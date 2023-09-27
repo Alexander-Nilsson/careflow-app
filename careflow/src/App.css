@@ -1,0 +1,144 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* override bootstrap navbar colors */
+.navbar,
+.navbar-default {
+ 
+    background-image: linear-gradient(to bottom,#1b3853 0,#1b3853  100%) !important; /* override background image gradient w/ flat color */
+   height: 6rem;
+    border-style: dashed;
+}
+
+.custom-link {
+  color: red; /* Change to your desired text color */
+  font-size: 18px; /* Change to your desired font size */
+}
+.ml-auto {
+  text-decoration: none;
+}
+
+.stacked-components {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Set a height to fill the viewport */
+}
+
+.container-1,
+.container-2,
+.container-3,
+.container-4 {
+  width: 98%; /* Adjust the width as needed */
+  padding: 20px;
+  margin: 10px;
+  background-color: #f0f0f0; /* Background color for the containers */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 20vh;
+}
+
+
+
+.ArkivContainer {
+  width: 96%; /* Adjust the width as needed */
+  padding: 0;
+  margin: 0 auto; /* Automatically center horizontally */
+  box-sizing: border-box;
+  margin-top: 6rem;
+  background-color: rgb(255, 255, 255);
+  border: 2px solid black;
+  border-style: dashed;
+  height: 100vh;
+}
+
+.big-container {
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f0f0; /* Background color for the containers */
+  /* height: 20vh; Remove fixed height */
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 3vh;
+}
+
+.top-container,
+.middle-container,
+.bottom-container {
+  border-radius: 25px;
+  width: 95%;
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  display: flex;
+  border: 1px solid #ccc;
+}
+
+.middle-container {
+  border-radius: 25px;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+}
+
+.square {
+  border-radius: 25px; /* rundande hörn */
+  min-height: 10vh; 
+  width: 25%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+  margin-inline: 1rem;
+
+}
+
+.IdeProgressContainer {
+  display: flex; /* Use flexbox */
+  border-radius: 25px;
+  justify-content:space-between; /* Distribute items along the main axis (horizontally) */
+  border: 1px solid #ccc;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  margin-bottom: 3vh;
+
+}

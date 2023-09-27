@@ -1,0 +1,48 @@
+.ide-main-container {
+    justify-content: space-between; /* Distribute items along the main axis (horizontally) */
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0; /* Background color for the containers */
+    /* height: 20vh; Remove fixed height */
+    min-height: 20vh;
+    padding: 10px;
+    width: 50%;
+    border: 1px solid #ccc;
+
+}
+.ide-headline-container {
+    border-radius: 25px;
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    text-align: center;
+    display: flex;
+
+}
+.write-container {
+    border-radius: 25px;
+    min-height: 10vh; 
+    display: flex;
+    justify-content: space-between;
+    border-radius: 25px;
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    text-align: center;
+    display: flex;
+
+}
+.button-container {
+    border-radius: 25px;
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    text-align:right;
+    display: flex;
+
+}

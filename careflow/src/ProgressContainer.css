@@ -1,0 +1,34 @@
+.progress-main-container{
+    justify-content: space-between; /* Distribute items along the main axis (horizontally) */
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0; /* Background color for the containers */
+    /* height: 20vh; Remove fixed height */
+    min-height: 20vh;
+    width: 25%;
+    padding: 10px;
+    margin-right:0;
+    border: 1px solid #ccc;
+
+}
+.progress-headline-container {
+    border-radius: 25px;
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    text-align: center;
+    display: flex;
+}
+.progress-content-container {
+    min-height: 15vh;
+    border-radius: 25px;
+    width: 95%;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+    display: flex;
+    border: 1px solid #ccc;
+}
