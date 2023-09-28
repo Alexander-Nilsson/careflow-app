@@ -1,62 +1,41 @@
+// import Navbar from 'react-bootstrap/Navbar';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import { Link, useMatch, useResolvedPath } from 'react-router-dom'; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
+import { Link } from 'react-router-dom'; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
+import React, { useState } from 'react';
 
 function NavigationBar() {
+
   const linkStyle = {
-    color: 'white', // Change to your desired text color
+    color: 'white',
     fontSize: '24px', // Change to your desired font size
     padding: '1em',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textDecoration: 'none',
   };
 
   return (
-    <>
-      <Navbar fixed="top" className="bg-body-tertiary justify-content-between">
-        <CustomLink to="/">
-          <img
-            alt=""
-            src="CareFlow_Vit.png"
-            width="220"
-            height="80"
-            margin-left="300px"
-            className="d-inline-block align-top"
-          />
-        </CustomLink>
-        <Nav>
-        <CustomLink to="/projekt" className="ml-auto" style={linkStyle}>Projekt</CustomLink>
-        <CustomLink to="/arkiv" className="ml-auto" style={linkStyle}>Arkiv</CustomLink>
-        <CustomLink to="/profil" className="ml-auto" style={linkStyle}>Profil</CustomLink>
-          <CustomLink to="/loggain" className="ml-auto" style={linkStyle}>Logga in</CustomLink>
-
-
-
+    <Navbar expand="lg" variant="dark" style={{ backgroundColor: '#0a206a' }} >
+      <Link to="/">
+        <img
+          alt=""
+          src="CareFlow_Vit.png"
+          width="220"
+          height="80"
+          margin-left="300px"
+          className="d-inline-block align-top"
+        />
+      </Link>
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="">
+          <Link to="/start" className="" style={linkStyle}>Start</Link>
+          <Link to="/forandringsarbeten" className="" style={linkStyle}>Förändringar</Link>
+          <Link to="/arkiv" className="" style={linkStyle}>Arkiv</Link>
+          <Link to="/guide" className="" style={linkStyle}>Guide</Link>
         </Nav>
-      </Navbar>
-    </>
+      </Navbar.Collapse>
+    </Navbar>
   );
 }
-interface CustomLinkProps {
-    to: string;
-    children: React.ReactNode;
-    [key: string]: any; // Allows for additional props
-  }
-  
-  function CustomLink({ to, children, ...props }: CustomLinkProps) {
-    const resolvedPath =  useResolvedPath(to)
-    const isActive = useMatch({path:resolvedPath.pathname, end:true})
-
-  
-    return (
-      <li className={isActive ? "active" : ""}>
-        <Link to={to} {...props}>
-          {children}
-        </Link>
-      </li>
-    );
-  }
-  
-
-
-
 export default NavigationBar;
