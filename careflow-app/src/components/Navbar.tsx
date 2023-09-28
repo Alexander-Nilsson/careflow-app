@@ -1,8 +1,6 @@
-// import Navbar from 'react-bootstrap/Navbar';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom'; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
-import React, { useState } from 'react';
 
 function NavigationBar() {
 
