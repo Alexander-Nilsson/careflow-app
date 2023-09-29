@@ -11,8 +11,37 @@ import {
   MDBIcon,
   MDBInput,
 } from "mdb-react-ui-kit";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase'
+import Button from 'react-bootstrap/Button';
+import { useState } from 'react'
+// import history from 'history'\;
+import Redirect from 'react-router-dom';
 
 function LoginModal() {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+
+
+  function handleLogin() {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log(user)
+        // return <Redirect to='/start' />
+      })
+      .catch((error) => {
+        alert("wrong credentials!")
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+  }
+
+
+
   return (
     <MDBContainer className="my-5">
       <MDBCard>
@@ -53,6 +82,8 @@ function LoginModal() {
                 id="formControlLg"
                 type="email"
                 size="lg"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <MDBInput
                 wrapperClass="mb-4"
@@ -60,11 +91,13 @@ function LoginModal() {
                 id="formControlLg"
                 type="password"
                 size="lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
 
-              <MDBBtn className="mb-4 px-5" color="primary" size="lg">
+              <Button className="mb-4 px-5" size="lg" variant="primary" onClick={handleLogin}>
                 Login
-              </MDBBtn>
+              </Button>
               <Link className="small text-muted" to="/resetpassword">
                 Forgot password?
               </Link>
