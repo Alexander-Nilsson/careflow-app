@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
 import {
   MDBBtn,
   MDBContainer,
@@ -64,23 +65,23 @@ function LoginModal() {
               <MDBBtn className="mb-4 px-5" color="primary" size="lg">
                 Login
               </MDBBtn>
-              <a className="small text-muted" href="#!">
+              <Link className="small text-muted" to="/resetpassword">
                 Forgot password?
-              </a>
+              </Link>
               <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
                 Don't have an account?{" "}
-                <a href="#!" style={{ color: "#393f81" }}>
+                <Link to="#!" style={{ color: "#393f81" }}>
                   Register here
-                </a>
+                </Link>
               </p>
 
               <div className="d-flex flex-row justify-content-start">
-                <a href="#!" className="small text-muted me-1">
+                <Link to="#!" className="small text-muted me-1">
                   Terms of use.
-                </a>
-                <a href="#!" className="small text-muted">
+                </Link>
+                <Link to="#!" className="small text-muted">
                   Privacy policy
-                </a>
+                </Link>
               </div>
             </MDBCardBody>
           </MDBCol>
