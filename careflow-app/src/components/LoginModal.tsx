@@ -12,31 +12,29 @@ import {
   MDBInput,
 } from "mdb-react-ui-kit";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../firebase'
+import { app } from '../firebase'
 import Button from 'react-bootstrap/Button';
 import { useState } from 'react'
-// import history from 'history'\;
-import Redirect from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function LoginModal() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showAlert, setAlert] = useState('')
+  const navigate = useNavigate();
 
 
-
-  function handleLogin() {
+  function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const auth = getAuth(app)
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in 
         const user = userCredential.user;
-        console.log(user)
-        // return <Redirect to='/start' />
+        navigate('/start');
       })
       .catch((error) => {
-        alert("wrong credentials!")
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        setAlert('true');
       });
   }
 
@@ -69,44 +67,40 @@ function LoginModal() {
                 />
               </div>
 
-              <h5
-                className="fw-normal my- pb-3"
-                style={{ letterSpacing: "1px" }}
-              >
-                Sign into your account
-              </h5>
-
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Email address"
-                id="formControlLg"
-                type="email"
-                size="lg"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Password"
-                id="formControlLg"
-                type="password"
-                size="lg"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-
-              <Button className="mb-4 px-5" size="lg" variant="primary" onClick={handleLogin}>
-                Login
-              </Button>
+              <h5 className="fw-normal mb-2">Sign into your account</h5>
+              <form className="form-group" onSubmit={handleLogin}>
+                <label>Email</label>
+                <MDBInput
+                  className="form-control mb-2"
+                  type="email"
+                  size="lg"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <label>Password</label>
+                <MDBInput
+                  className="form-control mb-2"
+                  type="password"
+                  size="lg"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {/* {showAlert && <label className="text-danger">Wrong credentials</label>} */}
+                <Button className="form-control" size="lg" variant="primary" type="submit">
+                  Login
+                </Button>
+                {showAlert && <small className="form-text text-danger">Wrong credentials</small>}
+              </form>
               <Link className="small text-muted" to="/resetpassword">
                 Forgot password?
               </Link>
-              <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
+              {/* <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
                 Don't have an account?{" "}
                 <Link to="#!" style={{ color: "#393f81" }}>
                   Register here
                 </Link>
-              </p>
+              </p> */}
+
 
               <div className="d-flex flex-row justify-content-start">
                 <Link to="#!" className="small text-muted me-1">
@@ -120,7 +114,7 @@ function LoginModal() {
           </MDBCol>
         </MDBRow>
       </MDBCard>
-    </MDBContainer>
+    </MDBContainer >
   );
 }
 

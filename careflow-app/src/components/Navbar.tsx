@@ -1,6 +1,10 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom'; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
+import { signOut, getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import {app} from "../firebase";
+
 
 function NavigationBar() {
 
@@ -12,25 +16,40 @@ function NavigationBar() {
     textDecoration: 'none',
   };
 
+  const navigate = useNavigate();
+
+  function handleLogout(event: React.MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault()
+    const auth = getAuth(app)
+    const user = auth.currentUser;
+    if (user) {
+      signOut(auth).then(() => {
+        navigate("/login")
+      })
+    } else {
+        console.log("not signed in")
+    }
+  }
+
   return (
-    <Navbar expand="lg" variant="dark" style={{ backgroundColor: '#0a206a' }} >
-      <Link to="/">
+    <Navbar expand="lg" variant="dark" className="d-flex" style={{ backgroundColor: '#0a206a' }} >
+      <Link to="/start">
         <img
           alt=""
           src="CareFlow_Vit.png"
           width="220"
           height="80"
-          margin-left="300px"
-          className="d-inline-block align-top"
+          className=""
         />
       </Link>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="">
+      <Navbar.Collapse id="responsive-navbar-nav" className='d-flex'>
+        <Nav className="d-flex flex-grow-1">
           <Link to="/start" className="" style={linkStyle}>Start</Link>
           <Link to="/forandringsarbeten" className="" style={linkStyle}>Förändringar</Link>
           <Link to="/arkiv" className="" style={linkStyle}>Arkiv</Link>
-          <Link to="/guide" className="" style={linkStyle}>Guide</Link>
+          <Link to="/guide" className="flex-grow-1" style={linkStyle}>Guide</Link>
+          <a href="/" style={linkStyle} onClick={handleLogout}>Logga ut</a>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

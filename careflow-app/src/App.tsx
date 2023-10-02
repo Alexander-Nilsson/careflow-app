@@ -13,7 +13,7 @@ function App() {
       <NavigationBar />
       <div>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/start" element={<Start />} />
           <Route path="/forandringsarbeten" element={<Projects />} />
         </Routes>
