@@ -31,18 +31,6 @@ function Projects() {
 
     }, [user, loading]);
 
-    // useEffect(() => { //useEffect is a function which runs when the component is mounted
-    //     const auth = getAuth(app)
-    //     const user = auth.currentUser
-
-    //     if (user) {
-    //         fetchProjects();
-    //     } else {
-    //         navigate("/login")
-    //     }
-    // }, []);
-
-
     return (
         <>
             {loading ? (
