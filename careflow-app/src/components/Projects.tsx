@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { app, db, auth } from "../firebase"
+import { collection, query, getDocs } from "firebase/firestore";
+import { db, auth } from "../firebase"
 import { useNavigate } from "react-router-dom";
-// import { getAuth } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 function Projects() {

@@ -11,11 +11,10 @@ import {
   MDBIcon,
   MDBInput,
 } from "mdb-react-ui-kit";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { app } from '../firebase'
 import Button from 'react-bootstrap/Button';
 import { useState } from 'react'
 import { useNavigate } from "react-router-dom";
+import { signIn } from "../firebase"
 
 function LoginModal() {
 
@@ -25,17 +24,15 @@ function LoginModal() {
   const navigate = useNavigate();
 
 
-  function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const auth = getAuth(app)
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        navigate('/start');
-      })
-      .catch((error) => {
-        setAlert('true');
-      });
+    signIn(email, password)
+
+    if (await signIn(email, password)) {
+      navigate('/start');
+    } else {
+      setAlert('true');
+    };
   }
 
 

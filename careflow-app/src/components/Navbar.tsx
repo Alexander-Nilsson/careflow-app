@@ -1,9 +1,8 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom'; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
-import { signOut, getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import {app} from "../firebase";
+import { signedIn, signOutUser} from "../firebase"
 
 
 function NavigationBar() {
@@ -18,16 +17,11 @@ function NavigationBar() {
 
   const navigate = useNavigate();
 
-  function handleLogout(event: React.MouseEvent<HTMLAnchorElement>) {
+  async function handleLogout(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
-    const auth = getAuth(app)
-    const user = auth.currentUser;
-    if (user) {
-      signOut(auth).then(() => {
-        navigate("/login")
-      })
-    } else {
-        console.log("not signed in")
+    if (signedIn()) {
+      await signOutUser()
+      navigate("/login")
     }
   }
 

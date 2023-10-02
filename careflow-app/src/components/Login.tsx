@@ -1,6 +1,5 @@
 import LoginModal from "./LoginModal";
 import { auth } from '../firebase'
-import { getAuth } from "firebase/auth";
 import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
