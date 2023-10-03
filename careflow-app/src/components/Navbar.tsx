@@ -2,15 +2,14 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom'; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
 import { useNavigate } from "react-router-dom";
-import { signedIn, signOutUser } from "../firebase"
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from '../firebase';
+import { auth, signedIn, signOutUser } from '../firebase';
 import { useEffect } from 'react';
 
 
 function NavigationBar() {
 
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
 
   const linkStyle = {

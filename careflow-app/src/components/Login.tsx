@@ -7,7 +7,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 function Login() {
 
   const navigate = useNavigate()
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
 
   useEffect(() => { //useEffect is a function which runs when the component is mounted
     if (loading) {

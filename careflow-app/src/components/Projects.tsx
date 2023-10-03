@@ -7,7 +7,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 function Projects() {
 
     const navigate = useNavigate()
-    const [user, loading, error] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
 
     // example of how to fetch from the db.
     async function fetchProjects() {
