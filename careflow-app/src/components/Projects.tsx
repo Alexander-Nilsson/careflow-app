@@ -26,7 +26,7 @@ function Projects() {
             // maybe trigger a loading screen
             return;
         }
-        // if (!user) navigate("/login");
+        if (!user) navigate("/login");
         fetchProjects();
 
     }, [user, loading]);

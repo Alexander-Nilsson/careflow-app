@@ -22,8 +22,8 @@ function App() {
 
   return (
     <>
-      {/* {user && <NavigationBar />} */}
-      <NavigationBar />
+      {user && <NavigationBar />}
+      {/* <NavigationBar /> */}
       <div>
         <Routes>
         <Route path="/" element={<Login />} />
