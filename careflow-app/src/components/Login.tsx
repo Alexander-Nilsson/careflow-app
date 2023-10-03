@@ -9,7 +9,7 @@ function Login() {
   const navigate = useNavigate()
   const [user, loading] = useAuthState(auth);
 
-  useEffect(() => { //useEffect is a function which runs when the component is mounted
+  useEffect(() => {
     if (loading) {
       // maybe trigger a loading screen
       return;

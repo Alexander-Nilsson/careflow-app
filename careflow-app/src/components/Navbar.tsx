@@ -1,15 +1,12 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import { Link } from 'react-router-dom'; //Replaces anchor link a.k.a <a>. href needs to be changed to "to"
+import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, signedIn, signOutUser } from '../firebase';
-import { useEffect } from 'react';
+import { signedIn, signOutUser } from '../firebase';
 
 
 function NavigationBar() {
 
-  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
 
   const linkStyle = {
@@ -28,25 +25,9 @@ function NavigationBar() {
     }
   }
 
-  function handleLinkClick(event: React.MouseEvent<HTMLAnchorElement>, path: string) {
-    if (!user) {
-      event.preventDefault();
-    } else {
-      navigate(path);
-    }
-  }
-
-  useEffect(() => {
-    if (loading) {
-      // maybe trigger a loading screen
-      return;
-    }
-    if (!user) navigate("/login");
-  }, [user, loading]);
-
   return (
     <Navbar expand="lg" variant="dark" className="d-flex" style={{ backgroundColor: '#0a206a' }} >
-      <Link to="/start" onClick={(e) => handleLinkClick(e, "/start")}>
+      <Link to="/start">
         <img
           alt=""
           src="CareFlow_Vit.png"
@@ -58,10 +39,10 @@ function NavigationBar() {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav" className='d-flex'>
         <Nav className="d-flex flex-grow-1">
-          <Link to="/start" style={linkStyle} onClick={(e) => handleLinkClick(e, "/start")}>Start</Link>
-          <Link to="/forandringsarbeten" style={linkStyle} onClick={(e) => handleLinkClick(e, "/start")}>Förändringar</Link>
-          <Link to="/arkiv" style={linkStyle} onClick={(e) => handleLinkClick(e, "/start")}>Arkiv</Link>
-          <Link to="/guide" className="flex-grow-1" style={linkStyle} onClick={(e) => handleLinkClick(e, "/start")}>Guide</Link>
+          <Link to="/start" style={linkStyle} >Start</Link>
+          <Link to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
+          <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
+          <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
           <a href="/" style={linkStyle} onClick={handleLogout}>Logga ut</a>
         </Nav>
       </Navbar.Collapse>
