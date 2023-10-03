@@ -19,10 +19,8 @@ function NavigationBar() {
 
   async function handleLogout(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
-    if (signedIn()) {
-      await signOutUser()
-      navigate("/login")
-    }
+    await signOutUser()
+    navigate("/login")
   }
 
   return (
