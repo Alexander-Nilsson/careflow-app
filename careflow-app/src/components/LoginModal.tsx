@@ -11,8 +11,32 @@ import {
   MDBIcon,
   MDBInput,
 } from "mdb-react-ui-kit";
+import Button from 'react-bootstrap/Button';
+import { useState } from 'react'
+import { useNavigate } from "react-router-dom";
+import { signIn } from "../firebase"
 
 function LoginModal() {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showAlert, setAlert] = useState('')
+  const navigate = useNavigate();
+
+
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    signIn(email, password)
+
+    if (await signIn(email, password)) {
+      navigate('/start');
+    } else {
+      setAlert('true');
+    };
+  }
+
+
+
   return (
     <MDBContainer className="my-5">
       <MDBCard>
@@ -40,40 +64,40 @@ function LoginModal() {
                 />
               </div>
 
-              <h5
-                className="fw-normal my- pb-3"
-                style={{ letterSpacing: "1px" }}
-              >
-                Sign into your account
-              </h5>
-
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Email address"
-                id="formControlLg"
-                type="email"
-                size="lg"
-              />
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Password"
-                id="formControlLg"
-                type="password"
-                size="lg"
-              />
-
-              <MDBBtn className="mb-4 px-5" color="primary" size="lg">
-                Login
-              </MDBBtn>
+              <h5 className="fw-normal mb-2">Sign into your account</h5>
+              <form className="form-group" onSubmit={handleLogin}>
+                <label>Email</label>
+                <MDBInput
+                  className="form-control mb-2"
+                  type="email"
+                  size="lg"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <label>Password</label>
+                <MDBInput
+                  className="form-control mb-2"
+                  type="password"
+                  size="lg"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {/* {showAlert && <label className="text-danger">Wrong credentials</label>} */}
+                <Button className="form-control" size="lg" variant="primary" type="submit">
+                  Login
+                </Button>
+                {showAlert && <small className="form-text text-danger">Wrong credentials</small>}
+              </form>
               <Link className="small text-muted" to="/resetpassword">
                 Forgot password?
               </Link>
-              <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
+              {/* <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
                 Don't have an account?{" "}
                 <Link to="#!" style={{ color: "#393f81" }}>
                   Register here
                 </Link>
-              </p>
+              </p> */}
+
 
               <div className="d-flex flex-row justify-content-start">
                 <Link to="#!" className="small text-muted me-1">
@@ -87,7 +111,7 @@ function LoginModal() {
           </MDBCol>
         </MDBRow>
       </MDBCard>
-    </MDBContainer>
+    </MDBContainer >
   );
 }
 

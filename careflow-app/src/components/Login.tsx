@@ -1,9 +1,29 @@
 import LoginModal from "./LoginModal";
+import { auth } from '../firebase'
+import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+
 function Login() {
+
+  const navigate = useNavigate()
+  const [user, loading] = useAuthState(auth);
+
+  useEffect(() => {
+    if (loading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    // if (user) navigate("/start");
+  });
+
   return (
     <>
-      <h1>Logga in</h1>
-      <LoginModal />
+      {loading ? (
+        <p>Loading...</p> // Show a loading indicator
+      ) : (
+        <LoginModal />
+      )}
     </>
   );
 }
