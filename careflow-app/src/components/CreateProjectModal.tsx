@@ -1,5 +1,10 @@
 import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
-import { BarChart, Lightbulb, Bullseye } from "react-bootstrap-icons";
+import {
+  BarChart,
+  Lightbulb,
+  Bullseye,
+  QuestionCircleFill,
+} from "react-bootstrap-icons";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -28,7 +33,7 @@ const ButtonStyle = {
 };
 
 const ButtonStyle1 = {
-  backgroundColor: "#051F6F",
+  backgroundColor: "white",
   border: "none",
   cursor: "pointer",
   borderRadius: "1000px",
@@ -61,7 +66,17 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <OverlayTrigger trigger="hover" placement="right" overlay={HelpPopover}>
-          <Button style={ButtonStyle1}>?</Button>
+          <Button style={ButtonStyle1}>
+            <QuestionCircleFill
+              style={{
+                marginRight: "10px",
+                marginBottom: "3px",
+                color: "#051F6F",
+                width: "25px",
+                height: "25px",
+              }}
+            ></QuestionCircleFill>
+          </Button>
         </OverlayTrigger>
       </Modal.Header>
 
@@ -72,35 +87,82 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
             <input type="text" className="form-control"></input>
           </div>
           <div className="mb-3">
-            <Bullseye
+            <div
               style={{
-                marginRight: "10px",
-                marginBottom: "3px",
-                color: "red",
-                borderRadius: "50%",
-                borderColor: "gray",
-                background: "white",
+                display: "flex",
+                alignItems: "center",
               }}
-            ></Bullseye>
-            <label style={TitleStyle}>Mål och syfte</label>
-            <div className="form-text" style={DescriptiveText}>
-              Vad vill vi åstadkomma med förändringen?
+            >
+              <div style={IconCircleStyle}>
+                <Bullseye
+                  style={{
+                    color: "#FD0B0B",
+                    width: "20px",
+                    height: "20px",
+                  }}
+                />
+              </div>
+              <div>
+                <label style={TitleStyle}>Mål och syfte</label>
+                <div className="form-text" style={DescriptiveText}>
+                  Vad vill vi åstadkomma med förändringen?
+                </div>
+              </div>
             </div>
-            <textarea className="form-control"></textarea>
+          </div>
+          <div className="card" style={{ height: "100px" }}>
+            <div className="input-group input-group-sm mb-3">
+              <span className="input-group-text" id="inputGroup-sizing-sm">
+                +
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm"
+                placeholder="Lägg till mål"
+                style={{}}
+              ></input>
+            </div>
           </div>
           <div className="mb-3">
-            <BarChart
+            <div
               style={{
-                marginRight: "10px",
-                marginBottom: "3px",
-                color: "purple",
+                display: "flex",
+                alignItems: "center",
               }}
-            ></BarChart>
-            <label style={TitleStyle}>Mäta och följa upp</label>
-            <div className="form-text" style={DescriptiveText}>
-              Hur vet vi om förändringen är en förbättring?
+            >
+              <div style={IconCircleStyle}>
+                <BarChart
+                  style={{
+                    color: "#495BFF",
+                    width: "20px",
+                    height: "20px",
+                  }}
+                />
+              </div>
+              <div>
+                <label style={TitleStyle}>Mäta och följa upp</label>
+                <div className="form-text" style={DescriptiveText}>
+                  Hur vet vi om förändringen är en förbättring?
+                </div>
+              </div>
             </div>
-            <textarea className="form-control"></textarea>
+            <div className="card" style={{ height: "100px" }}>
+              <div className="input-group input-group-sm mb-3">
+                <span className="input-group-text" id="inputGroup-sizing-sm">
+                  +
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-sm"
+                  placeholder="Lägg till "
+                  style={{}}
+                ></input>
+              </div>
+            </div>
           </div>
           <div className="mb-3">
             <div
@@ -125,7 +187,21 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 </div>
               </div>
             </div>
-            <textarea className="form-control"></textarea>
+            <div className="card" style={{ height: "100px" }}>
+              <div className="input-group input-group-sm mb-3">
+                <span className="input-group-text" id="inputGroup-sizing-sm">
+                  +
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-sm"
+                  placeholder="Lägg till idé"
+                  style={{}}
+                ></input>
+              </div>
+            </div>
           </div>
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Lägg till avdelning</label>
