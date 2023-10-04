@@ -3,19 +3,25 @@ import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { signedIn, signOutUser } from '../firebase';
+import { NavItem } from 'react-bootstrap';
 
 
 function NavigationBar() {
 
   const navigate = useNavigate();
 
+  const loggedIn = signedIn();
+
   const linkStyle = {
     color: 'white',
     fontSize: '24px', // Change to your desired font size
     padding: '1em',
-    fontWeight: 'bold',
+    fontWeight: 'normal',
     textDecoration: 'none',
   };
+
+  //alert("Inloggad: " + loggedIn);
+  console.log(loggedIn);
 
   async function handleLogout(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
@@ -36,12 +42,30 @@ function NavigationBar() {
       </Link>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav" className='d-flex'>
-        <Nav className="d-flex flex-grow-1">
-          <Link to="/start" style={linkStyle} >Start</Link>
-          <Link to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
-          <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
-          <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
-          <a href="/" style={linkStyle} onClick={handleLogout}>Logga ut</a>
+        {/* <Nav className="d-flex flex-grow-1" > */}
+        <Nav className= "container-fluid" >
+          <div>
+            {
+            loggedIn ? 
+            <div>
+                <Link to="/start" style={linkStyle} >Start</Link>
+                <Link to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
+                <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
+                <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
+                <a href="/" style={linkStyle} onClick={handleLogout}>Logga ut</a>
+            </div>:
+            <div>
+              <div>
+              <a href="/login" style={linkStyle}>Logga in</a>
+              </div>
+            </div>
+              // <Link to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
+              // <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
+              // <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
+              // <a href="/" style={linkStyle} onClick={handleLogout}>Logga ut</a>
+            }
+         </div>
+             
         </Nav>
       </Navbar.Collapse>
     </Navbar>
