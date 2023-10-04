@@ -3,6 +3,7 @@ import { collection, query, getDocs } from "firebase/firestore";
 import { db, auth } from "../firebase"
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
+import ShowCard from "./ShowCard"
 
 function Projects() {
 
@@ -29,17 +30,15 @@ function Projects() {
         // if (!user) navigate("/login");
         fetchProjects();
 
-    }, [user, loading]);
+    }, []);
 
     return (
-        <>
-            {loading ? (
-                <p>Loading...</p> // Show a loading indicator
-            ) : (
-                <h1>Förändringsarbeten</h1>
-            )}
-        </>
+      <>
+        <h1>Förändringsarbeten</h1>
+        <ShowCard />
+      </>
     );
+  
 }
 
 export default Projects
