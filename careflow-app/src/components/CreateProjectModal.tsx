@@ -1,3 +1,4 @@
+import React, { useState } from "react"; //Nytt
 import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
 import {
   BarChart,
@@ -13,7 +14,7 @@ const TitleStyle = {
   marginLeft: "0px",
 };
 
-const DescriptiveText = {
+const DescriptiveTextStyle = {
   fontFamily: "Avenir",
   fontSize: "12px",
   color: "#848484",
@@ -32,13 +33,6 @@ const ButtonStyle = {
   marginTop: "50px",
 };
 
-const ButtonStyle1 = {
-  backgroundColor: "white",
-  border: "none",
-  cursor: "pointer",
-  borderRadius: "1000px",
-};
-
 const IconCircleStyle = {
   borderRadius: "50%",
   width: "35px",
@@ -50,9 +44,26 @@ const IconCircleStyle = {
   justifyContent: "center",
 };
 
+const QuestionmarkStyle = {
+  marginRight: "10px",
+  marginBottom: "3px",
+  color: "#051F6F",
+  width: "25px",
+  height: "25px",
+};
+
+const FlexAndCenter = {
+  display: "flex",
+  alignItems: "center",
+};
+
 const HelpPopover = (
-  <Popover id="popover-positioned-right" title="Popover right">
-    Här kommer det finnas en bskrivande text
+  <Popover
+    id="popover-positioned-right"
+    title="Popover right"
+    style={{ padding: "10px" }}
+  >
+    Här kommer det att finnas en beskrivande text sen
   </Popover>
 );
 
@@ -66,17 +77,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <OverlayTrigger trigger="hover" placement="right" overlay={HelpPopover}>
-          <Button style={ButtonStyle1}>
-            <QuestionCircleFill
-              style={{
-                marginRight: "10px",
-                marginBottom: "3px",
-                color: "#051F6F",
-                width: "25px",
-                height: "25px",
-              }}
-            ></QuestionCircleFill>
-          </Button>
+          <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
         </OverlayTrigger>
       </Modal.Header>
 
@@ -86,13 +87,9 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
             <label style={TitleStyle}>Titel</label>
             <input type="text" className="form-control"></input>
           </div>
+
           <div className="mb-3">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
+            <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
                 <Bullseye
                   style={{
@@ -104,34 +101,34 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               </div>
               <div>
                 <label style={TitleStyle}>Mål och syfte</label>
-                <div className="form-text" style={DescriptiveText}>
+                <div className="form-text" style={DescriptiveTextStyle}>
                   Vad vill vi åstadkomma med förändringen?
                 </div>
               </div>
             </div>
-          </div>
-          <div className="card" style={{ height: "100px" }}>
-            <div className="input-group input-group-sm mb-3">
-              <span className="input-group-text" id="inputGroup-sizing-sm">
-                +
-              </span>
-              <input
-                type="text"
-                className="form-control"
-                aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm"
-                placeholder="Lägg till mål"
-                style={{}}
-              ></input>
+            <div className="card" style={{ height: "100px" }}>
+              <div
+                className="input-group input-group-sm"
+                style={{
+                  position: "absolute",
+                  bottom: "0",
+                  left: "0",
+                  right: "0",
+                  marginBottom: "0",
+                }}
+              >
+                <span className="input-group-text">+</span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Lägg till"
+                ></input>
+              </div>
             </div>
           </div>
+
           <div className="mb-3">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
+            <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
                 <BarChart
                   style={{
@@ -143,34 +140,34 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               </div>
               <div>
                 <label style={TitleStyle}>Mäta och följa upp</label>
-                <div className="form-text" style={DescriptiveText}>
+                <div className="form-text" style={DescriptiveTextStyle}>
                   Hur vet vi om förändringen är en förbättring?
                 </div>
               </div>
             </div>
             <div className="card" style={{ height: "100px" }}>
-              <div className="input-group input-group-sm mb-3">
-                <span className="input-group-text" id="inputGroup-sizing-sm">
-                  +
-                </span>
+              <div
+                className="input-group input-group-sm"
+                style={{
+                  position: "absolute",
+                  bottom: "0",
+                  left: "0",
+                  right: "0",
+                  marginBottom: "0",
+                }}
+              >
+                <span className="input-group-text">+</span>
                 <input
                   type="text"
                   className="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  placeholder="Lägg till "
-                  style={{}}
+                  placeholder="Lägg till"
                 ></input>
               </div>
             </div>
           </div>
+
           <div className="mb-3">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
+            <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
                 <Lightbulb
                   style={{
@@ -182,27 +179,32 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               </div>
               <div>
                 <label style={TitleStyle}>Samla idéer</label>
-                <div className="form-text" style={DescriptiveText}>
+                <div className="form-text" style={DescriptiveTextStyle}>
                   Vilka förändringar kan vi göra som leder till en förbättring?
                 </div>
               </div>
             </div>
             <div className="card" style={{ height: "100px" }}>
-              <div className="input-group input-group-sm mb-3">
-                <span className="input-group-text" id="inputGroup-sizing-sm">
-                  +
-                </span>
+              <div
+                className="input-group input-group-sm"
+                style={{
+                  position: "absolute",
+                  bottom: "0",
+                  left: "0",
+                  right: "0",
+                  marginBottom: "0",
+                }}
+              >
+                <span className="input-group-text">+</span>
                 <input
                   type="text"
                   className="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  placeholder="Lägg till idé"
-                  style={{}}
+                  placeholder="Lägg till"
                 ></input>
               </div>
             </div>
           </div>
+
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Lägg till avdelning</label>
             <input type="text" className="form-control"></input>
