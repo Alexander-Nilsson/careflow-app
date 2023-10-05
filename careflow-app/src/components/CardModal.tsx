@@ -1,5 +1,6 @@
 import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
 import { BarChart, Lightbulb, Bullseye } from "react-bootstrap-icons";
+import Nav from 'react-bootstrap/Nav';
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -34,6 +35,17 @@ const ButtonStyle1 = {
   borderRadius: "1000px",
 };
 
+const ButtonStyle2 = {
+    backgroundColor: "White",
+    border: "none",
+    cursor: "pointer",
+    color: "Black",
+    borderRadius: "1000px",
+    ':hover': {
+        backgroundColor: "#0000000" // darker blue when hovered
+    }
+  };
+
 const IconCircleStyle = {
   borderRadius: "50%",
   width: "35px",
@@ -51,18 +63,30 @@ const HelpPopover = (
   </Popover>
 );
 
-interface CreateProjectModalProps {
+interface CardModalProps {
   show: boolean;
   onHide: () => void;
 }
 
-function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
+function CardModal({ show, onHide }: CardModalProps) {
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <OverlayTrigger trigger="hover" placement="right" overlay={HelpPopover}>
-          <Button style={ButtonStyle1}>?</Button>
-        </OverlayTrigger>
+      <Nav variant="pills" defaultActiveKey="#first">
+          <Nav.Item>
+            <Nav.Link href="#planera">Planera</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#genomföra">Genomföra</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#studera">Studera</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#agera">Agera</Nav.Link>
+          </Nav.Item>
+
+        </Nav>
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
@@ -128,18 +152,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
             <textarea className="form-control"></textarea>
           </div>
           <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till avdelning</label>
-            <input type="text" className="form-control"></input>
-          </div>
-          <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till kollegor</label>
-            <input type="text" className="form-control"></input>
-          </div>
-          <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till beskrivande nyckelord</label>
-            <input type="text" className="form-control"></input>
-          </div>
-          <div className="mb-3 text-center">
             <Button
               id="Spara"
               onClick={onHide}
@@ -154,4 +166,4 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   );
 }
 
-export default CreateProjectModal;
+export default CardModal;

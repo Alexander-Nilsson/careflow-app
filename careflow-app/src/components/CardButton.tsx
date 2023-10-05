@@ -1,16 +1,5 @@
 import { Button } from "react-bootstrap";
-
-const ButtonStyle: React.CSSProperties = {
-  backgroundColor: "#051F6F",
-  fontFamily: "Avenir",
-  fontSize: "40px",
-  top: "400px",
-  left: "400px",
-  padding: "100x 100px",
-  border: "none",
-  cursor: "pointer",
-  position: "absolute",
-};
+import Card from 'react-bootstrap/Card';
 
 
 interface CardButtonProps {
@@ -18,11 +7,19 @@ interface CardButtonProps {
 }
 
 function CardButton({ onClick }: CardButtonProps) {
-  return (
-    <Button id="ClickCard" onClick={onClick} style={ButtonStyle}>
-      Card 1
-    </Button>
-  );
+    return (
+      <a href="#" onClick={onClick} style={{ cursor: 'pointer', textDecoration: 'none' }}>
+        <Card style={{ width: '18rem', margin: '200px' }}>
+          {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+          <Card.Body>
+            <Card.Title>Card Title</Card.Title>
+            <Card.Text>
+              Some quick example text to build on the card title and make up the bulk of the card's content.
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      </a>
+    );
 }
 
 export default CardButton;
