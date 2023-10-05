@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "../firebase"; // Import Firebase configuration
+import "./FetchUserData.css";
 
 function FetchUserData() {
   const [user, setUser] = useState({
