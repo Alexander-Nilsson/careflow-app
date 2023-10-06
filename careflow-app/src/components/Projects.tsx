@@ -1,9 +1,14 @@
 import { useEffect } from "react";
-import { db } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, getDocs } from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
 import CreateNewProject from "./CreateNewProject";
 
 function Projects() {
+  const navigate = useNavigate();
+  const [user, loading] = useAuthState(auth);
+
   // example of how to fetch from the db.
   async function fetchProjects() {
     const q = query(collection(db, "projects")); //create a query
@@ -18,13 +23,22 @@ function Projects() {
   }
 
   useEffect(() => {
-    //useEffect is a function which runs when the component is mounted
+    if (loading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    // if (!user) navigate("/login");
     fetchProjects();
-  }, []);
+  }, [user, loading]);
 
   return (
     <>
-      <h1>Förändringsarbeten</h1>
+      {loading ? (
+        <p>Loading...</p> // Show a loading indicator
+      ) : (
+        <h1>Förändringsarbeten</h1>
+      )}
+
       <CreateNewProject />
     </>
   );
