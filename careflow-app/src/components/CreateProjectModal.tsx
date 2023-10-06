@@ -115,6 +115,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   left: "0",
                   right: "0",
                   marginBottom: "0",
+                  fontFamily: "Avenir",
                 }}
               >
                 <span className="input-group-text">+</span>
@@ -154,6 +155,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   left: "0",
                   right: "0",
                   marginBottom: "0",
+                  fontFamily: "Avenir",
                 }}
               >
                 <span className="input-group-text">+</span>
@@ -193,6 +195,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   left: "0",
                   right: "0",
                   marginBottom: "0",
+                  fontFamily: "Avenir",
                 }}
               >
                 <span className="input-group-text">+</span>
