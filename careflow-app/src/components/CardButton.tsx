@@ -1,4 +1,3 @@
-import { Button } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { PersonFill } from "react-bootstrap-icons";
 
@@ -15,10 +14,9 @@ function CardButton({ title, content, onClick }: CardButtonProps) {
       onClick={onClick}
       style={{ cursor: "pointer", textDecoration: "none" }}
     >
-      <Card style={{ width: "18rem", margin: "20px" }}>
+      <Card style={{ width: "18rem", margin: "10px" }}>
         <Card.Body>
           <Card.Title>
-            {" "}
             <PersonFill />
             {"   " + title}
           </Card.Title>
