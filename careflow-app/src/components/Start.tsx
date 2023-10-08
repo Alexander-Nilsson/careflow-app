@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { auth } from '../firebase';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-
+import CreateNewProject from "./CreateNewProject";
 
 function Start() {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ function Start() {
       ) : (
         <div>
           <h1>Start</h1>
+          <CreateNewProject />
         </div>
       )}
     </>
