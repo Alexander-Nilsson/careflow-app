@@ -22,12 +22,13 @@ function Projects() {
    // Only temporary. Cards will later on be fetched from database
   const cards = [
     { id: 1, title: "Card Title 1", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", column: 1 },
-        { id: 2, title: "Card Title 2", content: "Card content 2", column: 2 },
-        { id: 2, title: "Card Title 3", content: "Card content 3", column: 3 },
-        { id: 2, title: "Card Title 4", content: "Card content 4", column: 4 },
-        { id: 2, title: "Card Title 5", content: "Card content 5", column: 1 },
-        { id: 2, title: "Card Title 6", content: "Card content 5", column: 2 },
-        { id: 2, title: "Card Title 6", content: "Card content 5", column: 5 },
+    { id: 2, title: "Card Title 2", content: "Card content 2", column: 2 },
+    { id: 2, title: "Card Title 3", content: "Card content 3", column: 3 },
+    { id: 2, title: "Card Title 4", content: "Card content 4", column: 4 },
+    { id: 2, title: "Card Title 5", content: "Card content 5", column: 1 },
+    { id: 2, title: "Card Title 6", content: "Card content 5", column: 2 },
+    { id: 2, title: "Card Title 6", content: "Card content 5", column: 5 },
+  ];
 
   // example of how to fetch from the db.
   async function fetchProjects() {
