@@ -1,6 +1,20 @@
-import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Form,
+  Tabs,
+  Tab,
+  TabContainer,
+  Popover,
+} from "react-bootstrap";
 import { BarChart, Lightbulb, Bullseye } from "react-bootstrap-icons";
-import Nav from 'react-bootstrap/Nav';
+
+interface CardModalProps {
+  show: boolean;
+  onHide: () => void;
+  title: string;
+  content: string;
+}
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -36,15 +50,15 @@ const ButtonStyle1 = {
 };
 
 const ButtonStyle2 = {
-    backgroundColor: "White",
-    border: "none",
-    cursor: "pointer",
-    color: "Black",
-    borderRadius: "1000px",
-    ':hover': {
-        backgroundColor: "#0000000" // darker blue when hovered
-    }
-  };
+  backgroundColor: "White",
+  border: "none",
+  cursor: "pointer",
+  color: "Black",
+  borderRadius: "1000px",
+  ":hover": {
+    backgroundColor: "#0000000", // darker blue when hovered
+  },
+};
 
 const IconCircleStyle = {
   borderRadius: "50%",
@@ -70,98 +84,110 @@ interface CardModalProps {
 
 function CardModal({ show, onHide }: CardModalProps) {
   return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-      <Nav variant="pills" defaultActiveKey="#first">
-          <Nav.Item>
-            <Nav.Link href="#planera">Planera</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="#genomföra">Genomföra</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="#studera">Studera</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="#agera">Agera</Nav.Link>
-          </Nav.Item>
+    <Modal show={show} onHide={onHide} size="lg">
+      <TabContainer defaultActiveKey="planera">
+        <Modal.Header closeButton></Modal.Header>
 
-        </Nav>
-      </Modal.Header>
+        <Modal.Body>
+          <Tabs id="card-tabs" justify>
+            <Tab eventKey="planera" title="Planera" />
+            <Tab eventKey="genomföra" title="Genomföra" />
+            <Tab eventKey="studera" title="Studera" />
+            <Tab eventKey="agera" title="Agera" />
+          </Tabs>
+          <Tab.Content>
+            <Tab.Pane eventKey="planera">
+              <Form>
+                <Form.Group controlId="planeraTitle">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control type="text" placeholder="Enter title" />
+                </Form.Group>
 
-      <Modal.Body className="d-flex justify-content-center align-items-center">
-        <Form style={{ width: "90%" }}>
-          <div className="mb-3 text-center">
-            <label style={TitleStyle}>Titel</label>
-            <input type="text" className="form-control"></input>
-          </div>
-          <div className="mb-3">
-            <Bullseye
-              style={{
-                marginRight: "10px",
-                marginBottom: "3px",
-                color: "red",
-                borderRadius: "50%",
-                borderColor: "gray",
-                background: "white",
-              }}
-            ></Bullseye>
-            <label style={TitleStyle}>Mål och syfte</label>
-            <div className="form-text" style={DescriptiveText}>
-              Vad vill vi åstadkomma med förändringen?
-            </div>
-            <textarea className="form-control"></textarea>
-          </div>
-          <div className="mb-3">
-            <BarChart
-              style={{
-                marginRight: "10px",
-                marginBottom: "3px",
-                color: "purple",
-              }}
-            ></BarChart>
-            <label style={TitleStyle}>Mäta och följa upp</label>
-            <div className="form-text" style={DescriptiveText}>
-              Hur vet vi om förändringen är en förbättring?
-            </div>
-            <textarea className="form-control"></textarea>
-          </div>
-          <div className="mb-3">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <div style={IconCircleStyle}>
-                <Lightbulb
-                  style={{
-                    color: "#FFE500",
-                    width: "20px",
-                    height: "20px",
-                  }}
-                />
-              </div>
-              <div>
-                <label style={TitleStyle}>Samla idéer</label>
-                <div className="form-text" style={DescriptiveText}>
-                  Vilka förändringar kan vi göra som leder till en förbättring?
-                </div>
-              </div>
-            </div>
-            <textarea className="form-control"></textarea>
-          </div>
-          <div className="mb-3 text-center">
-            <Button
-              id="Spara"
-              onClick={onHide}
-              style={ButtonStyle}
-            >
-              Spara
-            </Button>
-          </div>
-        </Form>
-      </Modal.Body>
+                <Form.Group controlId="planeraDescription">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Enter description"
+                  />
+                </Form.Group>
+
+                <Form.Group controlId="planeraDate">
+                  <Form.Label>Start Date</Form.Label>
+                  <Form.Control type="date" />
+                </Form.Group>
+
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+              </Form>
+            </Tab.Pane>
+
+            <Tab.Pane eventKey="genomföra">
+              <Form>
+                <Form.Group controlId="genomforaCategory">
+                  <Form.Label>Category</Form.Label>
+                  <Form.Control as="select">
+                    <option>Category 1</option>
+                    <option>Category 2</option>
+                    <option>Category 3</option>
+                  </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="genomforaType">
+                  <Form.Label>Type</Form.Label>
+                  {["radio1", "radio2", "radio3"].map((type) => (
+                    <Form.Check
+                      type="radio"
+                      label={type}
+                      name="type"
+                      id={`type-${type}`}
+                    />
+                  ))}
+                </Form.Group>
+
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+              </Form>
+            </Tab.Pane>
+
+            <Tab.Pane eventKey="studera">
+              <Form>{/* Your form or content for "Studera" tab */}</Form>
+            </Tab.Pane>
+
+            <Tab.Pane eventKey="agera">
+              <Form>
+                <Form.Group controlId="studeraOptions">
+                  <Form.Label>Options</Form.Label>
+                  {["option1", "option2", "option3"].map((option) => (
+                    <Form.Check
+                      type="checkbox"
+                      label={option}
+                      id={`option-${option}`}
+                    />
+                  ))}
+                </Form.Group>
+
+                <Form.Group controlId="studeraFile">
+                  <Form.Label>Upload File</Form.Label>
+                  <Form.Control type="file" />
+                </Form.Group>
+
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+              </Form>
+            </Tab.Pane>
+          </Tab.Content>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button onClick={onHide} style={ButtonStyle}>
+            Spara
+          </Button>
+        </Modal.Footer>
+      </TabContainer>
     </Modal>
   );
 }

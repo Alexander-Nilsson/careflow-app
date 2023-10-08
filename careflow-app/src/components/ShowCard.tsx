@@ -3,7 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 
-function ShowCard() {
+interface ShowCardProps {
+  title: string;
+  content: string;
+}
+
+function ShowCard({ title, content }: ShowCardProps) {
   const [show, setShow] = useState(false);
 
   const modalClose = () => setShow(false);
@@ -11,8 +16,13 @@ function ShowCard() {
 
   return (
     <div>
-      <CardButton onClick={modalShow} />
-      <CardModal show={show} onHide={modalClose} />
+      <CardButton title={title} content={content} onClick={modalShow} />
+      <CardModal
+        show={show}
+        onHide={modalClose}
+        title={title}
+        content={content}
+      />
     </div>
   );
 }
