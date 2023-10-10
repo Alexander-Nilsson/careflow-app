@@ -30,7 +30,7 @@ function Start() {
       ) : (
         <div style={startStyle}>
           <ProfileSection />
-          <CreateNewProject />
+          {/* <CreateNewProject /> */}
           <ProjectsSection />
           <IdeasAndProgressSection />
         </div>

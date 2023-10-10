@@ -5,7 +5,7 @@ function ProjectsSection() {
     // You can define your project data here
     const projectsSectionStyle = {
         backgroundColor: "lightblue",
-        width: "1400px",
+        width: "1120px",
         height: "250px",
         borderRadius: "10px",
         margin: "20px",
