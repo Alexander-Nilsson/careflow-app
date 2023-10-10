@@ -15,6 +15,9 @@ import Button from 'react-bootstrap/Button';
 import { useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import { signIn } from "../firebase"
+import { auth0Client } from '../auth0';
+import { useAuth0 } from '@auth0/auth0-react';
+import LoginButton from './LoginButton'
 
 function LoginModal() {
 
@@ -22,17 +25,29 @@ function LoginModal() {
   const [password, setPassword] = useState('');
   const [showAlert, setAlert] = useState('')
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const { loginWithRedirect, isAuthenticated, user } = useAuth0();
 
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    signIn(email, password)
+    loginWithRedirect();
 
-    if (await signIn(email, password)) {
-      navigate('/start');
-    } else {
-      setAlert('true');
-    };
+    // auth0Client.login({
+    //   realm: 'Careflow', // Replace with your DB connection name
+    //   username: email,
+    //   password: password,
+    // }, (err : any) => {
+    //   if (err) setError(err.description);
+    // });
+
+    // signIn(email, password)
+
+    // if (await signIn(email, password)) {
+    //   navigate('/start');
+    // } else {
+    //   setAlert('true');
+    // };
   }
 
 
@@ -69,7 +84,7 @@ function LoginModal() {
                 <label>Email</label>
                 <MDBInput
                   className="form-control mb-2"
-                  type="email"
+                  type="username"
                   size="lg"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -83,9 +98,11 @@ function LoginModal() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 {/* {showAlert && <label className="text-danger">Wrong credentials</label>} */}
-                <Button className="form-control" size="lg" variant="primary" type="submit">
+                {/* <Button className="form-control" size="lg" variant="primary" onClick={() => loginWithRedirect()}>
                   Login
-                </Button>
+                </Button> */}
+                <LoginButton></LoginButton>
+
                 {showAlert && <small className="form-text text-danger">Wrong credentials</small>}
               </form>
               <Link className="small text-muted" to="/resetpassword">
