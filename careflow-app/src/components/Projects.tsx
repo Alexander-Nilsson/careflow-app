@@ -4,6 +4,7 @@ import { db, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
+import KanbanBoard from "./KanbanBoard";
 import CreateNewProject from "./CreateNewProject";
 
 function Projects() {
@@ -52,7 +53,7 @@ function Projects() {
     fetchProjects();
   }, [user, loading]);
 
-  return (
+/*  return (
     <>
       {loading ? (
         <p>Loading...</p> // Show a loading indicator
@@ -80,7 +81,9 @@ function Projects() {
           ))}
       </div>
     </>
-  );
+  ); */
+
+  return <KanbanBoard />;
 }
 
 export default Projects;
