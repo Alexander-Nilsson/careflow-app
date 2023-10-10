@@ -8,7 +8,13 @@ import {
   Popover,
 } from "react-bootstrap";
 
-import { Calendar, Folder2Open, GeoAltFill } from "react-bootstrap-icons";
+import {
+  Calendar,
+  Folder2Open,
+  GeoAltFill,
+  Circle,
+  CheckCircle,
+} from "react-bootstrap-icons";
 
 interface CardModalProps {
   show: boolean;
@@ -48,7 +54,7 @@ const FormGroupStyle = {
 function CardModal({ show, onHide, title, content }: CardModalProps) {
   return (
     <Modal show={show} onHide={onHide} size="lg">
-      <TabContainer defaultActiveKey="planera">
+      <TabContainer defaultActiveKey="genomföra">
         <Modal.Body
           style={{
             paddingLeft: "30px",
@@ -57,11 +63,64 @@ function CardModal({ show, onHide, title, content }: CardModalProps) {
           }}
         >
           <Tabs id="card-tabs" justify>
-            <Tab eventKey="planera" title="Planera" />
-            <Tab eventKey="genomföra" title="Genomföra" />
-            <Tab eventKey="studera" title="Studera" />
-            <Tab eventKey="agera" title="Agera" />
+            <Tab
+              eventKey="planera"
+              title={
+                <span style={FlexAndCenter}>
+                  <CheckCircle
+                    style={{
+                      marginLeft: "35px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  Planera
+                </span>
+              }
+            />
+            <Tab
+              eventKey="genomföra"
+              title={
+                <span style={FlexAndCenter}>
+                  <CheckCircle
+                    style={{
+                      marginLeft: "20px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  Genomföra
+                </span>
+              }
+            />
+            <Tab
+              eventKey="studera"
+              title={
+                <span style={FlexAndCenter}>
+                  <Circle
+                    style={{
+                      marginLeft: "30px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  Studera
+                </span>
+              }
+            />
+            <Tab
+              eventKey="agera"
+              title={
+                <span style={FlexAndCenter}>
+                  <Circle
+                    style={{
+                      marginLeft: "40px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  Agera
+                </span>
+              }
+            />
           </Tabs>
+
           <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
           <div
             style={{
@@ -91,20 +150,16 @@ function CardModal({ show, onHide, title, content }: CardModalProps) {
               </div>
             </div>
           </div>
+          <Form.Group controlId="planeraDescription" style={FormGroupStyle}>
+            <Form.Label>
+              <b>Beskrivning</b>
+            </Form.Label>
+            <div>{content}</div>
+          </Form.Group>
 
           <Tab.Content>
             <Tab.Pane eventKey="planera">
               <Form>
-                <Form.Group
-                  controlId="planeraDescription"
-                  style={FormGroupStyle}
-                >
-                  <Form.Label>
-                    <b>Beskrivning</b>
-                  </Form.Label>
-                  <div>{content}</div>
-                </Form.Group>
-
                 <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
                   <Form.Label>
                     <b>Checklista</b>
@@ -116,7 +171,7 @@ function CardModal({ show, onHide, title, content }: CardModalProps) {
                   <Form.Label>
                     <b>Anteckningar</b>
                   </Form.Label>
-                  <div>Här ska det finnas anteckningar</div>
+                  <textarea className="form-control" rows={3}></textarea>
                 </Form.Group>
 
                 <Form.Group controlId="planeraFile" style={FormGroupStyle}>
