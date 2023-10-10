@@ -5,11 +5,12 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import CreateNewProject from "./CreateNewProject";
 import ProfileSection from "./ProfileSection";
 import ProjectsSection from "./ProjectsSection";
+import IdeasAndProgressSection from "./IdeasAndProgressSection";
 
 function Start() {
   const startStyle = {
     backgroundColor: "white",
-    
+
 };
   const navigate = useNavigate();
   const [user, loading] = useAuthState(auth);
@@ -28,10 +29,10 @@ function Start() {
         <p>Loading...</p> // Show a loading indicator
       ) : (
         <div style={startStyle}>
-          <h1>Start</h1>
           <ProfileSection />
           <CreateNewProject />
           <ProjectsSection />
+          <IdeasAndProgressSection />
         </div>
       )}
     </>

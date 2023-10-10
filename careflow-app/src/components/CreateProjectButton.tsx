@@ -4,7 +4,7 @@ const ButtonStyle: React.CSSProperties = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "20px",
-  top: "310px",
+  top: "260px",
   left: "1000px",
   padding: "10px 20px",
   border: "none",
