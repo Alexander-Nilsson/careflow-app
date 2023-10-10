@@ -7,6 +7,7 @@ function ProfileSection() {
         width: "500px",
         height: "250px",
         borderRadius: "10px",
+        margin: "20px",
     };
 
     return (
