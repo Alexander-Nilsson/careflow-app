@@ -12,7 +12,7 @@ function ProfileSection() {
 
     return (
         <div style={profileSectionStyle}>
-            <h1>Profile Section</h1>
+            <h1>Min Profil</h1>
             <h3>Namn</h3>
             <h3>Avdelning</h3>
         </div>

@@ -9,6 +9,7 @@ import ProjectsSection from "./ProjectsSection";
 function Start() {
   const startStyle = {
     backgroundColor: "white",
+    
 };
   const navigate = useNavigate();
   const [user, loading] = useAuthState(auth);
