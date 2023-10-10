@@ -3,6 +3,7 @@ import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import CreateNewProject from "./CreateNewProject";
+import ProfileSection from "./ProfileSection";
 
 function Start() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ function Start() {
       ) : (
         <div>
           <h1>Start</h1>
+          <ProfileSection />
           <CreateNewProject />
         </div>
       )}
