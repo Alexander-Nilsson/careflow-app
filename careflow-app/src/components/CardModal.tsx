@@ -54,7 +54,7 @@ const FormGroupStyle = {
 function CardModal({ show, onHide, title, content }: CardModalProps) {
   return (
     <Modal show={show} onHide={onHide} size="lg">
-      <TabContainer defaultActiveKey="genomföra">
+      <TabContainer defaultActiveKey="planera">
         <Modal.Body
           style={{
             paddingLeft: "30px",
