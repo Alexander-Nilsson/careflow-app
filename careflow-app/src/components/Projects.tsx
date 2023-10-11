@@ -43,14 +43,15 @@ function Projects() {
     });
   }
 
-  useEffect(() => {
-    if (loading) {
-      // maybe trigger a loading screen
-      return;
-    }
-    // if (!user) navigate("/login");
-    fetchProjects();
-  }, [user, loading]);
+    useEffect(() => {
+        if (loading) {
+            // maybe trigger a loading screen
+            return;
+        }
+        if (!user) navigate("/login");
+        fetchProjects();
+
+    }, [user, loading]);
 
   return (
     <>

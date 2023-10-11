@@ -14,7 +14,7 @@ function Login() {
       // maybe trigger a loading screen
       return;
     }
-    // if (user) navigate("/start");
+     if (user) navigate("/start");
   });
 
   return (
