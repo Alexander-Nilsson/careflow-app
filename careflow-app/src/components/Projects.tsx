@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
 import CreateNewProject from "./CreateNewProject";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function Projects() {
   const navigate = useNavigate();
-  const [user, loading] = useAuthState(auth);
+  // const [user, loading] = useAuthState(auth);
+  const { isAuthenticated, isLoading, user } = useAuth0();
 
   //Column titles
   const columns = [
@@ -44,18 +46,20 @@ function Projects() {
   }
 
     useEffect(() => {
-        if (loading) {
+        if (isLoading) {
             // maybe trigger a loading screen
             return;
         }
-        if (!user) navigate("/login");
+        if (!isAuthenticated){
+          navigate("/login")
+        };
         fetchProjects();
 
-    }, [user, loading]);
+    }, [user, isLoading]);
 
   return (
     <>
-      {loading ? (
+      {isLoading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
         <h1>Förändringsarbeten</h1>

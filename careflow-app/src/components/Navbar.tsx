@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { signedIn, signOutUser } from '../firebase';
 import { useAuth0 } from '@auth0/auth0-react';
+// import clientID from '../auth0';
 
 
 function NavigationBar() {
@@ -18,12 +19,17 @@ function NavigationBar() {
     textDecoration: 'none',
   };
 
-  const { logout, isAuthenticated } = useAuth0();
+  const { logout, isAuthenticated} = useAuth0();
+
+  // logout({
+  //   "federated": true,
+  // });
 
   async function handleLogout(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
-    await signOutUser()
-    navigate("/login")
+    // window.location.href = `https://dev-ni7jkmfx0oybqzdf.us.auth0.com/v2/logout?client_id=mkmVvsZQwku14qYIH34tA4kPKdTzejse&returnTo=${encodeURIComponent(window.location.origin)}`
+    // await signOutUser()
+    // navigate("/login")
   }
 
   return (
