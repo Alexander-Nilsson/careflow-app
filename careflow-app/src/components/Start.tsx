@@ -6,6 +6,7 @@ import CreateNewProject from "./CreateNewProject";
 import ProfileSection from "./ProfileSection";
 import ProjectsSection from "./ProjectsSection";
 import IdeasAndProgressSection from "./IdeasAndProgressSection";
+import FinishedProjectsSection from "./FinishedProjectsSection";
 
 function Start() {
   const startStyle = {
@@ -33,6 +34,7 @@ function Start() {
           {/* <CreateNewProject /> */}
           <ProjectsSection />
           <IdeasAndProgressSection />
+          <FinishedProjectsSection />
         </div>
       )}
     </>
