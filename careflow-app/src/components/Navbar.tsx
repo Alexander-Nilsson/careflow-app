@@ -2,7 +2,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { signedIn, signOutUser } from '../firebase';
 import { useAuth0 } from '@auth0/auth0-react';
 // import clientID from '../auth0';
 
@@ -20,21 +19,12 @@ function NavigationBar() {
     cursor: 'pointer'
   };
 
-  // const hoverStyle = {
-  //   color: 'white',
-  //   fontSize: '24px', // Change to your desired font size
-  //   padding: '1em',
-  //   fontWeight: 'bold',
-  //   textDecoration: 'none',
-  //   cursor: 'pointer'
-  // }
-
-  const { logout, isAuthenticated} = useAuth0();
+  const { logout, isAuthenticated } = useAuth0();
 
   const handleLogout = () => {
-   if (isAuthenticated){
-    logout();
-   }
+    if (isAuthenticated) {
+      logout();
+    }
   }
 
   return (
@@ -56,8 +46,9 @@ function NavigationBar() {
           <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
           <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
           {isAuthenticated && (
-          <a style = {linkStyle}  onClick={handleLogout}>Logga ut</a>)}
-          
+            <a style={linkStyle} onClick={handleLogout}>Logga ut</a>
+          )}
+
         </Nav>
       </Navbar.Collapse>
     </Navbar>

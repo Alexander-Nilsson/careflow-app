@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { collection, query, getDocs } from "firebase/firestore";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
 import CreateNewProject from "./CreateNewProject";
 import { useAuth0 } from '@auth0/auth0-react';

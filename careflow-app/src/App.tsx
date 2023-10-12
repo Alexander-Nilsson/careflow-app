@@ -6,8 +6,6 @@ import NavigationBar from './components/Navbar';
 import Start from './components/Start';
 import Login from './components/Login'
 import Projects from './components/Projects';
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from './firebase';
 import { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -22,11 +20,11 @@ function App() {
     if (isLoading) {
       return;
     }
-  }, [user, isLoading]);
+  }, [isAuthenticated, isLoading]);
 
   return (
     <>
-      {user && <NavigationBar />}
+      {isAuthenticated && <NavigationBar />}
       {/* <NavigationBar /> */}
       <div>
         <Routes>
