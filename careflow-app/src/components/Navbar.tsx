@@ -17,7 +17,17 @@ function NavigationBar() {
     padding: '1em',
     fontWeight: 'bold',
     textDecoration: 'none',
+    cursor: 'pointer'
   };
+
+  // const hoverStyle = {
+  //   color: 'white',
+  //   fontSize: '24px', // Change to your desired font size
+  //   padding: '1em',
+  //   fontWeight: 'bold',
+  //   textDecoration: 'none',
+  //   cursor: 'pointer'
+  // }
 
   const { logout, isAuthenticated} = useAuth0();
 
@@ -46,7 +56,7 @@ function NavigationBar() {
           <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
           <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
           {isAuthenticated && (
-          <button onClick={handleLogout} style={linkStyle}>Logga ut</button>)}
+          <a style = {linkStyle}  onClick={handleLogout}>Logga ut</a>)}
           
         </Nav>
       </Navbar.Collapse>
