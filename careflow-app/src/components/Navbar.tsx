@@ -1,28 +1,35 @@
-import React from 'react';
-import { Navbar, Nav } from 'react-bootstrap';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { signedIn, signOutUser } from '../firebase';
 import { useAuth0 } from '@auth0/auth0-react';
+// import clientID from '../auth0';
+
 
 function NavigationBar() {
-  const { isAuthenticated, logout } = useAuth0();
+
+  const navigate = useNavigate();
 
   const linkStyle = {
     color: 'white',
-    fontSize: '24px',
+    fontSize: '24px', // Change to your desired font size
     padding: '1em',
     fontWeight: 'bold',
     textDecoration: 'none',
   };
 
+  const { logout, isAuthenticated} = useAuth0();
+
   const handleLogout = () => {
-    if (isAuthenticated) {
-      logout(); // Just initiate the logout process, no need for 'returnTo'
-    }
-  };
+   if (isAuthenticated){
+    logout();
+   }
+  }
 
   return (
-    <Navbar expand="lg" variant="dark" className="d-flex" style={{ backgroundColor: '#0a206a' }}>
-      <Link to="/">
+    <Navbar expand="lg" variant="dark" className="d-flex" style={{ backgroundColor: '#0a206a' }} >
+      <Link to="/start">
         <img
           alt=""
           src="CareFlow_Vit.png"
@@ -34,15 +41,16 @@ function NavigationBar() {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav" className='d-flex'>
         <Nav className="d-flex flex-grow-1">
-          <Link to="/" style={linkStyle} >Home</Link>
-          <Link to="/profile" style={linkStyle} >Profile</Link>
+          <Link to="/start" style={linkStyle} >Start</Link>
+          <Link to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
+          <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
+          <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
           {isAuthenticated && (
-            <button onClick={handleLogout} style={linkStyle}>Log Out</button>
-          )}
+          <button onClick={handleLogout} style={linkStyle}>Logga ut</button>)}
+          
         </Nav>
       </Navbar.Collapse>
     </Navbar>
   );
 }
-
 export default NavigationBar;
