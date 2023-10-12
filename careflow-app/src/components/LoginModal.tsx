@@ -1,32 +1,18 @@
 import React from "react";
-import {
-  MDBInput
-} from "mdb-react-ui-kit";
 import Button from 'react-bootstrap/Button';
-import { useState } from 'react'
-import { useNavigate } from "react-router-dom";
-import { signIn } from "../firebase"
+import { useAuth0 } from '@auth0/auth0-react';
 import "./LoginModal.css";
 import TermsModal from "./TermsModal";
 import PrivacyModal from "./PrivacyModal";
 
 function LoginModal() {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showAlert, setAlert] = useState('')
-  const navigate = useNavigate();
-  
+  const { loginWithRedirect } = useAuth0();
+
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    signIn(email, password)
-
-    if (await signIn(email, password)) {
-      navigate('/start');
-    } else {
-      setAlert('true');
-    };
+    loginWithRedirect();
   }
 
   return (
@@ -43,14 +29,10 @@ function LoginModal() {
             <TermsModal />
             <PrivacyModal />
           </div>
-          
-          
         </form>
       </div>
      
     </div>
-    
-
   );
 }
 

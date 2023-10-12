@@ -2,7 +2,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { signedIn, signOutUser } from '../firebase';
+import { useAuth0 } from '@auth0/auth0-react';
+// import clientID from '../auth0';
 
 
 function NavigationBar() {
@@ -15,12 +16,15 @@ function NavigationBar() {
     padding: '1em',
     fontWeight: 'bold',
     textDecoration: 'none',
+    cursor: 'pointer'
   };
 
-  async function handleLogout(event: React.MouseEvent<HTMLAnchorElement>) {
-    event.preventDefault()
-    await signOutUser()
-    navigate("/login")
+  const { logout, isAuthenticated } = useAuth0();
+
+  const handleLogout = () => {
+    if (isAuthenticated) {
+      logout();
+    }
   }
 
   return (
@@ -41,7 +45,10 @@ function NavigationBar() {
           <Link to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
           <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
           <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
-          <a href="/" style={linkStyle} onClick={handleLogout}>Logga ut</a>
+          {isAuthenticated && (
+            <a style={linkStyle} onClick={handleLogout}>Logga ut</a>
+          )}
+
         </Nav>
       </Navbar.Collapse>
     </Navbar>
