@@ -1,6 +1,12 @@
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react'
-import "./PrivacyModal.css";
+
+const styles = {
+  privacyPolicy: {
+    color:'#051f6e',
+    cursor: 'pointer'
+  },
+};
 
 function PrivacyModal() {
     const [show, setShow] = useState(false);
@@ -10,7 +16,7 @@ function PrivacyModal() {
   
     return (
       <>
-        <a className = "privacy-policy"onClick={handleShow}>
+        <a style = {styles.privacyPolicy as React.CSSProperties} onClick={handleShow}>
           Personuppgiftspolicy
         </a>
         <Modal show={show} onHide={handleClose}>

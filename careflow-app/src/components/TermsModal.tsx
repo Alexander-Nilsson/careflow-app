@@ -1,6 +1,14 @@
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react'
-import "./TermsModal.css";
+
+const styles = {
+  termsOfUse: {
+    color:'#051f6e',
+    cursor: 'pointer',
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+  },
+};
 
 function TermsModal() {
     const [show, setShow] = useState(false);
@@ -10,7 +18,7 @@ function TermsModal() {
   
     return (
       <>
-        <a className = "terms-of-use"onClick={handleShow}>
+        <a style = {styles.termsOfUse} onClick={handleShow}>
           Användarvillkor
         </a>
         <Modal show={show} onHide={handleClose}>
