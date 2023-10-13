@@ -15,7 +15,7 @@ function Start() {
     if (!isAuthenticated) {
       navigate("/login")
     } else {
-      console.log(user) // do something, for example fetch the user data from firebase based on the user's nickname
+      console.log(user?.name) // do something, for example fetch the user data from firebase based on the user's nickname
     };
 
   }, [isAuthenticated, isLoading]);
