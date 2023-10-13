@@ -9,7 +9,7 @@ const styles = {
     overflow: 'hidden',
   },
   logInContainer: {
-   position: 'relative',
+    position: 'fixed',
     backgroundColor: '#fff',
     width: '100%',
     height: '64rem',
