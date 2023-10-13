@@ -8,7 +8,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 function Projects() {
   const navigate = useNavigate();
-  // const [user, loading] = useAuthState(auth);
   const { isAuthenticated, isLoading, user } = useAuth0();
 
   //Column titles
