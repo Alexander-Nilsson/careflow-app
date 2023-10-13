@@ -19,7 +19,7 @@ function Projects() {
     { id: 5, title: 'Agera' },
   ];
 
-   // Only temporary. Cards will later on be fetched from database
+  // Only temporary. Cards will later on be fetched from database
   const cards = [
     { id: 1, title: "Card Title 1", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", column: 1 },
     { id: 2, title: "Card Title 2", content: "Card content 2", column: 2 },
@@ -43,45 +43,48 @@ function Projects() {
     });
   }
 
-    useEffect(() => {
-        if (isLoading) {
-            // maybe trigger a loading screen
-            return;
-        }
-        if (!isAuthenticated){
-          navigate("/login")
-        };
-        fetchProjects();
+  useEffect(() => {
+    if (isLoading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    if (!isAuthenticated) {
+      navigate("/login")
+    };
+    fetchProjects();
 
-    }, [user, isLoading]);
+  }, [user, isLoading]);
 
   return (
     <>
       {isLoading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
-        <h1>Förändringsarbeten</h1>
+        <>
+          <CreateNewProject />
+          <div className="card-grid-container">
+            {columns.map(column => (
+              <div key={column.id} className={`column-${column.id}`}>
+                <h2>{column.title}</h2>
+                {cards
+                  .filter(card => card.column === column.id)
+                  .map(card => (
+                    <ShowCard
+                      key={card.id}
+                      title={card.title}
+                      content={card.content}
+                      column={card.column}
+                    />
+                  ))}
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
-      <CreateNewProject />
 
-      <div className="card-grid-container">
-          {columns.map(column => (
-              <div key={column.id} className={`column-${column.id}`}>
-                  <h2>{column.title}</h2>
-                  {cards
-                      .filter(card => card.column === column.id)
-                      .map(card => (
-                          <ShowCard
-                              key={card.id}
-                              title={card.title}
-                              content={card.content}
-                              column={card.column}
-                          />
-                      ))}
-              </div>
-          ))}
-      </div>
+
+
     </>
   );
 }
