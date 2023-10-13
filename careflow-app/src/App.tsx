@@ -11,11 +11,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 function App() {
 
-  // const [user, loading] = useAuthState(auth);
-  const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuth0();
 
-
-  // const user = false;
   useEffect(() => {
     if (isLoading) {
       return;
@@ -25,7 +22,6 @@ function App() {
   return (
     <>
       {isAuthenticated && <NavigationBar />}
-      {/* <NavigationBar /> */}
       <div>
         <Routes>
           <Route path="/" element={<Login />} />

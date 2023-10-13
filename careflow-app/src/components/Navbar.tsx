@@ -1,30 +1,23 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
 import { useAuth0 } from '@auth0/auth0-react';
-// import clientID from '../auth0';
 
 
 function NavigationBar() {
 
-  const navigate = useNavigate();
-
   const linkStyle = {
     color: 'white',
     fontSize: '24px', // Change to your desired font size
-    padding: '1em',
     fontWeight: 'bold',
     textDecoration: 'none',
     cursor: 'pointer'
   };
 
-  const { logout, isAuthenticated } = useAuth0();
+  const { logout } = useAuth0();
 
   const handleLogout = () => {
-    if (isAuthenticated) {
-      logout();
-    }
+    logout();
   }
 
   return (
@@ -41,14 +34,12 @@ function NavigationBar() {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav" className='d-flex'>
         <Nav className="d-flex flex-grow-1">
-          <Link to="/start" style={linkStyle} >Start</Link>
-          <Link to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
-          <Link to="/arkiv" style={linkStyle} >Arkiv</Link>
-          <Link to="/guide" className="flex-grow-1" style={linkStyle} >Guide</Link>
-          {isAuthenticated && (
-            <a style={linkStyle} onClick={handleLogout}>Logga ut</a>
-          )}
-
+          <Link className="p-4" to="/start" style={linkStyle} >Start</Link>
+          <Link className="p-4" to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
+          <div className="flex-grow-1 p-4">
+            <Link className="pt-4 pb-4" to="/arkiv" style={linkStyle} >Arkiv</Link>
+          </div>
+          <a className="p-4" style={linkStyle} onClick={handleLogout}>Logga ut</a>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
