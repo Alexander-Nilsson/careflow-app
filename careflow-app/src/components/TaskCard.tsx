@@ -11,9 +11,13 @@ interface Props {
 }
 
 function TaskCard({ task, deleteTask, updateTask }: Props) {
+  // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);
+
+  // State to toggle edit mode for the task content
   const [editMode, setEditMode] = useState(true);
 
+  // UseSortable hook for drag-and-drop functionality
   const {
     setNodeRef,
     attributes,
@@ -30,30 +34,34 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     disabled: editMode,
   });
 
+  // Define the style based on drag-and-drop transition
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
   };
 
+  // Function to toggle edit mode for task content
   const toggleEditMode = () => {
     setEditMode((prev) => !prev);
     setMouseIsOver(false);
   };
 
   if (isDragging) {
+    // Styling for when the task is being dragged
     return (
       <div
         ref={setNodeRef}
         style={style}
         className="
         opacity-30
-      bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500  cursor-grab relative
+        bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500 cursor-grab relative
       "
       />
     );
   }
 
   if (editMode) {
+    // Styling for when in edit mode (textarea for task content)
     return (
       <div
         ref={setNodeRef}
@@ -64,8 +72,8 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
       >
         <textarea
           className="
-        h-[90%]
-        w-full resize-none border-none rounded bg-transparent text-white focus:outline-none
+          h-[90%]
+          w-full resize-none border-none rounded bg-transparent text-black focus:outline-none
         "
           value={task.content}
           autoFocus
@@ -82,6 +90,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     );
   }
 
+  // Styling for the default display mode
   return (
     <div
       ref={setNodeRef}
