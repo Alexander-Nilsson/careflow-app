@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
 import CreateNewProject from "./CreateNewProject";
+import { render } from "react-dom";
 
 
 class Project {
@@ -16,7 +17,8 @@ class Project {
 
   constructor (id: string, title: string, description : string, phase : number){
     //tags : Array<string>, projectMembers : Array<string>, projectLeader : Array<string>, place : string, notesStudy : string, notesDo : string, notesPlan : string, notesAct : string, iteration : number, filesStudy : Array<string>, filesDo : Array<string>, filesPlan : Array<string>, filesAct : Array<string>, dateCreated : Date, comments : Array<string>, closed : boolean, clinic : string, centrum : string) {
- 
+    
+
     this.id = id;
     this.title = title;
     this.description = description;
@@ -25,6 +27,7 @@ class Project {
   toString() {
       return this.title + ', ' + this.description + ', ' + this.phase;
   }
+
 }
 
 function Projects() {
@@ -70,9 +73,9 @@ function Projects() {
       console.log("Hämtar in: ", doc.id, " => ", doc.data());
       i++;
     });
-    fetchProjectByID();
+    const proj = fetchProjectByID();
     
-
+    return proj;
   }
 
   //Firebase project converter
@@ -102,10 +105,13 @@ function Projects() {
   //     console.log("No such document!");
   //   }
   
-  let projectList : Array<any> = [];
+  //
+  const [projectList, setProjectList] = useState([] as Array<any>);
+  console.log("zzz Init: ", projectList.length);
 
   async function fetchProjectByID(){
-
+    //projectList.length = 0;
+    let projectList : Array<any> = [];
     console.log("ID array length: ", cardIDs.length);
     for (let i = 0; i < cardIDs.length; i++)
     {
@@ -116,7 +122,10 @@ function Projects() {
       const querySnapshot = await getDoc(projectReference);
       if(querySnapshot.exists()) {
         const projectData = querySnapshot.data();
+    
         projectList.push(projectData);
+       
+        console.log("zzz Push: ", projectList.length);
         printProjects(projectList);
         console.log("Titel: " + projectData.title);
       } else {
@@ -124,6 +133,7 @@ function Projects() {
       }
       
     }
+    setProjectList(projectList);
 
   }
 
@@ -135,18 +145,23 @@ function Projects() {
       console.log("Projekttitel: " , projectList[i].title);
     }
 
+    return (
+      <> <p></p> </>
+      )
   }
 
-
+  
+ 
   useEffect(() => {
     if (loading) {
       // maybe trigger a loading screen
       return;
     }
-    // if (!user) navigate("/login");
-    fetchProjects();
-  }, [user, loading]);
 
+    fetchProjects();
+
+  }, [loading]);
+  console.log("zzz Read: ", projectList.length);
   return (
     <>
       {loading ? (
@@ -158,7 +173,7 @@ function Projects() {
       <CreateNewProject />
         
       <div className="card-grid-container">
-        <p>{projectList.length}</p>
+        <p>{}</p>
           {columns.map(column => (
               <div key={column.id} className={`column-${column.id}`}>
                   <h2>{column.title}</h2>
