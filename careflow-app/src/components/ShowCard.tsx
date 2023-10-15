@@ -31,7 +31,7 @@ function ShowCard({
 
   return (
     <div className={`column-${column}`}>
-      <CardButton title={title} onClick={modalShow} />
+      <CardButton title={title} tags = {tags} onClick={modalShow} />
       <CardModal
         show={show}
         onHide={modalClose}

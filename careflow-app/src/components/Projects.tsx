@@ -70,7 +70,7 @@ function Projects() {
 
   let cardIDs: Array<any> = [];
 
-  // // example of how to fetch from the db.
+  // Fetch all projects and store their ID's
   async function fetchProjects() {
     const q = query(collection(db, "projects")); //create a query
 
@@ -90,7 +90,7 @@ function Projects() {
     return proj;
   }
 
-  //Firebase project converter
+  //Firebase project converter, converting the data into instance of Project
   const projectConverter = {
     toFirestore: (projectData: any) => {
       return {
@@ -119,29 +119,17 @@ function Projects() {
     },
   };
 
-  // const ref = doc(db, "projects","LA").withConverter(projectConverter);
-  //   const docSnap = await getDocs(ref);
-  //   if (docSnap.exists()) {
-  //     // Convert to City object
-  //     const project = docSnap.data();
-  //     // Use a City instance method
-  //     console.log(project.toString());
-  //   } else {
-  //     console.log("No such document!");
-  //   }
 
-  //
+  // Fetching each project by ID, converting them into objects and storing them in array
   const [projectList, setProjectList] = useState([] as Array<any>);
   console.log("zzz Init: ", projectList.length);
 
   async function fetchProjectByID() {
-    //projectList.length = 0;
     let projectList: Array<any> = [];
     console.log("ID array length: ", cardIDs.length);
     for (let i = 0; i < cardIDs.length; i++) {
-      console.log("Hämtar in enskild data");
       let id = cardIDs[i];
-      console.log(id);
+      console.log("Project ID: ", id);
       const projectReference = doc(db, "projects", id).withConverter(
         projectConverter
       );
@@ -152,8 +140,6 @@ function Projects() {
         projectList.push(projectData);
 
         console.log("zzz Push: ", projectList.length);
-        printProjects(projectList);
-        console.log("Titel: " + projectData.title);
       } else {
         console.log("No such document!");
       }
@@ -161,19 +147,6 @@ function Projects() {
     setProjectList(projectList);
   }
 
-  //test function for printing projects from the list
-  function printProjects(projectList: Array<any>) {
-    for (let i = 0; i < projectList.length; i++) {
-      console.log("Projekttitel: ", projectList[i].title);
-    }
-
-    return (
-      <>
-        {" "}
-        <p></p>{" "}
-      </>
-    );
-  }
 
   useEffect(() => {
     if (loading) {
@@ -182,7 +155,7 @@ function Projects() {
     }
 
     fetchProjects();
-  }, [loading]);
+  }, [loading, user]);
   console.log("zzz Read: ", projectList.length);
   return (
     <>

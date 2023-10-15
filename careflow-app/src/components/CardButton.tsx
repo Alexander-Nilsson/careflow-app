@@ -3,10 +3,11 @@ import { PersonFill } from "react-bootstrap-icons";
 
 interface CardButtonProps {
   title: string;
+  tags : Array<String>
   onClick: () => void;
 }
 
-function CardButton({ title, onClick }: CardButtonProps) {
+function CardButton({ title, tags, onClick }: CardButtonProps) {
   return (
     <a
       href="#"
@@ -19,7 +20,15 @@ function CardButton({ title, onClick }: CardButtonProps) {
             <PersonFill />
             {"   " + title}
           </Card.Title>
-          <Card.Text></Card.Text>
+          <Card.Text>
+            
+          {
+
+            //tags[0]
+
+          }
+
+            </Card.Text>
         </Card.Body>
       </Card>
     </a>
