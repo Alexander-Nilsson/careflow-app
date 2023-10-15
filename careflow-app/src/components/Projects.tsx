@@ -6,28 +6,53 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
 import CreateNewProject from "./CreateNewProject";
 import { render } from "react-dom";
-
+import { Timestamp } from "firebase/firestore";
 
 class Project {
-
   id: String;
   title: String;
   description: String;
   phase: number;
+  place: String;
+  centrum: String;
+  tags: Array<string>;
+  date_created: Timestamp;
 
-  constructor (id: string, title: string, description : string, phase : number){
+  constructor(
+    id: string,
+    title: string,
+    description: string,
+    phase: number,
+    place: string,
+    centrum: string,
+    tags: Array<string>,
+    date_created: Timestamp
+  ) {
     //tags : Array<string>, projectMembers : Array<string>, projectLeader : Array<string>, place : string, notesStudy : string, notesDo : string, notesPlan : string, notesAct : string, iteration : number, filesStudy : Array<string>, filesDo : Array<string>, filesPlan : Array<string>, filesAct : Array<string>, dateCreated : Date, comments : Array<string>, closed : boolean, clinic : string, centrum : string) {
-    
 
     this.id = id;
     this.title = title;
     this.description = description;
     this.phase = phase;
-  }
-  toString() {
-      return this.title + ', ' + this.description + ', ' + this.phase;
+    this.place = place;
+    this.centrum = centrum;
+    this.tags = tags;
+    this.date_created = date_created;
   }
 
+  toString() {
+    return (
+      this.title +
+      ", " +
+      this.description +
+      ", " +
+      this.phase +
+      ", " +
+      this.place +
+      ", " +
+      this.centrum
+    );
+  }
 }
 
 function Projects() {
@@ -36,30 +61,17 @@ function Projects() {
 
   //Column titles
   const columns = [
-    { id: 1, title: 'Förslag' },
-    { id: 2, title: 'Planera' },
-    { id: 3, title: 'Genomföra' },
-    { id: 4, title: 'Studera' },
-    { id: 5, title: 'Agera' },
+    { id: 1, title: "Förslag" },
+    { id: 2, title: "Planera" },
+    { id: 3, title: "Genomföra" },
+    { id: 4, title: "Studera" },
+    { id: 5, title: "Agera" },
   ];
 
-   // Only temporary. Cards will later on be fetched from database
-  const cards = [
-    { id: 1, title: "Card Title 1", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", column: 1 },
-    { id: 2, title: "Card Title 2", content: "Card content 2", column: 2 },
-    { id: 2, title: "Card Title 3", content: "Card content 3", column: 3 },
-    { id: 2, title: "Card Title 4", content: "Card content 4", column: 4 },
-    { id: 2, title: "Card Title 5", content: "Card content 5", column: 1 },
-    { id: 2, title: "Card Title 6", content: "Card content 5", column: 2 },
-    { id: 2, title: "Card Title 6", content: "Card content 5", column: 5 },
-  ];
-
-  let cardIDs : Array<any> = [];
-
+  let cardIDs: Array<any> = [];
 
   // // example of how to fetch from the db.
   async function fetchProjects() {
-
     const q = query(collection(db, "projects")); //create a query
 
     const querySnapshot = await getDocs(q); //use the query to fetch the items
@@ -74,26 +86,39 @@ function Projects() {
       i++;
     });
     const proj = fetchProjectByID();
-    
+
     return proj;
   }
 
   //Firebase project converter
   const projectConverter = {
-    toFirestore: (projectData : any) => {
-        return {
-          id: projectData.id,
-          title: projectData.title,
-          description: projectData.description,
-          phase: projectData.phase
-            };
+    toFirestore: (projectData: any) => {
+      return {
+        id: projectData.id,
+        title: projectData.title,
+        description: projectData.description,
+        phase: projectData.phase,
+        place: projectData.place,
+        centrum: projectData.centrum,
+        tags: projectData.tags,
+        date_created: projectData.date_created,
+      };
     },
-    fromFirestore: (snapshot : any, options : any) => {
-        const data = snapshot.data(options);
-        return new Project(data.id, data.title, data.description, data.phase);
-    }
+    fromFirestore: (snapshot: any, options: any) => {
+      const data = snapshot.data(options);
+      return new Project(
+        data.id,
+        data.title,
+        data.description,
+        data.phase,
+        data.place,
+        data.centrum,
+        data.tags,
+        data.date_created
+      );
+    },
   };
-  
+
   // const ref = doc(db, "projects","LA").withConverter(projectConverter);
   //   const docSnap = await getDocs(ref);
   //   if (docSnap.exists()) {
@@ -104,54 +129,52 @@ function Projects() {
   //   } else {
   //     console.log("No such document!");
   //   }
-  
+
   //
   const [projectList, setProjectList] = useState([] as Array<any>);
   console.log("zzz Init: ", projectList.length);
 
-  async function fetchProjectByID(){
+  async function fetchProjectByID() {
     //projectList.length = 0;
-    let projectList : Array<any> = [];
+    let projectList: Array<any> = [];
     console.log("ID array length: ", cardIDs.length);
-    for (let i = 0; i < cardIDs.length; i++)
-    {
+    for (let i = 0; i < cardIDs.length; i++) {
       console.log("Hämtar in enskild data");
       let id = cardIDs[i];
       console.log(id);
-      const projectReference = doc(db, "projects", id).withConverter(projectConverter);
+      const projectReference = doc(db, "projects", id).withConverter(
+        projectConverter
+      );
       const querySnapshot = await getDoc(projectReference);
-      if(querySnapshot.exists()) {
+      if (querySnapshot.exists()) {
         const projectData = querySnapshot.data();
-    
+
         projectList.push(projectData);
-       
+
         console.log("zzz Push: ", projectList.length);
         printProjects(projectList);
         console.log("Titel: " + projectData.title);
       } else {
         console.log("No such document!");
       }
-      
     }
     setProjectList(projectList);
-
   }
 
   //test function for printing projects from the list
-  function printProjects(projectList : Array<any>){
-
-    for (let i = 0; i < projectList.length; i++)
-    {
-      console.log("Projekttitel: " , projectList[i].title);
+  function printProjects(projectList: Array<any>) {
+    for (let i = 0; i < projectList.length; i++) {
+      console.log("Projekttitel: ", projectList[i].title);
     }
 
     return (
-      <> <p></p> </>
-      )
+      <>
+        {" "}
+        <p></p>{" "}
+      </>
+    );
   }
 
-  
- 
   useEffect(() => {
     if (loading) {
       // maybe trigger a loading screen
@@ -159,7 +182,6 @@ function Projects() {
     }
 
     fetchProjects();
-
   }, [loading]);
   console.log("zzz Read: ", projectList.length);
   return (
@@ -171,24 +193,28 @@ function Projects() {
       )}
 
       <CreateNewProject />
-        
+
       <div className="card-grid-container">
         <p>{}</p>
-          {columns.map(column => (
-              <div key={column.id} className={`column-${column.id}`}>
-                  <h2>{column.title}</h2>
-                  {projectList
-                      .filter(project => project.phase === column.id)
-                      .map(project => (
-                          <ShowCard
-                              key={project.id}
-                              title={project.title}
-                              content={project.description}
-                              column={project.phase}
-                          />
-                      ))}
-              </div>
-          ))}
+        {columns.map((column) => (
+          <div key={column.id} className={`column-${column.id}`}>
+            <h2>{column.title}</h2>
+            {projectList
+              .filter((project) => project.phase === column.id)
+              .map((project) => (
+                <ShowCard
+                  key={project.id}
+                  title={project.title}
+                  content={project.description}
+                  column={project.phase}
+                  place={project.place}
+                  centrum={project.centrum}
+                  tags={project.tags}
+                  date_created={project.date_created}
+                />
+              ))}
+          </div>
+        ))}
       </div>
     </>
   );
