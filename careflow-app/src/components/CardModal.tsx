@@ -198,6 +198,20 @@ function SpecificContent() {
   );
 }
 
+function getPhaseIcon(phase: number, column: string, marginLeft: number) {
+  const isCheck = parseInt(column) > phase;
+  const iconStyle = {
+    marginLeft: `${marginLeft}px`,
+    marginRight: "10px",
+  };
+
+  return isCheck ? (
+    <CheckCircle style={iconStyle} />
+  ) : (
+    <Circle style={iconStyle} />
+  );
+}
+
 function CardModal({
   show,
   onHide,
@@ -226,21 +240,7 @@ function CardModal({
             eventKey="phase2"
             title={
               <span style={FlexAndCenter}>
-                {parseInt(column) > 2 ? (
-                  <CheckCircle
-                    style={{
-                      marginLeft: "35px",
-                      marginRight: "10px",
-                    }}
-                  />
-                ) : (
-                  <Circle
-                    style={{
-                      marginLeft: "35px",
-                      marginRight: "10px",
-                    }}
-                  />
-                )}
+                {getPhaseIcon(2, column, 35)}
                 Planera
               </span>
             }
@@ -265,21 +265,7 @@ function CardModal({
             eventKey="phase3"
             title={
               <span style={FlexAndCenter}>
-                {parseInt(column) > 3 ? (
-                  <CheckCircle
-                    style={{
-                      marginLeft: "20px",
-                      marginRight: "10px",
-                    }}
-                  />
-                ) : (
-                  <Circle
-                    style={{
-                      marginLeft: "20px",
-                      marginRight: "10px",
-                    }}
-                  />
-                )}
+                {getPhaseIcon(3, column, 20)}
                 Genomföra
               </span>
             }
@@ -303,21 +289,7 @@ function CardModal({
             eventKey="phase4"
             title={
               <span style={FlexAndCenter}>
-                {parseInt(column) > 4 ? (
-                  <CheckCircle
-                    style={{
-                      marginLeft: "30px",
-                      marginRight: "10px",
-                    }}
-                  />
-                ) : (
-                  <Circle
-                    style={{
-                      marginLeft: "30px",
-                      marginRight: "10px",
-                    }}
-                  />
-                )}
+                {getPhaseIcon(4, column, 30)}
                 Studera
               </span>
             }
@@ -341,21 +313,7 @@ function CardModal({
             eventKey="phase5"
             title={
               <span style={FlexAndCenter}>
-                {parseInt(column) > 5 ? (
-                  <CheckCircle
-                    style={{
-                      marginLeft: "40px",
-                      marginRight: "10px",
-                    }}
-                  />
-                ) : (
-                  <Circle
-                    style={{
-                      marginLeft: "40px",
-                      marginRight: "10px",
-                    }}
-                  />
-                )}
+                {getPhaseIcon(5, column, 40)}
                 Agera
               </span>
             }
