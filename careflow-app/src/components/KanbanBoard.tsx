@@ -1,4 +1,3 @@
-import PlusIcon from "../icons/Plusicon";
 import { useMemo, useState } from "react";
 import { Column, Id, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
@@ -31,6 +30,7 @@ const defaultCols: Column[] = [
   },
 ];
 
+//Temp tasks/cards to test the functionallity
 const defaultTasks: Task[] = [
   {
     id: "1",
@@ -291,7 +291,7 @@ function KanbanBoard() {
         const activeIndex = tasks.findIndex((t) => t.id === activeId);
         const overIndex = tasks.findIndex((t) => t.id === overId);
 
-        if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
+        if (tasks[activeIndex].columnId !== tasks[overIndex].columnId) {
           // Fix introduced after video recording
           tasks[activeIndex].columnId = tasks[overIndex].columnId;
           return arrayMove(tasks, activeIndex, overIndex - 1);
