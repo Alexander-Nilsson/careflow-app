@@ -8,6 +8,7 @@ function Start() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth0();
 
+
   useEffect(() => {
     if (isLoading) {
       return;
