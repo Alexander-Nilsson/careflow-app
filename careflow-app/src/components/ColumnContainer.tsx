@@ -46,6 +46,9 @@ function ColumnContainer({
     transform: CSS.Transform.toString(transform),
   };
 
+  // Count the number of tasks in the column
+  const taskCount = tasks.length;
+
   // If the column is currently being dragged, return a placeholder
   if (isDragging) {
     return (
@@ -104,6 +107,7 @@ function ColumnContainer({
       "
       >
         <div className="flex gap-2">{column.title}</div>
+        <div>{taskCount}</div> {/* Display the task count */}
       </div>
 
       {/* Column task container */}

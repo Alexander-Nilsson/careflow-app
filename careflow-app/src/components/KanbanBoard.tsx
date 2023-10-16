@@ -17,16 +17,24 @@ import TaskCard from "./TaskCard";
 
 const defaultCols: Column[] = [
   {
-    id: "todo",
-    title: "Todo",
+    id: "Förslag",
+    title: "Förslag",
   },
   {
-    id: "doing",
-    title: "Work in progress",
+    id: "Planera",
+    title: "Planera",
   },
   {
-    id: "done",
-    title: "Done",
+    id: "Utföra",
+    title: "Utföra",
+  },
+  {
+    id: "Studera",
+    title: "Studera",
+  },
+  {
+    id: "Agera",
+    title: "Agera",
   },
 ];
 
@@ -34,69 +42,54 @@ const defaultCols: Column[] = [
 const defaultTasks: Task[] = [
   {
     id: "1",
-    columnId: "todo",
+    columnId: "Förslag",
     content: "List admin APIs for dashboard",
   },
   {
     id: "2",
-    columnId: "todo",
+    columnId: "Förslag",
     content:
       "Develop user registration functionality with OTP delivered on SMS after email confirmation and phone number confirmation",
   },
   {
     id: "3",
-    columnId: "doing",
+    columnId: "Förslag",
     content: "Conduct security testing",
   },
   {
     id: "4",
-    columnId: "doing",
+    columnId: "Förslag",
     content: "Analyze competitors",
   },
   {
     id: "5",
-    columnId: "done",
+    columnId: "Studera",
     content: "Create UI kit documentation",
   },
   {
     id: "6",
-    columnId: "done",
+    columnId: "Studera",
     content: "Dev meeting",
   },
   {
     id: "7",
-    columnId: "done",
+    columnId: "Studera",
     content: "Deliver dashboard prototype",
   },
   {
     id: "8",
-    columnId: "todo",
+    columnId: "Studera",
     content: "Optimize application performance",
   },
   {
     id: "9",
-    columnId: "todo",
+    columnId: "Studera",
     content: "Implement data validation",
   },
   {
     id: "10",
-    columnId: "todo",
+    columnId: "Studera",
     content: "Design database schema",
-  },
-  {
-    id: "11",
-    columnId: "todo",
-    content: "Integrate SSL web certificates into workflow",
-  },
-  {
-    id: "12",
-    columnId: "doing",
-    content: "Implement error logging and monitoring",
-  },
-  {
-    id: "13",
-    columnId: "doing",
-    content: "Design and implement responsive UI",
   },
 ];
 
