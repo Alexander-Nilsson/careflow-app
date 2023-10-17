@@ -4,9 +4,6 @@ import CreateNewProject from "./CreateNewProject";
 
 function ProfileSection() {
 
-  
-
-
 
     const profileSectionStyle = {
         backgroundColor: "lightblue",

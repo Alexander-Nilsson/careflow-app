@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 function ProgressSection() {
     // You can define your project data here
@@ -10,11 +11,14 @@ function ProgressSection() {
         borderRadius: "10px",
         margin: "10px",
         marginTop: "0px",
+
     };
 
     return (
+        
         <div style={progressSectionStyle}>
-            <h1>Framsteg</h1>
+            <h1>Framsteg för Region Östergötland 2023</h1>
+            <ProgressBar animated now={30} label={`${30}%`} />
             
         </div>
     );
