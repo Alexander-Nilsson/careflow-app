@@ -26,14 +26,7 @@ function ColumnContainer({
   }, [tasks]);
 
   // UseSortable hook for drag-and-drop functionality
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { setNodeRef, attributes, listeners } = useSortable({
     id: column.id,
     data: {
       type: "Column",
@@ -41,36 +34,8 @@ function ColumnContainer({
     },
   });
 
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
-  };
-
   // Count the number of tasks in the column
   const taskCount = tasks.length;
-
-  /*// If the column is currently being dragged, return a placeholder
-  if (isDragging) {
-    return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="
-      bg-columnBackgroundColor
-      opacity-40
-      border-2
-      border-pink-500
-      w-[350px]
-      h-[500px]
-      max-h-[500px]
-      rounded-md
-      flex
-      flex-col
-      "
-      ></div>
-    );
-  }
-  */
 
   // Render the column
   return (
@@ -94,6 +59,7 @@ function ColumnContainer({
       bg-columnBackgroundColor
       text-md
       h-[60px]
+      cursor-default
       rounded-md
       rounded-b-none
       p-3
