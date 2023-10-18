@@ -49,7 +49,7 @@ function ColumnContainer({
   // Count the number of tasks in the column
   const taskCount = tasks.length;
 
-  // If the column is currently being dragged, return a placeholder
+  /*// If the column is currently being dragged, return a placeholder
   if (isDragging) {
     return (
       <div
@@ -70,12 +70,12 @@ function ColumnContainer({
       ></div>
     );
   }
+  */
 
   // Render the column
   return (
     <div
       ref={setNodeRef}
-      style={style}
       className="
   bg-columnBackgroundColor
   w-[350px]
@@ -94,7 +94,6 @@ function ColumnContainer({
       bg-columnBackgroundColor
       text-md
       h-[60px]
-      cursor-grab
       rounded-md
       rounded-b-none
       p-3

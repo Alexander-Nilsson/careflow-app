@@ -15,91 +15,58 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 
-const defaultCols: Column[] = [
-  {
-    id: "Förslag",
-    title: "Förslag",
-  },
-  {
-    id: "Planera",
-    title: "Planera",
-  },
-  {
-    id: "Utföra",
-    title: "Utföra",
-  },
-  {
-    id: "Studera",
-    title: "Studera",
-  },
-  {
-    id: "Agera",
-    title: "Agera",
-  },
+//Column titles
+const columns: Column[] = [
+  { id: 1, title: "Förslag" },
+  { id: 2, title: "Planera" },
+  { id: 3, title: "Genomföra" },
+  { id: 4, title: "Studera" },
+  { id: 5, title: "Agera" },
 ];
 
 //Temp tasks/cards to test the functionallity
 const defaultTasks: Task[] = [
   {
     id: "1",
-    columnId: "Förslag",
+    columnId: 1,
     content: "List admin APIs for dashboard",
   },
   {
     id: "2",
-    columnId: "Förslag",
+    columnId: 1,
     content:
       "Develop user registration functionality with OTP delivered on SMS after email confirmation and phone number confirmation",
   },
   {
     id: "3",
-    columnId: "Förslag",
+    columnId: 2,
     content: "Conduct security testing",
   },
   {
     id: "4",
-    columnId: "Förslag",
+    columnId: 3,
     content: "Analyze competitors",
   },
   {
     id: "5",
-    columnId: "Studera",
+    columnId: 1,
     content: "Create UI kit documentation",
   },
   {
     id: "6",
-    columnId: "Studera",
+    columnId: 1,
     content: "Dev meeting",
-  },
-  {
-    id: "7",
-    columnId: "Studera",
-    content: "Deliver dashboard prototype",
-  },
-  {
-    id: "8",
-    columnId: "Studera",
-    content: "Optimize application performance",
-  },
-  {
-    id: "9",
-    columnId: "Studera",
-    content: "Implement data validation",
-  },
-  {
-    id: "10",
-    columnId: "Studera",
-    content: "Design database schema",
   },
 ];
 
 function KanbanBoard() {
-  const [columns, setColumns] = useState<Column[]>(defaultCols);
+  //const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
-  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+  // Remove the activeColumn state
+  //const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -132,23 +99,26 @@ function KanbanBoard() {
       >
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
-            <SortableContext items={columnsId}>
-              {columns.map((col) => (
-                <ColumnContainer
-                  key={col.id}
-                  column={col}
-                  createTask={createTask}
-                  deleteTask={deleteTask}
-                  updateTask={updateTask}
-                  tasks={tasks.filter((task) => task.columnId === col.id)}
-                />
-              ))}
-            </SortableContext>
+            {/* Remove the SortableContext from columns and wrap only the tasks */}
+
+            {/*<SortableContext items={columnsId}>*/}
+            {columns.map((col) => (
+              <ColumnContainer
+                key={col.id}
+                column={col}
+                createTask={createTask}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+                tasks={tasks.filter((task) => task.columnId === col.id)}
+              />
+            ))}
+            {/*</SortableContext>*/}
           </div>
         </div>
 
         {createPortal(
           <DragOverlay>
+            {/*
             {activeColumn && (
               <ColumnContainer
                 column={activeColumn}
@@ -160,6 +130,7 @@ function KanbanBoard() {
                 )}
               />
             )}
+                */}
             {activeTask && (
               <TaskCard
                 task={activeTask}
@@ -227,10 +198,12 @@ function KanbanBoard() {
   */
 
   function onDragStart(event: DragStartEvent) {
+    /*
     if (event.active.data.current?.type === "Column") {
       setActiveColumn(event.active.data.current.column);
       return;
     }
+    */
 
     if (event.active.data.current?.type === "Task") {
       setActiveTask(event.active.data.current.task);
@@ -239,7 +212,7 @@ function KanbanBoard() {
   }
 
   function onDragEnd(event: DragEndEvent) {
-    setActiveColumn(null);
+    //setActiveColumn(null);
     setActiveTask(null);
 
     const { active, over } = event;
@@ -250,18 +223,19 @@ function KanbanBoard() {
 
     if (activeId === overId) return;
 
-    const isActiveAColumn = active.data.current?.type === "Column";
-    if (!isActiveAColumn) return;
+    //const isActiveAColumn = active.data.current?.type === "Column";
+    //if (!isActiveAColumn) return;
 
     console.log("DRAG END");
 
+    /*
     setColumns((columns) => {
       const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
 
       const overColumnIndex = columns.findIndex((col) => col.id === overId);
 
       return arrayMove(columns, activeColumnIndex, overColumnIndex);
-    });
+    });*/
   }
 
   function onDragOver(event: DragOverEvent) {
@@ -285,7 +259,6 @@ function KanbanBoard() {
         const overIndex = tasks.findIndex((t) => t.id === overId);
 
         if (tasks[activeIndex].columnId !== tasks[overIndex].columnId) {
-          // Fix introduced after video recording
           tasks[activeIndex].columnId = tasks[overIndex].columnId;
           return arrayMove(tasks, activeIndex, overIndex - 1);
         }
