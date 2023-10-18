@@ -53,8 +53,6 @@ function ColumnContainer({
     >
       {/* Column title */}
       <div
-        {...attributes}
-        {...listeners}
         className="
       bg-columnBackgroundColor
       text-md
