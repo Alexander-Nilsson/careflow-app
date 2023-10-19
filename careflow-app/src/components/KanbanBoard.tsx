@@ -14,6 +14,7 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
+import "../styles/Kanban.css";
 
 //Column titles
 const columns: Column[] = [
@@ -75,37 +76,24 @@ function KanbanBoard() {
   );
 
   return (
-    <div
-      className="
-        m-auto
-        flex
-        min-h-screen
-        w-full
-        items-center
-        overflow-x-auto
-        overflow-y-hidden
-        px-[40px]
-    "
-    >
+    <div className="board-container">
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
       >
-        <div className="m-auto flex gap-4">
-          <div className="flex gap-4">
-            {columns.map((col) => (
-              <ColumnContainer
-                key={col.id}
-                column={col}
-                createTask={createTask}
-                deleteTask={deleteTask}
-                updateTask={updateTask}
-                tasks={tasks.filter((task) => task.columnId === col.id)}
-              />
-            ))}
-          </div>
+        <div className="column-group">
+          {columns.map((col) => (
+            <ColumnContainer
+              key={col.id}
+              column={col}
+              createTask={createTask}
+              deleteTask={deleteTask}
+              updateTask={updateTask}
+              tasks={tasks.filter((task) => task.columnId === col.id)}
+            />
+          ))}
         </div>
 
         {createPortal(

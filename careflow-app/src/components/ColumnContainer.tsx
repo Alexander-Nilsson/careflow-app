@@ -1,9 +1,9 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { Column, Id, Task } from "../types";
-import { CSS } from "@dnd-kit/utilities";
 import { useMemo } from "react";
 import PlusIcon from "../icons/Plusicon";
 import TaskCard from "./TaskCard";
+import "../styles/Kanban.css";
 
 interface Props {
   column: Column;
@@ -26,7 +26,7 @@ function ColumnContainer({
   }, [tasks]);
 
   // UseSortable hook for drag-and-drop functionality
-  const { setNodeRef, attributes, listeners } = useSortable({
+  const { setNodeRef } = useSortable({
     id: column.id,
     data: {
       type: "Column",
@@ -39,42 +39,12 @@ function ColumnContainer({
 
   // Render the column
   return (
-    <div
-      ref={setNodeRef}
-      className="
-  bg-columnBackgroundColor
-  w-[350px]
-  h-[500px]
-  max-h-[500px]
-  rounded-md
-  flex
-  flex-col
-  "
-    >
-      {/* Column title */}
-      <div
-        className="
-      bg-columnBackgroundColor
-      text-md
-      h-[60px]
-      cursor-default
-      rounded-md
-      rounded-b-none
-      p-3
-      font-bold
-      border-columnBackgroundColor
-      border-4
-      flex
-      items-center
-      justify-between
-      "
-      >
+    <div ref={setNodeRef} className="kanban-column">
+      <div className="kanban-columnTitle">
         <div className="flex gap-2">{column.title}</div>
-        <div>{taskCount}</div> {/* Display the task count */}
+        <div>{taskCount}</div>
       </div>
-
-      {/* Column task container */}
-      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+      <div className="kanban-tasksContainer">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
             <TaskCard
@@ -86,12 +56,9 @@ function ColumnContainer({
           ))}
         </SortableContext>
       </div>
-      {/* Column footer */}
       <button
-        className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover-bg-mainBackgroundColor hover-text-rose-500 active-bg-black"
-        onClick={() => {
-          createTask(column.id);
-        }}
+        className="kanban-footerButton"
+        onClick={() => createTask(column.id)}
       >
         <PlusIcon />
         Add task
