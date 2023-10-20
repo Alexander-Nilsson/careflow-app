@@ -15,7 +15,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
   const [mouseIsOver, setMouseIsOver] = useState(false);
 
   // State to toggle edit mode for the task content
-  const [editMode, setEditMode] = useState(true);
+  //const [editMode, setEditMode] = useState(true);
 
   // UseSortable hook for drag-and-drop functionality
   const {
@@ -31,7 +31,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
       type: "Task",
       task,
     },
-    disabled: editMode,
+    //disabled: editMode,
   });
 
   // Define the style based on drag-and-drop transition
@@ -40,12 +40,13 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     transform: CSS.Transform.toString(transform),
   };
 
-  // Function to toggle edit mode for task content
+  /* //Function to toggle edit mode for task content
   const toggleEditMode = () => {
     setEditMode((prev) => !prev);
     setMouseIsOver(false);
   };
 
+  */
   if (isDragging) {
     // Styling for when the task is being dragged
     return (
@@ -60,7 +61,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     );
   }
 
-  if (editMode) {
+  /*if (editMode) {
     // Styling for when in edit mode (textarea for task content)
     return (
       <div
@@ -88,7 +89,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
         />
       </div>
     );
-  }
+  }*/
 
   // Styling for the default display mode
   return (
@@ -97,7 +98,6 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
       style={style}
       {...attributes}
       {...listeners}
-      onClick={toggleEditMode}
       className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
       onMouseEnter={() => {
         setMouseIsOver(true);
