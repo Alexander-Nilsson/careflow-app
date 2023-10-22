@@ -8,11 +8,11 @@ export type Column = {
 
 export type Project = {
   id: Id;
-  title: String;
-  description: String;
+  title: string;
+  description: string;
   phase: Id;
-  place: String;
-  centrum: String;
+  place: string;
+  centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
 };

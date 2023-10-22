@@ -3,7 +3,7 @@ import { PersonFill } from "react-bootstrap-icons";
 
 interface CardButtonProps {
   title: string;
-  tags: Array<String>;
+  tags: Array<string>;
   onClick: () => void;
 }
 

@@ -112,6 +112,7 @@ function KanbanBoard() {
     }
   }
 
+  //TODO: uppdate the prodject phase in the database on drag end
   function onDragEnd(event: DragEndEvent) {
     setActiveProject(null);
 

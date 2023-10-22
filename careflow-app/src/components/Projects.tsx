@@ -26,11 +26,11 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 
 class Project {
   id: Id;
-  title: String;
-  description: String;
+  title: string;
+  description: string;
   phase: Id;
-  place: String;
-  centrum: String;
+  place: string;
+  centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
 

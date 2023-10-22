@@ -4,45 +4,98 @@ import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
 import { Timestamp } from "firebase/firestore";
+import { Id, Project } from "../types";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface ShowCardProps {
-  title: string;
-  content: string;
-  column: number;
-  place: string;
-  centrum: string;
-  tags: Array<string>;
-  date_created: Timestamp;
+  project: Project;
+  deleteProject: (id: Id) => void;
+  updateProject: (updatedProject: Project) => void;
 }
+function ShowCard({ project, deleteProject, updateProject }: ShowCardProps) {
+  // State to track whether the mouse is over the task card
+  const [mouseIsOver, setMouseIsOver] = useState(false);
 
-function ShowCard({
-  title,
-  content,
-  column,
-  place,
-  centrum,
-  tags,
-  date_created,
-}: ShowCardProps) {
+  // State to toggle edit mode for the task content
+  //const [editMode, setEditMode] = useState(true);
+
+  // UseSortable hook for drag-and-drop functionality
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: project.id,
+    data: {
+      type: "Project",
+      project,
+    },
+
+    //disabled: editMode,
+  });
+
+  // Define the style based on drag-and-drop transition
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
+  // problemet är att de tror dem är ISDragging
+  if (isDragging) {
+    // Styling for when the task is being dragged
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="
+          opacity-30
+          bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500 cursor-grab relative
+        "
+      />
+    );
+  }
+
   const [show, setShow] = useState(false);
 
   const modalClose = () => setShow(false);
   const modalShow = () => setShow(true);
 
   return (
-    <div className={`column-${column}`}>
-      <CardButton title={title} tags={tags} onClick={modalShow} />
-      <CardModal
-        show={show}
-        onHide={modalClose}
-        title={title}
-        column={column.toString()}
-        content={content}
-        place={place}
-        centrum={centrum}
-        tags={tags}
-        date_created={date_created}
-      />
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
+      onMouseEnter={() => {
+        setMouseIsOver(true);
+      }}
+      onMouseLeave={() => {
+        setMouseIsOver(false);
+      }}
+    >
+      <div>
+        <CardButton
+          title={project.title}
+          tags={project.tags}
+          onClick={modalShow}
+        />
+        <CardModal
+          show={show}
+          onHide={modalClose}
+          title={project.title}
+          column={project.phase.toString()}
+          content={project.description}
+          place={project.place}
+          centrum={project.centrum}
+          tags={project.tags}
+          date_created={project.date_created}
+        />
+      </div>
     </div>
   );
 }
