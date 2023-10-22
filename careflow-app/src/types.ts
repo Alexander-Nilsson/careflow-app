@@ -1,3 +1,4 @@
+import {Timestamp} from "firebase/firestore";
 export type Id = string | number;
 
 export type Column = {
@@ -9,4 +10,16 @@ export type Task = {
   id: Id;
   columnId: Id;
   content: string;
+  centrum?: String;
+};
+
+export type Project = {
+  id: Id;
+  title: String;
+  description: String;
+  phase: Id;
+  place: String;
+  centrum: String;
+  tags: Array<string>;
+  date_created: Timestamp;
 };

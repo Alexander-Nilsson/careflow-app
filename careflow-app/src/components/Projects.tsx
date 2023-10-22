@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import {
   collection,
   query,
@@ -13,6 +13,15 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
 import KanbanBoard from "./KanbanBoard";
 import CreateNewProject from "./CreateNewProject";
+
+// Context to pass functions to KANBAN
+export interface ProjectContextType {
+  projectList: Project[];
+  setProjectList: React.Dispatch<React.SetStateAction<Project[]>>;
+  updateProject: (updatedProject: Project) => void;
+}
+
+export const ProjectContext = createContext<ProjectContextType | null>(null);
 
 class Project {
   id: String;
@@ -34,8 +43,6 @@ class Project {
     tags: Array<string>,
     date_created: Timestamp
   ) {
-    //tags : Array<string>, projectMembers : Array<string>, projectLeader : Array<string>, place : string, notesStudy : string, notesDo : string, notesPlan : string, notesAct : string, iteration : number, filesStudy : Array<string>, filesDo : Array<string>, filesPlan : Array<string>, filesAct : Array<string>, dateCreated : Date, comments : Array<string>, closed : boolean, clinic : string, centrum : string) {
-
     this.id = id;
     this.title = title;
     this.description = description;
@@ -64,15 +71,6 @@ class Project {
 function Projects() {
   const navigate = useNavigate();
   const [user, loading] = useAuthState(auth);
-
-  //Column titles edit Moved to Kanban
-  const columns = [
-    { id: 1, title: "Förslag" },
-    { id: 2, title: "Planera" },
-    { id: 3, title: "Genomföra" },
-    { id: 4, title: "Studera" },
-    { id: 5, title: "Agera" },
-  ];
 
   let cardIDs: Array<any> = [];
 
@@ -152,6 +150,20 @@ function Projects() {
     setProjectList(projectList);
   }
 
+  function updateProject(updatedProject: Project) {
+    setProjectList((prevList) => {
+      // Find the index of the project with the same ID as the updatedProject
+      const index = prevList.findIndex((p) => p.id === updatedProject.id);
+      if (index === -1) return prevList; // Return the previous list if the project is not found
+
+      // Replace the old project with the updated one
+      const newList = [...prevList];
+      newList[index] = updatedProject;
+
+      return newList;
+    });
+  }
+
   useEffect(() => {
     if (loading) {
       // maybe trigger a loading screen
@@ -162,29 +174,6 @@ function Projects() {
   }, [loading, user]);
   console.log("zzz Read: ", projectList.length);
 
-  /*
-  // example of how to fetch from the db.
-  async function fetchProjects() {
-    const q = query(collection(db, "projects")); //create a query
-
-    const querySnapshot = await getDocs(q); //use the query to fetch the items
-
-    querySnapshot.forEach((doc) => {
-      //do something with the response
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
-    });
-  }
-
-  useEffect(() => {
-    if (loading) {
-      // maybe trigger a loading screen
-      return;
-    }
-    // if (!user) navigate("/login");
-    fetchProjects();
-  }, [user, loading]);
-*/
   return (
     <>
       {loading ? (
@@ -192,8 +181,12 @@ function Projects() {
       ) : (
         <h1>Förändringsarbeten </h1>
       )}
-      {/*<CreateNewProject />*/}
-      <KanbanBoard />;
+      <ProjectContext.Provider
+        value={{ projectList, setProjectList, updateProject }}
+      >
+        {/*<CreateNewProject />*/}
+        <KanbanBoard />;
+      </ProjectContext.Provider>
     </>
   );
 }

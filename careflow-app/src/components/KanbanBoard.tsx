@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useContext, useEffect } from "react";
 import { Column, Id, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import {
@@ -15,6 +15,7 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 import "../styles/Kanban.css";
+import { ProjectContext, ProjectContextType } from "./Projects";
 
 //Column titles
 const columns: Column[] = [
@@ -31,6 +32,7 @@ const defaultTasks: Task[] = [
     id: "1",
     columnId: 1,
     content: "List admin APIs for dashboard",
+    centrum: "hejhej",
   },
   {
     id: "2",
@@ -61,7 +63,22 @@ const defaultTasks: Task[] = [
 ];
 
 function KanbanBoard() {
-  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+  const context = useContext(ProjectContext);
+  if (!context) {
+    throw new Error(
+      "KanbanBoard must be used within a ProjectContext Provider"
+    );
+  }
+
+  const { projectList, setProjectList, updateProject } = context;
+
+  useEffect(() => {
+    projectList.forEach((project) => {
+      console.log("Project Title:", project.title);
+    });
+  }, [projectList]);
+
+  //const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
@@ -127,6 +144,7 @@ function KanbanBoard() {
     setTasks(newTasks);
   }
 
+  //for uppdating task content
   function updateTask(id: Id, content: string) {
     const newTasks = tasks.map((task) => {
       if (task.id !== id) return task;
