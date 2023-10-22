@@ -1,5 +1,5 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { Column, Id, Task } from "../types";
+import { Column, Id, Project } from "../types";
 import { useMemo } from "react";
 import PlusIcon from "../icons/Plusicon";
 import TaskCard from "./TaskCard";
@@ -7,23 +7,23 @@ import "../styles/Kanban.css";
 
 interface Props {
   column: Column;
-  createTask: (columnId: Id) => void;
-  deleteTask: (id: Id) => void;
-  updateTask: (id: Id, content: string) => void;
-  tasks: Task[];
+  createProject: (columnId: Id) => void;
+  deleteProject: (id: Id) => void;
+  updateProject: (updatedProject: Project) => void;
+  projectList: Project[];
 }
 
 function ColumnContainer({
   column,
-  createTask,
-  tasks,
-  deleteTask,
-  updateTask,
+  createProject,
+  projectList,
+  deleteProject,
+  updateProject,
 }: Props) {
   // Memoize task IDs for use in SortableContext
   const tasksIds = useMemo(() => {
-    return tasks.map((task) => task.id);
-  }, [tasks]);
+    return projectList.map((project) => project.id);
+  }, [projectList]);
 
   // UseSortable hook for drag-and-drop functionality
   const { setNodeRef } = useSortable({
@@ -35,7 +35,7 @@ function ColumnContainer({
   });
 
   // Count the number of tasks in the column
-  const taskCount = tasks.length;
+  const taskCount = projectList.length;
 
   // Render the column
   return (
@@ -46,19 +46,19 @@ function ColumnContainer({
       </div>
       <div className="kanban-tasksContainer">
         <SortableContext items={tasksIds}>
-          {tasks.map((task) => (
+          {projectList.map((project) => (
             <TaskCard
-              key={task.id}
-              task={task}
-              deleteTask={deleteTask}
-              updateTask={updateTask}
+              key={project.id}
+              project={project}
+              deleteProject={deleteProject}
+              updateProject={updateProject}
             />
           ))}
         </SortableContext>
       </div>
       <button
         className="kanban-footerButton"
-        onClick={() => createTask(column.id)}
+        onClick={() => createProject(column.id)}
       >
         <PlusIcon />
         Add task

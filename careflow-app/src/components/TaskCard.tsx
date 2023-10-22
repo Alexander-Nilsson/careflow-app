@@ -1,16 +1,16 @@
 import { useState } from "react";
 import TrashIcon from "../icons/Trashicon";
-import { Id, Task } from "../types";
+import { Id, Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
-  task: Task;
-  deleteTask: (id: Id) => void;
-  updateTask: (id: Id, content: string) => void;
+  project: Project;
+  deleteProject: (id: Id) => void;
+  updateProject: (updatedProject: Project) => void;
 }
 
-function TaskCard({ task, deleteTask, updateTask }: Props) {
+function TaskCard({ project, deleteProject, updateProject }: Props) {
   // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);
 
@@ -26,11 +26,12 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     transition,
     isDragging,
   } = useSortable({
-    id: task.id,
+    id: project.id,
     data: {
-      type: "Task",
-      task,
+      type: "Project",
+      project,
     },
+
     //disabled: editMode,
   });
 
@@ -47,6 +48,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
   };
 
   */
+  // problemet är att de tror dem är ISDragging
   if (isDragging) {
     // Styling for when the task is being dragged
     return (
@@ -85,7 +87,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
               toggleEditMode();
             }
           }}
-          onChange={(e) => updateTask(task.id, e.target.value)}
+          onChange={(e) => updateProject(task.id, e.target.value)}
         />
       </div>
     );
@@ -106,15 +108,16 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
         setMouseIsOver(false);
       }}
     >
+      {" "}
+      {project.centrum}
       <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
-        {task.content}
-        {task.centrum}
+        {project.title}
+        {project.centrum}
       </p>
-
       {mouseIsOver && (
         <button
           onClick={() => {
-            deleteTask(task.id);
+            deleteProject(project.id);
           }}
           className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
         >

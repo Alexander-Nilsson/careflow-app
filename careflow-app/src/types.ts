@@ -6,13 +6,6 @@ export type Column = {
   title: string;
 };
 
-export type Task = {
-  id: Id;
-  columnId: Id;
-  content: string;
-  centrum?: String;
-};
-
 export type Project = {
   id: Id;
   title: String;

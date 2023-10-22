@@ -13,6 +13,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
 import KanbanBoard from "./KanbanBoard";
 import CreateNewProject from "./CreateNewProject";
+import { Id } from "../types";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -24,17 +25,17 @@ export interface ProjectContextType {
 export const ProjectContext = createContext<ProjectContextType | null>(null);
 
 class Project {
-  id: String;
+  id: Id;
   title: String;
   description: String;
-  phase: number;
+  phase: Id;
   place: String;
   centrum: String;
   tags: Array<string>;
   date_created: Timestamp;
 
   constructor(
-    id: string,
+    id: Id,
     title: string,
     description: string,
     phase: number,
@@ -111,7 +112,7 @@ function Projects() {
     fromFirestore: (snapshot: any, options: any) => {
       const data = snapshot.data(options);
       return new Project(
-        data.id,
+        snapshot.id, // use snapshot.id instead of data.id
         data.title,
         data.description,
         data.phase,
@@ -150,18 +151,9 @@ function Projects() {
     setProjectList(projectList);
   }
 
+  //TODO
   function updateProject(updatedProject: Project) {
-    setProjectList((prevList) => {
-      // Find the index of the project with the same ID as the updatedProject
-      const index = prevList.findIndex((p) => p.id === updatedProject.id);
-      if (index === -1) return prevList; // Return the previous list if the project is not found
-
-      // Replace the old project with the updated one
-      const newList = [...prevList];
-      newList[index] = updatedProject;
-
-      return newList;
-    });
+    return updatedProject;
   }
 
   useEffect(() => {

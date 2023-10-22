@@ -1,5 +1,5 @@
 import { useMemo, useState, useContext, useEffect } from "react";
-import { Column, Id, Task } from "../types";
+import { Column, Id, Project } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import {
   DndContext,
@@ -16,6 +16,7 @@ import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 import "../styles/Kanban.css";
 import { ProjectContext, ProjectContextType } from "./Projects";
+import { Timestamp } from "firebase/firestore";
 
 //Column titles
 const columns: Column[] = [
@@ -24,42 +25,6 @@ const columns: Column[] = [
   { id: 3, title: "Genomföra" },
   { id: 4, title: "Studera" },
   { id: 5, title: "Agera" },
-];
-
-//Temp tasks/cards to test the functionallity
-const defaultTasks: Task[] = [
-  {
-    id: "1",
-    columnId: 1,
-    content: "List admin APIs for dashboard",
-    centrum: "hejhej",
-  },
-  {
-    id: "2",
-    columnId: 1,
-    content:
-      "Develop user registration functionality with OTP delivered on SMS after email confirmation and phone number confirmation",
-  },
-  {
-    id: "3",
-    columnId: 2,
-    content: "Conduct security testing",
-  },
-  {
-    id: "4",
-    columnId: 3,
-    content: "Analyze competitors",
-  },
-  {
-    id: "5",
-    columnId: 1,
-    content: "Create UI kit documentation",
-  },
-  {
-    id: "6",
-    columnId: 1,
-    content: "Dev meeting",
-  },
 ];
 
 function KanbanBoard() {
@@ -71,18 +36,7 @@ function KanbanBoard() {
   }
 
   const { projectList, setProjectList, updateProject } = context;
-
-  useEffect(() => {
-    projectList.forEach((project) => {
-      console.log("Project Title:", project.title);
-    });
-  }, [projectList]);
-
-  //const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-
-  const [tasks, setTasks] = useState<Task[]>(defaultTasks);
-
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -105,21 +59,23 @@ function KanbanBoard() {
             <ColumnContainer
               key={col.id}
               column={col}
-              createTask={createTask}
-              deleteTask={deleteTask}
-              updateTask={updateTask}
-              tasks={tasks.filter((task) => task.columnId === col.id)}
+              createProject={createProject}
+              deleteProject={deleteProject}
+              updateProject={updateProject}
+              projectList={projectList.filter(
+                (Project) => Project.phase === col.id
+              )}
             />
           ))}
         </div>
 
         {createPortal(
           <DragOverlay>
-            {activeTask && (
+            {activeProject && (
               <TaskCard
-                task={activeTask}
-                deleteTask={deleteTask}
-                updateTask={updateTask}
+                project={activeProject}
+                deleteProject={deleteProject}
+                updateProject={updateProject}
               />
             )}
           </DragOverlay>,
@@ -129,40 +85,35 @@ function KanbanBoard() {
     </div>
   );
 
-  function createTask(columnId: Id) {
-    const newTask: Task = {
+  // temp newproject function
+  function createProject(phase: Id) {
+    const newProject: Project = {
       id: generateId(),
-      columnId,
-      content: `Task ${tasks.length + 1}`,
+      title: `Task ${projectList.length + 1}`,
+      description: "", // Replace with a valid description
+      phase: phase,
+      place: "place",
+      centrum: "centrum",
+      tags: [], // Initialize as an empty array or provide initial values
+      date_created: Timestamp.now(),
     };
-
-    setTasks([...tasks, newTask]);
+    setProjectList([...projectList, newProject]);
   }
 
-  function deleteTask(id: Id) {
-    const newTasks = tasks.filter((task) => task.id !== id);
-    setTasks(newTasks);
-  }
-
-  //for uppdating task content
-  function updateTask(id: Id, content: string) {
-    const newTasks = tasks.map((task) => {
-      if (task.id !== id) return task;
-      return { ...task, content };
-    });
-
-    setTasks(newTasks);
+  function deleteProject(id: Id) {
+    const newProjects = projectList.filter((project) => project.id !== id);
+    setProjectList(newProjects);
   }
 
   function onDragStart(event: DragStartEvent) {
-    if (event.active.data.current?.type === "Task") {
-      setActiveTask(event.active.data.current.task);
+    if (event.active.data.current?.type === "Project") {
+      setActiveProject(event.active.data.current.project);
       return;
     }
   }
 
   function onDragEnd(event: DragEndEvent) {
-    setActiveTask(null);
+    setActiveProject(null);
 
     const { active, over } = event;
     if (!over) return;
@@ -184,36 +135,36 @@ function KanbanBoard() {
 
     if (activeId === overId) return;
 
-    const isActiveATask = active.data.current?.type === "Task";
-    const isOverATask = over.data.current?.type === "Task";
+    const isActiveAProjet = active.data.current?.type === "Project";
+    const isOverAProject = over.data.current?.type === "Project";
 
-    if (!isActiveATask) return;
+    if (!isActiveAProjet) return;
 
-    // Im dropping a Task over another Task
-    if (isActiveATask && isOverATask) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
-        const overIndex = tasks.findIndex((t) => t.id === overId);
+    // dropping a Task over another Task
+    if (isActiveAProjet && isOverAProject) {
+      setProjectList((projectList) => {
+        const activeIndex = projectList.findIndex((t) => t.id === activeId);
+        const overIndex = projectList.findIndex((t) => t.id === overId);
 
-        if (tasks[activeIndex].columnId !== tasks[overIndex].columnId) {
-          tasks[activeIndex].columnId = tasks[overIndex].columnId;
-          return arrayMove(tasks, activeIndex, overIndex - 1);
+        if (projectList[activeIndex].phase !== projectList[overIndex].phase) {
+          projectList[activeIndex].phase = projectList[overIndex].phase;
+          return arrayMove(projectList, activeIndex, overIndex - 1);
         }
 
-        return arrayMove(tasks, activeIndex, overIndex);
+        return arrayMove(projectList, activeIndex, overIndex);
       });
     }
 
     const isOverAColumn = over.data.current?.type === "Column";
 
-    // Im dropping a Task over a column
-    if (isActiveATask && isOverAColumn) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
+    // dropping a Task over a column
+    if (isActiveAProjet && isOverAColumn) {
+      setProjectList((projectList) => {
+        const activeIndex = projectList.findIndex((t) => t.id === activeId);
 
-        tasks[activeIndex].columnId = overId;
-        console.log("DROPPING TASK OVER COLUMN", { activeIndex });
-        return arrayMove(tasks, activeIndex, activeIndex);
+        projectList[activeIndex].phase = overId;
+        console.log("DROPPING PROJECT OVER COLUMN", { activeIndex });
+        return arrayMove(projectList, activeIndex, activeIndex);
       });
     }
   }
