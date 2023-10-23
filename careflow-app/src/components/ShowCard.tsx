@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
-import { Timestamp } from "firebase/firestore";
 import { Id, Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -16,6 +15,9 @@ interface ShowCardProps {
 function ShowCard({ project, deleteProject, updateProject }: ShowCardProps) {
   // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);
+  const [show, setShow] = useState(false);
+  const modalClose = () => setShow(false);
+  const modalShow = () => setShow(true);
 
   // State to toggle edit mode for the task content
   //const [editMode, setEditMode] = useState(true);
@@ -44,7 +46,6 @@ function ShowCard({ project, deleteProject, updateProject }: ShowCardProps) {
     transform: CSS.Transform.toString(transform),
   };
 
-  // problemet är att de tror dem är ISDragging
   if (isDragging) {
     // Styling for when the task is being dragged
     return (
@@ -59,18 +60,12 @@ function ShowCard({ project, deleteProject, updateProject }: ShowCardProps) {
     );
   }
 
-  const [show, setShow] = useState(false);
-
-  const modalClose = () => setShow(false);
-  const modalShow = () => setShow(true);
-
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
       onMouseEnter={() => {
         setMouseIsOver(true);
       }}

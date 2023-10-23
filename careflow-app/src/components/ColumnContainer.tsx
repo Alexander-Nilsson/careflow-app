@@ -2,8 +2,8 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { Column, Id, Project } from "../types";
 import { useMemo } from "react";
 import PlusIcon from "../icons/Plusicon";
-import TaskCard from "./TaskCard";
 import "../styles/Kanban.css";
+import ShowCard from "./ShowCard";
 
 interface Props {
   column: Column;
@@ -47,7 +47,7 @@ function ColumnContainer({
       <div className="kanban-tasksContainer">
         <SortableContext items={tasksIds}>
           {projectList.map((project) => (
-            <TaskCard
+            <ShowCard
               key={project.id}
               project={project}
               deleteProject={deleteProject}

@@ -13,10 +13,10 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
-import TaskCard from "./TaskCard";
 import "../styles/Kanban.css";
 import { ProjectContext, ProjectContextType } from "./Projects";
 import { Timestamp } from "firebase/firestore";
+import ShowCard from "./ShowCard";
 
 //Column titles
 const columns: Column[] = [
@@ -72,7 +72,7 @@ function KanbanBoard() {
         {createPortal(
           <DragOverlay>
             {activeProject && (
-              <TaskCard
+              <ShowCard
                 project={activeProject}
                 deleteProject={deleteProject}
                 updateProject={updateProject}
@@ -89,7 +89,7 @@ function KanbanBoard() {
   function createProject(phase: Id) {
     const newProject: Project = {
       id: generateId(),
-      title: `Task ${projectList.length + 1}`,
+      title: `Project ${projectList.length + 1}`,
       description: "", // Replace with a valid description
       phase: phase,
       place: "place",
