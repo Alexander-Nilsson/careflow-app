@@ -1,16 +1,30 @@
+body {
+  overflow: auto;
+}
+
+.background-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: -1;
+}
+
 .kanban-column {
-  background-color: #f5f5f5; 
+  background: rgba(255, 255, 255, 0.70);
   width: 350px;
   height: 500px;
   max-height: 500px;
-  border-radius: 12px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
 }
 
 .kanban-columnTitle {
-  background-color: #f5f5f5; 
-  font-size: 1rem;
+  background-color: rgba(255, 255, 255);
+  color: #000;
+  font-family: Avenir;
+  font-size: 25px;
   height: 60px;
   cursor: default;
   border-radius: 12px 12px 0 0;
@@ -35,19 +49,20 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  border: 2px solid #f5f5f5; 
-  border-radius: 12px;
   padding: 12px;
   cursor: pointer;
   transition: 0.2s;
+  color: #000;
+  font-family: Avenir;
+  font-size: 15px;
 }
 
-.kanban-footerButton:hover {
-  background-color: #e5e5e5; 
-}
+/*.kanban-footerButton:hover {
+  background-color: rgba(255, 255, 255); 
+}*/
 
 .kanban-footerButton:active {
-  background-color: #d5d5d5; 
+  background-color: rgba(255, 255, 255); 
 }
 
 

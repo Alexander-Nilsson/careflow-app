@@ -47,6 +47,8 @@ function KanbanBoard() {
   );
 
   return (
+    <div className="board">
+       <img className="background-gradient" alt="" src="./background-gradient.jpeg" />
     <div className="board-container">
       <DndContext
         sensors={sensors}
@@ -82,6 +84,7 @@ function KanbanBoard() {
           document.body
         )}
       </DndContext>
+    </div>
     </div>
   );
 

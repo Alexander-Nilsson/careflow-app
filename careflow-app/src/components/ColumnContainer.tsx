@@ -4,6 +4,43 @@ import { useMemo } from "react";
 import PlusIcon from "../icons/Plusicon";
 import "../styles/Kanban.css";
 import ShowCard from "./ShowCard";
+import {OverlayTrigger, Popover} from "react-bootstrap";
+import { QuestionCircleFill } from "react-bootstrap-icons";
+
+
+const IconCircleStyle = {
+  borderRadius: "50%",
+  width: "25px",
+  height: "25px",
+  border: "0.5px solid #AEAEAE",
+  marginRight: "10px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const QuestionmarkStyle = {
+  marginRight: "10px",
+  marginBottom: "3px",
+  color: "#051F6F",
+  width: "20px",
+  height: "20px",
+};
+
+const FlexAndCenter = {
+  display: "flex",
+  alignItems: "center",
+};
+
+const HelpPopover = (
+  <Popover
+    id="popover-positioned-right"
+    title="Popover right"
+    style={{ padding: "10px" }}
+  >
+    Här kommer det att finnas en beskrivande text sen
+  </Popover>
+);
 
 interface Props {
   column: Column;
@@ -42,7 +79,10 @@ function ColumnContainer({
     <div ref={setNodeRef} className="kanban-column">
       <div className="kanban-columnTitle">
         <div className="flex gap-2">{column.title}</div>
-        <div>{taskCount}</div>
+        <OverlayTrigger trigger="hover" placement="right" overlay={HelpPopover}>
+          <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
+        </OverlayTrigger>
+        {/* <div>{taskCount}</div> */}
       </div>
       <div className="kanban-tasksContainer">
         <SortableContext items={tasksIds}>
@@ -61,7 +101,7 @@ function ColumnContainer({
         onClick={() => createProject(column.id)}
       >
         <PlusIcon />
-        Add task
+        Antal:  {taskCount}
       </button>
     </div>
   );
