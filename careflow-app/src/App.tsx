@@ -6,49 +6,49 @@ import NavigationBar from './components/Navbar';
 import Start from './components/Start';
 import Login from './components/Login'
 import Projects from './components/Projects';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
 function App() {
 
   const { isAuthenticated, isLoading, logout } = useAuth0();
-  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+  const TIMEOUT = 60 * 1000; // 1 hour in milliseconds
+  let timeoutId: number | undefined;;
 
-  const id = setTimeout(() => {
-    console.log('Timer expired!');
-    // Do something after timer expires, like logging the user out
-    // logout();
-  }, 10 * 1000);  // 60 seconds
+  // updates activity by user
+  const updateActivity = () => {
+    if (isAuthenticated) {
+      localStorage.setItem('lastActivity', Date.now().toString());
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = window.setTimeout(checkActivity, TIMEOUT);
+    }
+  };
+
+  // runs after an hour of inactivity and logs the user out
+  const checkActivity = () => {
+    const lastActivity = localStorage.getItem('lastActivity');
+    if (lastActivity) {
+      const elapsed = Date.now() - parseInt(lastActivity);
+      if (elapsed > TIMEOUT) {
+        logout();
+      }
+    }
+  };
+
+  // listen for user activity
+  window.addEventListener('click', updateActivity);
+  window.addEventListener('keypress', updateActivity);
 
   useEffect(() => {
     if (isLoading) {
       return;
     }
-    if (isAuthenticated) {
-      // If there's an existing timer, clear it
-      if (timerId) clearTimeout(timerId);
-      
-      // Set a new timer (e.g., for 1 minute)
-      const id = setTimeout(() => {
-        console.log('Timer expired!');
-        // Do something after timer expires, like logging the user out
-        // logout();
-      }, 60 * 1000);  // 60 seconds
-
-      // setTimerId(id);
-    } else {
-      // If user is not authenticated, clear any existing timer
-      if (timerId) {
-        clearTimeout(timerId);
-        // setTimerId(null);  // Reset the timerId state
-      }
-    }
-
-    // Cleanup effect if component gets unmounted
-    return () => {
-      if (timerId) clearTimeout(timerId);
-    };
-  }, [isAuthenticated, isLoading, timerId, setTimerId]);
+    if (isAuthenticated) updateActivity();
+  }, [isLoading, isAuthenticated]);
 
   return (
     <>
