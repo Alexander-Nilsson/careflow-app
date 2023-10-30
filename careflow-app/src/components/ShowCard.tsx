@@ -9,10 +9,8 @@ import { CSS } from "@dnd-kit/utilities";
 
 interface ShowCardProps {
   project: Project;
-  deleteProject: (id: Id) => void;
-  updateProject: (updatedProject: Project) => void;
 }
-function ShowCard({ project, deleteProject, updateProject }: ShowCardProps) {
+function ShowCard({ project }: ShowCardProps) {
   // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [show, setShow] = useState(false);

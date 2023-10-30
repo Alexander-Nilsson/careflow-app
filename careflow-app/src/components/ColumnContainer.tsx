@@ -4,9 +4,8 @@ import { useMemo } from "react";
 import PlusIcon from "../icons/Plusicon";
 import "../styles/Kanban.css";
 import ShowCard from "./ShowCard";
-import {OverlayTrigger, Popover} from "react-bootstrap";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import { QuestionCircleFill } from "react-bootstrap-icons";
-
 
 const IconCircleStyle = {
   borderRadius: "50%",
@@ -45,18 +44,10 @@ const HelpPopover = (
 interface Props {
   column: Column;
   createProject: (columnId: Id) => void;
-  deleteProject: (id: Id) => void;
-  updateProject: (updatedProject: Project) => void;
   projectList: Project[];
 }
 
-function ColumnContainer({
-  column,
-  createProject,
-  projectList,
-  deleteProject,
-  updateProject,
-}: Props) {
+function ColumnContainer({ column, createProject, projectList }: Props) {
   // Memoize task IDs for use in SortableContext
   const tasksIds = useMemo(() => {
     return projectList.map((project) => project.id);
@@ -87,12 +78,7 @@ function ColumnContainer({
       <div className="kanban-tasksContainer">
         <SortableContext items={tasksIds}>
           {projectList.map((project) => (
-            <ShowCard
-              key={project.id}
-              project={project}
-              deleteProject={deleteProject}
-              updateProject={updateProject}
-            />
+            <ShowCard key={project.id} project={project} />
           ))}
         </SortableContext>
       </div>
@@ -101,7 +87,7 @@ function ColumnContainer({
         onClick={() => createProject(column.id)}
       >
         <PlusIcon />
-        Antal:  {taskCount}
+        Antal: {taskCount}
       </button>
     </div>
   );

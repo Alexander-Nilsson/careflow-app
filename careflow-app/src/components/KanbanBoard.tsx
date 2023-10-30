@@ -48,43 +48,39 @@ function KanbanBoard() {
 
   return (
     <div className="board">
-       <img className="background-gradient" alt="" src="./background-gradient.jpeg" />
-    <div className="board-container">
-      <DndContext
-        sensors={sensors}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-      >
-        <div className="column-group">
-          {columns.map((col) => (
-            <ColumnContainer
-              key={col.id}
-              column={col}
-              createProject={createProject}
-              deleteProject={deleteProject}
-              updateProject={updateProject}
-              projectList={projectList.filter(
-                (Project) => Project.phase === col.id
-              )}
-            />
-          ))}
-        </div>
-
-        {createPortal(
-          <DragOverlay>
-            {activeProject && (
-              <ShowCard
-                project={activeProject}
-                deleteProject={deleteProject}
-                updateProject={updateProject}
+      <img
+        className="background-gradient"
+        alt=""
+        src="./background-gradient.jpeg"
+      />
+      <div className="board-container">
+        <DndContext
+          sensors={sensors}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+        >
+          <div className="column-group">
+            {columns.map((col) => (
+              <ColumnContainer
+                key={col.id}
+                column={col}
+                createProject={createProject}
+                projectList={projectList.filter(
+                  (Project) => Project.phase === col.id
+                )}
               />
-            )}
-          </DragOverlay>,
-          document.body
-        )}
-      </DndContext>
-    </div>
+            ))}
+          </div>
+
+          {createPortal(
+            <DragOverlay>
+              {activeProject && <ShowCard project={activeProject} />}
+            </DragOverlay>,
+            document.body
+          )}
+        </DndContext>
+      </div>
     </div>
   );
 
