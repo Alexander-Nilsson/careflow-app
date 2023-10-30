@@ -3,8 +3,16 @@ import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import CreateNewProject from "./CreateNewProject";
+import ProfileSection from "./ProfileSection";
+import ProjectsSection from "./ProjectsSection";
+import IdeasAndProgressSection from "./IdeasAndProgressSection";
+import FinishedProjectsSection from "./FinishedProjectsSection";
 
 function Start() {
+  const startStyle = {
+    backgroundColor: "white",
+
+};
   const navigate = useNavigate();
   const [user, loading] = useAuthState(auth);
 
@@ -21,9 +29,12 @@ function Start() {
       {loading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
-        <div>
-          <h1>Start</h1>
-          <CreateNewProject />
+        <div style={startStyle}>
+          <ProfileSection />
+          {/* <CreateNewProject /> */}
+          <ProjectsSection />
+          <IdeasAndProgressSection />
+          <FinishedProjectsSection />
         </div>
       )}
     </>
