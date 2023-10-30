@@ -7,26 +7,32 @@ import ProfileSection from "./ProfileSection";
 import ProjectsSection from "./ProjectsSection";
 import IdeasAndProgressSection from "./IdeasAndProgressSection";
 import FinishedProjectsSection from "./FinishedProjectsSection";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function Start() {
   const startStyle = {
     backgroundColor: "white",
 
-};
+  };
+  const { user, isAuthenticated, isLoading } = useAuth0();
   const navigate = useNavigate();
-  const [user, loading] = useAuthState(auth);
+  // const [user, loading] = useAuthState(auth)
 
   useEffect(() => {
-    if (loading) {
+    if (isLoading) {
       // maybe trigger a loading screen
       return;
     }
+
+    if (user) {
+      console.log(user)
+    }
     // if (!user) navigate("/login");
-  }, [user, loading]);
+  }, [user, isLoading]);
 
   return (
     <>
-      {loading ? (
+      {isLoading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
         <div style={startStyle}>
