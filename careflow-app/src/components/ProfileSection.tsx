@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
 import nurseImage from "../Images/nurse.png";
@@ -12,6 +12,7 @@ function ProfileSection() {
     margin: "20px",
     display: "flex", 
   };
+  
 
   const leftDivStyle = {
     flex: "40%", 
