@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
+import nurseImage from "../Images/nurse.png";
 
 function ProfileSection() {
   const profileSectionStyle = {
@@ -32,7 +33,10 @@ function ProfileSection() {
     justifyContent: "center", // Center horizontally
     marginLeft: "15px",
     marginTop: "10px",
+    backgroundImage: `url(${nurseImage})`, // Set the image as background
+    backgroundSize: "cover",
   };
+  
 
   return (
     <div style={profileSectionStyle}>
