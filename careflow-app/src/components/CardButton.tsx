@@ -21,13 +21,14 @@ function CardButton({ title, tags, onClick }: CardButtonProps) {
           width: "18vw",
           maxWidth: "300px",
           minWidth: "150px",
+          borderRadius: "15px",
 
           margin: "1vw",
         }}
       >
-        <Card.Body>
-          <Card.Title>
-            <div className="outerContainer">
+       
+         
+                    <div className="outerContainer">
               <div className="tags"> tags</div>
               <div className="title"> {"   " + title}</div>
               <div className="bottomContainer">
@@ -36,17 +37,11 @@ function CardButton({ title, tags, onClick }: CardButtonProps) {
                   <div className="icons">Icon</div>
                 </div>
                 <div className="profilCard">
-                  <PersonFill />
+                  <PersonFill/>
                 </div>
               </div>
             </div>
-          </Card.Title>
-          <Card.Text>
-            {
-              //tags[0]
-            }
-          </Card.Text>
-        </Card.Body>
+       
       </Card>
     </a>
   );
