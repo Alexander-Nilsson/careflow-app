@@ -9,17 +9,17 @@ import { QuestionCircleFill } from "react-bootstrap-icons";
 
 const IconCircleStyle = {
   borderRadius: "50%",
-  width: "25px",
-  height: "25px",
+  width: "30px",
+  height: "30px",
   border: "0.5px solid #AEAEAE",
-  marginRight: "10px",
+  marginRight: "0.5vw",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 };
 
 const QuestionmarkStyle = {
-  marginRight: "10px",
+  marginRight: "0.5vw",
   marginBottom: "3px",
   color: "#051F6F",
   width: "20px",
