@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import HelpPopover from "./HelpPopover";
 
 function ProjectsSection() {
     // You can define your project data here
@@ -13,7 +14,11 @@ function ProjectsSection() {
 
     return (
         <div style={projectsSectionStyle}>
-            <h1>Mina Projekt</h1>
+            <h1>Pågående förbättringsarbeten
+            <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+            <HelpPopover content = "Här kommer det vara en informationsruta som hjälper användaren att navigera bland pågående projekt"/>
+            </div>
+            </h1>
             
         </div>
     );

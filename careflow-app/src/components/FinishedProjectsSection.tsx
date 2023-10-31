@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import HelpPopover from "./HelpPopover";
 
 function FinishedProjectsSection() {
     const FinishedProjectsSectionStyle = {
@@ -15,7 +15,11 @@ function FinishedProjectsSection() {
 
     return (
         <div style={FinishedProjectsSectionStyle}>
-            <h1>Färdiga projekt</h1>
+            <h1>Färdiga projekt
+            <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+            <HelpPopover content = "Här kommer det vara en informationsruta som hjälper användaren att navigera bland avslutade projekt"/>
+            </div>
+            </h1>
             
         </div>
     );
