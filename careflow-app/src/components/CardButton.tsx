@@ -1,22 +1,31 @@
 import Card from "react-bootstrap/Card";
 import { PersonFill } from "react-bootstrap-icons";
 import "./CardButton.css";
+<<<<<<< HEAD
 import PaperClipComponent from "./Paperclip";
 import CommentIconComponent from "./CommentIcon";
 import ListIconComponent from "./ListIcon";
+=======
+import { Timestamp } from "firebase/firestore";
+>>>>>>> be11661b0bb4f2f4682a5b03309aeb67efd00bec
 
 interface CardButtonProps {
   title: string;
   tags: Array<string>;
+  date_created: Timestamp;
   onClick: () => void;
 }
 
-function CardButton({ title, tags, onClick }: CardButtonProps) {
+
+function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
+  const formattedDate = date_created.toDate().toLocaleString().slice(0, 10); //Format the date into a string only first 10 char
   return (
+    
     <a
       href="#"
       onClick={onClick}
       style={{ cursor: "pointer", textDecoration: "none" }}
+      
     >
       {/* Kom ihåh att ändra CSS storleken om ni ändrar style size */}
       <Card
@@ -29,6 +38,7 @@ function CardButton({ title, tags, onClick }: CardButtonProps) {
           margin: "1vw",
         }}
       >
+<<<<<<< HEAD
         <div className="outerContainer">
           <div className="tags"> tags</div>
           <div className="title"> {"   " + title}</div>
@@ -40,6 +50,23 @@ function CardButton({ title, tags, onClick }: CardButtonProps) {
                 <ListIconComponent />
                 <PaperClipComponent />
                 <CommentIconComponent />
+=======
+       
+         
+                    <div className="outerContainer">
+              <div className="tags"> tags</div>
+              <div className="title"> {"   " + title}</div>
+              <div className="bottomContainer">
+                <div className="dateAndIcons">
+                  <div className="date"> 
+                    <label>{formattedDate}</label> 
+                  </div>
+                  <div className="icons">Icon</div>
+                </div>
+                <div className="profilCard">
+                  <PersonFill/>
+                </div>
+>>>>>>> be11661b0bb4f2f4682a5b03309aeb67efd00bec
               </div>
             </div>
             <div className="profilCard">
