@@ -1,20 +1,25 @@
 function PlusIcon() {
-    return (
-      <svg
-        xmlns="./public/Plus.png"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-    );
-  }
-  
-  export default PlusIcon;
+  return (
+    <svg
+      width="30"
+      height="30"
+      viewBox="0 0 34 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M33.5 16.5C33.5 25.3226 26.1269 32.5 17 32.5C7.87313 32.5 0.5 25.3226 0.5 16.5C0.5 7.67741 7.87313 0.5 17 0.5C26.1269 0.5 33.5 7.67741 33.5 16.5Z"
+        fill="white"
+        stroke="#D9D9D9"
+      />
+      <path
+        d="M17.5 10V23.026M10 16.513H25"
+        stroke="#848484"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
+
+export default PlusIcon;

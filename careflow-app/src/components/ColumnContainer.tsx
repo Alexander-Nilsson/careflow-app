@@ -72,7 +72,7 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
     <div ref={setNodeRef} className="kanban-column">
       <div className="kanban-columnTitle">
         <div className="flex gap-2">{column.title}</div>
-        <OverlayTrigger trigger="hover" overlay={HelpPopover}>
+        <OverlayTrigger trigger="hover" placement="top" overlay={HelpPopover}>
           <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
         </OverlayTrigger>
       </div>
@@ -83,13 +83,15 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
           ))}
         </SortableContext>
       </div>
-      <button
-        className="kanban-footerButton"
-        onClick={() => createProject(column.id)}
-      >
-        <PlusIcon />
+      <div className="kanban-footerButton">
         Antal: {taskCount}
-      </button>
+        <div
+          onClick={() => createProject(column.id)}
+          className="clickable-icon"
+        >
+          <PlusIcon />
+        </div>
+      </div>
     </div>
   );
 }
