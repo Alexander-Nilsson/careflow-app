@@ -6,6 +6,8 @@ import {
   Bullseye,
   QuestionCircleFill,
 } from "react-bootstrap-icons";
+import { doc, setDoc } from "firebase/firestore";
+import { db, auth } from "../firebase";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -72,6 +74,28 @@ interface CreateProjectModalProps {
   onHide: () => void;
 }
 
+function handleSubmit(e: any) {
+  // Prevent the browser from reloading the page
+  e.preventDefault();
+
+  // Read the form data
+  const form = e.target;
+  const formData = new FormData(form);
+  //fetch("/some-api", { method: form.method, body: formData });
+
+  // Or you can work with it as a plain object:
+  const formJson = Object.fromEntries(formData.entries());
+  console.log(formJson);
+  console.log(formJson.title);
+
+  sendToDataBase(formJson);
+  //await setDoc(doc(db, "projects", formJson.title), formJson);
+}
+
+async function sendToDataBase(formJson: any) {
+  await setDoc(doc(db, "projects", formJson.title), formJson);
+}
+
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   return (
     <Modal show={show} onHide={onHide}>
@@ -82,10 +106,10 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
-        <Form style={{ width: "90%" }}>
+        <Form method="post" onSubmit={handleSubmit} style={{ width: "90%" }}>
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Titel</label>
-            <input type="text" className="form-control"></input>
+            <input name="title" type="text" className="form-control"></input>
           </div>
 
           <div className="mb-3">
@@ -120,6 +144,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               >
                 <span className="input-group-text">+</span>
                 <input
+                  title="purpose"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
@@ -160,6 +185,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               >
                 <span className="input-group-text">+</span>
                 <input
+                  name="description"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
@@ -200,6 +226,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               >
                 <span className="input-group-text">+</span>
                 <input
+                  name="samlaideer"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
@@ -222,6 +249,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
           </div>
           <div className="mb-3 text-center">
             <Button
+              type="submit"
               id="SkapaFörbättringsarbete"
               onClick={onHide}
               style={ButtonStyle}
