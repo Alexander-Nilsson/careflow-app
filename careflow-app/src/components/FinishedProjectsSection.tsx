@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import ProjectCard from "./ProjectCard";
+import HelpPopover from "./HelpPopover";import ProjectCard from "./ProjectCard";
 import { ProjectCardProps } from "./ProjectCard";
 import {db} from "../firebase";
 import {collection, getDocs} from "firebase/firestore";
@@ -89,8 +89,12 @@ function FinishedProjectsSection() {
      return (
         <div style={projectsSectionStyle}>
             <style>{scrollBarStyles}</style>
-            <h1 style={titleStyle}>Avslutade förbättringsarbeten</h1>
-            
+            <h1 style={titleStyle}>Avslutade förbättringsarbeten
+            <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+            <HelpPopover content = "Här kommer det vara en informationsruta som hjälper användaren att navigera bland avslutade projekt"/>
+            </div>
+            </h1>
+           
             <div style={projectsContainerStyle}>
                 {projects.map((project, index) => (
                     <div className="col-md-6 col-lg-3" style={{marginRight: "1%"}} key={index}>

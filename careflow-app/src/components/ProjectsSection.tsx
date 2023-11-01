@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
 import { ProjectCardProps } from "./ProjectCard";
 import {db} from "../firebase";
@@ -89,7 +90,11 @@ function ProjectsSection() {
      return (
         <div style={projectsSectionStyle}>
             <style>{scrollBarStyles}</style>
-            <h1 style={titleStyle}>Pågående förbättringsarbeten</h1>
+            <h1 style={titleStyle}>Pågående förbättringsarbeten
+            <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+            <HelpPopover content = "Här kommer det vara en informationsruta som hjälper användaren att navigera bland pågående projekt"/>
+            </div>
+            </h1>
             
             <div style={projectsContainerStyle}>
                 {projects.map((project, index) => (
@@ -107,6 +112,8 @@ function ProjectsSection() {
            
             </div>
           
+           
+            
         </div>
     );
 }
