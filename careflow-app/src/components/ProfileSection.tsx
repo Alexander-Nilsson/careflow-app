@@ -1,7 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
-import nurseImage from "../Images/nurse.png";
+import nurseImage from "../Images/genderNeutralWorker.png";
 
 function ProfileSection() {
   const profileSectionStyle = {
