@@ -72,10 +72,9 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
     <div ref={setNodeRef} className="kanban-column">
       <div className="kanban-columnTitle">
         <div className="flex gap-2">{column.title}</div>
-        <OverlayTrigger trigger="hover" placement="right" overlay={HelpPopover}>
+        <OverlayTrigger trigger="hover" overlay={HelpPopover}>
           <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
         </OverlayTrigger>
-        {/* <div>{taskCount}</div> */}
       </div>
       <div className="kanban-tasksContainer">
         <SortableContext items={tasksIds}>
