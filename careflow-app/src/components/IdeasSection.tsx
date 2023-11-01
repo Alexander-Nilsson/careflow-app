@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { FormControl, Container, Button } from 'react-bootstrap';
+import { db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function IdeasSection() {
     // You can define your project data here
@@ -15,13 +18,20 @@ function IdeasSection() {
     };
 
     const [value, setValue] = React.useState('');
+    const { isAuthenticated, user } = useAuth0();
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setValue(event.target.value);
     };
 
-    const handleClick = () => {
-        console.log(value);
+    const handleClick = async () => {
+        if (isAuthenticated) {
+            await setDoc(doc(db, "suggestions"), {
+                name: "Los Angeles",
+                state: "CA",
+                country: "USA"
+              });
+        }
     };
 
     return (
