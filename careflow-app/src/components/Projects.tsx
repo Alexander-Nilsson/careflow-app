@@ -165,7 +165,8 @@ function Projects() {
         <h1>Förändringsarbeten</h1>
       )}
 
-      <CreateNewProject />
+      {/* Removed */}
+      {/* <CreateNewProject /> */}
 
       <div className="card-grid-container">
         <p>{}</p>
