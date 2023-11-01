@@ -20,9 +20,19 @@ function ProgressSection() {
     width: "700px",
     height: "250px",
     borderRadius: "10px",
-    padding: "50px",
+    padding: "10px",
     margin: "0px",
     marginTop: "0px",
+  };
+
+  const innerProgressSectionStyle = {
+
+    width: "600px",
+    height: "150px",
+    borderRadius: "10px",
+    backgroundColor: "white",
+    margin: "20px",
+    padding: "10px",
   };
 
 
@@ -30,7 +40,7 @@ function ProgressSection() {
   async function getGoal() {
     const a = query(collection(db, "goals"));
     const querySnapshot = await getDocs(a);
-    let activeGoals : number = 0; 
+    let activeGoals: number = 0;
 
     querySnapshot.forEach((doc) => {
       if (doc.data().active === true) { //Current year is marked as active in firestore, year and goal set from admin page?
@@ -40,7 +50,7 @@ function ProgressSection() {
       }
 
     });
-    if (activeGoals === 1){
+    if (activeGoals === 1) {
       setGoalNotFound(false); //Prevent render on progress when no active goal or more than one active goal
     }
   }
@@ -71,32 +81,36 @@ function ProgressSection() {
 
 
   return (
-   /* 
-   - Render loading when data is not fetched yet. 
-   - Don't render year variable if goal data is not found/invalid
-   - Don't render progress bar and info if goal data is not found/invalid
-   - If goal <= 0, show 100% goal completion
-
-   */
+    /* 
+    - Render loading when data is not fetched yet. 
+    - Don't render year variable if goal data is not found/invalid
+    - Don't render progress bar and info if goal data is not found/invalid
+    - If goal <= 0, show 100% goal completion
+ 
+    */
     <div style={progressSectionStyle}>
-      {loading ? ( 
+      {loading ? (
         <p>Loading data</p>
       ) : (
         <>
-          <h2>Framsteg för Region Östergötland {goalNotFound ? <p> </p> : <>{year}</> } </h2>
+          <h2>Framsteg för Region Östergötland {goalNotFound ? <p> </p> : <>{year}</>} </h2>
+
+          <div style={innerProgressSectionStyle}>
+
           <h3>Avslutade förbättringsarbeten: {completedProjects}</h3>
           <>
-          {goalNotFound ? ( 
-            <p>No active goal</p>
+            {goalNotFound ? (
+              <p>No active goal</p>
             ) : (
               <>
-                <ProgressBar animated now={ goal <= 0 ? 100 :(completedProjects / goal) * 100} label={`${ goal <= 0 ? 100 : (completedProjects / goal) * 100  }%`} />
+                <ProgressBar animated now={goal <= 0 ? 100 : (completedProjects / goal) * 100} label={`${goal <= 0 ? 100 : (completedProjects / goal) * 100}%`} />
                 <h4>Mål till 31 December {year}: {goal}</h4>
               </>
 
-            ) }
-            </>
-          
+            )}
+          </>
+
+          </div>
         </>
       )}
     </div>
