@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 
@@ -46,6 +47,15 @@ const DescriptionStyle = {
 const TagStyle = {
   marginTop: "5px",
   marginBottom: "10px",
+  color: "#FFFFFF",
+  fontSize: "14px",
+};
+
+const TagContainerStyle = {
+  backgroundColor: "#051F6E",
+  padding: "2px 10px",
+  marginRight: "5px",
+  borderRadius: "10px",
 };
 
 const ProjectMembersContainer = {
@@ -57,31 +67,67 @@ const ProjectMembersContainer = {
   padding: "20px",
 };
 
-// Innehållet längst upp i modalen (som är gemensamt för alla faser)
-function SharedContentTop() {
+interface CardModalProps {
+  show: boolean;
+  onHide: () => void;
+  title: string;
+  column: string;
+  content: string;
+  place: string;
+  centrum: string;
+  tags: Array<string>;
+  date_created: Timestamp;
+}
+
+interface SharedContentTopProps {
+  title: string;
+  tags: Array<string>;
+  date_created: Timestamp;
+  place: string;
+  centrum: string;
+  content: string;
+}
+
+// The content at the top of the modal (that all phases have in common)
+function SharedContentTop({
+  title,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+}: SharedContentTopProps) {
+  const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
+
   return (
     <>
       <div style={{ display: "flex" }}>
         <div style={{ width: "63%" }}>
-          <Modal.Title style={{ marginTop: "30px" }}>Projekttitel</Modal.Title>
-          <div style={TagStyle}>Här ska det ligga taggar sen</div>
+          <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
+          <div style={TagStyle}>
+            {tags.map((tag, index) => (
+              <React.Fragment key={index}>
+                <span style={TagContainerStyle}>{tag}</span>
+              </React.Fragment>
+            ))}
+          </div>
           <div style={{ marginBottom: "50px" }}>
             <div style={FlexAndCenter}>
               <Calendar style={IconStyle} />
               <div>
-                <label>Startdatum</label>
+                <label>{formattedDate}</label>
               </div>
             </div>
             <div style={FlexAndCenter}>
               <Folder2Open style={IconStyle} />
               <div>
-                <label>Avdelning</label>
+                <label>{centrum}</label>
               </div>
             </div>
             <div style={FlexAndCenter}>
               <GeoAltFill style={IconStyle} />
               <div>
-                <label>Sjukhus</label>
+                <label>{place}</label>
               </div>
             </div>
           </div>
@@ -90,7 +136,7 @@ function SharedContentTop() {
             <Form.Label>
               <b>Beskrivning</b>
             </Form.Label>
-            <div>Här ska det finnas en beskrivning</div>
+            <div>{content}</div>
           </Form.Group>
         </div>
 
@@ -108,7 +154,7 @@ function SharedContentTop() {
   );
 }
 
-// Innehållet längst ner i modalen (som också är gemensamt för alla faser)
+// The content att the bottom of the modal (that all phases have in common)
 function SharedContentBottom() {
   return (
     <>
@@ -122,7 +168,7 @@ function SharedContentBottom() {
   );
 }
 
-//Det innehållet som är specifikt för varje tab
+// The content that is specific for each phase
 function SpecificContent() {
   return (
     <>
@@ -152,14 +198,31 @@ function SpecificContent() {
   );
 }
 
-interface CardModalTestProps {
-  show: boolean;
-  onHide: () => void;
-  title: string;
-  content: string;
+function getPhaseIcon(phase: number, column: string, marginLeft: number) {
+  const isCheck = parseInt(column) > phase;
+  const iconStyle = {
+    marginLeft: `${marginLeft}px`,
+    marginRight: "10px",
+  };
+
+  return isCheck ? (
+    <CheckCircle style={iconStyle} />
+  ) : (
+    <Circle style={iconStyle} />
+  );
 }
 
-function CardModal({ show, onHide, title, content }: CardModalTestProps) {
+function CardModal({
+  show,
+  onHide,
+  title,
+  column,
+  content,
+  place,
+  centrum,
+  tags,
+  date_created,
+}: CardModalProps) {
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Body
@@ -169,26 +232,28 @@ function CardModal({ show, onHide, title, content }: CardModalTestProps) {
           fontFamily: "Avenir",
         }}
       >
-        <Tabs defaultActiveKey="tab1" justify>
+        <Tabs defaultActiveKey={"phase" + column} justify>
           {/*------ PLANERA ------*/}
 
           {/* Planera-tabens utseende */}
           <Tab
-            eventKey="tab1"
+            eventKey="phase2"
             title={
               <span style={FlexAndCenter}>
-                <CheckCircle
-                  style={{
-                    marginLeft: "35px",
-                    marginRight: "10px",
-                  }}
-                />
+                {getPhaseIcon(2, column, 35)}
                 Planera
               </span>
             }
           >
             {/* Innehållet i planera-taben */}
-            <SharedContentTop />
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
             <SpecificContent />
             <SharedContentBottom />
           </Tab>
@@ -197,21 +262,23 @@ function CardModal({ show, onHide, title, content }: CardModalTestProps) {
 
           {/* Genomföra-tabens utseende */}
           <Tab
-            eventKey="tab2"
+            eventKey="phase3"
             title={
               <span style={FlexAndCenter}>
-                <CheckCircle
-                  style={{
-                    marginLeft: "20px",
-                    marginRight: "10px",
-                  }}
-                />
+                {getPhaseIcon(3, column, 20)}
                 Genomföra
               </span>
             }
           >
             {/* Innehållet i genomföra-taben */}
-            <SharedContentTop />
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
             <SpecificContent />
             <SharedContentBottom />
           </Tab>
@@ -219,21 +286,23 @@ function CardModal({ show, onHide, title, content }: CardModalTestProps) {
           {/*------STUDERA ------*/}
 
           <Tab
-            eventKey="tab3"
+            eventKey="phase4"
             title={
               <span style={FlexAndCenter}>
-                <Circle
-                  style={{
-                    marginLeft: "30px",
-                    marginRight: "10px",
-                  }}
-                />
+                {getPhaseIcon(4, column, 30)}
                 Studera
               </span>
             }
           >
             {/* Innehållet i studera-taben */}
-            <SharedContentTop />
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
             <SpecificContent />
             <SharedContentBottom />
           </Tab>
@@ -241,21 +310,23 @@ function CardModal({ show, onHide, title, content }: CardModalTestProps) {
           {/*------- AGERA ------*/}
 
           <Tab
-            eventKey="tab4"
+            eventKey="phase5"
             title={
               <span style={FlexAndCenter}>
-                <Circle
-                  style={{
-                    marginLeft: "40px",
-                    marginRight: "10px",
-                  }}
-                />
+                {getPhaseIcon(5, column, 40)}
                 Agera
               </span>
             }
           >
             {/* Innehållet i agera-taben */}
-            <SharedContentTop />
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
             <SpecificContent />
             <SharedContentBottom />
           </Tab>

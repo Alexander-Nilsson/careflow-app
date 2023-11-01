@@ -3,8 +3,16 @@ import { useNavigate } from "react-router-dom";
 import CreateNewProject from "./CreateNewProject";
 import { useAuth0 } from '@auth0/auth0-react';
 
+import ProfileSection from "./ProfileSection";
+import ProjectsSection from "./ProjectsSection";
+import IdeasAndProgressSection from "./IdeasAndProgressSection";
+import FinishedProjectsSection from "./FinishedProjectsSection";
 
 function Start() {
+  const startStyle = {
+    backgroundColor: "white",
+
+};
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth0();
 
@@ -26,9 +34,12 @@ function Start() {
       {isLoading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
-        <div>
-          <h1>Start</h1>
-          <CreateNewProject />
+        <div style={startStyle}>
+          <ProfileSection />
+          {/* <CreateNewProject /> */}
+          <ProjectsSection />
+          <IdeasAndProgressSection />
+          <FinishedProjectsSection />
         </div>
       )}
     </>

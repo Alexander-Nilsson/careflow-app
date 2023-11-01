@@ -12,7 +12,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 function App() {
 
   const { isAuthenticated, isLoading, logout } = useAuth0();
-  const TIMEOUT = 60 * 1000; // 1 hour in milliseconds
+  const TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
   let timeoutId: number | undefined;;
 
   // updates activity by user
