@@ -14,14 +14,16 @@ border-color: black;
    
   }
   .tags {
-    height: 20%;
+    height: 15%;
     border: 1px;
     /*border-style: dotted; */
     border-color: black;
+    color: white;
+    font-size: 12px;
 
   }
   .title {
-    height: 45%;
+    height: 50%;
     border: 1px;
     /*border-style: dotted;*/
     border-color: black;

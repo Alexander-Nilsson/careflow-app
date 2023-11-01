@@ -5,6 +5,22 @@ import PaperClipComponent from "./Paperclip";
 import CommentIconComponent from "./CommentIcon";
 import ListIconComponent from "./ListIcon";
 import { Timestamp } from "firebase/firestore";
+import React, { useState } from "react";
+
+const TagStyle = {
+  marginTop: "5px",
+  marginBottom: "10px",
+  color: "white",
+  fontSize: "14px",
+  
+};
+
+const TagContainerStyle = {
+  backgroundColor: "#051F6E",
+  padding: "2px 10px",
+  marginRight: "5px",
+  borderRadius: "10px",
+};
 
 interface CardButtonProps {
   title: string;
@@ -33,7 +49,13 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
         }}
       >
         <div className="outerContainer">
-          <div className="tags"> tags</div>
+          <div className="tags">
+          {tags.map((tag, index) => (
+              <React.Fragment key={index}>
+                <span style={TagContainerStyle}>{tag}</span>
+              </React.Fragment>
+            ))}
+          </div>
           <div className="title"> {"   " + title}</div>
           <div className="bottomContainer">
             <div className="dateAndIcons">
