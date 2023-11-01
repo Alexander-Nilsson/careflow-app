@@ -6,6 +6,7 @@ import {
   doc,
   getDoc,
   Timestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +20,6 @@ import { Id } from "../types";
 export interface ProjectContextType {
   projectList: Project[];
   setProjectList: React.Dispatch<React.SetStateAction<Project[]>>;
-  updateProject: (updatedProject: Project) => void;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -151,10 +151,12 @@ function Projects() {
     setProjectList(projectList);
   }
 
+  /*
   //TODO
   function updateProject(updatedProject: Project) {
     return updatedProject;
   }
+  */
 
   useEffect(() => {
     if (loading) {
@@ -173,9 +175,7 @@ function Projects() {
       ) : (
         <h1>Förändringsarbeten </h1>
       )}
-      <ProjectContext.Provider
-        value={{ projectList, setProjectList, updateProject }}
-      >
+      <ProjectContext.Provider value={{ projectList, setProjectList }}>
         {/*<CreateNewProject />*/}
         <KanbanBoard />;
       </ProjectContext.Provider>

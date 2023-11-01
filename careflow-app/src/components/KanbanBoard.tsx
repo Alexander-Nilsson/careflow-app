@@ -8,6 +8,7 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -15,8 +16,9 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import "../styles/Kanban.css";
 import { ProjectContext, ProjectContextType } from "./Projects";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import ShowCard from "./ShowCard";
+import { db } from "../firebase";
 
 const columns: Column[] = [
   {
@@ -59,7 +61,7 @@ function KanbanBoard() {
     );
   }
 
-  const { projectList, setProjectList, updateProject } = context;
+  const { projectList, setProjectList } = context;
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
   const sensors = useSensors(
@@ -128,6 +130,15 @@ function KanbanBoard() {
     setProjectList(newProjects);
   }
 
+  // Update function for dragdrop
+  async function updateProject(id: any, newColumn: any) {
+    const userDoc = doc(db, "projects", id);
+    const newFields = { phase: newColumn };
+
+    console.log("updateProject");
+    await updateDoc(userDoc, newFields);
+  }
+
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "Project") {
       setActiveProject(event.active.data.current.project);
@@ -135,7 +146,6 @@ function KanbanBoard() {
     }
   }
 
-  //TODO: uppdate the prodject phase in the database on drag end
   function onDragEnd(event: DragEndEvent) {
     setActiveProject(null);
 
@@ -148,6 +158,17 @@ function KanbanBoard() {
     if (activeId === overId) return;
 
     console.log("DRAG END");
+    console.log("activeId: " + activeId);
+    console.log("overId: " + overId);
+
+    // `overId` is the new column ID or phase for the project
+    // uppdate the prodject phase in the database
+    updateProject(activeId, overId).catch((error) => {
+      console.error(
+        "Kanban - Failed to update project phase in Firestore:",
+        error
+      );
+    });
   }
 
   function onDragOver(event: DragOverEvent) {
