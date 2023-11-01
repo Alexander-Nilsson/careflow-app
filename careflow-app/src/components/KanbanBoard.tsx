@@ -11,20 +11,44 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import "../styles/Kanban.css";
 import { ProjectContext, ProjectContextType } from "./Projects";
 import { Timestamp } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 
-//Column titles
 const columns: Column[] = [
-  { id: 1, title: "Förslag" },
-  { id: 2, title: "Planera" },
-  { id: 3, title: "Genomföra" },
-  { id: 4, title: "Studera" },
-  { id: 5, title: "Agera" },
+  {
+    id: 1,
+    title: "Förslag",
+    columnDescription:
+      "Här ligger de projekt som ännu inte startats. Det kan saknas viss information som behövs innan förbättringsarbetet kan starta.",
+  },
+  {
+    id: 2,
+    title: "Planera",
+    columnDescription:
+      "I planeringsfasen har projektet inletts men inte genomförts. Detaljer kring genomförandet diskuteras fortfarande i denna fas.",
+  },
+  {
+    id: 3,
+    title: "Genomföra",
+    columnDescription:
+      "Projekt som har genomförts eller genomförs just nu ligger här.",
+  },
+  {
+    id: 4,
+    title: "Studera",
+    columnDescription:
+      "Här studeras och utvärderas utfallet av projekten som genomförts, och beslut fattas om det ska bli en permanent förändring eller inte.",
+  },
+  {
+    id: 5,
+    title: "Agera",
+    columnDescription:
+      "Efter lyckat genomförande har det beslutats att  förändringen ska implementeras permanent, vilket pågår i denna fasen.",
+  },
 ];
 
 function KanbanBoard() {

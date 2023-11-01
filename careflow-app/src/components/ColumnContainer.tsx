@@ -31,16 +31,6 @@ const FlexAndCenter = {
   alignItems: "center",
 };
 
-const HelpPopover = (
-  <Popover
-    id="popover-positioned-right"
-    title="Popover right"
-    style={{ padding: "10px" }}
-  >
-    Här kommer det att finnas en beskrivande text sen
-  </Popover>
-);
-
 interface Props {
   column: Column;
   createProject: (columnId: Id) => void;
@@ -64,6 +54,18 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
 
   // Count the number of tasks in the column
   const taskCount = projectList.length;
+
+  // HelpPopover for displaying column description/help info
+  const HelpPopover = (
+    <Popover
+      id="popover-positioned-right"
+      title="Popover right"
+      style={{ padding: "10px" }}
+    >
+      <div>{column.title}</div>
+      {column.columnDescription}
+    </Popover>
+  );
 
   // Render the column
   return (
