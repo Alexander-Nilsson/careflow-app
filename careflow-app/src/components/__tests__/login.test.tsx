@@ -13,10 +13,8 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => jest.fn(),
 }));
 
-
-
-describe('Login component with Auth0', () => {
-  test('redirects to /start after successful login (FR-010301)', () => {
+describe('TC-login-8 (FR-010301)', () => {
+  test('redirects to /start after successful login', () => {
     const navigate = jest.fn(); // Mock the navigate function
 
     // Replace the mocked useNavigate with the new implementation in the test
