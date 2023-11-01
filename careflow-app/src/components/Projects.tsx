@@ -151,13 +151,6 @@ function Projects() {
     setProjectList(projectList);
   }
 
-  /*
-  //TODO
-  function updateProject(updatedProject: Project) {
-    return updatedProject;
-  }
-  */
-
   useEffect(() => {
     if (loading) {
       // maybe trigger a loading screen

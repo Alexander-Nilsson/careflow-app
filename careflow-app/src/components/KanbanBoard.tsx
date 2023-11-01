@@ -15,7 +15,7 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import "../styles/Kanban.css";
-import { ProjectContext, ProjectContextType } from "./Projects";
+import { ProjectContext } from "./Projects";
 import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
@@ -119,7 +119,7 @@ function KanbanBoard() {
       phase: phase,
       place: "place",
       centrum: "centrum",
-      tags: [], // Initialize as an empty array or provide initial values
+      tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
     };
     setProjectList([...projectList, newProject]);
@@ -161,7 +161,7 @@ function KanbanBoard() {
     console.log("activeId: " + activeId);
     console.log("overId: " + overId);
 
-    // `overId` is the new column ID or phase for the project
+    // `overId` is the new phase for the project
     // uppdate the prodject phase in the database
     updateProject(activeId, overId).catch((error) => {
       console.error(
