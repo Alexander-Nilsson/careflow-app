@@ -8,7 +8,7 @@ border-color: black;
     border: 1px;
     /*border-style: dotted;
     border-color: rgb(255, 0, 0); */
-    height:170px;
+    height: 140px;
     padding: 5px;
     
    
@@ -21,7 +21,7 @@ border-color: black;
 
   }
   .title {
-    height: 50%;
+    height: 45%;
     border: 1px;
     /*border-style: dotted;*/
     border-color: black;
@@ -31,7 +31,7 @@ border-color: black;
   .bottomContainer {
     display: flex;
     max-width: 100%;
-    height: 30%; /* 20% of the parent height (outerContainer) */
+    height: 35%; /* 20% of the parent height (outerContainer) */
     border: 1px;
    /* border-style: dotted;*/
     border-color: black;
