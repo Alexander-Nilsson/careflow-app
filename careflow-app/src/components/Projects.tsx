@@ -1,3 +1,4 @@
+import { db } from "../firebase";
 import { createContext, useEffect, useState } from "react";
 import {
   collection,
@@ -6,15 +7,11 @@ import {
   doc,
   getDoc,
   Timestamp,
-  updateDoc,
 } from "firebase/firestore";
-import { db, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
-import ShowCard from "./ShowCard";
 import KanbanBoard from "./KanbanBoard";
-import CreateNewProject from "./CreateNewProject";
 import { Id } from "../types";
+import { useAuth0 } from "@auth0/auth0-react";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -53,66 +50,29 @@ class Project {
     this.tags = tags;
     this.date_created = date_created;
   }
-
-  toString() {
-    return (
-      this.title +
-      ", " +
-      this.description +
-      ", " +
-      this.phase +
-      ", " +
-      this.place +
-      ", " +
-      this.centrum
-    );
-  }
 }
 
 function Projects() {
   const navigate = useNavigate();
-  const [user, loading] = useAuthState(auth);
+  const { isAuthenticated, isLoading, user } = useAuth0();
 
-  let cardIDs: Array<any> = [];
+  const [projectList, setProjectList] = useState<Project[]>([]);
 
-  // Fetch all projects and store their ID's
-  async function fetchProjects() {
-    const q = query(collection(db, "projects")); //create a query
-
-    const querySnapshot = await getDocs(q); //use the query to fetch the items
-
-    let i = 0;
-    querySnapshot.forEach((doc) => {
-      //do something with the response
-      // doc.data() is never undefined for query doc snapshots
-      cardIDs.push(doc.id);
-      console.log("Pushat till ID: ", cardIDs[i]);
-      console.log("Hämtar in: ", doc.id, " => ", doc.data());
-      i++;
-    });
-    const proj = fetchProjectByID();
-
-    return proj;
-  }
-
-  //Firebase project converter, converting the data into instance of Project
   const projectConverter = {
-    toFirestore: (projectData: any) => {
-      return {
-        id: projectData.id,
-        title: projectData.title,
-        description: projectData.description,
-        phase: projectData.phase,
-        place: projectData.place,
-        centrum: projectData.centrum,
-        tags: projectData.tags,
-        date_created: projectData.date_created,
-      };
-    },
+    toFirestore: (projectData: any) => ({
+      id: projectData.id,
+      title: projectData.title,
+      description: projectData.description,
+      phase: projectData.phase,
+      place: projectData.place,
+      centrum: projectData.centrum,
+      tags: projectData.tags,
+      date_created: projectData.date_created,
+    }),
     fromFirestore: (snapshot: any, options: any) => {
       const data = snapshot.data(options);
       return new Project(
-        snapshot.id, // use snapshot.id instead of data.id
+        snapshot.id,
         data.title,
         data.description,
         data.phase,
@@ -124,52 +84,51 @@ function Projects() {
     },
   };
 
-  // Fetching each project by ID, converting them into objects and storing them in array
-  const [projectList, setProjectList] = useState([] as Array<any>);
-  console.log("zzz Init: ", projectList.length);
+  async function fetchProjects() {
+    const q = query(collection(db, "projects"));
+    const querySnapshot = await getDocs(q);
 
-  async function fetchProjectByID() {
-    let projectList: Array<any> = [];
-    console.log("ID array length: ", cardIDs.length);
-    for (let i = 0; i < cardIDs.length; i++) {
-      let id = cardIDs[i];
-      console.log("Project ID: ", id);
-      const projectReference = doc(db, "projects", id).withConverter(
-        projectConverter
-      );
-      const querySnapshot = await getDoc(projectReference);
-      if (querySnapshot.exists()) {
-        const projectData = querySnapshot.data();
+    // Use map to obtain all document IDs
+    const ids = querySnapshot.docs.map((doc) => doc.id);
 
-        projectList.push(projectData);
+    // Fetch all projects using Promise.all for better performance.
+    const projects = await Promise.all(
+      ids.map(async (id) => {
+        const projectReference = doc(db, "projects", id).withConverter(
+          projectConverter
+        );
+        const snapshot = await getDoc(projectReference);
 
-        console.log("zzz Push: ", projectList.length);
-      } else {
-        console.log("No such document!");
-      }
-    }
-    setProjectList(projectList);
+        if (snapshot.exists()) {
+          return snapshot.data() as Project;
+        }
+        return null;
+      })
+    );
+
+    // Filter out null values (if any) and set the project list state.
+    setProjectList(projects.filter(Boolean) as Project[]);
   }
 
   useEffect(() => {
-    if (loading) {
-      // maybe trigger a loading screen
+    if (isLoading) {
       return;
     }
 
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    // Fetch projects only if the user is authenticated and data is not loading.
     fetchProjects();
-  }, [loading, user]);
-  console.log("zzz Read: ", projectList.length);
+  }, [isLoading, isAuthenticated, user]);
+
   return (
     <>
-      {loading ? (
-        <p>Loading...</p> // Show a loading indicator
-      ) : (
-        <h1>Förändringsarbeten </h1>
-      )}
+      {isLoading ? <p>Loading...</p> : <h1>Förändringsarbeten </h1>}
       <ProjectContext.Provider value={{ projectList, setProjectList }}>
-        {/*<CreateNewProject />*/}
-        <KanbanBoard />;
+        <KanbanBoard />
       </ProjectContext.Provider>
     </>
   );
