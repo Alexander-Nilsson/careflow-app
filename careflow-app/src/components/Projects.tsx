@@ -1,10 +1,11 @@
+
+import { db } from "../firebase";
 import { SetStateAction, useEffect, useState } from "react";
 import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
-import { db, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
 import ShowCard from "./ShowCard";
 import CreateNewProject from "./CreateNewProject";
+import { useAuth0 } from '@auth0/auth0-react';
 import { render } from "react-dom";
 import { Timestamp } from "firebase/firestore";
 
@@ -57,7 +58,7 @@ class Project {
 
 function Projects() {
   const navigate = useNavigate();
-  const [user, loading] = useAuthState(auth);
+  const { isAuthenticated, isLoading, user } = useAuth0();
 
   //Column titles
   const columns = [
@@ -68,6 +69,16 @@ function Projects() {
     { id: 5, title: "Agera" },
   ];
 
+  // Only temporary. Cards will later on be fetched from database
+  const cards = [
+    { id: 1, title: "Card Title 1", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", column: 1 },
+    { id: 2, title: "Card Title 2", content: "Card content 2", column: 2 },
+    { id: 2, title: "Card Title 3", content: "Card content 3", column: 3 },
+    { id: 2, title: "Card Title 4", content: "Card content 4", column: 4 },
+    { id: 2, title: "Card Title 5", content: "Card content 5", column: 1 },
+    { id: 2, title: "Card Title 6", content: "Card content 5", column: 2 },
+    { id: 2, title: "Card Title 6", content: "Card content 5", column: 5 },
+  ];
   let cardIDs: Array<any> = [];
 
   // Fetch all projects and store their ID's
@@ -122,7 +133,6 @@ function Projects() {
 
   // Fetching each project by ID, converting them into objects and storing them in array
   const [projectList, setProjectList] = useState([] as Array<any>);
-  console.log("zzz Init: ", projectList.length);
 
   async function fetchProjectByID() {
     let projectList: Array<any> = [];
@@ -149,21 +159,18 @@ function Projects() {
 
 
   useEffect(() => {
-    if (loading) {
+    if (isLoading) {
       // maybe trigger a loading screen
       return;
     }
-
+    if (!isAuthenticated) {
+      navigate("/login")
+    };
     fetchProjects();
-  }, [loading, user]);
-  console.log("zzz Read: ", projectList.length);
+
+  }, [user, isLoading]);
   return (
     <>
-      {loading ? (
-        <p>Loading...</p> // Show a loading indicator
-      ) : (
-        <h1>Förändringsarbeten</h1>
-      )}
 
       {/* Removed */}
       {/* <CreateNewProject /> */}
