@@ -1,4 +1,4 @@
-import { useMemo, useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { Column, Id, Project } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import {
@@ -47,7 +47,7 @@ const columns: Column[] = [
     id: 5,
     title: "Agera",
     columnDescription:
-      "Efter lyckat genomförande har det beslutats att  förändringen ska implementeras permanent, vilket pågår i denna fasen.",
+      "Efter lyckat genomförande har det beslutats att förändringen ska implementeras permanent, vilket pågår i denna fasen.",
   },
 ];
 
