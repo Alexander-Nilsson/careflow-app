@@ -17,12 +17,13 @@ function Start() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth0();
 
+  //fetches the user data from database, based on the hsa-ID
   async function getUser(username:string){
     const docRef = doc(db, "users", username);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
+          // console.log("Document data:", docSnap.data());
         } else {
           // docSnap.data() will be undefined in this case
           console.log("No such document!");
