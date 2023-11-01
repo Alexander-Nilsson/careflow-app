@@ -76,7 +76,11 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <OverlayTrigger trigger="hover" placement="right" overlay={HelpPopover}>
+        <OverlayTrigger
+          trigger={["hover", "focus"]}
+          placement="right"
+          overlay={HelpPopover}
+        >
           <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
         </OverlayTrigger>
       </Modal.Header>

@@ -91,7 +91,7 @@ function Projects() {
     // Use map to obtain all document IDs
     const ids = querySnapshot.docs.map((doc) => doc.id);
 
-    // Fetch all projects using Promise.all for better performance.
+    // fetch all project data in parallel
     const projects = await Promise.all(
       ids.map(async (id) => {
         const projectReference = doc(db, "projects", id).withConverter(

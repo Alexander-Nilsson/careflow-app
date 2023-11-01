@@ -6,7 +6,6 @@ import "./ShowCard.css";
 import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Timestamp } from "firebase/firestore";
 
 interface ShowCardProps {
   project: Project;

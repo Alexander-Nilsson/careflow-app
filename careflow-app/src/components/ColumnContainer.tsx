@@ -7,28 +7,12 @@ import ShowCard from "./ShowCard";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { QuestionCircleFill } from "react-bootstrap-icons";
 
-const IconCircleStyle = {
-  borderRadius: "50%",
-  width: "30px",
-  height: "30px",
-  border: "0.5px solid #AEAEAE",
-  marginRight: "0.5vw",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
-
 const QuestionmarkStyle = {
   marginRight: "0.5vw",
   marginBottom: "3px",
   color: "#051F6F",
   width: "20px",
   height: "20px",
-};
-
-const FlexAndCenter = {
-  display: "flex",
-  alignItems: "center",
 };
 
 interface Props {
@@ -72,7 +56,11 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
     <div ref={setNodeRef} className="kanban-column">
       <div className="kanban-columnTitle">
         <div className="flex gap-2">{column.title}</div>
-        <OverlayTrigger trigger="hover" placement="top" overlay={HelpPopover}>
+        <OverlayTrigger
+          trigger={["hover", "focus"]}
+          placement="top"
+          overlay={HelpPopover}
+        >
           <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
         </OverlayTrigger>
       </div>
