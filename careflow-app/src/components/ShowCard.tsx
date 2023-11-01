@@ -6,13 +6,31 @@ import "./ShowCard.css";
 import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Timestamp } from "firebase/firestore";
 
 interface ShowCardProps {
   project: Project;
+  title: string;
+  content: string;
+  column: number;
+  place: string;
+  centrum: string;
+  tags: Array<string>;
+  date_created: Timestamp;
 }
 function ShowCard({ project }: ShowCardProps) {
   // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);
+
+function ShowCard({
+  title,
+  content,
+  column,
+  place,
+  centrum,
+  tags,
+  date_created,
+}: ShowCardProps) {
   const [show, setShow] = useState(false);
   const modalClose = () => setShow(false);
   const modalShow = () => setShow(true);

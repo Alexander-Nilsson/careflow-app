@@ -14,10 +14,14 @@ function CardButton({ title, tags, onClick }: CardButtonProps) {
       onClick={onClick}
       style={{ cursor: "pointer", textDecoration: "none" }}
     >
-      <Card style={{width: "18vw",
+      <Card
+        style={{
+          width: "18vw",
           maxWidth: "300px",
           minWidth: "150px",
-          margin: "1vw",}}>
+          margin: "1vw",
+        }}
+      >
         <Card.Body>
           <Card.Title>
             <PersonFill />

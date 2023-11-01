@@ -4,7 +4,7 @@ const ButtonStyle: React.CSSProperties = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "20px",
-  top: "260px",
+  top: "320px",
   left: "860px",
   padding: "10px 20px",
   border: "none",
@@ -12,14 +12,14 @@ const ButtonStyle: React.CSSProperties = {
   position: "absolute",
 };
 
-interface CreateProjectButtonProps {
+interface ContinueButtonProps {
   onClick: () => void;
 }
 
-function CreateProjectButton({ onClick }: CreateProjectButtonProps) {
+function ContinueButton({ onClick }: ContinueButtonProps) {
   return (
     <Button id="NyttFörbättringsarbete" onClick={onClick} style={ButtonStyle}>
-      Nytt förbättringsarbete
+      Fortsätt där jag slutade
       <img
         src="./Plus.png"
         alt="Image"
@@ -29,4 +29,4 @@ function CreateProjectButton({ onClick }: CreateProjectButtonProps) {
   );
 }
 
-export default CreateProjectButton;
+export default ContinueButton;

@@ -160,7 +160,6 @@ function Projects() {
     fetchProjects();
   }, [loading, user]);
   console.log("zzz Read: ", projectList.length);
-
   return (
     <>
       {loading ? (
