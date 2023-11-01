@@ -14,6 +14,7 @@ function ProgressSection() {
   const [loading, setLoading] = useState<boolean>(true); //True while loading data from firebase
   const [goalNotFound, setGoalNotFound] = useState<boolean>(true); //True when no active year/goal in firebase, or more than one active goal
 
+  
 
   const progressSectionStyle = {
     backgroundColor: "lightblue",
