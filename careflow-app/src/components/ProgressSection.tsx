@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
 import { collection, query, getDocs } from "firebase/firestore";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 import { useEffect } from "react";
 
 
