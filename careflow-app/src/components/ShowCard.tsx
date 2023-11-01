@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
-import './ShowCard.css';
+import "./ShowCard.css";
 
 interface ShowCardProps {
   title: string;
