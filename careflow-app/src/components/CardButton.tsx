@@ -1,6 +1,9 @@
 import Card from "react-bootstrap/Card";
 import { PersonFill } from "react-bootstrap-icons";
 import "./CardButton.css";
+import PaperClipComponent from "./Paperclip";
+import CommentIconComponent from "./CommentIcon";
+import ListIconComponent from "./ListIcon";
 
 interface CardButtonProps {
   title: string;
@@ -26,22 +29,24 @@ function CardButton({ title, tags, onClick }: CardButtonProps) {
           margin: "1vw",
         }}
       >
-       
-         
-                    <div className="outerContainer">
-              <div className="tags"> tags</div>
-              <div className="title"> {"   " + title}</div>
-              <div className="bottomContainer">
-                <div className="dateAndIcons">
-                  <div className="date">Date</div>
-                  <div className="icons">Icon</div>
-                </div>
-                <div className="profilCard">
-                  <PersonFill/>
-                </div>
+        <div className="outerContainer">
+          <div className="tags"> tags</div>
+          <div className="title"> {"   " + title}</div>
+          <div className="bottomContainer">
+            <div className="dateAndIcons">
+              <div className="date">Date</div>
+              <div className="icons">
+                {" "}
+                <ListIconComponent />
+                <PaperClipComponent />
+                <CommentIconComponent />
               </div>
             </div>
-       
+            <div className="profilCard">
+              <PersonFill />
+            </div>
+          </div>
+        </div>
       </Card>
     </a>
   );

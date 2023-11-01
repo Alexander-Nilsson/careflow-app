@@ -58,8 +58,9 @@ border-color: black;
   
   .icons {
     background-color: rgb(255, 255, 255); /* Add your styles */
-   
+    display:flex;
     height: 50%;
+    align-items: center;
     border: 1px;
     /*border-style: dotted;*/
     border-color: black;
