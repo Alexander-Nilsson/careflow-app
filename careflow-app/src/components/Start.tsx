@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
 import CreateNewProject from "./CreateNewProject";
+
 import ProfileSection from "./ProfileSection";
 import ProjectsSection from "./ProjectsSection";
 import IdeasAndProgressSection from "./IdeasAndProgressSection";
@@ -14,21 +13,21 @@ function Start() {
     backgroundColor: "white",
 
   };
-  const { user, isAuthenticated, isLoading } = useAuth0();
   const navigate = useNavigate();
-  // const [user, loading] = useAuthState(auth)
+  const { isAuthenticated, isLoading, user } = useAuth0();
+
 
   useEffect(() => {
     if (isLoading) {
-      // maybe trigger a loading screen
       return;
     }
+    if (!isAuthenticated) {
+      navigate("/login")
+    } else {
+      console.log(user?.name) // do something, for example fetch the user data from firebase based on the user's nickname
+    };
 
-    if (user) {
-      console.log(user)
-    }
-    // if (!user) navigate("/login");
-  }, [user, isLoading]);
+  }, [isAuthenticated, isLoading]);
 
   return (
     <>

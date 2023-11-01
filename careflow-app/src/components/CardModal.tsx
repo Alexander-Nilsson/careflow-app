@@ -1,158 +1,344 @@
+import { Timestamp } from "firebase/firestore";
+import React, { useState } from "react";
+import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
+
 import {
-    Modal,
-    Button,
-    Form,
-    Tabs,
-    Tab,
-    TabContainer,
-    Popover,
-} from "react-bootstrap";
-
-interface CardModalProps {
-    show: boolean;
-    onHide: () => void;
-    title: string;
-    content: string;
-}
-
+  Calendar,
+  Folder2Open,
+  GeoAltFill,
+  Circle,
+  CheckCircle,
+} from "react-bootstrap-icons";
 
 const ButtonStyle = {
-    backgroundColor: "#051F6F",
-    fontFamily: "Avenir",
-    fontSize: "17px",
-    padding: "10px 20px",
-    border: "none",
-    cursor: "pointer",
-    marginTop: "50px",
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "17px",
+  padding: "10px 20px",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "50px",
 };
 
-const IconCircleStyle = {
-    borderRadius: "50%",
-    width: "35px",
-    height: "35px",
-    border: "0.5px solid #AEAEAE",
+const IconStyle = {
+  width: "15px",
+  height: "15px",
+  marginRight: "7px",
+  marginTop: "0px",
+};
+
+const FlexAndCenter = {
+  display: "flex",
+  alignItems: "center",
+};
+
+const FormGroupStyle = {
+  backgroundColor: "#F4F4F4",
+  padding: "20px",
+  marginBottom: "20px",
+};
+
+const DescriptionStyle = {
+  backgroundColor: "#F4F4F4",
+  padding: "20px",
+  marginBottom: "20px",
+};
+
+const TagStyle = {
+  marginTop: "5px",
+  marginBottom: "10px",
+  color: "#FFFFFF",
+  fontSize: "14px",
+};
+
+const TagContainerStyle = {
+  backgroundColor: "#051F6E",
+  padding: "2px 10px",
+  marginRight: "5px",
+  borderRadius: "10px",
+};
+
+const ProjectMembersContainer = {
+  width: "34%",
+  marginTop: "30px",
+  marginBottom: "20px",
+  marginLeft: "3%",
+  background: "#F4F4F4",
+  padding: "20px",
+};
+
+interface CardModalProps {
+  show: boolean;
+  onHide: () => void;
+  title: string;
+  column: string;
+  content: string;
+  place: string;
+  centrum: string;
+  tags: Array<string>;
+  date_created: Timestamp;
+}
+
+interface SharedContentTopProps {
+  title: string;
+  tags: Array<string>;
+  date_created: Timestamp;
+  place: string;
+  centrum: string;
+  content: string;
+}
+
+// The content at the top of the modal (that all phases have in common)
+function SharedContentTop({
+  title,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+}: SharedContentTopProps) {
+  const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
+
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <div style={{ width: "63%" }}>
+          <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
+          <div style={TagStyle}>
+            {tags.map((tag, index) => (
+              <React.Fragment key={index}>
+                <span style={TagContainerStyle}>{tag}</span>
+              </React.Fragment>
+            ))}
+          </div>
+          <div style={{ marginBottom: "50px" }}>
+            <div style={FlexAndCenter}>
+              <Calendar style={IconStyle} />
+              <div>
+                <label>{formattedDate}</label>
+              </div>
+            </div>
+            <div style={FlexAndCenter}>
+              <Folder2Open style={IconStyle} />
+              <div>
+                <label>{centrum}</label>
+              </div>
+            </div>
+            <div style={FlexAndCenter}>
+              <GeoAltFill style={IconStyle} />
+              <div>
+                <label>{place}</label>
+              </div>
+            </div>
+          </div>
+
+          <Form.Group controlId="planeraDescription" style={DescriptionStyle}>
+            <Form.Label>
+              <b>Beskrivning</b>
+            </Form.Label>
+            <div>{content}</div>
+          </Form.Group>
+        </div>
+
+        <div style={ProjectMembersContainer}>
+          <Form.Group controlId="projectMembersForm">
+            <Form.Label>
+              <div>
+                <b>Medlemmar</b>
+              </div>
+            </Form.Label>
+          </Form.Group>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// The content att the bottom of the modal (that all phases have in common)
+function SharedContentBottom() {
+  return (
+    <>
+      <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
+        <Form.Label>
+          <b>Liknande förbättringsarbeten</b>
+        </Form.Label>
+        <div>Här ska det finnas förslag på liknande förbättringsarbeten</div>
+      </Form.Group>
+    </>
+  );
+}
+
+// The content that is specific for each phase
+function SpecificContent() {
+  return (
+    <>
+      <Form>
+        <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
+          <Form.Label>
+            <b>Checklista</b>
+          </Form.Label>
+          <div>Här ska det finnas en checklista</div>
+        </Form.Group>
+
+        <Form.Group controlId="planeraNotes" style={FormGroupStyle}>
+          <Form.Label>
+            <b>Anteckningar</b>
+          </Form.Label>
+          <textarea className="form-control" rows={3}></textarea>
+        </Form.Group>
+
+        <Form.Group controlId="planeraFile" style={FormGroupStyle}>
+          <Form.Label>
+            <b>Bilagor</b>
+          </Form.Label>
+          <Form.Control type="file" />
+        </Form.Group>
+      </Form>
+    </>
+  );
+}
+
+function getPhaseIcon(phase: number, column: string, marginLeft: number) {
+  const isCheck = parseInt(column) > phase;
+  const iconStyle = {
+    marginLeft: `${marginLeft}px`,
     marginRight: "10px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-};
+  };
 
-const HelpPopover = (
-    <Popover id="popover-positioned-right" title="Popover right">
-        Här kommer det finnas en beskrivande text
-    </Popover>
-);
+  return isCheck ? (
+    <CheckCircle style={iconStyle} />
+  ) : (
+    <Circle style={iconStyle} />
+  );
+}
 
-function CardModal({ show, onHide }: CardModalProps) {
-    return (
-        <Modal show={show} onHide={onHide} size="lg">
-            <TabContainer defaultActiveKey="planera">
+function CardModal({
+  show,
+  onHide,
+  title,
+  column,
+  content,
+  place,
+  centrum,
+  tags,
+  date_created,
+}: CardModalProps) {
+  return (
+    <Modal show={show} onHide={onHide} size="lg">
+      <Modal.Body
+        style={{
+          paddingLeft: "30px",
+          paddingRight: "30px",
+          fontFamily: "Avenir",
+        }}
+      >
+        <Tabs defaultActiveKey={"phase" + column} justify>
+          {/*------ PLANERA ------*/}
 
+          {/* Planera-tabens utseende */}
+          <Tab
+            eventKey="phase2"
+            title={
+              <span style={FlexAndCenter}>
+                {getPhaseIcon(2, column, 35)}
+                Planera
+              </span>
+            }
+          >
+            {/* Innehållet i planera-taben */}
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
+            <SpecificContent />
+            <SharedContentBottom />
+          </Tab>
 
-                <Modal.Body>
-                    <Tabs id="card-tabs" justify>
-                        <Tab eventKey="planera" title="Planera" />
-                        <Tab eventKey="genomföra" title="Genomföra" />
-                        <Tab eventKey="studera" title="Studera" />
-                        <Tab eventKey="agera" title="Agera" />
-                    </Tabs>
-                    <Tab.Content>
-                        <Tab.Pane eventKey="planera">
-                            <Form>
-                                <Form.Group controlId="planeraDate">
-                                    <Form.Label>Start Date</Form.Label>
-                                    <Form.Control type="date" />
-                                </Form.Group>
+          {/*------ GENOMFÖRA ------*/}
 
-                                <Form.Group controlId="planeraTitle">
-                                    <Form.Label>Title</Form.Label>
-                                    <Form.Control type="text" placeholder="Enter title" />
-                                </Form.Group>
+          {/* Genomföra-tabens utseende */}
+          <Tab
+            eventKey="phase3"
+            title={
+              <span style={FlexAndCenter}>
+                {getPhaseIcon(3, column, 20)}
+                Genomföra
+              </span>
+            }
+          >
+            {/* Innehållet i genomföra-taben */}
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
+            <SpecificContent />
+            <SharedContentBottom />
+          </Tab>
 
-                                <Form.Group controlId="planeraDescription">
-                                    <Form.Label>Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={8}
-                                        placeholder="Enter description"
-                                    />
-                                </Form.Group>
+          {/*------STUDERA ------*/}
 
-                                <Form.Group controlId="planeraFile">
-                                    <Form.Label>Upload File</Form.Label>
-                                    <Form.Control type="file" />
-                                </Form.Group>
+          <Tab
+            eventKey="phase4"
+            title={
+              <span style={FlexAndCenter}>
+                {getPhaseIcon(4, column, 30)}
+                Studera
+              </span>
+            }
+          >
+            {/* Innehållet i studera-taben */}
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
+            <SpecificContent />
+            <SharedContentBottom />
+          </Tab>
 
-                            </Form>
-                        </Tab.Pane>
+          {/*------- AGERA ------*/}
 
-                        <Tab.Pane eventKey="genomföra">
-                            <Form>
-                                <Form.Group controlId="genomforaCategory">
-                                    <Form.Label>Category</Form.Label>
-                                    <Form.Control as="select">
-                                        <option>Category 1</option>
-                                        <option>Category 2</option>
-                                        <option>Category 3</option>
-                                    </Form.Control>
-                                </Form.Group>
-
-                                <Form.Group controlId="genomforaType">
-                                    <Form.Label>Type</Form.Label>
-                                    {["radio1", "radio2", "radio3"].map((type) => (
-                                        <Form.Check
-                                            type="radio"
-                                            label={type}
-                                            name="type"
-                                            id={`type-${type}`}
-                                        />
-                                    ))}
-                                </Form.Group>
-
-                                <Button variant="primary" type="submit">
-                                    Submit
-                                </Button>
-                            </Form>
-                        </Tab.Pane>
-
-                        <Tab.Pane eventKey="studera">
-                            <Form>{/* content for "Studera" tab */}</Form>
-                        </Tab.Pane>
-
-                        <Tab.Pane eventKey="agera">
-                            <Form>
-                                <Form.Group controlId="studeraOptions">
-                                    <Form.Label>Options</Form.Label>
-                                    {["option1", "option2", "option3"].map((option) => (
-                                        <Form.Check
-                                            type="checkbox"
-                                            label={option}
-                                            id={`option-${option}`}
-                                        />
-                                    ))}
-                                </Form.Group>
-
-                                <Form.Group controlId="studeraFile">
-                                    <Form.Label>Upload File</Form.Label>
-                                    <Form.Control type="file" />
-                                </Form.Group>
-
-                                <Button variant="primary" type="submit">
-                                    Submit
-                                </Button>
-                            </Form>
-                        </Tab.Pane>
-                    </Tab.Content>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button onClick={onHide} style={ButtonStyle}>
-                        Spara
-                    </Button>
-                </Modal.Footer>
-            </TabContainer>
-        </Modal>
-    );
+          <Tab
+            eventKey="phase5"
+            title={
+              <span style={FlexAndCenter}>
+                {getPhaseIcon(5, column, 40)}
+                Agera
+              </span>
+            }
+          >
+            {/* Innehållet i agera-taben */}
+            <SharedContentTop
+              title={title}
+              tags={tags}
+              date_created={date_created}
+              place={place}
+              centrum={centrum}
+              content={content}
+            />
+            <SpecificContent />
+            <SharedContentBottom />
+          </Tab>
+        </Tabs>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={onHide} style={ButtonStyle}>
+          Spara
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 }
 
 export default CardModal;
