@@ -8,6 +8,7 @@ import {
 } from "react-bootstrap-icons";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -281,41 +282,42 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
             </div>
           </div>
 
-          <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till avdelning</label>
-            <input
-              type="text"
-              className="form-control"
-              onKeyPress={(
-                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-              ) => {
-                e.key === "Enter" && e.preventDefault();
-              }}
-            ></input>
+          <div className="mb-3 text">
+            <Dropdown>
+              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
+                Lägg till avdelning
+              </Dropdown.Toggle>
+              <Dropdown.Menu style={{ width: "100%" }}>
+                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
           <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till kollegor</label>
-            <input
-              type="text"
-              className="form-control"
-              onKeyPress={(
-                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-              ) => {
-                e.key === "Enter" && e.preventDefault();
-              }}
-            ></input>
+            <Dropdown>
+              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
+                Lägg till kollegor
+              </Dropdown.Toggle>
+              <Dropdown.Menu style={{ width: "100%" }}>
+                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
           <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till beskrivande nyckelord</label>
-            <input
-              type="text"
-              className="form-control"
-              onKeyPress={(
-                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-              ) => {
-                e.key === "Enter" && e.preventDefault();
-              }}
-            ></input>
+            <Dropdown>
+              <Dropdown.Toggle id="-basic" style={{ width: "100%" }}>
+                Lägg till beskrivande nyckelord
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu style={{ width: "100%" }}>
+                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
           <div className="mb-3 text-center">
             <Button
