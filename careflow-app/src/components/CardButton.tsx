@@ -16,7 +16,7 @@ function CardButton({ title, tags, onClick }: CardButtonProps) {
     >
       <Card
         style={{
-          width: "18vw",
+          /*width: "18vw",*/
           maxWidth: "18vw",
           minWidth: "2vw",
           margin: "0.3vw",
