@@ -170,12 +170,18 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span className="input-group-text">+</span>
+                <span
+                  className="input-group-text"
+                  style={{ border: "none", background: "white" }}
+                >
+                  +
+                </span>
                 <input
                   title="purpose"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
+                  style={{ border: "none" }}
                   onKeyPress={(
                     e: React.KeyboardEvent<
                       HTMLInputElement | HTMLTextAreaElement
@@ -217,12 +223,18 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span className="input-group-text">+</span>
+                <span
+                  className="input-group-text"
+                  style={{ border: "none", background: "white" }}
+                >
+                  +
+                </span>
                 <input
                   name="description"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
+                  style={{ border: "none" }}
                   onKeyPress={(
                     e: React.KeyboardEvent<
                       HTMLInputElement | HTMLTextAreaElement
@@ -264,12 +276,18 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span className="input-group-text">+</span>
+                <span
+                  className="input-group-text"
+                  style={{ border: "none", background: "white" }}
+                >
+                  +
+                </span>
                 <input
                   name="samlaideer"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
+                  style={{ border: "none" }}
                   onKeyPress={(
                     e: React.KeyboardEvent<
                       HTMLInputElement | HTMLTextAreaElement
