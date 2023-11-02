@@ -7,7 +7,7 @@ import {
   QuestionCircleFill,
 } from "react-bootstrap-icons";
 import { doc, setDoc } from "firebase/firestore";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 
 const TitleStyle = {
   fontFamily: "Avenir",
