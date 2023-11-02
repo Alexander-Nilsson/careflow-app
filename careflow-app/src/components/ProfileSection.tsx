@@ -97,8 +97,8 @@ function ProfileSection() {
       <div style={rightDivStyle}>
         <h1>Min Profil</h1>
         <h3>{name}</h3>
-        <h3>{department}</h3>
         <h3>{role}</h3>
+        <h3>{department}</h3>
         <CreateNewProject />
       </div>
     </div>
