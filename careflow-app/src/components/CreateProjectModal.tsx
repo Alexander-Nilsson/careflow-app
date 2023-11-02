@@ -22,7 +22,7 @@ const DescriptiveTextStyle = {
   fontSize: "12px",
   color: "#848484",
   marginTop: "-3px",
-  marginBottom: "7px",
+  marginBottom: "8px",
   marginLeft: "0px",
 };
 
