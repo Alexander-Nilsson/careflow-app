@@ -36,7 +36,7 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
     },
   });
 
-  // Count the number of tasks in the column
+  // Count the number of tasks in the  column
   const taskCount = projectList.length;
 
   // HelpPopover for displaying column description/help info
