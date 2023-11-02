@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
 import nurseImage from "../Images/genderNeutralWorker.png";
+import { collection, query, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+import { useEffect } from "react";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function ProfileSection() {
+
+  const [name, setName] = useState<String>("Namn ej funnet");
+  const [department, setDepartment] = useState<String>("Avdelning ej funnen");
+  const [role, setRole] = useState<String>("Roll ej funnen");
+  const { isAuthenticated, isLoading, user } = useAuth0();
+
   const profileSectionStyle = {
     backgroundColor: "lightblue",
     width: "500px",
@@ -37,6 +47,28 @@ function ProfileSection() {
     backgroundImage: `url(${nurseImage})`, // Set the image as background
     backgroundSize: "cover",
   };
+
+  async function setItems() {
+    if (user?.name) {
+      setName(user.name)
+    }
+    if (user?.clinic){
+      setDepartment(user.clinic)
+    }
+    if (user?.profession){
+      setRole(user.profession)
+    }
+
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      await setItems(); //async function ensures that goal has been fetched before fetching projects
+      
+    }
+
+    fetchData();
+  }, [setItems]);
   
 
   return (
@@ -46,8 +78,9 @@ function ProfileSection() {
       </div>
       <div style={rightDivStyle}>
         <h1>Min Profil</h1>
-        <h3>Namn</h3>
-        <h3>Avdelning</h3>
+        <h3>{name}</h3>
+        <h3>{department}</h3>
+        <h3>{role}</h3>
         <CreateNewProject />
       </div>
     </div>
