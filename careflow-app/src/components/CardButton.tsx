@@ -50,7 +50,7 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
       >
         <div className="outerContainer">
           <div className="tags">
-          {tags.map((tag, index) => (
+          {tags.slice(0, 2).map((tag, index) => (
               <React.Fragment key={index}>
                 <span style={TagContainerStyle}>{tag}</span>
               </React.Fragment>
