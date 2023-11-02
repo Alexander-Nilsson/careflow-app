@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
 import nurseImage from "../Images/genderNeutralWorker.png";
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useEffect } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
+
+
 
 function ProfileSection() {
 
@@ -48,17 +50,33 @@ function ProfileSection() {
     backgroundSize: "cover",
   };
 
-  async function setItems() {
-    if (user?.name) {
-      setName(user.name)
-    }
-    if (user?.clinic){
-      setDepartment(user.clinic)
-    }
-    if (user?.profession){
-      setRole(user.profession)
-    }
+  async function getUser2(username:string){
+    const docRef = doc(db, "users", username);
+        const docSnap = await getDoc(docRef);
 
+        if (docSnap.exists()) {
+           console.log("Document data:", docSnap.data());
+           setName(docSnap.data().first_name)
+           setDepartment(docSnap.data().clinic)
+           setRole(docSnap.data().profession)
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+        }
+        return docSnap.data();
+  }
+
+  async function setItems() {
+    
+    
+
+    if (user?.name) {
+   
+     
+      getUser2(user.name)
+     
+
+  }
   }
 
   useEffect(() => {
