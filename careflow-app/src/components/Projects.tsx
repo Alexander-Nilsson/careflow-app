@@ -17,6 +17,22 @@ class Project {
   centrum: String;
   tags: Array<string>;
   date_created: Timestamp;
+  checklist_plan: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_do: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_study: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_act: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
 
   constructor(
     id: string,
@@ -26,7 +42,23 @@ class Project {
     place: string,
     centrum: string,
     tags: Array<string>,
-    date_created: Timestamp
+    date_created: Timestamp,
+    checklist_plan: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    },
+    checklist_do: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    },
+    checklist_study: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    },
+    checklist_act: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    }
   ) {
     //tags : Array<string>, projectMembers : Array<string>, projectLeader : Array<string>, place : string, notesStudy : string, notesDo : string, notesPlan : string, notesAct : string, iteration : number, filesStudy : Array<string>, filesDo : Array<string>, filesPlan : Array<string>, filesAct : Array<string>, dateCreated : Date, comments : Array<string>, closed : boolean, clinic : string, centrum : string) {
 
@@ -38,6 +70,10 @@ class Project {
     this.centrum = centrum;
     this.tags = tags;
     this.date_created = date_created;
+    this.checklist_plan = checklist_plan;
+    this.checklist_do = checklist_do;
+    this.checklist_study = checklist_study;
+    this.checklist_act = checklist_act;
   }
 
   toString() {
@@ -102,10 +138,44 @@ function Projects() {
         centrum: projectData.centrum,
         tags: projectData.tags,
         date_created: projectData.date_created,
+        checklist_plan: {
+          checklist_item: projectData.checklist_plan.checklist_item,
+          checklist_done: projectData.checklist_plan.checklist_done,
+        },
+        checklist_do: {
+          checklist_item: projectData.checklist_do.checklist_item,
+          checklist_done: projectData.checklist_do.checklist_done,
+        },
+        checklist_study: {
+          checklist_item: projectData.checklist_study.checklist_item,
+          checklist_done: projectData.checklist_study.checklist_done,
+        },
+        checklist_act: {
+          checklist_item: projectData.checklist_act.checklist_item,
+          checklist_done: projectData.checklist_act.checklist_done,
+        },
       };
     },
     fromFirestore: (snapshot: any, options: any) => {
       const data = snapshot.data(options);
+
+      const checklist_plan = {
+        checklist_item: data.checklist_plan.checklist_item,
+        checklist_done: data.checklist_plan.checklist_done,
+      };
+      const checklist_do = {
+        checklist_item: data.checklist_do.checklist_item,
+        checklist_done: data.checklist_do.checklist_done,
+      };
+      const checklist_study = {
+        checklist_item: data.checklist_study.checklist_item,
+        checklist_done: data.checklist_study.checklist_done,
+      };
+      const checklist_act = {
+        checklist_item: data.checklist_act.checklist_item,
+        checklist_done: data.checklist_act.checklist_done,
+      };
+
       return new Project(
         data.id,
         data.title,
@@ -114,11 +184,14 @@ function Projects() {
         data.place,
         data.centrum,
         data.tags,
-        data.date_created
+        data.date_created,
+        checklist_plan,
+        checklist_do,
+        checklist_study,
+        checklist_act
       );
     },
   };
-
 
   // Fetching each project by ID, converting them into objects and storing them in array
   const [projectList, setProjectList] = useState([] as Array<any>);
@@ -130,6 +203,7 @@ function Projects() {
     for (let i = 0; i < cardIDs.length; i++) {
       let id = cardIDs[i];
       console.log("Project ID: ", id);
+
       const projectReference = doc(db, "projects", id).withConverter(
         projectConverter
       );
@@ -146,7 +220,6 @@ function Projects() {
     }
     setProjectList(projectList);
   }
-
 
   useEffect(() => {
     if (loading) {
@@ -185,6 +258,10 @@ function Projects() {
                   centrum={project.centrum}
                   tags={project.tags}
                   date_created={project.date_created}
+                  checklist_plan={project.checklist_plan}
+                  checklist_do={project.checklist_do}
+                  checklist_study={project.checklist_study}
+                  checklist_act={project.checklist_act}
                 />
               ))}
           </div>

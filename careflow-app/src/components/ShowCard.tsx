@@ -13,6 +13,22 @@ interface ShowCardProps {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  checklist_plan: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_do: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_study: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_act: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
 }
 
 function ShowCard({
@@ -23,6 +39,10 @@ function ShowCard({
   centrum,
   tags,
   date_created,
+  checklist_plan,
+  checklist_do,
+  checklist_study,
+  checklist_act,
 }: ShowCardProps) {
   const [show, setShow] = useState(false);
 
@@ -31,7 +51,7 @@ function ShowCard({
 
   return (
     <div className={`column-${column}`}>
-      <CardButton title={title} tags = {tags} onClick={modalShow} />
+      <CardButton title={title} tags={tags} onClick={modalShow} />
       <CardModal
         show={show}
         onHide={modalClose}
@@ -42,6 +62,10 @@ function ShowCard({
         centrum={centrum}
         tags={tags}
         date_created={date_created}
+        checklist_plan={checklist_plan}
+        checklist_do={checklist_do}
+        checklist_study={checklist_study}
+        checklist_act={checklist_act}
       />
     </div>
   );
