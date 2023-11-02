@@ -81,17 +81,36 @@ function handleSubmit(e: any) {
   // Read the form data
   const form = e.target;
   const formData = new FormData(form);
-  //fetch("/some-api", { method: form.method, body: formData });
-
-  // Or you can work with it as a plain object:
   const formJson = Object.fromEntries(formData.entries());
-  console.log(formJson);
-  console.log(formJson.title);
 
-  sendToDataBase(formJson);
-  //await setDoc(doc(db, "projects", formJson.title), formJson);
+  let allFieldsFilled = true;
+  let emptyFields = []; // Keep track of empty fields
+
+  for (const [key, value] of Object.entries(formJson)) {
+    if (value === "") {
+      allFieldsFilled = false;
+      emptyFields.push(key); // Add the key of the empty field to the array
+    }
+  }
+
+  // If all fields are filled, or the user confirms they want to submit with empty fields
+  if (
+    allFieldsFilled ||
+    (emptyFields.length > 0 &&
+      window.confirm(
+        `Some fields are empty: ${emptyFields.join(
+          ", "
+        )}. Are you sure you want to submit the form?`
+      ))
+  ) {
+    sendToDataBase(formJson);
+  } else {
+    // If not all fields are filled and the user does not confirm, handle it here
+    console.log("Form submission cancelled.");
+  }
 }
 
+// Writes the formdata to database
 async function sendToDataBase(formJson: any) {
   await setDoc(doc(db, "projects", "test" + formJson.title), formJson);
 }
