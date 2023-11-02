@@ -125,10 +125,12 @@ function KanbanBoard() {
     setProjectList([...projectList, newProject]);
   }
 
+  /*
   function deleteProject(id: Id) {
     const newProjects = projectList.filter((project) => project.id !== id);
     setProjectList(newProjects);
   }
+*/
 
   // Update function for dragdrop
   async function updateProject(id: any, newColumn: any) {
@@ -158,17 +160,6 @@ function KanbanBoard() {
     if (activeId === overId) return;
 
     console.log("DRAG END");
-    console.log("activeId: " + activeId);
-    console.log("overId: " + overId);
-
-    // `overId` is the new phase for the project
-    // uppdate the prodject phase in the database
-    updateProject(activeId, overId).catch((error) => {
-      console.error(
-        "Kanban - Failed to update project phase in Firestore:",
-        error
-      );
-    });
   }
 
   function onDragOver(event: DragOverEvent) {
@@ -185,18 +176,31 @@ function KanbanBoard() {
 
     if (!isActiveAProjet) return;
 
-    // dropping a Task over another Task
+    // Dropping a Task over another Task
     if (isActiveAProjet && isOverAProject) {
       setProjectList((projectList) => {
         const activeIndex = projectList.findIndex((t) => t.id === activeId);
         const overIndex = projectList.findIndex((t) => t.id === overId);
 
+        let newProjectList;
         if (projectList[activeIndex].phase !== projectList[overIndex].phase) {
           projectList[activeIndex].phase = projectList[overIndex].phase;
-          return arrayMove(projectList, activeIndex, overIndex - 1);
+          newProjectList = arrayMove(projectList, activeIndex, overIndex - 1);
+        } else {
+          newProjectList = arrayMove(projectList, activeIndex, overIndex);
         }
 
-        return arrayMove(projectList, activeIndex, overIndex);
+        // Update the project in the database after reassigning to a new phase or position
+        updateProject(activeId, projectList[activeIndex].phase).catch(
+          (error) => {
+            console.error(
+              "Kanban - Failed to update project phase in Firestore:",
+              error
+            );
+          }
+        );
+
+        return newProjectList;
       });
     }
 
@@ -210,6 +214,15 @@ function KanbanBoard() {
         projectList[activeIndex].phase = overId;
         console.log("DROPPING PROJECT OVER COLUMN", { activeIndex });
         return arrayMove(projectList, activeIndex, activeIndex);
+      });
+
+      // `overId` is the new phase for the project
+      // uppdate the prodject phase in the database
+      updateProject(activeId, overId).catch((error) => {
+        console.error(
+          "Kanban - Failed to update project phase in Firestore:",
+          error
+        );
       });
     }
   }
