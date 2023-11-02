@@ -190,6 +190,8 @@ function KanbanBoard() {
           newProjectList = arrayMove(projectList, activeIndex, overIndex);
         }
 
+        console.log("DROPPING PROJECT OVER another task", { activeIndex });
+
         // Update the project in the database after reassigning to a new phase or position
         updateProject(activeId, projectList[activeIndex].phase).catch(
           (error) => {

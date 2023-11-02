@@ -41,7 +41,6 @@ function ShowCard({ project }: ShowCardProps) {
   // Define the style based on drag-and-drop transition
   const style = {
     transition,
-    transform: CSS.Transform.toString(transform),
   };
 
   if (isDragging) {
