@@ -299,6 +299,20 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               </div>
             </div>
           </div>
+          <div className="mb-3 text-center">
+            <label style={TitleStyle}>Lägg till en beskrivning</label>
+            <input
+              title="description"
+              name="title"
+              type="text"
+              className="form-control"
+              onKeyPress={(
+                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+              ) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
+            ></input>
+          </div>
 
           <div className="mb-3 text">
             <Dropdown>
