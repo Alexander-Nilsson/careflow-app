@@ -1,6 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+//npm install --save react-circular-progressbar
 
 import {
   Calendar,
@@ -8,6 +11,7 @@ import {
   GeoAltFill,
   Circle,
   CheckCircle,
+  PlusLg,
 } from "react-bootstrap-icons";
 
 const ButtonStyle = {
@@ -17,7 +21,7 @@ const ButtonStyle = {
   padding: "10px 20px",
   border: "none",
   cursor: "pointer",
-  marginTop: "50px",
+  marginTop: "20px",
 };
 
 const IconStyle = {
@@ -107,7 +111,7 @@ interface CardModalProps {
   };
 }
 
-interface SharedContentTopProps {
+interface ModalContentProps {
   title: string;
   tags: Array<string>;
   date_created: Timestamp;
@@ -116,17 +120,60 @@ interface SharedContentTopProps {
   content: string;
   column: string;
   active_tab: number;
-}
-
-interface SpecificContentProps {
   checklist: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
   };
 }
 
-// The content at the top of the modal (that all phases have in common)
-function SharedContentTop({
+interface PhasePercentageProps {
+  percentage: number;
+}
+
+// Funktion som kollar om ikonen bredvid fasen ska vara checkad eller inte
+function getPhaseIcon(phase: number, column: string, marginLeft: number) {
+  const isCheck = parseInt(column) > phase;
+  const iconStyle = {
+    marginLeft: `${marginLeft}px`,
+    marginRight: "10px",
+  };
+
+  return isCheck ? (
+    <CheckCircle style={iconStyle} />
+  ) : (
+    <Circle style={iconStyle} />
+  );
+}
+
+function PhasePercentage({ percentage }: PhasePercentageProps) {
+  return (
+    <>
+      <div style={{ width: 120, height: 120 }}>
+        <CircularProgressbar
+          value={percentage}
+          text={`${percentage}%`}
+          styles={{
+            path: {
+              // Färgen på progress-cirkeln
+              stroke: `rgba(5, 31, 110)`,
+            },
+            trail: {
+              // Färgen på cirkeln i bakgrunden
+              stroke: "#AEAEAE",
+            },
+            text: {
+              fill: "#AEAEAE",
+              fontSize: "25px",
+            },
+          }}
+        />
+      </div>
+    </>
+  );
+}
+
+// Innehållet i modalen
+function ModalContent({
   title,
   tags,
   date_created,
@@ -135,44 +182,86 @@ function SharedContentTop({
   content,
   column,
   active_tab,
-}: SharedContentTopProps) {
+  checklist,
+}: ModalContentProps) {
   const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
+  // Hanterar förändringar av checkboxarna i checklistan
+  const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
+
+  const handleCheckboxChange = (index: number) => {
+    setChecklistDone((prevChecklistDone) => {
+      const newChecklistDone = [...prevChecklistDone]; // Skapa en kopia av booleanens tidigare state
+      newChecklistDone[index] = !newChecklistDone[index]; // Ändra kopians state
+      return newChecklistDone; // Returnera det nya statet
+    });
+
+    // Här i måste vi också ändra boolean-värdet i databasen!
+  };
+
+  // Räknar ut fasens progress i procent baserat på antal gjorda tasks i checklistan
+  function calculatePercentage() {
+    const totalItems = checklistDone.length; // Räknar totala antalet objekt i checklist_done-arrayen
+    const trueCount = checklistDone.filter((value) => value).length; // Räknar antalet "true" i checklist_done-arrayen
+    const percentageFinished = (trueCount / totalItems) * 100; // Beräknar hur mycket av fasen som är avklarad (i procent)
+
+    return percentageFinished;
+  }
 
   return (
     <>
+      {/* Innehåll som är samma oberoende fas */}
+
       <div style={{ display: "flex" }}>
         <div style={{ width: "63%" }}>
-          <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
-          <div style={TagStyle}>
-            {tags.map((tag, index) => (
-              <React.Fragment key={index}>
-                <span style={TagContainerStyle}>{tag}</span>
-              </React.Fragment>
-            ))}
-          </div>
-          <div style={{ marginBottom: "15px" }}>
-            <div style={FlexAndCenter}>
-              <Calendar style={IconStyle} />
+          <div style={{ display: "flex", marginBottom: "20px" }}>
+            <div style={{ width: "60%" }}>
+              <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
+              <div style={TagStyle}>
+                {tags.map((tag, index) => (
+                  <React.Fragment key={index}>
+                    <span style={TagContainerStyle}>{tag}</span>
+                  </React.Fragment>
+                ))}
+              </div>
               <div>
-                <label>{formattedDate}</label>
+                <div style={FlexAndCenter}>
+                  <Calendar style={IconStyle} />
+                  <div>
+                    <label>{formattedDate}</label>
+                  </div>
+                </div>
+                <div style={FlexAndCenter}>
+                  <Folder2Open style={IconStyle} />
+                  <div>
+                    <label>{centrum}</label>
+                  </div>
+                </div>
+                <div style={FlexAndCenter}>
+                  <GeoAltFill style={IconStyle} />
+                  <div>
+                    <label>{place}</label>
+                  </div>
+                </div>
               </div>
             </div>
-            <div style={FlexAndCenter}>
-              <Folder2Open style={IconStyle} />
-              <div>
-                <label>{centrum}</label>
-              </div>
-            </div>
-            <div style={FlexAndCenter}>
-              <GeoAltFill style={IconStyle} />
-              <div>
-                <label>{place}</label>
-              </div>
-            </div>
-            <div style={{ display: "flex", justifyContent: "right" }}>
+
+            <div
+              style={{
+                width: "40%",
+                display: "flex",
+                justifyContent: "right",
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "40px",
+              }}
+            >
+              <PhasePercentage percentage={calculatePercentage()} />
+
               <Button
                 style={ButtonStyle}
-                disabled={active_tab !== parseInt(column)}
+                disabled={
+                  active_tab !== parseInt(column) || calculatePercentage() < 100
+                }
               >
                 Markera fas som klar
               </Button>
@@ -197,54 +286,13 @@ function SharedContentTop({
           </Form.Group>
         </div>
       </div>
-    </>
-  );
-}
 
-// The content att the bottom of the modal (that all phases have in common)
-function SharedContentBottom() {
-  return (
-    <>
-      <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
-        <Form.Label>
-          <b>Liknande förbättringsarbeten</b>
-        </Form.Label>
-        <div style={WhiteContainerStyle}>
-          Här ska det finnas förslag på liknande förbättringsarbeten
-        </div>
-      </Form.Group>
-    </>
-  );
-}
+      {/* Innehåll specifikt för den aktuella fasen */}
 
-// The content that is specific for each phase
-function SpecificContent({ checklist }: SpecificContentProps) {
-  const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
-  const handleCheckboxChange = (index: number) => {
-    setChecklistDone((prevChecklistDone) => {
-      const newChecklistDone = [...prevChecklistDone]; // Skapa en kopia av booleanens tidigare state
-      newChecklistDone[index] = !newChecklistDone[index]; // Ändra kopians state
-      return newChecklistDone; // Returnera det nya statet
-    });
-
-    // Här i måste vi också ändra boolean-värdet i databasen!
-  };
-
-  function calculateProcent() {
-    const totalItems = checklistDone.length; // Räknar totala antalet objekt i checklist_done-arrayen
-    const trueCount = checklistDone.filter((value) => value).length; // Räknar antalet "true" i checklist_done-arrayen
-    const percentageFinished = (trueCount / totalItems) * 100; // Beräknar hur mycket av fasen som är avklarad (i procent)
-
-    return percentageFinished + "%";
-  }
-
-  return (
-    <>
       <Form>
         <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
           <Form.Label>
             <b>Checklista </b>
-            <i>{calculateProcent()}</i>
           </Form.Label>
           <div style={WhiteContainerStyle}>
             {checklist.checklist_item.map((item, index) => (
@@ -256,6 +304,22 @@ function SpecificContent({ checklist }: SpecificContentProps) {
                 onChange={() => handleCheckboxChange(index)} //Hantera checkbox-förändring
               />
             ))}
+            <Button
+              style={{
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                fontSize: "15.5px",
+                padding: "0px",
+                border: "none",
+                cursor: "pointer",
+                marginTop: "17px",
+              }}
+            >
+              <div style={FlexAndCenter}>
+                <PlusLg style={{ marginRight: "9px" }} />
+                <div>Lägg till ny åtgärd</div>
+              </div>
+            </Button>
           </div>
         </Form.Group>
 
@@ -273,25 +337,22 @@ function SpecificContent({ checklist }: SpecificContentProps) {
           <Form.Control type="file" />
         </Form.Group>
       </Form>
+
+      {/* Innehåll som är samma oberoende av fas */}
+
+      <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
+        <Form.Label>
+          <b>Liknande förbättringsarbeten</b>
+        </Form.Label>
+        <div style={WhiteContainerStyle}>
+          Här ska det finnas förslag på liknande förbättringsarbeten
+        </div>
+      </Form.Group>
     </>
   );
 }
 
-function getPhaseIcon(phase: number, column: string, marginLeft: number) {
-  //Kollar om ikonen bredvid fasen ska vara checked eller inte
-  const isCheck = parseInt(column) > phase;
-  const iconStyle = {
-    marginLeft: `${marginLeft}px`,
-    marginRight: "10px",
-  };
-
-  return isCheck ? (
-    <CheckCircle style={iconStyle} />
-  ) : (
-    <Circle style={iconStyle} />
-  );
-}
-
+// Modalen för förbättringsarbetet
 function CardModal({
   show,
   onHide,
@@ -319,7 +380,7 @@ function CardModal({
         <Tabs defaultActiveKey={"phase" + column} justify>
           {/*------ PLANERA ------*/}
 
-          {/* Planera-tabens utseende */}
+          {/* Planera-taben */}
           <Tab
             eventKey="phase2"
             title={
@@ -331,7 +392,7 @@ function CardModal({
           >
             {/* Innehållet i planera-taben */}
 
-            <SharedContentTop
+            <ModalContent
               title={title}
               tags={tags}
               date_created={date_created}
@@ -340,14 +401,13 @@ function CardModal({
               content={content}
               column={column}
               active_tab={2}
+              checklist={checklist_plan}
             />
-            <SpecificContent checklist={checklist_plan} />
-            <SharedContentBottom />
           </Tab>
 
           {/*------ GENOMFÖRA ------*/}
 
-          {/* Genomföra-tabens utseende */}
+          {/* Genomföra-taben */}
           <Tab
             eventKey="phase3"
             title={
@@ -358,7 +418,7 @@ function CardModal({
             }
           >
             {/* Innehållet i genomföra-taben */}
-            <SharedContentTop
+            <ModalContent
               title={title}
               tags={tags}
               date_created={date_created}
@@ -367,12 +427,13 @@ function CardModal({
               content={content}
               column={column}
               active_tab={3}
+              checklist={checklist_do}
             />
-            <SpecificContent checklist={checklist_do} />
-            <SharedContentBottom />
           </Tab>
 
           {/*------STUDERA ------*/}
+
+          {/* Studera-taben */}
 
           <Tab
             eventKey="phase4"
@@ -384,7 +445,7 @@ function CardModal({
             }
           >
             {/* Innehållet i studera-taben */}
-            <SharedContentTop
+            <ModalContent
               title={title}
               tags={tags}
               date_created={date_created}
@@ -393,12 +454,13 @@ function CardModal({
               content={content}
               column={column}
               active_tab={4}
+              checklist={checklist_study}
             />
-            <SpecificContent checklist={checklist_study} />
-            <SharedContentBottom />
           </Tab>
 
           {/*------- AGERA ------*/}
+
+          {/* Agera-taben */}
 
           <Tab
             eventKey="phase5"
@@ -410,7 +472,7 @@ function CardModal({
             }
           >
             {/* Innehållet i agera-taben */}
-            <SharedContentTop
+            <ModalContent
               title={title}
               tags={tags}
               date_created={date_created}
@@ -419,9 +481,8 @@ function CardModal({
               content={content}
               column={column}
               active_tab={5}
+              checklist={checklist_act}
             />
-            <SpecificContent checklist={checklist_act} />
-            <SharedContentBottom />
           </Tab>
         </Tabs>
       </Modal.Body>
