@@ -21,14 +21,33 @@ export interface ProjectCardProps {
 const ProjectCard: React.FC<ProjectCardProps> = ({ title, date_created, place, tags, phase, displayPhaseImage}) => {
     const cardBodyStyle = {
         height: "180px",
-       
+        alignItems: "center" as "center"
     };
 
     const titleStyle = {
         fontFamily: "Avenir",
         fontWeight: "bold", 
         marginBottom: "0rem",
+        marginTop: "0.3rem"
     };
+
+    const badgeStyle = {
+        fontFamily: "Avenir",
+        marginTop: "5px",
+        marginBottom: "10px",
+        marginRight: "0.3rem",
+        backgroundColor: "#051F6E",
+        color: "white",
+        fontSize: "12px",
+        borderRadius: "10px",
+        padding: "2px 10px",
+        
+    }
+    const iconContainerStyle = {
+        display: "flex",
+        alignItems: "center",
+    };
+
 
     const formatDate = (timestamp: any) => {
         if (timestamp instanceof Date) {
@@ -57,9 +76,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ title, date_created, place, t
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <div>
                     {tags.map((tag, index) => (
-                        <Badge bg="dark" key={index} className="mr-2" style={{fontFamily: "Avenir",marginRight: "0.3rem", marginBottom: "0.4rem" }}>
-                        {tag}
-                        </Badge>
+                        <React.Fragment key={index}>
+                        <span style={badgeStyle}>{tag}</span>
+                        </React.Fragment>
                     ))}
                        <Card.Title style={titleStyle}>{title}</Card.Title>
                         <Card.Text style ={{fontFamily: "Avenir",marginBottom:"1rem"}}>
@@ -72,10 +91,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ title, date_created, place, t
                         </span>
                             {place}
                         </Card.Text>
+                        <div style ={iconContainerStyle}>
                         <GrTextAlignLeft style ={{marginLeft: "0.5rem",marginRight: "0.6rem"}}/>
                         <BiFileBlank  style ={{marginRight: "0.6rem"}}/>
-                        <BiComment style = {{marginRight: "11rem"}}/>
-                        
+                        <BiComment style = {{marginRight: "10rem"}}/>
+                        </div>
                     </div>
                     {displayPhaseImage && (
                         <div style={{ position: "absolute", bottom: "1rem", right: "1rem" }}>
