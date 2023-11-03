@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
-import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
+import { Modal, Button, Form, Tabs, Tab, Dropdown } from "react-bootstrap";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 //npm install --save react-circular-progressbar
@@ -22,6 +22,16 @@ const ButtonStyle = {
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
+};
+
+const SaveChecklistButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontSize: "16px",
+  padding: "10px 20px",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "20px",
+  width: "100%",
 };
 
 const IconStyle = {
@@ -145,6 +155,7 @@ function getPhaseIcon(phase: number, column: string, marginLeft: number) {
   );
 }
 
+// Funktion som returnerar den cirkulära progress-baren
 function PhasePercentage({ percentage }: PhasePercentageProps) {
   return (
     <>
@@ -195,7 +206,7 @@ function ModalContent({
       return newChecklistDone; // Returnera det nya statet
     });
 
-    // Här i måste vi också ändra boolean-värdet i databasen!
+    //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA BOOLEAN-VÄRDET
   };
 
   // Räknar ut fasens progress i procent baserat på antal gjorda tasks i checklistan
@@ -204,8 +215,37 @@ function ModalContent({
     const trueCount = checklistDone.filter((value) => value).length; // Räknar antalet "true" i checklist_done-arrayen
     const percentageFinished = (trueCount / totalItems) * 100; // Beräknar hur mycket av fasen som är avklarad (i procent)
 
-    return percentageFinished;
+    return Math.round(percentageFinished);
   }
+
+  // Hanterar modalen som öppnas när man skapar en ny checklist task
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  // Gör så att den nya tasken läggs till i checklist-arrayen när man klickar på "lägg till åtgärd"-knappen
+  const [newTask, setNewTask] = useState("");
+  const [checklistItem, setChecklistItem] = useState(checklist.checklist_item);
+
+  const handleSaveModal = (newTask: string) => {
+    //Ser till så att åtgärdsfältet är ifyllt innan tasken läggs till
+    if (newTask.trim() !== "") {
+      setShowModal(false);
+      const updatedChecklistItem = [...checklistItem, newTask];
+      const updatedChecklistDone = [...checklistDone, false];
+      setChecklistItem(updatedChecklistItem);
+      setChecklistDone(updatedChecklistDone);
+      setNewTask("");
+    }
+
+    //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA CHECKLISTAN
+  };
 
   return (
     <>
@@ -295,7 +335,7 @@ function ModalContent({
             <b>Checklista </b>
           </Form.Label>
           <div style={WhiteContainerStyle}>
-            {checklist.checklist_item.map((item, index) => (
+            {checklistItem.map((item, index) => (
               <Form.Check
                 key={index}
                 type="checkbox"
@@ -314,6 +354,7 @@ function ModalContent({
                 cursor: "pointer",
                 marginTop: "17px",
               }}
+              onClick={handleShowModal}
             >
               <div style={FlexAndCenter}>
                 <PlusLg style={{ marginRight: "9px" }} />
@@ -322,6 +363,63 @@ function ModalContent({
             </Button>
           </div>
         </Form.Group>
+
+        <Modal
+          show={showModal}
+          onHide={handleCloseModal}
+          style={{ top: "25%", fontFamily: "Avenir" }}
+        >
+          <Modal.Header closeButton></Modal.Header>
+          <Modal.Body className="d-flex justify-content-center align-items-center">
+            <Form style={{ width: "90%" }}>
+              <div className="mb-3 text-center">
+                <label>Åtgärd</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={newTask}
+                  onChange={(e) => setNewTask(e.target.value)}
+                ></input>
+              </div>
+              <div className="mb-3 text-center">
+                <label>Viktning</label>
+                <input
+                  type="range"
+                  className="form-range"
+                  min="1"
+                  max="10"
+                ></input>
+              </div>
+              <div className="mb-3 text-center">
+                <Dropdown>
+                  <Dropdown.Toggle
+                    style={{
+                      width: "100%",
+                      backgroundColor: "#FFFFFF",
+                      color: "#000000",
+                      border: "1px solid #DDDDDD",
+                    }}
+                  >
+                    Lägg till kollegor
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu style={{ width: "100%" }}>
+                    <Dropdown.Item href="#/action-1">Kollega 1</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">Kollega 2</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">Kollega 3</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div className="mb-3 text-center">
+                <Button
+                  style={SaveChecklistButtonStyle}
+                  onClick={() => handleSaveModal(newTask)}
+                >
+                  Lägg till ny åtgärd
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
 
         <Form.Group controlId="planeraNotes" style={FormGroupStyle}>
           <Form.Label>
