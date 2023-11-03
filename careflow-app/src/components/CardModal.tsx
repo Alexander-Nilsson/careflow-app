@@ -381,7 +381,7 @@ function ModalContent({
                   onChange={(e) => setNewTask(e.target.value)}
                 ></input>
               </div>
-              <div className="mb-3 text-center">
+              {/*<div className="mb-3 text-center">
                 <label>Viktning</label>
                 <input
                   type="range"
@@ -389,7 +389,7 @@ function ModalContent({
                   min="1"
                   max="10"
                 ></input>
-              </div>
+            </div>*/}
               <div className="mb-3 text-center">
                 <Dropdown>
                   <Dropdown.Toggle
