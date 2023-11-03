@@ -121,6 +121,22 @@ function KanbanBoard() {
       centrum: "centrum",
       tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
+      checklist_plan: {
+        checklist_item: [],
+        checklist_done: [],
+      },
+      checklist_do: {
+        checklist_item: [],
+        checklist_done: [],
+      },
+      checklist_study: {
+        checklist_item: [],
+        checklist_done: [],
+      },
+      checklist_act: {
+        checklist_item: [],
+        checklist_done: [],
+      },
     };
     setProjectList([...projectList, newProject]);
   }

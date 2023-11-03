@@ -30,6 +30,22 @@ class Project {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  checklist_plan: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_do: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_study: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_act: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
 
   constructor(
     id: Id,
@@ -39,7 +55,23 @@ class Project {
     place: string,
     centrum: string,
     tags: Array<string>,
-    date_created: Timestamp
+    date_created: Timestamp,
+    checklist_plan: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    },
+    checklist_do: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    },
+    checklist_study: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    },
+    checklist_act: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+    }
   ) {
     this.id = id;
     this.title = title;
@@ -49,6 +81,10 @@ class Project {
     this.centrum = centrum;
     this.tags = tags;
     this.date_created = date_created;
+    this.checklist_plan = checklist_plan;
+    this.checklist_do = checklist_do;
+    this.checklist_study = checklist_study;
+    this.checklist_act = checklist_act;
   }
 }
 
@@ -68,9 +104,43 @@ function Projects() {
       centrum: projectData.centrum,
       tags: projectData.tags,
       date_created: projectData.date_created,
+      checklist_plan: {
+        checklist_item: projectData.checklist_plan.checklist_item,
+        checklist_done: projectData.checklist_plan.checklist_done,
+      },
+      checklist_do: {
+        checklist_item: projectData.checklist_do.checklist_item,
+        checklist_done: projectData.checklist_do.checklist_done,
+      },
+      checklist_study: {
+        checklist_item: projectData.checklist_study.checklist_item,
+        checklist_done: projectData.checklist_study.checklist_done,
+      },
+      checklist_act: {
+        checklist_item: projectData.checklist_act.checklist_item,
+        checklist_done: projectData.checklist_act.checklist_done,
+      },
     }),
     fromFirestore: (snapshot: any, options: any) => {
       const data = snapshot.data(options);
+
+      const checklist_plan = {
+        checklist_item: data.checklist_plan.checklist_item,
+        checklist_done: data.checklist_plan.checklist_done,
+      };
+      const checklist_do = {
+        checklist_item: data.checklist_do.checklist_item,
+        checklist_done: data.checklist_do.checklist_done,
+      };
+      const checklist_study = {
+        checklist_item: data.checklist_study.checklist_item,
+        checklist_done: data.checklist_study.checklist_done,
+      };
+      const checklist_act = {
+        checklist_item: data.checklist_act.checklist_item,
+        checklist_done: data.checklist_act.checklist_done,
+      };
+
       return new Project(
         snapshot.id,
         data.title,
@@ -79,7 +149,11 @@ function Projects() {
         data.place,
         data.centrum,
         data.tags,
-        data.date_created
+        data.date_created,
+        checklist_plan,
+        checklist_do,
+        checklist_study,
+        checklist_act
       );
     },
   };
@@ -126,7 +200,12 @@ function Projects() {
 
   return (
     <>
-      {isLoading ? <p>Loading...</p> : <h1>Förändringsarbeten </h1>}
+      {isLoading ? (
+        <p>Loading...</p> // Show a loading indicator
+      ) : (
+        <h1>Förändringsarbeten</h1>
+      )}
+
       <ProjectContext.Provider value={{ projectList, setProjectList }}>
         <KanbanBoard />
       </ProjectContext.Provider>

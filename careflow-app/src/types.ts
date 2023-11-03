@@ -16,4 +16,20 @@ export type Project = {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  checklist_plan: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_do: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_study: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
+  checklist_act: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+  };
 };
