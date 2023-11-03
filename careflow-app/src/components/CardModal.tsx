@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Modal, Button, Form, Tabs, Tab, Dropdown } from "react-bootstrap";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-//npm install --save react-circular-progressbar
+// Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
 import {
   Calendar,
