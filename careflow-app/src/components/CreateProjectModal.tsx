@@ -6,6 +6,8 @@ import {
   Bullseye,
   QuestionCircleFill,
 } from "react-bootstrap-icons";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -72,20 +74,74 @@ interface CreateProjectModalProps {
   onHide: () => void;
 }
 
+function handleSubmit(e: any) {
+  // Prevent the browser from reloading the page
+  e.preventDefault();
+
+  // Read the form data
+  const form = e.target;
+  const formData = new FormData(form);
+  const formJson = Object.fromEntries(formData.entries());
+
+  let allFieldsFilled = true;
+  let emptyFields = []; // Keep track of empty fields
+
+  for (const [key, value] of Object.entries(formJson)) {
+    if (value === "") {
+      allFieldsFilled = false;
+      emptyFields.push(key); // Add the key of the empty field to the array
+    }
+  }
+
+  // If all fields are filled, or the user confirms they want to submit with empty fields
+  if (
+    allFieldsFilled ||
+    (emptyFields.length > 0 &&
+      window.confirm(
+        `Some fields are empty: ${emptyFields.join(
+          ", "
+        )}. Are you sure you want to submit the form?`
+      ))
+  ) {
+    sendToDataBase(formJson);
+  } else {
+    // If not all fields are filled and the user does not confirm, handle it here
+    console.log("Form submission cancelled.");
+  }
+}
+
+// Writes the formdata to database
+async function sendToDataBase(formJson: any) {
+  await setDoc(doc(db, "projects", "test" + formJson.title), formJson);
+}
+
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <OverlayTrigger trigger="hover" placement="right" overlay={HelpPopover}>
+        <OverlayTrigger
+          trigger={["hover", "focus"]}
+          placement="right"
+          overlay={HelpPopover}
+        >
           <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
         </OverlayTrigger>
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
-        <Form style={{ width: "90%" }}>
+        <Form method="post" onSubmit={handleSubmit} style={{ width: "90%" }}>
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Titel</label>
-            <input type="text" className="form-control"></input>
+            <input
+              name="title"
+              type="text"
+              className="form-control"
+              onKeyPress={(
+                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+              ) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
+            ></input>
           </div>
 
           <div className="mb-3">
@@ -111,7 +167,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 className="input-group input-group-sm"
                 style={{
                   position: "absolute",
-                  bottom: "0",
                   left: "0",
                   right: "0",
                   marginBottom: "0",
@@ -120,9 +175,17 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               >
                 <span className="input-group-text">+</span>
                 <input
+                  title="purpose"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
+                  onKeyPress={(
+                    e: React.KeyboardEvent<
+                      HTMLInputElement | HTMLTextAreaElement
+                    >
+                  ) => {
+                    e.key === "Enter" && e.preventDefault();
+                  }}
                 ></input>
               </div>
             </div>
@@ -151,7 +214,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 className="input-group input-group-sm"
                 style={{
                   position: "absolute",
-                  bottom: "0",
                   left: "0",
                   right: "0",
                   marginBottom: "0",
@@ -160,9 +222,17 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               >
                 <span className="input-group-text">+</span>
                 <input
+                  name="description"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
+                  onKeyPress={(
+                    e: React.KeyboardEvent<
+                      HTMLInputElement | HTMLTextAreaElement
+                    >
+                  ) => {
+                    e.key === "Enter" && e.preventDefault();
+                  }}
                 ></input>
               </div>
             </div>
@@ -191,7 +261,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 className="input-group input-group-sm"
                 style={{
                   position: "absolute",
-                  bottom: "0",
                   left: "0",
                   right: "0",
                   marginBottom: "0",
@@ -200,9 +269,17 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               >
                 <span className="input-group-text">+</span>
                 <input
+                  name="samlaideer"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
+                  onKeyPress={(
+                    e: React.KeyboardEvent<
+                      HTMLInputElement | HTMLTextAreaElement
+                    >
+                  ) => {
+                    e.key === "Enter" && e.preventDefault();
+                  }}
                 ></input>
               </div>
             </div>
@@ -210,18 +287,43 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
 
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Lägg till avdelning</label>
-            <input type="text" className="form-control"></input>
+            <input
+              type="text"
+              className="form-control"
+              onKeyPress={(
+                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+              ) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
+            ></input>
           </div>
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Lägg till kollegor</label>
-            <input type="text" className="form-control"></input>
+            <input
+              type="text"
+              className="form-control"
+              onKeyPress={(
+                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+              ) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
+            ></input>
           </div>
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Lägg till beskrivande nyckelord</label>
-            <input type="text" className="form-control"></input>
+            <input
+              type="text"
+              className="form-control"
+              onKeyPress={(
+                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+              ) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
+            ></input>
           </div>
           <div className="mb-3 text-center">
             <Button
+              type="submit"
               id="SkapaFörbättringsarbete"
               onClick={onHide}
               style={ButtonStyle}

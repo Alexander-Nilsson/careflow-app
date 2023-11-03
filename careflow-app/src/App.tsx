@@ -6,27 +6,56 @@ import NavigationBar from './components/Navbar';
 import Start from './components/Start';
 import Login from './components/Login'
 import Projects from './components/Projects';
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from './firebase';
 import { useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 
 function App() {
 
-  const [user, loading] = useAuthState(auth);
+  const { isAuthenticated, isLoading, logout } = useAuth0();
+  const TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
+  let timeoutId: number | undefined;;
+
+  // updates activity by user
+  const updateActivity = () => {
+    if (isAuthenticated) {
+      localStorage.setItem('lastActivity', Date.now().toString());
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = window.setTimeout(checkActivity, TIMEOUT);
+    }
+  };
+
+  // runs after an hour of inactivity and logs the user out
+  const checkActivity = () => {
+    const lastActivity = localStorage.getItem('lastActivity');
+    if (lastActivity) {
+      const elapsed = Date.now() - parseInt(lastActivity);
+      if (elapsed > TIMEOUT) {
+        logout();
+      }
+    }
+  };
+
+  // listen for user activity
+  window.addEventListener('click', updateActivity);
+  window.addEventListener('keypress', updateActivity);
 
   useEffect(() => {
-    if (loading) {
+    if (isLoading) {
       return;
     }
-  }, [user, loading]);
+    if (isAuthenticated) updateActivity();
+  }, [isLoading, isAuthenticated]);
 
   return (
     <>
-      {/* {user && <NavigationBar />} */}
-      <NavigationBar />
+      {isAuthenticated && <NavigationBar />}
       <div>
         <Routes>
-        <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/start" element={<Start />} />
           <Route path="/forandringsarbeten" element={<Projects />} />

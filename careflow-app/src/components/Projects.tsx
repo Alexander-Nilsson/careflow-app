@@ -1,20 +1,33 @@
-import { SetStateAction, useEffect, useState } from "react";
-import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
+import { createContext, useEffect, useState } from "react";
+import {
+  collection,
+  query,
+  getDocs,
+  doc,
+  getDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
-import ShowCard from "./ShowCard";
-import CreateNewProject from "./CreateNewProject";
-import { render } from "react-dom";
-import { Timestamp } from "firebase/firestore";
+import KanbanBoard from "./KanbanBoard";
+import { Id } from "../types";
+import { useAuth0 } from "@auth0/auth0-react";
+
+// Context to pass functions to KANBAN
+export interface ProjectContextType {
+  projectList: Project[];
+  setProjectList: React.Dispatch<React.SetStateAction<Project[]>>;
+}
+
+export const ProjectContext = createContext<ProjectContextType | null>(null);
 
 class Project {
-  id: String;
-  title: String;
-  description: String;
-  phase: number;
-  place: String;
-  centrum: String;
+  id: Id;
+  title: string;
+  description: string;
+  phase: Id;
+  place: string;
+  centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
   checklist_plan: {
@@ -35,7 +48,7 @@ class Project {
   };
 
   constructor(
-    id: string,
+    id: Id,
     title: string,
     description: string,
     phase: number,
@@ -60,8 +73,6 @@ class Project {
       checklist_done: Array<boolean>;
     }
   ) {
-    //tags : Array<string>, projectMembers : Array<string>, projectLeader : Array<string>, place : string, notesStudy : string, notesDo : string, notesPlan : string, notesAct : string, iteration : number, filesStudy : Array<string>, filesDo : Array<string>, filesPlan : Array<string>, filesAct : Array<string>, dateCreated : Date, comments : Array<string>, closed : boolean, clinic : string, centrum : string) {
-
     this.id = id;
     this.title = title;
     this.description = description;
@@ -75,87 +86,41 @@ class Project {
     this.checklist_study = checklist_study;
     this.checklist_act = checklist_act;
   }
-
-  toString() {
-    return (
-      this.title +
-      ", " +
-      this.description +
-      ", " +
-      this.phase +
-      ", " +
-      this.place +
-      ", " +
-      this.centrum
-    );
-  }
 }
 
 function Projects() {
   const navigate = useNavigate();
-  const [user, loading] = useAuthState(auth);
+  const { isAuthenticated, isLoading, user } = useAuth0();
 
-  //Column titles
-  const columns = [
-    { id: 1, title: "Förslag" },
-    { id: 2, title: "Planera" },
-    { id: 3, title: "Genomföra" },
-    { id: 4, title: "Studera" },
-    { id: 5, title: "Agera" },
-  ];
+  const [projectList, setProjectList] = useState<Project[]>([]);
 
-  let cardIDs: Array<any> = [];
-
-  // Fetch all projects and store their ID's
-  async function fetchProjects() {
-    const q = query(collection(db, "projects")); //create a query
-
-    const querySnapshot = await getDocs(q); //use the query to fetch the items
-
-    let i = 0;
-    querySnapshot.forEach((doc) => {
-      //do something with the response
-      // doc.data() is never undefined for query doc snapshots
-      cardIDs.push(doc.id);
-      console.log("Pushat till ID: ", cardIDs[i]);
-      console.log("Hämtar in: ", doc.id, " => ", doc.data());
-      i++;
-    });
-    const proj = fetchProjectByID();
-
-    return proj;
-  }
-
-  //Firebase project converter, converting the data into instance of Project
   const projectConverter = {
-    toFirestore: (projectData: any) => {
-      return {
-        id: projectData.id,
-        title: projectData.title,
-        description: projectData.description,
-        phase: projectData.phase,
-        place: projectData.place,
-        centrum: projectData.centrum,
-        tags: projectData.tags,
-        date_created: projectData.date_created,
-        checklist_plan: {
-          checklist_item: projectData.checklist_plan.checklist_item,
-          checklist_done: projectData.checklist_plan.checklist_done,
-        },
-        checklist_do: {
-          checklist_item: projectData.checklist_do.checklist_item,
-          checklist_done: projectData.checklist_do.checklist_done,
-        },
-        checklist_study: {
-          checklist_item: projectData.checklist_study.checklist_item,
-          checklist_done: projectData.checklist_study.checklist_done,
-        },
-        checklist_act: {
-          checklist_item: projectData.checklist_act.checklist_item,
-          checklist_done: projectData.checklist_act.checklist_done,
-        },
-      };
-    },
+    toFirestore: (projectData: any) => ({
+      id: projectData.id,
+      title: projectData.title,
+      description: projectData.description,
+      phase: projectData.phase,
+      place: projectData.place,
+      centrum: projectData.centrum,
+      tags: projectData.tags,
+      date_created: projectData.date_created,
+      checklist_plan: {
+        checklist_item: projectData.checklist_plan.checklist_item,
+        checklist_done: projectData.checklist_plan.checklist_done,
+      },
+      checklist_do: {
+        checklist_item: projectData.checklist_do.checklist_item,
+        checklist_done: projectData.checklist_do.checklist_done,
+      },
+      checklist_study: {
+        checklist_item: projectData.checklist_study.checklist_item,
+        checklist_done: projectData.checklist_study.checklist_done,
+      },
+      checklist_act: {
+        checklist_item: projectData.checklist_act.checklist_item,
+        checklist_done: projectData.checklist_act.checklist_done,
+      },
+    }),
     fromFirestore: (snapshot: any, options: any) => {
       const data = snapshot.data(options);
 
@@ -177,7 +142,7 @@ function Projects() {
       };
 
       return new Project(
-        data.id,
+        snapshot.id,
         data.title,
         data.description,
         data.phase,
@@ -193,80 +158,57 @@ function Projects() {
     },
   };
 
-  // Fetching each project by ID, converting them into objects and storing them in array
-  const [projectList, setProjectList] = useState([] as Array<any>);
-  console.log("zzz Init: ", projectList.length);
+  async function fetchProjects() {
+    const q = query(collection(db, "projects"));
+    const querySnapshot = await getDocs(q);
 
-  async function fetchProjectByID() {
-    let projectList: Array<any> = [];
-    console.log("ID array length: ", cardIDs.length);
-    for (let i = 0; i < cardIDs.length; i++) {
-      let id = cardIDs[i];
-      console.log("Project ID: ", id);
+    // Use map to obtain all document IDs
+    const ids = querySnapshot.docs.map((doc) => doc.id);
 
-      const projectReference = doc(db, "projects", id).withConverter(
-        projectConverter
-      );
-      const querySnapshot = await getDoc(projectReference);
-      if (querySnapshot.exists()) {
-        const projectData = querySnapshot.data();
+    // fetch all project data in parallel
+    const projects = await Promise.all(
+      ids.map(async (id) => {
+        const projectReference = doc(db, "projects", id).withConverter(
+          projectConverter
+        );
+        const snapshot = await getDoc(projectReference);
 
-        projectList.push(projectData);
+        if (snapshot.exists()) {
+          return snapshot.data() as Project;
+        }
+        return null;
+      })
+    );
 
-        console.log("zzz Push: ", projectList.length);
-      } else {
-        console.log("No such document!");
-      }
-    }
-    setProjectList(projectList);
+    // Filter out null values (if any) and set the project list state.
+    setProjectList(projects.filter(Boolean) as Project[]);
   }
 
   useEffect(() => {
-    if (loading) {
-      // maybe trigger a loading screen
+    if (isLoading) {
       return;
     }
 
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    // Fetch projects only if the user is authenticated and data is not loading.
     fetchProjects();
-  }, [loading, user]);
-  console.log("zzz Read: ", projectList.length);
+  }, [isLoading, isAuthenticated, user]);
+
   return (
     <>
-      {loading ? (
+      {isLoading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
         <h1>Förändringsarbeten</h1>
       )}
 
-      {/* Removed */}
-      {/* <CreateNewProject /> */}
-
-      <div className="card-grid-container">
-        <p>{}</p>
-        {columns.map((column) => (
-          <div key={column.id} className={`column-${column.id}`}>
-            <h2>{column.title}</h2>
-            {projectList
-              .filter((project) => project.phase === column.id)
-              .map((project) => (
-                <ShowCard
-                  key={project.id}
-                  title={project.title}
-                  content={project.description}
-                  column={project.phase}
-                  place={project.place}
-                  centrum={project.centrum}
-                  tags={project.tags}
-                  date_created={project.date_created}
-                  checklist_plan={project.checklist_plan}
-                  checklist_do={project.checklist_do}
-                  checklist_study={project.checklist_study}
-                  checklist_act={project.checklist_act}
-                />
-              ))}
-          </div>
-        ))}
-      </div>
+      <ProjectContext.Provider value={{ projectList, setProjectList }}>
+        <KanbanBoard />
+      </ProjectContext.Provider>
     </>
   );
 }
