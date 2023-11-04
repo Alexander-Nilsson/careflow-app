@@ -23,7 +23,7 @@ const HelpPopover: React.FC<HelpPopoverProps> = ({ content }) => {
     );
 
 return (
-    <OverlayTrigger trigger="hover" placement="right" overlay={popoverContent}>
+    <OverlayTrigger trigger={["hover", "focus"]} placement="right" overlay={popoverContent}>
         <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
     </OverlayTrigger>
     );
