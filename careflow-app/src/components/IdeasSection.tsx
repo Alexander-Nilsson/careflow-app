@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FormControl, Container, Button } from 'react-bootstrap';
 import { db } from "../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, addDoc, collection } from "firebase/firestore";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -17,19 +17,27 @@ function IdeasSection() {
         marginTop: "0px",
     };
 
+    const ideaInputStyle = {
+        maxHeight: "80px"
+    }
+
     const [value, setValue] = React.useState('');
     const { isAuthenticated, user } = useAuth0();
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setValue(event.target.value);
+        // setValue(event.target.value);
+        console.log("hej")
     };
 
     const handleClick = async () => {
         if (isAuthenticated) {
-            await setDoc(doc(db, "suggestions"), {
-                name: "Los Angeles",
-                state: "CA",
-                country: "USA"
+            await addDoc(collection(db, "suggestions"), {
+                centrum: "Los Angeles",
+                clinic: "CA",
+                date_created: "USA",
+                description: "hej",
+                place: "hej",
+                title: "hej"
               });
         }
     };
@@ -43,7 +51,7 @@ function IdeasSection() {
                     value={value}
                     onChange={handleChange}
                     placeholder="Skicka in ett eget förslag på en förändring."
-                    style={{ height: '100px' }}
+                    style = {ideaInputStyle}
                 />
                 <Button variant="primary" onClick={handleClick} className="mt-2">
                     Skicka förslag
