@@ -64,8 +64,10 @@ function ProgressSection() {
     setCompletedProjects(0); // Set count to 0 in case function is run again during runtime
 
     querySnapshot.forEach((doc) => { //Loop through all projects
-      if (doc.data().closed && (doc.data().date_created.toDate().getFullYear() === 2023 || doc.data().date_created.toDate().getFullYear() === 2022)) {// && year === doc.data().date_created.toDate().getFullYear()) //Only increase counter on completed projects
+      if (doc.data().closed && year === doc.data().date_created.toDate().getFullYear()){ //Only increase counter on completed projects
+      // if (doc.data().closed && (doc.data().date_created.toDate().getFullYear() === 2023 || doc.data().date_created.toDate().getFullYear() === 2022)) {// && year === doc.data().date_created.toDate().getFullYear()) //Only increase counter on completed projects
         setCompletedProjects((prev) => (prev + 1)); //Set counter to +1. Prev is used for react to render after database read
+      console.log(year);
       }
     });
   }
@@ -78,7 +80,7 @@ function ProgressSection() {
     }
 
     fetchData();
-  }, [setCompletedProjects, setGoal, setYear]);
+  }, [setCompletedProjects, goal, year]);
 
 
   return (
@@ -104,7 +106,7 @@ function ProgressSection() {
               <p>No active goal</p>
             ) : (
               <>
-                <ProgressBar animated now={goal <= 0 ? 100 : (completedProjects / goal) * 100} label={`${goal <= 0 ? 100 : (completedProjects / goal) * 100}%`} />
+                <ProgressBar animated now={goal <= 0 ? 100 : (completedProjects / goal) * 100} label={`${(goal <= 0 ? 100 : (completedProjects / goal) * 100).toFixed(2)}%`} />
                 <h4>Mål till 31 December {year}: {goal}</h4>
               </>
 
