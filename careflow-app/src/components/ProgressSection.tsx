@@ -65,7 +65,7 @@ function ProgressSection() {
       if (doc.data().closed && year === doc.data().date_created.toDate().getFullYear()){ //Only increase counter on completed projects
       // if (doc.data().closed && (doc.data().date_created.toDate().getFullYear() === 2023 || doc.data().date_created.toDate().getFullYear() === 2022)) {// && year === doc.data().date_created.toDate().getFullYear()) //Only increase counter on completed projects
         setCompletedProjects((prev) => (prev + 1)); //Set counter to +1. Prev is used for react to render after database read
-      console.log(year);
+      // console.log(year);
       }
     });
   }

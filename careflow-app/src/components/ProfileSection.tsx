@@ -55,7 +55,7 @@ function ProfileSection() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-           console.log("Document data:", docSnap.data());
+          //  console.log("Document data:", docSnap.data());
            setName(docSnap.data().first_name)
            setDepartment(docSnap.data().clinic)
            setRole(docSnap.data().profession)

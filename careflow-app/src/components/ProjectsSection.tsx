@@ -24,7 +24,7 @@ function ProjectsSection() {
             const projectsData: ProjectCardProps[] = [];
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                console.log(doc.data());
+                // console.log(doc.data());
                 if (!data.closed) {
                     const project: ProjectCardProps = {
                         title: data.title,
