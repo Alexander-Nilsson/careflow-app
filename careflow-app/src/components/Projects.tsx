@@ -92,8 +92,8 @@ function Projects() {
       //do something with the response
       // doc.data() is never undefined for query doc snapshots
       cardIDs.push(doc.id);
-      console.log("Pushat till ID: ", cardIDs[i]);
-      console.log("Hämtar in: ", doc.id, " => ", doc.data());
+      // console.log("Pushat till ID: ", cardIDs[i]);
+      // console.log("Hämtar in: ", doc.id, " => ", doc.data());
       i++;
     });
     const proj = fetchProjectByID();

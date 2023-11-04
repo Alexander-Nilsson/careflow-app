@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateNewProject from "./CreateNewProject";
 import { useAuth0 } from '@auth0/auth0-react';
-import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import ProfileSection from "./ProfileSection";
 import ProjectsSection from "./ProjectsSection";
 // import IdeasAndProgressSection from "./IdeasAndProgressSection";
