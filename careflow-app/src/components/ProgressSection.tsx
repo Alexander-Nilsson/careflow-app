@@ -18,7 +18,7 @@ function ProgressSection() {
 
   const progressSectionStyle = {
     backgroundColor: "lightblue",
-    width: "700px",
+    width: "56%",
     height: "250px",
     borderRadius: "10px",
     padding: "10px",
@@ -27,8 +27,6 @@ function ProgressSection() {
   };
 
   const innerProgressSectionStyle = {
-
-    width: "600px",
     height: "150px",
     borderRadius: "10px",
     backgroundColor: "white",
