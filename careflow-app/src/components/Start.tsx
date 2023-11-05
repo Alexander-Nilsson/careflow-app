@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CreateNewProject from "./CreateNewProject";
 import { useAuth0 } from '@auth0/auth0-react';
 import { doc, getDoc } from "firebase/firestore";
 import ProfileSection from "./ProfileSection";
@@ -10,6 +9,7 @@ import FinishedProjectsSection from "./FinishedProjectsSection";
 import { db } from '../firebase'
 import IdeasSection from "./IdeasSection";
 import ProgressSection from "./ProgressSection";
+
 
 export type UserInfoType = {
   hsaID: string | undefined;
@@ -27,15 +27,10 @@ export type UserInfoType = {
 function Start() {
   const startStyle = {
     backgroundColor: "white",
-
-  };
-
-  const ideasAndProgressSectionStyle = {
-    display: "flex",
   };
 
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading, user } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
 
   //fetches the user data from database, based on the hsa-ID
@@ -57,6 +52,7 @@ function Start() {
         sur_name: docSnap.data().sur_name
       }
       setUserInfo(userData);
+      // console.log("Document data:", docSnap.data());
     } else {
       // docSnap.data() will be undefined in this case
       console.log("No such document!");
@@ -68,10 +64,10 @@ function Start() {
     //   return;
     // }
     if (!isAuthenticated) {
-      navigate("/login")
+      navigate("/login");
     } else {
       if (user?.name) {
-        getUser(user.name)
+        getUser(user.name);
       }
     };
 
@@ -81,7 +77,7 @@ function Start() {
     <>
       {isAuthenticated && userInfo ? (
         <div style={startStyle}>
-          <ProfileSection />
+          <ProfileSection/>
           {/* <CreateNewProject /> */}
           <ProjectsSection />
           <div className="d-flex mr-2">

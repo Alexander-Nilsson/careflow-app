@@ -84,11 +84,6 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
                 />
                 <Button onClick={handleClick} style={ButtonStyle} className="mt-2">
                     Skicka förslag
-                    <img
-                        src="./Plus.png"
-                        alt="Image"
-                        style={{ width: "20px", height: "20px", marginLeft: "15px" }}
-                    />
                 </Button>
             </Container>
 
