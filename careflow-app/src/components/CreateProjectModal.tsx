@@ -8,6 +8,7 @@ import {
 } from "react-bootstrap-icons";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import HelpPopover from "./HelpPopover";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -46,28 +47,11 @@ const IconCircleStyle = {
   justifyContent: "center",
 };
 
-const QuestionmarkStyle = {
-  marginRight: "10px",
-  marginBottom: "3px",
-  color: "#051F6F",
-  width: "25px",
-  height: "25px",
-};
-
 const FlexAndCenter = {
   display: "flex",
   alignItems: "center",
 };
 
-const HelpPopover = (
-  <Popover
-    id="popover-positioned-right"
-    title="Popover right"
-    style={{ padding: "10px" }}
-  >
-    Här kommer det att finnas en beskrivande text sen
-  </Popover>
-);
 
 interface CreateProjectModalProps {
   show: boolean;
@@ -119,13 +103,16 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <OverlayTrigger
+        <div>
+          <HelpPopover content = "Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete"/>
+        </div>
+        {/* <OverlayTrigger
           trigger={["hover", "focus"]}
           placement="right"
           overlay={HelpPopover}
         >
           <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
-        </OverlayTrigger>
+        </OverlayTrigger> */}
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
