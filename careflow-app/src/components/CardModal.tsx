@@ -21,7 +21,7 @@ import {
   PlusLg,
 } from "react-bootstrap-icons";
 
-const ButtonStyle = {
+const buttonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "14px",
@@ -31,7 +31,7 @@ const ButtonStyle = {
   marginTop: "20px",
 };
 
-const SaveChecklistButtonStyle = {
+const saveChecklistButtonStyle = {
   backgroundColor: "#051F6F",
   fontSize: "16px",
   padding: "10px 20px",
@@ -41,33 +41,33 @@ const SaveChecklistButtonStyle = {
   width: "100%",
 };
 
-const IconStyle = {
+const iconStyle = {
   width: "15px",
   height: "15px",
   marginRight: "7px",
   marginTop: "0px",
 };
 
-const FlexAndCenter = {
+const flexAndCenter = {
   display: "flex",
   alignItems: "center",
 };
 
-const FormGroupStyle = {
+const formGroupStyle = {
   backgroundColor: "#F4F4F4",
   padding: "20px",
   marginBottom: "20px",
   borderRadius: "10px",
 };
 
-const DescriptionStyle = {
+const descriptionStyle = {
   backgroundColor: "#F4F4F4",
   padding: "20px",
   marginBottom: "20px",
   borderRadius: "10px",
 };
 
-const WhiteContainerStyle = {
+const whiteContainerStyle = {
   backgroundColor: "#FFFFFF",
   border: "1px solid #E8E7E7",
   paddingTop: "10px",
@@ -76,21 +76,21 @@ const WhiteContainerStyle = {
   borderRadius: "10px",
 };
 
-const TagStyle = {
+const tagStyle = {
   marginTop: "5px",
   marginBottom: "10px",
   color: "#FFFFFF",
   fontSize: "14px",
 };
 
-const TagContainerStyle = {
+const tagContainerStyle = {
   backgroundColor: "#051F6E",
   padding: "2px 10px",
   marginRight: "5px",
   borderRadius: "10px",
 };
 
-const ProjectMembersContainer = {
+const projectMembersContainer = {
   width: "34%",
   marginTop: "30px",
   marginBottom: "20px",
@@ -100,7 +100,7 @@ const ProjectMembersContainer = {
   borderRadius: "10px",
 };
 
-interface CardModalProps {
+interface cardModalProps {
   show: boolean;
   onHide: () => void;
   title: string;
@@ -129,7 +129,7 @@ interface CardModalProps {
   project_leader: DocumentReference<DocumentData>;
 }
 
-interface ModalContentProps {
+interface modalContentProps {
   title: string;
   tags: Array<string>;
   date_created: Timestamp;
@@ -145,11 +145,11 @@ interface ModalContentProps {
   project_leader: string;
 }
 
-interface PhasePercentageProps {
+interface phasePercentageProps {
   percentage: number;
 }
 
-// Funktion som kollar om ikonen bredvid fasen ska vara checkad eller inte
+//Function that checks if the task's checkbox should be checked or not
 function getPhaseIcon(phase: number, column: string, marginLeft: number) {
   const isCheck = parseInt(column) > phase;
   const iconStyle = {
@@ -164,8 +164,8 @@ function getPhaseIcon(phase: number, column: string, marginLeft: number) {
   );
 }
 
-// Funktion som returnerar den cirkulära progress-baren
-function PhasePercentage({ percentage }: PhasePercentageProps) {
+//Function that returns the circular progress bar
+function PhasePercentage({ percentage }: phasePercentageProps) {
   return (
     <>
       <div style={{ width: 120, height: 120 }}>
@@ -174,11 +174,11 @@ function PhasePercentage({ percentage }: PhasePercentageProps) {
           text={`${percentage}%`}
           styles={{
             path: {
-              // Färgen på progress-cirkeln
+              //Color of the progress circle
               stroke: `rgba(5, 31, 110)`,
             },
             trail: {
-              // Färgen på cirkeln i bakgrunden
+              //Color of the circle in the background
               stroke: "#AEAEAE",
             },
             text: {
@@ -192,8 +192,8 @@ function PhasePercentage({ percentage }: PhasePercentageProps) {
   );
 }
 
-// Asynkron funktion som hämtar projektledarens namn från databasen
-async function GetProjectLeader(
+// Asynchronous function that fetches the project leader's name from the database
+async function getProjectLeader(
   project_leader: DocumentReference<DocumentData>
 ) {
   interface User {
@@ -220,7 +220,7 @@ async function GetProjectLeader(
   return null;
 }
 
-// Innehållet i modalen
+// The content of the modal (Title, tags, description, members, checklist etc)
 function ModalContent({
   title,
   tags,
@@ -232,31 +232,30 @@ function ModalContent({
   active_tab,
   checklist,
   project_leader,
-}: ModalContentProps) {
+}: modalContentProps) {
   const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
-  // Hanterar förändringar av checkboxarna i checklistan
+  // Handles changes of the checkboxes in the checklist
   const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
 
   const handleCheckboxChange = (index: number) => {
     setChecklistDone((prevChecklistDone) => {
-      const newChecklistDone = [...prevChecklistDone]; // Skapa en kopia av booleanens tidigare state
-      newChecklistDone[index] = !newChecklistDone[index]; // Ändra kopians state
-      return newChecklistDone; // Returnera det nya statet
+      const newChecklistDone = [...prevChecklistDone]; //Create a copy of the boolean's previous state
+      newChecklistDone[index] = !newChecklistDone[index]; //Change the state of the copy
+      return newChecklistDone; //Return the new state
     });
 
     //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA BOOLEAN-VÄRDET
   };
 
-  // Räknar ut fasens progress i procent baserat på antal gjorda tasks i checklistan
+  //Calculates the phase's progress based on the number of checked tasks in the checklist
   function calculatePercentage() {
-    const totalItems = checklistDone.length; // Räknar totala antalet objekt i checklist_done-arrayen
-    const trueCount = checklistDone.filter((value) => value).length; // Räknar antalet "true" i checklist_done-arrayen
-    const percentageFinished = (trueCount / totalItems) * 100; // Beräknar hur mycket av fasen som är avklarad (i procent)
-
+    const totalItems = checklistDone.length; //Total number of tasks in the checklist
+    const trueCount = checklistDone.filter((value) => value).length; //Number of "true" in the the checklist_done array
+    const percentageFinished = (trueCount / totalItems) * 100; //Calculates the percentage
     return Math.round(percentageFinished);
   }
 
-  // Hanterar modalen som öppnas när man skapar en ny checklist task
+  //Handles the modal that opens up when you create a new checklist task
   const [showModal, setShowModal] = useState(false);
 
   const handleShowModal = () => {
@@ -267,12 +266,12 @@ function ModalContent({
     setShowModal(false);
   };
 
-  // Gör så att den nya tasken läggs till i checklist-arrayen när man klickar på "lägg till åtgärd"-knappen
+  //Adds the new task to the checklist array when the "lägg till åtgärd" button is clicked
   const [newTask, setNewTask] = useState("");
   const [checklistItem, setChecklistItem] = useState(checklist.checklist_item);
 
   const handleSaveModal = (newTask: string) => {
-    //Ser till så att åtgärdsfältet är ifyllt innan tasken läggs till
+    //Makes sure that the "åtgärd" field is filled before the task is added
     if (newTask.trim() !== "") {
       setShowModal(false);
       const updatedChecklistItem = [...checklistItem, newTask];
@@ -287,35 +286,35 @@ function ModalContent({
 
   return (
     <>
-      {/* Innehåll som är samma oberoende fas */}
+      {/* Content that is the same no matter what phase tab is active */}
 
       <div style={{ display: "flex" }}>
         <div style={{ width: "63%" }}>
           <div style={{ display: "flex", marginBottom: "20px" }}>
             <div style={{ width: "60%" }}>
               <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
-              <div style={TagStyle}>
+              <div style={tagStyle}>
                 {tags.map((tag, index) => (
                   <React.Fragment key={index}>
-                    <span style={TagContainerStyle}>{tag}</span>
+                    <span style={tagContainerStyle}>{tag}</span>
                   </React.Fragment>
                 ))}
               </div>
               <div>
-                <div style={FlexAndCenter}>
-                  <Calendar style={IconStyle} />
+                <div style={flexAndCenter}>
+                  <Calendar style={iconStyle} />
                   <div>
                     <label>{formattedDate}</label>
                   </div>
                 </div>
-                <div style={FlexAndCenter}>
-                  <Folder2Open style={IconStyle} />
+                <div style={flexAndCenter}>
+                  <Folder2Open style={iconStyle} />
                   <div>
                     <label>{centrum}</label>
                   </div>
                 </div>
-                <div style={FlexAndCenter}>
-                  <GeoAltFill style={IconStyle} />
+                <div style={flexAndCenter}>
+                  <GeoAltFill style={iconStyle} />
                   <div>
                     <label>{place}</label>
                   </div>
@@ -336,7 +335,7 @@ function ModalContent({
               <PhasePercentage percentage={calculatePercentage()} />
 
               <Button
-                style={ButtonStyle}
+                style={buttonStyle}
                 disabled={
                   active_tab !== parseInt(column) || calculatePercentage() < 100
                 }
@@ -346,16 +345,16 @@ function ModalContent({
             </div>
           </div>
 
-          <Form.Group controlId="planeraDescription" style={DescriptionStyle}>
+          <Form.Group style={descriptionStyle}>
             <Form.Label>
               <b>Beskrivning</b>
             </Form.Label>
-            <div style={WhiteContainerStyle}>{content}</div>
+            <div style={whiteContainerStyle}>{content}</div>
           </Form.Group>
         </div>
 
-        <div style={ProjectMembersContainer}>
-          <Form.Group controlId="projectMembersForm">
+        <div style={projectMembersContainer}>
+          <Form.Group>
             <Form.Label>
               <div>
                 <b>Förbättringsledare</b>
@@ -367,21 +366,21 @@ function ModalContent({
         </div>
       </div>
 
-      {/* Innehåll specifikt för den aktuella fasen */}
+      {/* Content that is different for each phase */}
 
       <Form>
-        <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
+        <Form.Group style={formGroupStyle}>
           <Form.Label>
             <b>Checklista</b>
           </Form.Label>
-          <div style={WhiteContainerStyle}>
+          <div style={whiteContainerStyle}>
             {checklistItem.map((item, index) => (
               <Form.Check
                 key={index}
                 type="checkbox"
                 label={item}
-                checked={checklistDone[index]} //Kollar om checkboxen ska vara ifylld eller inte baserat på state-arrayen checklistDone
-                onChange={() => handleCheckboxChange(index)} //Hantera checkbox-förändring
+                checked={checklistDone[index]} //Checks if the checkbox should be filled or not based on the state-array "checklistDone"
+                onChange={() => handleCheckboxChange(index)} //Handles checkbox changes
               />
             ))}
             <Button
@@ -396,7 +395,7 @@ function ModalContent({
               }}
               onClick={handleShowModal}
             >
-              <div style={FlexAndCenter}>
+              <div style={flexAndCenter}>
                 <PlusLg style={{ marginRight: "9px" }} />
                 <div>Lägg till ny åtgärd</div>
               </div>
@@ -451,7 +450,7 @@ function ModalContent({
               </div>
               <div className="mb-3 text-center">
                 <Button
-                  style={SaveChecklistButtonStyle}
+                  style={saveChecklistButtonStyle}
                   onClick={() => handleSaveModal(newTask)}
                 >
                   Lägg till ny åtgärd
@@ -461,14 +460,14 @@ function ModalContent({
           </Modal.Body>
         </Modal>
 
-        <Form.Group controlId="planeraNotes" style={FormGroupStyle}>
+        <Form.Group controlId="planeraNotes" style={formGroupStyle}>
           <Form.Label>
             <b>Anteckningar</b>
           </Form.Label>
           <textarea className="form-control" rows={3}></textarea>
         </Form.Group>
 
-        <Form.Group controlId="planeraFile" style={FormGroupStyle}>
+        <Form.Group controlId="planeraFile" style={formGroupStyle}>
           <Form.Label>
             <b>Bilagor</b>
           </Form.Label>
@@ -476,13 +475,13 @@ function ModalContent({
         </Form.Group>
       </Form>
 
-      {/* Innehåll som är samma oberoende av fas */}
+      {/* Content that is the same no matter what phase tab is active */}
 
-      <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
+      <Form.Group controlId="planeraChecklist" style={formGroupStyle}>
         <Form.Label>
           <b>Liknande förbättringsarbeten</b>
         </Form.Label>
-        <div style={WhiteContainerStyle}>
+        <div style={whiteContainerStyle}>
           Här ska det finnas förslag på liknande förbättringsarbeten
         </div>
       </Form.Group>
@@ -490,7 +489,7 @@ function ModalContent({
   );
 }
 
-// Modalen för förbättringsarbetet
+//The project modal
 function CardModal({
   show,
   onHide,
@@ -506,12 +505,12 @@ function CardModal({
   checklist_do,
   checklist_study,
   checklist_act,
-}: CardModalProps) {
-  const [projectLeaderName, setProjectLeaderName] = useState<string>(""); // Initialize with an empty string
+}: cardModalProps) {
+  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
 
   useEffect(() => {
     const fetchProjectLeader = async () => {
-      const name = await GetProjectLeader(project_leader);
+      const name = await getProjectLeader(project_leader);
       if (name !== null) {
         setProjectLeaderName(name);
       }
@@ -531,19 +530,15 @@ function CardModal({
       >
         <Tabs defaultActiveKey={"phase" + column} justify>
           {/*------ PLANERA ------*/}
-
-          {/* Planera-taben */}
           <Tab
             eventKey="phase2"
             title={
-              <span style={FlexAndCenter}>
+              <span style={flexAndCenter}>
                 {getPhaseIcon(2, column, 35)}
                 Planera
               </span>
             }
           >
-            {/* Innehållet i planera-taben */}
-
             <ModalContent
               title={title}
               tags={tags}
@@ -560,17 +555,15 @@ function CardModal({
 
           {/*------ GENOMFÖRA ------*/}
 
-          {/* Genomföra-taben */}
           <Tab
             eventKey="phase3"
             title={
-              <span style={FlexAndCenter}>
+              <span style={flexAndCenter}>
                 {getPhaseIcon(3, column, 20)}
                 Genomföra
               </span>
             }
           >
-            {/* Innehållet i genomföra-taben */}
             <ModalContent
               title={title}
               tags={tags}
@@ -587,18 +580,15 @@ function CardModal({
 
           {/*------STUDERA ------*/}
 
-          {/* Studera-taben */}
-
           <Tab
             eventKey="phase4"
             title={
-              <span style={FlexAndCenter}>
+              <span style={flexAndCenter}>
                 {getPhaseIcon(4, column, 30)}
                 Studera
               </span>
             }
           >
-            {/* Innehållet i studera-taben */}
             <ModalContent
               title={title}
               tags={tags}
@@ -615,18 +605,15 @@ function CardModal({
 
           {/*------- AGERA ------*/}
 
-          {/* Agera-taben */}
-
           <Tab
             eventKey="phase5"
             title={
-              <span style={FlexAndCenter}>
+              <span style={flexAndCenter}>
                 {getPhaseIcon(5, column, 40)}
                 Agera
               </span>
             }
           >
-            {/* Innehållet i agera-taben */}
             <ModalContent
               title={title}
               tags={tags}
@@ -643,7 +630,7 @@ function CardModal({
         </Tabs>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide} style={ButtonStyle}>
+        <Button onClick={onHide} style={buttonStyle}>
           Spara
         </Button>
       </Modal.Footer>
