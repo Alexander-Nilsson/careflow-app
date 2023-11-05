@@ -16,7 +16,13 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import "../styles/Kanban.css";
 import { ProjectContext } from "./Projects";
-import { Timestamp, doc, updateDoc } from "firebase/firestore";
+import {
+  Timestamp,
+  doc,
+  updateDoc,
+  DocumentReference,
+  DocumentData,
+} from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
 
@@ -61,6 +67,7 @@ function KanbanBoard() {
     );
   }
 
+  const userReference = doc(db, "users", "random_user_id");
   const { projectList, setProjectList } = context;
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
@@ -121,6 +128,7 @@ function KanbanBoard() {
       centrum: "centrum",
       tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
+      project_leader: userReference,
       checklist_plan: {
         checklist_item: [],
         checklist_done: [],

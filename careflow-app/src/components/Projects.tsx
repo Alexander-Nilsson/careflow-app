@@ -7,6 +7,8 @@ import {
   doc,
   getDoc,
   Timestamp,
+  DocumentReference,
+  DocumentData,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
@@ -21,6 +23,11 @@ export interface ProjectContextType {
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
 
+interface User {
+  first_name: string;
+  // Define other user fields here
+}
+
 class Project {
   id: Id;
   title: string;
@@ -30,6 +37,7 @@ class Project {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  project_leader: DocumentReference<DocumentData>;
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
@@ -56,6 +64,7 @@ class Project {
     centrum: string,
     tags: Array<string>,
     date_created: Timestamp,
+    project_leader: DocumentReference<DocumentData>,
     checklist_plan: {
       checklist_item: Array<string>;
       checklist_done: Array<boolean>;
@@ -81,6 +90,7 @@ class Project {
     this.centrum = centrum;
     this.tags = tags;
     this.date_created = date_created;
+    this.project_leader = project_leader;
     this.checklist_plan = checklist_plan;
     this.checklist_do = checklist_do;
     this.checklist_study = checklist_study;
@@ -96,7 +106,13 @@ function Projects() {
 
   // Only temporary. Cards will later on be fetched from database
   const cards = [
-    { id: 1, title: "Card Title 1", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", column: 1 },
+    {
+      id: 1,
+      title: "Card Title 1",
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      column: 1,
+    },
     { id: 2, title: "Card Title 2", content: "Card content 2", column: 2 },
     { id: 2, title: "Card Title 3", content: "Card content 3", column: 3 },
     { id: 2, title: "Card Title 4", content: "Card content 4", column: 4 },
@@ -137,6 +153,7 @@ function Projects() {
       centrum: projectData.centrum,
       tags: projectData.tags,
       date_created: projectData.date_created,
+      project_leader: projectData.project_leader,
       checklist_plan: {
         checklist_item: projectData.checklist_plan.checklist_item,
         checklist_done: projectData.checklist_plan.checklist_done,
@@ -183,6 +200,7 @@ function Projects() {
         data.centrum,
         data.tags,
         data.date_created,
+        data.project_leader,
         checklist_plan,
         checklist_do,
         checklist_study,

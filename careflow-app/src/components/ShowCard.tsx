@@ -86,6 +86,7 @@ function ShowCard({ project }: ShowCardProps) {
           centrum={project.centrum}
           tags={project.tags}
           date_created={project.date_created}
+          project_leader={project.project_leader}
           checklist_plan={project.checklist_plan}
           checklist_do={project.checklist_do}
           checklist_study={project.checklist_study}

@@ -1,5 +1,12 @@
-import { Timestamp } from "firebase/firestore";
-import React, { useState } from "react";
+import { db } from "../firebase";
+import {
+  Timestamp,
+  DocumentReference,
+  DocumentData,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Tabs, Tab, Dropdown } from "react-bootstrap";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -119,6 +126,7 @@ interface CardModalProps {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
   };
+  project_leader: DocumentReference<DocumentData>;
 }
 
 interface ModalContentProps {
@@ -134,6 +142,7 @@ interface ModalContentProps {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
   };
+  project_leader: string;
 }
 
 interface PhasePercentageProps {
@@ -183,6 +192,34 @@ function PhasePercentage({ percentage }: PhasePercentageProps) {
   );
 }
 
+// Asynkron funktion som hämtar projektledarens namn från databasen
+async function GetProjectLeader(
+  project_leader: DocumentReference<DocumentData>
+) {
+  interface User {
+    first_name: string;
+    sur_name: string;
+  }
+
+  if (project_leader && project_leader.id) {
+    const userReference = doc(db, "users", project_leader.id);
+
+    try {
+      const userDoc = await getDoc(userReference);
+      if (userDoc.exists()) {
+        const userData = userDoc.data() as User;
+        return userData.first_name + " " + userData.sur_name;
+      } else {
+        console.error("User document not found.");
+      }
+    } catch (error) {
+      console.error("Error fetching user document:", error);
+    }
+  }
+
+  return null;
+}
+
 // Innehållet i modalen
 function ModalContent({
   title,
@@ -194,6 +231,7 @@ function ModalContent({
   column,
   active_tab,
   checklist,
+  project_leader,
 }: ModalContentProps) {
   const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
   // Hanterar förändringar av checkboxarna i checklistan
@@ -320,7 +358,9 @@ function ModalContent({
           <Form.Group controlId="projectMembersForm">
             <Form.Label>
               <div>
-                <b>Medlemmar</b>
+                <b>Förbättringsledare</b>
+                <div style={{ marginBottom: "20px" }}>{project_leader}</div>
+                <b>Förbättringsmedlemmar</b>
               </div>
             </Form.Label>
           </Form.Group>
@@ -332,7 +372,7 @@ function ModalContent({
       <Form>
         <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
           <Form.Label>
-            <b>Checklista </b>
+            <b>Checklista</b>
           </Form.Label>
           <div style={WhiteContainerStyle}>
             {checklistItem.map((item, index) => (
@@ -461,11 +501,25 @@ function CardModal({
   centrum,
   tags,
   date_created,
+  project_leader,
   checklist_plan,
   checklist_do,
   checklist_study,
   checklist_act,
 }: CardModalProps) {
+  const [projectLeaderName, setProjectLeaderName] = useState<string>(""); // Initialize with an empty string
+
+  useEffect(() => {
+    const fetchProjectLeader = async () => {
+      const name = await GetProjectLeader(project_leader);
+      if (name !== null) {
+        setProjectLeaderName(name);
+      }
+    };
+
+    fetchProjectLeader();
+  }, [project_leader]);
+
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Body
@@ -500,6 +554,7 @@ function CardModal({
               column={column}
               active_tab={2}
               checklist={checklist_plan}
+              project_leader={projectLeaderName}
             />
           </Tab>
 
@@ -526,6 +581,7 @@ function CardModal({
               column={column}
               active_tab={3}
               checklist={checklist_do}
+              project_leader={projectLeaderName}
             />
           </Tab>
 
@@ -553,6 +609,7 @@ function CardModal({
               column={column}
               active_tab={4}
               checklist={checklist_study}
+              project_leader={projectLeaderName}
             />
           </Tab>
 
@@ -580,6 +637,7 @@ function CardModal({
               column={column}
               active_tab={5}
               checklist={checklist_act}
+              project_leader={projectLeaderName}
             />
           </Tab>
         </Tabs>

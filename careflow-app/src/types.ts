@@ -1,4 +1,4 @@
-import {Timestamp} from "firebase/firestore";
+import {Timestamp, DocumentReference, DocumentData} from "firebase/firestore";
 export type Id = string | number;
 
 export type Column = {
@@ -16,6 +16,7 @@ export type Project = {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  project_leader: DocumentReference<DocumentData>;
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
