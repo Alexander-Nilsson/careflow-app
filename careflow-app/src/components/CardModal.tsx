@@ -110,6 +110,8 @@ interface cardModalProps {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  project_leader: DocumentReference<DocumentData>;
+  project_members: Array<string>;
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
@@ -126,7 +128,6 @@ interface cardModalProps {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
   };
-  project_leader: DocumentReference<DocumentData>;
 }
 
 interface modalContentProps {
@@ -143,6 +144,7 @@ interface modalContentProps {
     checklist_done: Array<boolean>;
   };
   project_leader: string;
+  project_members: Array<string>;
 }
 
 interface phasePercentageProps {
@@ -192,7 +194,7 @@ function PhasePercentage({ percentage }: phasePercentageProps) {
   );
 }
 
-// Asynchronous function that fetches the project leader's name from the database
+// Asynchronous function that fetches the project leader's name from the database (should probably move this to Projects.tsx)
 async function getProjectLeader(
   project_leader: DocumentReference<DocumentData>
 ) {
@@ -232,6 +234,7 @@ function ModalContent({
   active_tab,
   checklist,
   project_leader,
+  project_members,
 }: modalContentProps) {
   const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
   // Handles changes of the checkboxes in the checklist
@@ -282,6 +285,24 @@ function ModalContent({
     }
 
     //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA CHECKLISTAN
+  };
+
+  //Adds members to a checklist task when their name is clicked
+  const [selectedMembers, setSelectedMembers] = useState([""]);
+
+  const handleAlternativeClick = (chosenMember: string) => {
+    //If the selected member already has been chosen, remove from the array
+    if (selectedMembers.includes(chosenMember)) {
+      const updatedChosenMembers = selectedMembers.filter(
+        (member) => member !== chosenMember
+      );
+      setSelectedMembers(updatedChosenMembers);
+
+      //If it selected member has not already been chosen, add the member to the array
+    } else {
+      const updatedChosenMembers = [...selectedMembers, chosenMember];
+      setSelectedMembers(updatedChosenMembers);
+    }
   };
 
   return (
@@ -358,8 +379,13 @@ function ModalContent({
             <Form.Label>
               <div>
                 <b>Förbättringsledare</b>
-                <div style={{ marginBottom: "20px" }}>{project_leader}</div>
+                <div style={{ marginTop: "10px", marginBottom: "20px" }}>
+                  {project_leader}
+                </div>
                 <b>Förbättringsmedlemmar</b>
+                {project_members.map((member, index) => (
+                  <div style={{ marginTop: "10px" }}>{member}</div>
+                ))}
               </div>
             </Form.Label>
           </Form.Group>
@@ -430,6 +456,7 @@ function ModalContent({
                 ></input>
             </div>*/}
               <div className="mb-3 text-center">
+                {/* When someone is chosen their name will be displayed below the dropdown*/}
                 <Dropdown>
                   <Dropdown.Toggle
                     style={{
@@ -442,9 +469,28 @@ function ModalContent({
                     Lägg till kollegor
                   </Dropdown.Toggle>
                   <Dropdown.Menu style={{ width: "100%" }}>
-                    <Dropdown.Item href="#/action-1">Kollega 1</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Kollega 2</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Kollega 3</Dropdown.Item>
+                    <Dropdown.Item
+                      style={{
+                        fontWeight: selectedMembers.includes(project_leader)
+                          ? "bold"
+                          : "normal",
+                      }}
+                      onClick={() => handleAlternativeClick(project_leader)}
+                    >
+                      {project_leader}
+                    </Dropdown.Item>
+                    {project_members.map((member) => (
+                      <Dropdown.Item
+                        style={{
+                          fontWeight: selectedMembers.includes(member)
+                            ? "bold"
+                            : "normal",
+                        }}
+                        onClick={() => handleAlternativeClick(member)}
+                      >
+                        {member}
+                      </Dropdown.Item>
+                    ))}
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
@@ -501,6 +547,7 @@ function CardModal({
   tags,
   date_created,
   project_leader,
+  project_members,
   checklist_plan,
   checklist_do,
   checklist_study,
@@ -550,6 +597,7 @@ function CardModal({
               active_tab={2}
               checklist={checklist_plan}
               project_leader={projectLeaderName}
+              project_members={project_members}
             />
           </Tab>
 
@@ -575,6 +623,7 @@ function CardModal({
               active_tab={3}
               checklist={checklist_do}
               project_leader={projectLeaderName}
+              project_members={project_members}
             />
           </Tab>
 
@@ -600,6 +649,7 @@ function CardModal({
               active_tab={4}
               checklist={checklist_study}
               project_leader={projectLeaderName}
+              project_members={project_members}
             />
           </Tab>
 
@@ -625,6 +675,7 @@ function CardModal({
               active_tab={5}
               checklist={checklist_act}
               project_leader={projectLeaderName}
+              project_members={project_members}
             />
           </Tab>
         </Tabs>

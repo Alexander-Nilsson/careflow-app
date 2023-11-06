@@ -129,6 +129,7 @@ function KanbanBoard() {
       tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
       project_leader: userReference,
+      project_members: [],
       checklist_plan: {
         checklist_item: [],
         checklist_done: [],

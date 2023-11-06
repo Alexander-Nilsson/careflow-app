@@ -25,7 +25,7 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 
 interface User {
   first_name: string;
-  // Define other user fields here
+  sur_name: string;
 }
 
 class Project {
@@ -38,6 +38,7 @@ class Project {
   tags: Array<string>;
   date_created: Timestamp;
   project_leader: DocumentReference<DocumentData>;
+  project_members: Array<string>;
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
@@ -65,6 +66,7 @@ class Project {
     tags: Array<string>,
     date_created: Timestamp,
     project_leader: DocumentReference<DocumentData>,
+    project_members: Array<string>,
     checklist_plan: {
       checklist_item: Array<string>;
       checklist_done: Array<boolean>;
@@ -91,6 +93,7 @@ class Project {
     this.tags = tags;
     this.date_created = date_created;
     this.project_leader = project_leader;
+    this.project_members = project_members;
     this.checklist_plan = checklist_plan;
     this.checklist_do = checklist_do;
     this.checklist_study = checklist_study;
@@ -154,6 +157,7 @@ function Projects() {
       tags: projectData.tags,
       date_created: projectData.date_created,
       project_leader: projectData.project_leader,
+      project_members: projectData.project_members,
       checklist_plan: {
         checklist_item: projectData.checklist_plan.checklist_item,
         checklist_done: projectData.checklist_plan.checklist_done,
@@ -201,6 +205,7 @@ function Projects() {
         data.tags,
         data.date_created,
         data.project_leader,
+        data.project_members,
         checklist_plan,
         checklist_do,
         checklist_study,
@@ -225,7 +230,27 @@ function Projects() {
         const snapshot = await getDoc(projectReference);
 
         if (snapshot.exists()) {
-          return snapshot.data() as Project;
+          const projectData = snapshot.data() as Project;
+          const project_members = projectData.project_members;
+
+          // Fetch first_name and sur_name for each project_member
+          const memberNames = await Promise.all(
+            project_members.map(async (userId) => {
+              const userDocRef = doc(db, "users", userId);
+              const userSnapshot = await getDoc(userDocRef);
+              if (userSnapshot.exists()) {
+                const userData = userSnapshot.data() as User;
+                return userData.first_name + " " + userData.sur_name;
+              } else {
+                return "Unknown User"; // Handle non-existent user documents
+              }
+            })
+          );
+
+          // Update the projectData with the project_members' names
+          projectData.project_members = memberNames;
+
+          return projectData;
         }
         return null;
       })

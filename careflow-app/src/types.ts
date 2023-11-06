@@ -17,6 +17,7 @@ export type Project = {
   tags: Array<string>;
   date_created: Timestamp;
   project_leader: DocumentReference<DocumentData>;
+  project_members: Array<string>;
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
