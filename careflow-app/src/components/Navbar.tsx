@@ -8,10 +8,11 @@ function NavigationBar() {
 
   const linkStyle = {
     color: 'white',
-    fontSize: '24px', // Change to your desired font size
+    fontSize: '22px', // Change to your desired font size
     fontWeight: 'bold',
     textDecoration: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    fontFamily: 'Avenir'
   };
 
   const { logout } = useAuth0();

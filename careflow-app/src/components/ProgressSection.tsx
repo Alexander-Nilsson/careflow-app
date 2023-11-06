@@ -17,13 +17,15 @@ function ProgressSection() {
   
 
   const progressSectionStyle = {
-    backgroundColor: "lightblue",
+    background: 'rgba(255, 255, 255, 0.70)',
     width: "56%",
     height: "250px",
     borderRadius: "10px",
     padding: "10px",
     margin: "0px",
     marginTop: "0px",
+    fontFamily: "Avenir",
+    boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
   };
 
   const innerProgressSectionStyle = {
@@ -32,6 +34,7 @@ function ProgressSection() {
     backgroundColor: "white",
     margin: "20px",
     padding: "10px",
+    boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)'
   };
 
 
