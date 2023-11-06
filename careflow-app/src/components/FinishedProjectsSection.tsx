@@ -3,14 +3,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";import ProjectCard from "./ProjectCard";
 import { ProjectCardProps } from "./ProjectCard";
 import {db} from "../firebase";
-import {collection, getDocs} from "firebase/firestore";
-
+import {collection, getDocs, query, where} from "firebase/firestore";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function FinishedProjectsSection() {
     const [projects, setProjects] = useState<ProjectCardProps[]>([]);
-   
+    const { user } = useAuth0();
+
     const fetchData = async () => {
         const projectsCollectionRef = collection(db, "projects");
+        if (user?.name){
+            const q = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
 
         try {
             const querySnapshot = await getDocs(projectsCollectionRef);
@@ -35,6 +38,7 @@ function FinishedProjectsSection() {
         } catch (error) {
             console.error("Error fetching data:", error);
         }
+    }
     };
 
     useEffect(() => {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
 import nurseImage from "../Images/genderNeutralWorker.png";
-import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useEffect } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
@@ -23,17 +23,17 @@ function ProfileSection() {
     height: "250px",
     borderRadius: "10px",
     margin: "20px",
-    display: "flex", 
+    display: "flex",
   };
-  
+
 
   const leftDivStyle = {
-    flex: "40%", 
+    flex: "40%",
     padding: "10px",
   };
 
   const rightDivStyle = {
-    flex: "60%", 
+    flex: "60%",
     padding: "10px",
   };
 
@@ -51,45 +51,47 @@ function ProfileSection() {
     backgroundSize: "cover",
   };
 
-  async function getUser2(username:string){
+  async function getUser2(username: string) {
     const docRef = doc(db, "users", username);
-        const docSnap = await getDoc(docRef);
+    const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-           console.log("Document data:", docSnap.data());
-           setName(docSnap.data().first_name)
-           setDepartment(docSnap.data().clinic)
-           setRole(docSnap.data().profession)
-           setInstitution(docSnap.data().place)
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-        }
-        return docSnap.data();
+    if (docSnap.exists()) {
+      //  console.log("Document data:", docSnap.data());
+      setName(docSnap.data().first_name)
+      setDepartment(docSnap.data().clinic)
+      setRole(docSnap.data().profession)
+      setInstitution(docSnap.data().place)
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
+    return docSnap.data();
   }
 
   async function setItems() {
-    
-    
+
+
 
     if (user?.name) {
-   
-     
-      getUser2(user.name)
-     
 
-  }
+
+      getUser2(user.name)
+
+
+    }
   }
 
   useEffect(() => {
     async function fetchData() {
       await setItems(); //async function ensures that goal has been fetched before fetching projects
-      
+
     }
 
-    fetchData();
-  }, [setItems]);
-  
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
 
   return (
     <div style={profileSectionStyle}>

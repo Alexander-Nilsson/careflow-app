@@ -106,6 +106,13 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
         <div>
           <HelpPopover content = "Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete"/>
         </div>
+        {/* <OverlayTrigger
+          trigger={["hover", "focus"]}
+          placement="right"
+          overlay={HelpPopover}
+        >
+          <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
+        </OverlayTrigger> */}
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">

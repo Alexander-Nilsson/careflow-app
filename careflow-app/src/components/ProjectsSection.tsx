@@ -4,21 +4,27 @@ import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
 import { ProjectCardProps } from "./ProjectCard";
 import {db} from "../firebase";
-import {collection, getDocs} from "firebase/firestore";
-
+import {collection, getDocs, query, where} from "firebase/firestore";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function ProjectsSection() {
     
     const [projects, setProjects] = useState<ProjectCardProps[]>([]);
+    const { user } = useAuth0();
    
     const fetchData = async () => {
         const projectsCollectionRef = collection(db, "projects");
+        if (user?.name){
+        const q = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
+        
 
         try {
-            const querySnapshot = await getDocs(projectsCollectionRef);
+            const querySnapshot = await getDocs(q);
+           
             const projectsData: ProjectCardProps[] = [];
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
+                // console.log(doc.data());
                 if (!data.closed) {
                     const project: ProjectCardProps = {
                         title: data.title,
@@ -36,6 +42,7 @@ function ProjectsSection() {
         } catch (error) {
             console.error("Error fetching data:", error);
         }
+    }
     };
 
     useEffect(() => {
