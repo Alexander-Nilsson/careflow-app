@@ -17,12 +17,14 @@ function ProfileSection() {
   const { isAuthenticated, isLoading, user } = useAuth0();
 
   const profileSectionStyle = {
-    backgroundColor: "lightblue",
+    background: 'rgba(255, 255, 255, 0.70)',
     width: "500px",
     height: "250px",
     borderRadius: "10px",
     margin: "20px",
     display: "flex",
+    boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
+    fontFamily: "Avenir",
   };
 
 
@@ -45,7 +47,7 @@ function ProfileSection() {
     alignItems: "center", // Center vertically
     justifyContent: "center", // Center horizontally
     marginLeft: "15px",
-    marginTop: "10px",
+    boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     backgroundImage: `url(${nurseImage})`, // Set the image as background
     backgroundSize: "cover",
   };
