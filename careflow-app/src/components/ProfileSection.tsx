@@ -14,6 +14,7 @@ function ProfileSection() {
   const [name, setName] = useState<String>("Namn ej funnet");
   const [department, setDepartment] = useState<String>("Avdelning ej funnen");
   const [role, setRole] = useState<String>("Roll ej funnen");
+  const [institution, setInstitution] = useState<String>("Institution ej funnen");
   const { isAuthenticated, isLoading, user } = useAuth0();
 
   const profileSectionStyle = {
@@ -59,6 +60,7 @@ function ProfileSection() {
            setName(docSnap.data().first_name)
            setDepartment(docSnap.data().clinic)
            setRole(docSnap.data().profession)
+           setInstitution(docSnap.data().place)
         } else {
           // docSnap.data() will be undefined in this case
           console.log("No such document!");
@@ -99,6 +101,7 @@ function ProfileSection() {
         <h3>{name}</h3>
         <h3>{role}</h3>
         <h3>{department}</h3>
+        <h3>{institution}</h3>
         <CreateNewProject />
       </div>
     </div>
