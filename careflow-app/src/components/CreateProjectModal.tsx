@@ -230,7 +230,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   +
                 </span>
                 <input
-                  name="description"
+                  name="mataochfoljaupp"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
