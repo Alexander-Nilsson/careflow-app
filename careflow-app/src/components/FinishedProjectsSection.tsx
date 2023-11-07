@@ -16,10 +16,12 @@ function FinishedProjectsSection() {
             const q = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
 
         try {
-            const querySnapshot = await getDocs(projectsCollectionRef);
+            const querySnapshot = await getDocs(q);
+           
             const projectsData: ProjectCardProps[] = [];
             querySnapshot.forEach((doc) => {
-                const data = doc.data();
+            const data = doc.data();
+            
                 if (data.closed) {
                     const project: ProjectCardProps = {
                         title: data.title,

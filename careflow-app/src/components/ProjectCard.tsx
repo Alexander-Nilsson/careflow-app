@@ -75,11 +75,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ title, date_created, place, t
             <Card.Body style={cardBodyStyle}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <div>
-                    {tags.map((tag, index) => (
-                        <React.Fragment key={index}>
-                        <span style={badgeStyle}>{tag}</span>
-                        </React.Fragment>
-                    ))}
+                    {tags ? (
+                        tags.map((tag, index) => (
+                            <React.Fragment key={index}>
+                            <span style={badgeStyle}>{tag}</span>
+                            </React.Fragment>
+                        ))
+                        ) : (
+                        <p>Inga taggar</p>
+                    )}
                        <Card.Title style={titleStyle}>{title}</Card.Title>
                         <Card.Text style ={{fontFamily: "Avenir",marginBottom:"1rem"}}>
                             {formatDate(date_created)}
