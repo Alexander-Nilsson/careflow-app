@@ -6,7 +6,7 @@ import {
   Bullseye,
   QuestionCircleFill,
 } from "react-bootstrap-icons";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import Dropdown from "react-bootstrap/Dropdown";
 import Nav from "react-bootstrap/Nav";
@@ -79,15 +79,45 @@ interface CreateProjectModalProps {
 // Writes the formdata to database
 async function sendToDataBase(formJson: any) {
   console.log(formJson);
-  await setDoc(doc(db, "projects", "test " + formJson.title), formJson);
 
-  //const phase = {
-  //  phase: formJson.phase,
-  //};
+  const checklist_act_map = {
+    checklist_done: [false],
+    checklist_item: ["Köp fika"],
+    checklist_members: [""],
+  };
+  const checklist_plan_map = {
+    checklist_done: [false],
+    checklist_item: ["Planera fika"],
+    checklist_members: [""],
+  };
+  const checklist_study_map = {
+    checklist_done: [false],
+    checklist_item: ["Studera fika"],
+    checklist_members: [""],
+  };
+  const checklist_do_map = {
+    checklist_done: [false],
+    checklist_item: ["Gör fika"],
+    checklist_members: [""],
+  };
 
-  // await setDoc(doc(db, "projects", "test " + formJson.title), {
-  //   phase: formJson.phase,
-  // });
+  const allData = {
+    centrum: "Ett centrum",
+    checklist_act: checklist_act_map,
+    checklist_do: checklist_do_map,
+    checklist_plan: checklist_plan_map,
+    checklist_study: checklist_study_map,
+    clinic: "en klinik",
+    closed: true,
+    phase: "1",
+    date_created: new Timestamp(0, 0),
+    tags: ["en tag", "en till tag"],
+    place: "US Linköping",
+    description: "En beskrivning av projektet",
+    title: "En titel för projektet",
+  };
+
+  await setDoc(doc(db, "projects", "Sample Project"), allData);
 }
 
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
