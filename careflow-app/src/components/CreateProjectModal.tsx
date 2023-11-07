@@ -9,6 +9,7 @@ import {
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Dropdown from "react-bootstrap/Dropdown";
+import Nav from "react-bootstrap/Nav";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -75,48 +76,61 @@ interface CreateProjectModalProps {
   onHide: () => void;
 }
 
-function handleSubmit(e: any) {
-  // Prevent the browser from reloading the page
-  e.preventDefault();
-
-  // Read the form data
-  const form = e.target;
-  const formData = new FormData(form);
-  const formJson = Object.fromEntries(formData.entries());
-
-  let allFieldsFilled = true;
-  let emptyFields = []; // Keep track of empty fields
-
-  for (const [key, value] of Object.entries(formJson)) {
-    if (value === "") {
-      allFieldsFilled = false;
-      emptyFields.push(key); // Add the key of the empty field to the array
-    }
-  }
-
-  // If all fields are filled, or the user confirms they want to submit with empty fields
-  if (
-    allFieldsFilled ||
-    (emptyFields.length > 0 &&
-      window.confirm(
-        `Some fields are empty: ${emptyFields.join(
-          ", "
-        )}. Are you sure you want to submit the form?`
-      ))
-  ) {
-    sendToDataBase(formJson);
-  } else {
-    // If not all fields are filled and the user does not confirm, handle it here
-    console.log("Form submission cancelled.");
-  }
-}
-
 // Writes the formdata to database
 async function sendToDataBase(formJson: any) {
-  await setDoc(doc(db, "projects", "test" + formJson.title), formJson);
+  console.log(formJson);
+  await setDoc(doc(db, "projects", "test " + formJson.title), formJson);
+
+  //const phase = {
+  //  phase: formJson.phase,
+  //};
+
+  // await setDoc(doc(db, "projects", "test " + formJson.title), {
+  //   phase: formJson.phase,
+  // });
 }
 
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
+  const [selectedPhase, setselectedPhase] = useState(1); // State for tracking the selected phase/pill
+
+  // is executed when submit button is pressed
+  function handleSubmit(e: any) {
+    // Prevent the browser from reloading the page
+    e.preventDefault();
+
+    // Read the form data
+    const form = e.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+    formJson.phase = selectedPhase.toString();
+
+    let allFieldsFilled = true;
+    let emptyFields = []; // Keep track of empty fields
+
+    for (const [key, value] of Object.entries(formJson)) {
+      if (value === "") {
+        allFieldsFilled = false;
+        emptyFields.push(key); // Add the key of the empty field to the array
+      }
+    }
+
+    // If all fields are filled, or the user confirms they want to submit with empty fields
+    if (
+      allFieldsFilled ||
+      (emptyFields.length > 0 &&
+        window.confirm(
+          `Some fields are empty: ${emptyFields.join(
+            ", "
+          )}. Are you sure you want to submit the form?`
+        ))
+    ) {
+      sendToDataBase(formJson);
+    } else {
+      // If not all fields are filled and the user does not confirm, handle it here
+      console.log("Form submission cancelled.");
+      e.preventDefault();
+    }
+  }
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
@@ -133,12 +147,37 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               name="title"
               type="text"
               className="form-control"
+              // this is to prevent it from submitting when pressing enter
               onKeyPress={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => {
                 e.key === "Enter" && e.preventDefault();
               }}
             ></input>
+            {/* Phase selection */}
+            <label style={TitleStyle}>PGSA</label>
+            <Nav variant="pills" justify defaultActiveKey={1}>
+              <Nav.Item>
+                <Nav.Link eventKey={1} onClick={() => setselectedPhase(1)}>
+                  Planera
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey={2} onClick={() => setselectedPhase(2)}>
+                  Genomföra
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey={3} onClick={() => setselectedPhase(3)}>
+                  Studera
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey={4} onClick={() => setselectedPhase(4)}>
+                  Agera
+                </Nav.Link>
+              </Nav.Item>
+            </Nav>
           </div>
 
           <div className="mb-3">
@@ -235,6 +274,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   className="form-control"
                   placeholder="Lägg till"
                   style={{ border: "none" }}
+                  // this is to prevent it from submitting when pressing enter
                   onKeyPress={(
                     e: React.KeyboardEvent<
                       HTMLInputElement | HTMLTextAreaElement
@@ -306,6 +346,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               name="title"
               type="text"
               className="form-control"
+              // this is to prevent it from submitting when pressing enter
               onKeyPress={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => {
