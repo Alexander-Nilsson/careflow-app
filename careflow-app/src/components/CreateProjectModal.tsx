@@ -216,7 +216,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   +
                 </span>
                 <input
-                  title="purpose"
+                  name="malochsyfte"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
