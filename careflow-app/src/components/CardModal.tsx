@@ -115,18 +115,22 @@ interface cardModalProps {
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_do: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_study: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_act: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
 }
 
@@ -142,6 +146,7 @@ interface modalContentProps {
   checklist: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   project_leader: string;
   project_members: Array<string>;
@@ -269,27 +274,15 @@ function ModalContent({
     setShowModal(false);
   };
 
-  //Adds the new task to the checklist array when the "lägg till åtgärd" button is clicked
+  //State variables related to the checkbox
+  const [selectedMembers, setSelectedMembers] = useState([""]);
   const [newTask, setNewTask] = useState("");
   const [checklistItem, setChecklistItem] = useState(checklist.checklist_item);
-
-  const handleSaveModal = (newTask: string) => {
-    //Makes sure that the "åtgärd" field is filled before the task is added
-    if (newTask.trim() !== "") {
-      setShowModal(false);
-      const updatedChecklistItem = [...checklistItem, newTask];
-      const updatedChecklistDone = [...checklistDone, false];
-      setChecklistItem(updatedChecklistItem);
-      setChecklistDone(updatedChecklistDone);
-      setNewTask("");
-    }
-
-    //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA CHECKLISTAN
-  };
+  const [checklistMembers, setChecklistMembers] = useState(
+    checklist.checklist_members
+  );
 
   //Adds members to a checklist task when their name is clicked
-  const [selectedMembers, setSelectedMembers] = useState([""]);
-
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedMembers.includes(chosenMember)) {
@@ -298,11 +291,43 @@ function ModalContent({
       );
       setSelectedMembers(updatedChosenMembers);
 
-      //If it selected member has not already been chosen, add the member to the array
+      //If the selected member has not already been chosen, add the member to the array
     } else {
       const updatedChosenMembers = [...selectedMembers, chosenMember];
       setSelectedMembers(updatedChosenMembers);
     }
+  };
+
+  //Adds the new task to the checklist array when the "lägg till åtgärd" button is clicked
+  const handleSaveModal = (newTask: string) => {
+    //Makes sure that the "åtgärd" field is filled before the task can be added
+    if (newTask.trim() !== "") {
+      setShowModal(false);
+      const updatedChecklistItem = [...checklistItem, newTask];
+      const updatedChecklistDone = [...checklistDone, false];
+
+      //If members have been chosen, convert the selectedMembers array to a string on the (Member 1, Member 2) format. If no one has been chosen, set selectedMembers to "none".
+      const selectedMembersString =
+        selectedMembers.length > 1
+          ? selectedMembers.filter((member) => member !== "").join(", ")
+          : "none";
+
+      const updateChecklistMembers = [
+        ...checklistMembers,
+        selectedMembersString,
+      ];
+
+      setChecklistItem(updatedChecklistItem);
+      setChecklistDone(updatedChecklistDone);
+      setChecklistMembers(updateChecklistMembers);
+
+      setNewTask("");
+      setSelectedMembers([""]);
+    }
+
+    console.log(checklistItem, checklistDone, checklistMembers);
+
+    //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA CHECKLISTAN
   };
 
   return (
@@ -404,11 +429,30 @@ function ModalContent({
               <Form.Check
                 key={index}
                 type="checkbox"
-                label={item}
+                label={
+                  // Print the task followed by the names of the project members assigned to that task (if no one is assigned, only print the task text)
+                  checklistMembers[index] === "none" ? (
+                    item
+                  ) : (
+                    <span>
+                      {item}
+                      <span
+                        style={{
+                          color: "#AEAEAE",
+                          fontSize: "14px",
+                          marginLeft: "7px",
+                        }}
+                      >
+                        ({checklistMembers[index]})
+                      </span>
+                    </span>
+                  )
+                }
                 checked={checklistDone[index]} //Checks if the checkbox should be filled or not based on the state-array "checklistDone"
                 onChange={() => handleCheckboxChange(index)} //Handles checkbox changes
               />
             ))}
+
             <Button
               style={{
                 backgroundColor: "#FFFFFF",

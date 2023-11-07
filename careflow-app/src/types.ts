@@ -21,17 +21,21 @@ export type Project = {
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_do: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_study: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_act: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
 };

@@ -133,18 +133,22 @@ function KanbanBoard() {
       checklist_plan: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
       checklist_do: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
       checklist_study: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
       checklist_act: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
     };
     setProjectList([...projectList, newProject]);

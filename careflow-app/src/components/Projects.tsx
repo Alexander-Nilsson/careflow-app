@@ -42,18 +42,22 @@ class Project {
   checklist_plan: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_do: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_study: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
   checklist_act: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
   };
 
   constructor(
@@ -70,18 +74,22 @@ class Project {
     checklist_plan: {
       checklist_item: Array<string>;
       checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
     },
     checklist_do: {
       checklist_item: Array<string>;
       checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
     },
     checklist_study: {
       checklist_item: Array<string>;
       checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
     },
     checklist_act: {
       checklist_item: Array<string>;
       checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
     }
   ) {
     this.id = id;
@@ -161,18 +169,22 @@ function Projects() {
       checklist_plan: {
         checklist_item: projectData.checklist_plan.checklist_item,
         checklist_done: projectData.checklist_plan.checklist_done,
+        checklist_members: projectData.checklist_plan.checklist_members,
       },
       checklist_do: {
         checklist_item: projectData.checklist_do.checklist_item,
         checklist_done: projectData.checklist_do.checklist_done,
+        checklist_members: projectData.checklist_do.checklist_members,
       },
       checklist_study: {
         checklist_item: projectData.checklist_study.checklist_item,
         checklist_done: projectData.checklist_study.checklist_done,
+        checklist_members: projectData.checklist_study.checklist_members,
       },
       checklist_act: {
         checklist_item: projectData.checklist_act.checklist_item,
         checklist_done: projectData.checklist_act.checklist_done,
+        checklist_members: projectData.checklist_act.checklist_members,
       },
     }),
     fromFirestore: (snapshot: any, options: any) => {
@@ -181,18 +193,22 @@ function Projects() {
       const checklist_plan = {
         checklist_item: data.checklist_plan.checklist_item,
         checklist_done: data.checklist_plan.checklist_done,
+        checklist_members: data.checklist_plan.checklist_members,
       };
       const checklist_do = {
         checklist_item: data.checklist_do.checklist_item,
         checklist_done: data.checklist_do.checklist_done,
+        checklist_members: data.checklist_do.checklist_members,
       };
       const checklist_study = {
         checklist_item: data.checklist_study.checklist_item,
         checklist_done: data.checklist_study.checklist_done,
+        checklist_members: data.checklist_study.checklist_members,
       };
       const checklist_act = {
         checklist_item: data.checklist_act.checklist_item,
         checklist_done: data.checklist_act.checklist_done,
+        checklist_members: data.checklist_act.checklist_members,
       };
 
       return new Project(
