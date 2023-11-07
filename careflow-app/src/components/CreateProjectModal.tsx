@@ -269,7 +269,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   +
                 </span>
                 <input
-                  name="description"
+                  name="mataochfoljaupp"
                   type="text"
                   className="form-control"
                   placeholder="Lägg till"
@@ -342,8 +342,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
           <div className="mb-3 text-center">
             <label style={TitleStyle}>Lägg till en beskrivning</label>
             <input
-              title="description"
-              name="title"
+              name="description"
               type="text"
               className="form-control"
               // this is to prevent it from submitting when pressing enter
