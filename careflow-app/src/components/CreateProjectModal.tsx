@@ -63,6 +63,7 @@ interface CreateProjectModalProps {
 async function sendToDataBase(formJson: any) {
   console.log(formJson);
 
+  // Temp solution to avoid crash
   const checklist_act_map = {
     checklist_done: [false],
     checklist_item: ["Köp fika"],
@@ -85,14 +86,15 @@ async function sendToDataBase(formJson: any) {
   };
 
   const allData = {
+    id: 42,
     centrum: "Ett centrum",
     checklist_act: checklist_act_map,
     checklist_do: checklist_do_map,
     checklist_plan: checklist_plan_map,
     checklist_study: checklist_study_map,
     clinic: "en klinik",
-    closed: true,
-    phase: "1",
+    closed: false,
+    phase: 1,
     date_created: new Timestamp(0, 0),
     tags: ["en tag", "en till tag"],
     place: "US Linköping",
@@ -101,6 +103,8 @@ async function sendToDataBase(formJson: any) {
   };
 
   await setDoc(doc(db, "projects", "Sample Project"), allData);
+
+  //await setDoc(doc(db, "projects", formJson.title), formJson);
 }
 
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
