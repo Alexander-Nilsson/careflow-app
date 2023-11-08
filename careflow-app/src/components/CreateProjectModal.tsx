@@ -154,32 +154,21 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 e.key === "Enter" && e.preventDefault();
               }}
             ></input>
-            {/* Phase selection */}
-            <label style={TitleStyle}>PGSA</label>
-            <Nav variant="pills" justify defaultActiveKey={1}>
-              <Nav.Item>
-                <Nav.Link eventKey={1} onClick={() => setselectedPhase(1)}>
-                  Planera
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey={2} onClick={() => setselectedPhase(2)}>
-                  Genomföra
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey={3} onClick={() => setselectedPhase(3)}>
-                  Studera
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey={4} onClick={() => setselectedPhase(4)}>
-                  Agera
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
+            <div className="mb-3 text-center">
+              <label style={TitleStyle}>Syfte</label>
+              <input
+                name="description"
+                type="text"
+                className="form-control"
+                // this is to prevent it from submitting when pressing enter
+                onKeyPress={(
+                  e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+                ) => {
+                  e.key === "Enter" && e.preventDefault();
+                }}
+              ></input>
+            </div>
           </div>
-
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
@@ -192,7 +181,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 />
               </div>
               <div>
-                <label style={TitleStyle}>Mål och syfte</label>
+                <label style={TitleStyle}>Mål</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
                   Vad vill vi åstadkomma med förändringen?
                 </div>
@@ -338,33 +327,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 ></input>
               </div>
             </div>
-          </div>
-          <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till en beskrivning</label>
-            <input
-              name="description"
-              type="text"
-              className="form-control"
-              // this is to prevent it from submitting when pressing enter
-              onKeyPress={(
-                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-              ) => {
-                e.key === "Enter" && e.preventDefault();
-              }}
-            ></input>
-          </div>
-
-          <div className="mb-3 text">
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
-                Lägg till avdelning
-              </Dropdown.Toggle>
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
           </div>
           <div className="mb-3 text-center">
             <Dropdown>
