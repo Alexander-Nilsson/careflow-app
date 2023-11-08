@@ -29,6 +29,10 @@ function Start() {
     backgroundColor: "white",
   };
 
+  const contentStyle = {
+    marginTop: '20px',
+  }
+
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth0();
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
@@ -74,9 +78,15 @@ function Start() {
   }, [isAuthenticated, user]);
 
   return (
-    <>
+    
+    <div>
+      <img
+        className="background-gradient"
+        alt=""
+        src="./background-gradient.jpeg"
+      />
       {isAuthenticated && userInfo ? (
-        <div style={startStyle}>
+        <div style={contentStyle}>
           <ProfileSection/>
           {/* <CreateNewProject /> */}
           <ProjectsSection />
@@ -89,7 +99,7 @@ function Start() {
       ) : (
         <p>Loading...</p> // Show a loading indicator
       )}
-    </>
+    </div>
   );
 }
 

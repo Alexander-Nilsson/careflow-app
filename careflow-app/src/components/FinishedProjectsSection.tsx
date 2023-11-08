@@ -16,10 +16,12 @@ function FinishedProjectsSection() {
             const q = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
 
         try {
-            const querySnapshot = await getDocs(projectsCollectionRef);
+            const querySnapshot = await getDocs(q);
+           
             const projectsData: ProjectCardProps[] = [];
             querySnapshot.forEach((doc) => {
-                const data = doc.data();
+            const data = doc.data();
+            
                 if (data.closed) {
                     const project: ProjectCardProps = {
                         title: data.title,
@@ -48,13 +50,14 @@ function FinishedProjectsSection() {
    
 
     const projectsSectionStyle = {
-        backgroundColor: "lightblue",
+        background: 'rgba(255, 255, 255, 0.70)',
         width: "97%",
         height: "20rem",
         borderRadius: "10px",
         margin: "20px",
         padding: "10px",
         overflowX: "auto" as "auto", 
+        boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     };
 
     const scrollBarStyles = `

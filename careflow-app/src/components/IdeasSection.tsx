@@ -14,13 +14,14 @@ type IdeasSectionProps = {
 function IdeasSection({ userInfo }: IdeasSectionProps) {
     // You can define your project data here
     const ideasSectionStyle = {
-        backgroundColor: "lightblue",
+        background: 'rgba(255, 255, 255, 0.70)',
         height: "250px",
         borderRadius: "10px",
         margin: "10px",
         marginLeft: "20px",
         marginTop: "0px",
-        width: "40%"
+        width: "40%",
+        boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     };
 
     const ButtonStyle: React.CSSProperties = {
