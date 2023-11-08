@@ -325,8 +325,6 @@ function ModalContent({
       setSelectedMembers([""]);
     }
 
-    console.log(checklistItem, checklistDone, checklistMembers);
-
     //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA CHECKLISTAN
   };
 
