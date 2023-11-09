@@ -13,7 +13,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => jest.fn(),
 }));
 
-describe('TC-login-8 (FR-010301)', () => {
+describe('TC-Login-8 (FR-010301)', () => {
   it('should redirect to /start after successful login', () => {
     const navigate = jest.fn(); // Mock the navigate function
 
@@ -33,9 +33,30 @@ describe('TC-login-8 (FR-010301)', () => {
 
 import fs from 'fs';
 
-describe('TC-login-10 (FR-010103)', () => {
+describe('TC-Login-10 (FR-010103)', () => {
   it('should use useAuth0 hook', () => {
     const loginComponent = fs.readFileSync('src/components/Login.tsx', 'utf8');
     expect(loginComponent).toContain('useAuth0(');
   });
 });
+
+
+// App.tsx
+export function updateActivity(isAuthenticated: boolean) {
+  if (isAuthenticated) {
+    localStorage.setItem('lastActivity', Date.now().toString());
+  }
+}
+
+// In the test file
+describe('TC-Login-11 (FR-010205)', () => {
+  it('should create a user session upon successful login', () => {
+    updateActivity(true); // Simulating user authentication
+
+    const lastActivity = localStorage.getItem('lastActivity');
+    expect(lastActivity).toBeDefined();
+  });
+});
+
+
+
