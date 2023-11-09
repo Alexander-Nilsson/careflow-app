@@ -1,0 +1,50 @@
+FROM node:latest
+WORKDIR /app
+
+COPY careflow-app/package.json /app/
+COPY careflow-app/package-lock.json /app/
+
+RUN npm install
+RUN npm install typescript -g
+COPY careflow-app/public/ /app/public
+COPY . /app
+
+
+COPY careflow-app/src /app/src
+RUN npx tsc /app/src/index.tsx 
+
+EXPOSE 3000
+CMD npm start
+
+
+
+
+....
+# Use the official Node image as the base image
+FROM node:latest
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the working directory
+COPY careflow-app/package.json /app/
+COPY careflow-app/package-lock.json /app/
+
+# Install dependencies
+RUN npm install
+RUN npm install typescript -g
+
+# Copy the entire application to the working directory
+COPY . /app/
+
+COPY careflow-app/public /app/public
+
+# Build the React application
+RUN npm run build
+
+# Expose the port that your React app runs on (if using a specific port)
+EXPOSE 3000
+
+# Command to start the React app (modify as per your app's start command)
+CMD ["npm", "start"]
+
