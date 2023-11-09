@@ -14,37 +14,43 @@ function ProjectsSection() {
    
     const fetchData = async () => {
         const projectsCollectionRef = collection(db, "projects");
-        if (user?.name){
-        const q = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
-        
+        if (user?.name) {
+            const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
+            const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", user.name));
 
-        try {
-            const querySnapshot = await getDocs(q);
-           
-            const projectsData: ProjectCardProps[] = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                // console.log(doc.data());
-                if (!data.closed) {
-                    const project: ProjectCardProps = {
-                        title: data.title,
-                        date_created: data.date_created,
-                        place: data.place,
-                        tags: data.tags,
-                        phase: data.phase,
-                    }; 
-                    
-                    projectsData.push(project);
-                }                
-            
-            });
-            setProjects(projectsData);
-        } catch (error) {
-            console.error("Error fetching data:", error);
+
+            try {
+                Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
+                    .then(([memberSnapshot, leaderSnapshot]) => {
+                        const userProjects = [...memberSnapshot.docs, ...leaderSnapshot.docs]
+                        let projectsData: ProjectCardProps[] = [];
+                        userProjects.forEach((doc) => {
+                            let data = doc.data();
+
+                            if (!data.closed) {
+                                let project: ProjectCardProps = {
+                                    title: data.title,
+                                    date_created: data.date_created,
+                                    place: data.place,
+                                    tags: data.tags,
+                                    phase: data.phase,
+
+                                };
+
+                                projectsData.push(project);
+                            }
+                            console.log(projectsData)
+
+                        });
+                        setProjects(projectsData);
+                    })
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         }
-    }
     };
-
     useEffect(() => {
         fetchData();
     }, []); 
