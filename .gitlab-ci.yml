@@ -1,0 +1,10 @@
+image: node:14
+
+stages:
+  - test
+
+test:
+  stage: test
+  script:
+    - npm install # Install dependencies
+    - npm test # Run tests
