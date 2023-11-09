@@ -59,6 +59,19 @@ interface CreateProjectModalProps {
   onHide: () => void;
 }
 
+function transformBulletPoints(value: string) {
+  // Split the value by newline characters to get an array of lines
+  let lines = value.split('\n');
+
+  // Remove the bullet points from each line
+  lines = lines.map(line => line.replace('• ', ''));
+
+  // Remove any empty lines
+  lines = lines.filter(line => line !== '');
+
+  return lines;
+}
+
 // Writes the formdata to database
 async function sendToDataBase(formJson: any) {
   console.log(formJson);
@@ -111,14 +124,14 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   const [selectedPhase, setselectedPhase] = useState(1); // State for tracking the selected phase/pill
   const [ideas, setIdeas] = useState(''); // State for saving the ideas entered by user
 
-  const handleKeyPress = (e: any) => {
+  const handleKeyPressBulletPoint = (e: any) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       setIdeas(ideas + '\n+ ');
     }
   };
 
-  const handleFocus = () => {
+  const handleFocusBulletPoint = () => {
     if (ideas === '') {
       setIdeas('+ ');
     }
@@ -134,7 +147,9 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
     formJson.phase = selectedPhase.toString();
-    formJson.ideas = ideas;
+
+    let newideas = transformBulletPoints(ideas);
+    formJson.ideas = newideas.join("\n");
 
     let allFieldsFilled = true;
     let emptyFields = []; // Keep track of empty fields
@@ -176,6 +191,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
         >
           <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
         </OverlayTrigger> */}
+        <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
@@ -231,9 +247,9 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 />
               </div>
               <div>
-                <label style={TitleStyle}>Mål och syfte</label>
+                <label style={TitleStyle}>Mål</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Vad vill vi åstadkomma med förändringen?
+                  Vad vill du uppnå med förbättringen?
                 </div>
               </div>
             </div>
@@ -286,7 +302,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               <div>
                 <label style={TitleStyle}>Mäta och följa upp</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Hur vet vi om förändringen är en förbättring?
+                  Hur mäter vi om förändringen gör skillnad?
                 </div>
               </div>
             </div>
@@ -301,27 +317,12 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span
-                  className="input-group-text"
-                  style={{ border: "none", background: "white" }}
-                >
-                  +
-                </span>
-                <input
+                <textarea
                   name="mataochfoljaupp"
-                  type="text"
                   className="form-control"
                   placeholder="Lägg till"
-                  style={{ border: "none" }}
-                  // this is to prevent it from submitting when pressing enter
-                  onKeyPress={(
-                    e: React.KeyboardEvent<
-                      HTMLInputElement | HTMLTextAreaElement
-                    >
-                  ) => {
-                    e.key === "Enter" && e.preventDefault();
-                  }}
-                ></input>
+                  style={{ border: "none", height: "98px" }}
+                ></textarea>
               </div>
             </div>
           </div>
@@ -340,7 +341,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               <div>
                 <label style={TitleStyle}>Samla idéer</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Vilka förändringar kan vi göra som leder till en förbättring?
+                  Brainstorma idéer för för nå målen
                 </div>
               </div>
             </div>
@@ -362,8 +363,8 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   style={{ border: "none", height: "98px" }}
                   value={ideas}
                   onChange={(e) => setIdeas(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  onFocus={handleFocus}
+                  onKeyPress={handleKeyPressBulletPoint}
+                  onFocus={handleFocusBulletPoint}
                 />
               </div>
             </div>
@@ -424,7 +425,10 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
             <Button
               type="submit"
               id="SkapaFörbättringsarbete"
-              onClick={onHide}
+              onClick={() => {
+                onHide();
+                setIdeas(''); // Clear the textarea when the button is clicked
+              }}
               style={ButtonStyle}
             >
               Skicka in förbättringsarbete
