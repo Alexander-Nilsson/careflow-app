@@ -4,6 +4,7 @@ import {
   collection,
   query,
   getDocs,
+  where,
   doc,
   getDoc,
   Timestamp,
@@ -231,11 +232,26 @@ function Projects() {
   };
 
   async function fetchProjects() {
+    const projectsCollectionRef = collection(db, "projects");
+
     const q = query(collection(db, "projects"));
+    const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", user?.name));
+    const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", user?.name));
+
     const querySnapshot = await getDocs(q);
 
     // Use map to obtain all document IDs
+
+    // Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
+    //                 .then(([memberSnapshot, leaderSnapshot]) => {
+    //                   const querySnapshot = [...memberSnapshot.docs, ...leaderSnapshot.docs]
+
+
+    //                   const ids = querySnapshot.docs.map((doc) => doc.id);
+
+    //                 })
     const ids = querySnapshot.docs.map((doc) => doc.id);
+    console.log(ids)
 
     // fetch all project data in parallel
     const projects = await Promise.all(

@@ -21,6 +21,7 @@ function FinishedProjectsSection() {
                 Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
                     .then(([memberSnapshot, leaderSnapshot]) => {
                         const userProjects = [...memberSnapshot.docs, ...leaderSnapshot.docs]
+                        // console.log(userProjects)
                         let projectsData: ProjectCardProps[] = [];
                         userProjects.forEach((doc) => {
                             let data = doc.data();
@@ -42,6 +43,7 @@ function FinishedProjectsSection() {
                         });
                         setProjects(projectsData);
                     })
+                // const querySnapshot = await getDocs(q);
 
 
             } catch (error) {
