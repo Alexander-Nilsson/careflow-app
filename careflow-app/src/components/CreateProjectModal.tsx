@@ -109,6 +109,20 @@ async function sendToDataBase(formJson: any) {
 
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   const [selectedPhase, setselectedPhase] = useState(1); // State for tracking the selected phase/pill
+  const [ideas, setIdeas] = useState(''); // State for saving the ideas entered by user
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setIdeas(ideas + '\n+ ');
+    }
+  };
+
+  const handleFocus = () => {
+    if (ideas === '') {
+      setIdeas('+ ');
+    }
+  };
 
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
@@ -120,6 +134,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
     formJson.phase = selectedPhase.toString();
+    formJson.ideas = ideas;
 
     let allFieldsFilled = true;
     let emptyFields = []; // Keep track of empty fields
@@ -340,26 +355,16 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span
-                  className="input-group-text"
-                  style={{ border: "none", background: "white" }}
-                >
-                  +
-                </span>
-                <input
+                <textarea
                   name="samlaideer"
-                  type="text"
                   className="form-control"
                   placeholder="Lägg till"
-                  style={{ border: "none" }}
-                  onKeyPress={(
-                    e: React.KeyboardEvent<
-                      HTMLInputElement | HTMLTextAreaElement
-                    >
-                  ) => {
-                    e.key === "Enter" && e.preventDefault();
-                  }}
-                ></input>
+                  style={{ border: "none", height: "98px" }}
+                  value={ideas}
+                  onChange={(e) => setIdeas(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  onFocus={handleFocus}
+                />
               </div>
             </div>
           </div>
