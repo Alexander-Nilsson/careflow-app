@@ -7,5 +7,6 @@ test:
   stage: test
   script:
     - npm install # Install dependencies
+    - npm install react-scripts --save-dev
     - cd careflow-app
     - npm test # Run tests
