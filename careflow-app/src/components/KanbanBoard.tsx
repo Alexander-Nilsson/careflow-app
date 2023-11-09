@@ -41,7 +41,7 @@ const columns: Column[] = [
   },
   {
     id: 3,
-    title: "Genomföra",
+    title: "Göra",
     columnDescription:
       "Projekt som har genomförts eller genomförs just nu ligger här.",
   },

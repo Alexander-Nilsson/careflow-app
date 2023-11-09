@@ -643,14 +643,14 @@ function CardModal({
             />
           </Tab>
 
-          {/*------ GENOMFÖRA ------*/}
+          {/*------ GÖRA ------*/}
 
           <Tab
             eventKey="phase3"
             title={
               <span style={flexAndCenter}>
                 {getPhaseIcon(3, column, 20)}
-                Genomföra
+                Göra
               </span>
             }
           >
