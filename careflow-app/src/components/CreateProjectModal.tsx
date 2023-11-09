@@ -188,7 +188,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               </Nav.Item>
               <Nav.Item>
                 <Nav.Link eventKey={2} onClick={() => setselectedPhase(2)}>
-                  Genomföra
+                  Göra
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item>
