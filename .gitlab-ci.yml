@@ -6,6 +6,6 @@ stages:
 test:
   stage: test
   script:
+    - cd tddc88-company-2-2023/careflow-app # Change the directory path accordingly
     - npm install # Install dependencies
-    - cd careflow-app
     - npm test # Run tests
