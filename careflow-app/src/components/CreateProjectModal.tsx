@@ -4,7 +4,7 @@ import {
   BarChart,
   Lightbulb,
   Bullseye,
-  QuestionCircleFill,
+  EnvelopePaper,
 } from "react-bootstrap-icons";
 import { doc, setDoc, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../firebase";
@@ -179,21 +179,58 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               }}
             ></input>
           </div>
-          <div className="mb-3 text-center">
-            <label style={TitleStyle}>Syfte</label>
-            <input
-              name="description"
-              type="text"
-              className="form-control"
-              // this is to prevent it from submitting when pressing enter
-              onKeyPress={(
-                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-              ) => {
-                e.key === "Enter" && e.preventDefault();
-              }}
-            ></input>
+          <div className="mb-3">
+            <div style={FlexAndCenter}>
+              <div style={IconCircleStyle}>
+                <EnvelopePaper
+                  style={{
+                    color: "black",
+                    width: "20px",
+                    height: "20px",
+                  }}
+                />
+              </div>
+              <div>
+                <label style={TitleStyle}>Syfte</label>
+                <div className="form-text" style={DescriptiveTextStyle}>
+                  Vad är syftet bakom förändringen?
+                </div>
+              </div>
+            </div>
+            <div className="card" style={{ height: "100px" }}>
+              <div
+                className="input-group input-group-sm"
+                style={{
+                  position: "absolute",
+                  left: "0",
+                  right: "0",
+                  marginBottom: "0",
+                  fontFamily: "Avenir",
+                }}
+              >
+                <span
+                  className="input-group-text"
+                  style={{ border: "none", background: "white" }}
+                >
+                  +
+                </span>
+                <input
+                  name="malochsyfte"
+                  type="text"
+                  className="form-control"
+                  placeholder="Lägg till"
+                  style={{ border: "none" }}
+                  onKeyPress={(
+                    e: React.KeyboardEvent<
+                      HTMLInputElement | HTMLTextAreaElement
+                    >
+                  ) => {
+                    e.key === "Enter" && e.preventDefault();
+                  }}
+                ></input>
+              </div>
+            </div>
           </div>
-
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
