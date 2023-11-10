@@ -1,4 +1,5 @@
 import { db } from "../firebase";
+import { Id } from "../types";
 import {
   Timestamp,
   DocumentReference,
@@ -6,8 +7,17 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Tabs, Tab, Dropdown } from "react-bootstrap";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import {
+  Modal,
+  Button,
+  Form,
+  Tabs,
+  Tab,
+  Dropdown,
+  Popover,
+  OverlayTrigger,
+} from "react-bootstrap";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
@@ -19,7 +29,27 @@ import {
   Circle,
   CheckCircle,
   PlusLg,
+  BarChart,
+  Lightbulb,
+  Bullseye,
 } from "react-bootstrap-icons";
+
+const IconCircleStyle = {
+  borderRadius: "50%",
+  width: "25px",
+  height: "25px",
+  border: "0.5px solid #AEAEAE",
+  marginRight: "10px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#FFFFFF",
+};
+
+const FlexAndCenter = {
+  display: "flex",
+  alignItems: "center",
+};
 
 const buttonStyle = {
   backgroundColor: "#051F6F",
@@ -76,6 +106,17 @@ const whiteContainerStyle = {
   borderRadius: "10px",
 };
 
+const whiteDescriptionContainerStyle = {
+  backgroundColor: "#FFFFFF",
+  border: "1px solid #E8E7E7",
+  borderTop: "none",
+  paddingTop: "20px",
+  paddingBottom: "10px",
+  paddingLeft: "15px",
+  borderBottomLeftRadius: "10px",
+  borderBottomRightRadius: "10px",
+};
+
 const tagStyle = {
   marginTop: "5px",
   marginBottom: "10px",
@@ -104,7 +145,7 @@ interface cardModalProps {
   show: boolean;
   onHide: () => void;
   title: string;
-  column: string;
+  phase: Id;
   content: string;
   place: string;
   centrum: string;
@@ -134,20 +175,63 @@ interface cardModalProps {
   };
 }
 
-interface modalContentProps {
+interface modalContentPlanProps {
   title: string;
+  phase: number;
   tags: Array<string>;
   date_created: Timestamp;
   place: string;
   centrum: string;
   content: string;
-  column: string;
-  active_tab: number;
   checklist: {
     checklist_item: Array<string>;
     checklist_done: Array<boolean>;
     checklist_members: Array<string>;
   };
+  project_leader: string;
+  project_members: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+}
+
+interface modalContentDoStudyActProps {
+  title: string;
+  phase: number;
+  tags: Array<string>;
+  date_created: Timestamp;
+  place: string;
+  centrum: string;
+  content: string;
+  project_leader: string;
+  project_members: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+}
+
+interface topLeftProps {
+  title: string;
+  phase: number;
+  content: string;
+  place: string;
+  centrum: string;
+  tags: Array<string>;
+  date_created: Timestamp;
+  active_tab: number;
+  percentage: number;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+}
+
+interface topRightProps {
   project_leader: string;
   project_members: Array<string>;
 }
@@ -157,14 +241,18 @@ interface phasePercentageProps {
 }
 
 //Function that checks if the task's checkbox should be checked or not
-function getPhaseIcon(phase: number, column: string, marginLeft: number) {
-  const isCheck = parseInt(column) > phase;
+function getPhaseIcon(
+  activePhase: number,
+  projectPhase: number,
+  marginLeft: number
+) {
+  const isChecked = projectPhase > activePhase;
   const iconStyle = {
     marginLeft: `${marginLeft}px`,
     marginRight: "10px",
   };
 
-  return isCheck ? (
+  return isChecked ? (
     <CheckCircle style={iconStyle} />
   ) : (
     <Circle style={iconStyle} />
@@ -228,20 +316,20 @@ async function getProjectLeader(
 }
 
 // The content of the modal (Title, tags, description, members, checklist etc)
-function ModalContent({
+function ModalContentPlan({
   title,
+  phase,
   tags,
   date_created,
   place,
   centrum,
   content,
-  column,
-  active_tab,
   checklist,
   project_leader,
   project_members,
-}: modalContentProps) {
-  const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
+  ideas,
+  handleIdeaClick,
+}: modalContentPlanProps) {
   // Handles changes of the checkboxes in the checklist
   const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
 
@@ -264,14 +352,14 @@ function ModalContent({
   }
 
   //Handles the modal that opens up when you create a new checklist task
-  const [showModal, setShowModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
 
-  const handleShowModal = () => {
-    setShowModal(true);
+  const handleShowTaskModal = () => {
+    setShowTaskModal(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleCloseTaskModal = () => {
+    setShowTaskModal(false);
   };
 
   //State variables related to the checkbox
@@ -298,11 +386,11 @@ function ModalContent({
     }
   };
 
-  //Adds the new task to the checklist array when the "lägg till åtgärd" button is clicked
-  const handleSaveModal = (newTask: string) => {
-    //Makes sure that the "åtgärd" field is filled before the task can be added
+  //Adds the new task to the checklist array when the "lägg till aktivitet" button is clicked
+  const handleSaveTaskModal = (newTask: string) => {
+    //Makes sure that the "aktivitet" field is filled before the task can be added
     if (newTask.trim() !== "") {
-      setShowModal(false);
+      setShowTaskModal(false);
       const updatedChecklistItem = [...checklistItem, newTask];
       const updatedChecklistDone = [...checklistDone, false];
 
@@ -330,41 +418,454 @@ function ModalContent({
 
   return (
     <>
-      {/* Content that is the same no matter what phase tab is active */}
-
       <div style={{ display: "flex" }}>
-        <div style={{ width: "63%" }}>
-          <div style={{ display: "flex", marginBottom: "20px" }}>
-            <div style={{ width: "60%" }}>
-              <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
-              <div style={tagStyle}>
-                {tags.map((tag, index) => (
-                  <React.Fragment key={index}>
-                    <span style={tagContainerStyle}>{tag}</span>
-                  </React.Fragment>
+        <TopLeftContent
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={2}
+          percentage={calculatePercentage()}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+        />
+        <TopRightContent
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Plan phase */}
+
+      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <Form.Group style={formGroupStyle}>
+              <Form.Label>
+                <b>Aktiviteter för att genomföra idén</b>
+              </Form.Label>
+              <div style={whiteContainerStyle}>
+                {checklistItem.map((item, index) => (
+                  <Form.Check
+                    key={index}
+                    type="checkbox"
+                    label={
+                      // Print the task followed by the names of the project members assigned to that task (if no one is assigned, only print the task text)
+                      checklistMembers[index] === "none" ? (
+                        item
+                      ) : (
+                        <span>
+                          {item}
+                          <span
+                            style={{
+                              color: "#AEAEAE",
+                              fontSize: "14px",
+                              marginLeft: "7px",
+                            }}
+                          >
+                            ({checklistMembers[index]})
+                          </span>
+                        </span>
+                      )
+                    }
+                    checked={checklistDone[index]} //Checks if the checkbox should be filled or not based on the state-array "checklistDone"
+                    onChange={() => handleCheckboxChange(index)} //Handles checkbox changes
+                  />
                 ))}
+
+                <Button
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    color: "#000000",
+                    fontSize: "15.5px",
+                    padding: "0px",
+                    border: "none",
+                    cursor: "pointer",
+                    marginTop: "17px",
+                  }}
+                  onClick={handleShowTaskModal}
+                >
+                  <div style={flexAndCenter}>
+                    <PlusLg style={{ marginRight: "9px" }} />
+                    <div>Lägg till ny aktivitet</div>
+                  </div>
+                </Button>
               </div>
-              <div>
-                <div style={flexAndCenter}>
-                  <Calendar style={iconStyle} />
-                  <div>
-                    <label>{formattedDate}</label>
+            </Form.Group>
+
+            <Modal
+              show={showTaskModal}
+              onHide={handleCloseTaskModal}
+              style={{ top: "25%", fontFamily: "Avenir" }}
+            >
+              <Modal.Header closeButton></Modal.Header>
+              <Modal.Body className="d-flex justify-content-center align-items-center">
+                <Form style={{ width: "90%" }}>
+                  <div className="mb-3 text-center">
+                    <label>Aktivitet</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newTask}
+                      onChange={(e) => setNewTask(e.target.value)}
+                    ></input>
                   </div>
+                  {/*<div className="mb-3 text-center">
+                <label>Viktning</label>
+                <input
+                  type="range"
+                  className="form-range"
+                  min="1"
+                  max="10"
+                ></input>
+            </div>*/}
+                  <div className="mb-3 text-center">
+                    <Dropdown>
+                      <Dropdown.Toggle
+                        style={{
+                          width: "100%",
+                          backgroundColor: "#FFFFFF",
+                          color: "#000000",
+                          border: "1px solid #DDDDDD",
+                        }}
+                      >
+                        Lägg till kollegor
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu style={{ width: "100%" }}>
+                        <Dropdown.Item
+                          style={{
+                            fontWeight: selectedMembers.includes(project_leader)
+                              ? "bold"
+                              : "normal",
+                          }}
+                          onClick={() => handleAlternativeClick(project_leader)}
+                        >
+                          {project_leader}
+                        </Dropdown.Item>
+                        {project_members.map((member) => (
+                          <Dropdown.Item
+                            style={{
+                              fontWeight: selectedMembers.includes(member)
+                                ? "bold"
+                                : "normal",
+                            }}
+                            onClick={() => handleAlternativeClick(member)}
+                          >
+                            {member}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </div>
+                  <div className="mb-3 text-center">
+                    <Button
+                      style={saveChecklistButtonStyle}
+                      onClick={() => handleSaveTaskModal(newTask)}
+                    >
+                      Lägg till ny aktivitet
+                    </Button>
+                  </div>
+                </Form>
+              </Modal.Body>
+            </Modal>
+
+            <Form.Group style={formGroupStyle}>
+              <Form.Label>
+                <b>Övriga anteckningar</b>
+              </Form.Label>
+              <textarea className="form-control" rows={3}></textarea>
+            </Form.Group>
+            <FileSection />
+          </Form>
+
+          {/* --------------------------------------------------- */}
+
+          <SimilarImprovementProjectsSection />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function ModalContentDo({
+  title,
+  phase,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+  project_leader,
+  project_members,
+  ideas,
+  handleIdeaClick,
+}: modalContentDoStudyActProps) {
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <TopLeftContent
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={3}
+          percentage={0}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+        />
+        <TopRightContent
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Do phase */}
+
+      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <Form.Group style={formGroupStyle}>
+              <Form.Label>
+                <b>Uppmätt resultat</b>
+              </Form.Label>
+              <textarea className="form-control" rows={5}></textarea>
+            </Form.Group>
+            <Form.Group style={formGroupStyle}>
+              <Form.Label>
+                <b>Övriga anteckningar</b>
+              </Form.Label>
+              <textarea className="form-control" rows={3}></textarea>
+            </Form.Group>
+            <FileSection />
+          </Form>
+
+          {/* ---------------------------------------- */}
+
+          <SimilarImprovementProjectsSection />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function ModalContentStudy({
+  title,
+  phase,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+  project_leader,
+  project_members,
+  ideas,
+  handleIdeaClick,
+}: modalContentDoStudyActProps) {
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <TopLeftContent
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={4}
+          percentage={0}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+        />
+        <TopRightContent
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Study phase */}
+
+      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <Form.Group style={formGroupStyle}>
+              <Form.Label>
+                <b>Analys av resultat</b>
+              </Form.Label>
+              <textarea className="form-control" rows={5}></textarea>
+            </Form.Group>
+            <Form.Group style={formGroupStyle}>
+              <Form.Label>
+                <b>Övriga anteckningar</b>
+              </Form.Label>
+              <textarea className="form-control" rows={3}></textarea>
+            </Form.Group>
+            <FileSection />
+          </Form>
+
+          {/* ----------------------------------------- */}
+
+          <SimilarImprovementProjectsSection />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function ModalContentAct({
+  title,
+  phase,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+  project_leader,
+  project_members,
+  ideas,
+  handleIdeaClick,
+}: modalContentDoStudyActProps) {
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <TopLeftContent
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={5}
+          percentage={0}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+        />
+        <TopRightContent
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Act phase */}
+
+      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <Form.Group style={formGroupStyle}>
+              <Form.Label>
+                <b>Övriga anteckningar</b>
+              </Form.Label>
+              <textarea className="form-control" rows={3}></textarea>
+            </Form.Group>
+            <FileSection />
+          </Form>
+
+          {/* --------------------------------------------*/}
+
+          <SimilarImprovementProjectsSection />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+//Title, tags, centrum, tabs for syfte, mål, mäta and idéer, "markera fas som klar" button
+function TopLeftContent({
+  title,
+  phase,
+  content,
+  place,
+  centrum,
+  tags,
+  date_created,
+  active_tab,
+  percentage,
+  ideas,
+  handleIdeaClick,
+}: topLeftProps) {
+  const formattedDate = date_created.toDate().toLocaleString();
+
+  return (
+    <>
+      <div style={{ width: "63%" }}>
+        <div style={{ display: "flex", marginBottom: "20px" }}>
+          <div style={{ width: "60%" }}>
+            <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
+            <div style={tagStyle}>
+              {tags.map((tag, index) => (
+                <React.Fragment key={index}>
+                  <span style={tagContainerStyle}>{tag}</span>
+                </React.Fragment>
+              ))}
+            </div>
+            <div>
+              <div style={flexAndCenter}>
+                <Calendar style={iconStyle} />
+                <div>
+                  <label>{formattedDate}</label>
                 </div>
-                <div style={flexAndCenter}>
-                  <Folder2Open style={iconStyle} />
-                  <div>
-                    <label>{centrum}</label>
-                  </div>
+              </div>
+              <div style={flexAndCenter}>
+                <Folder2Open style={iconStyle} />
+                <div>
+                  <label>{centrum}</label>
                 </div>
-                <div style={flexAndCenter}>
-                  <GeoAltFill style={iconStyle} />
-                  <div>
-                    <label>{place}</label>
-                  </div>
+              </div>
+              <div style={flexAndCenter}>
+                <GeoAltFill style={iconStyle} />
+                <div>
+                  <label>{place}</label>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* If the active tab is Planera the donut is shown, if not only the "Markera fas som klar" button is shown */}
+          {active_tab === 2 ? ( //If active_tab is plan, show the donut
+            <div
+              style={{
+                width: "40%",
+                display: "flex",
+                justifyContent: "right",
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "40px",
+              }}
+            >
+              <PhasePercentage percentage={percentage} />
+              <Button style={buttonStyle} disabled={phase > active_tab}>
+                Markera fas som klar
+              </Button>
+            </div>
+          ) : active_tab === 5 ? ( //If active tab is act, show three different buttons
+            <div
+              style={{
+                width: "40%",
+                display: "flex",
+                justifyContent: "right",
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "40px",
+              }}
+            >
+              <div style={{ width: 120, height: 120 }}></div>
+              <Button style={buttonStyle} disabled={phase > active_tab}>
+                Markera fas som klar
+              </Button>
+            </div>
+          ) : (
+            //If active tab is do or study, show only "Markera fas som klar"
 
             <div
               style={{
@@ -376,196 +877,259 @@ function ModalContent({
                 marginTop: "40px",
               }}
             >
-              <PhasePercentage percentage={calculatePercentage()} />
-
-              <Button
-                style={buttonStyle}
-                disabled={
-                  active_tab !== parseInt(column) || calculatePercentage() < 100
-                }
-              >
+              <div style={{ width: 120, height: 120 }}></div>
+              <Button style={buttonStyle} disabled={phase > active_tab}>
                 Markera fas som klar
               </Button>
             </div>
-          </div>
-
-          <Form.Group style={descriptionStyle}>
-            <Form.Label>
-              <b>Beskrivning</b>
-            </Form.Label>
-            <div style={whiteContainerStyle}>{content}</div>
-          </Form.Group>
+          )}
         </div>
 
-        <div style={projectMembersContainer}>
-          <Form.Group>
-            <Form.Label>
-              <div>
-                <b>Förbättringsledare</b>
-                <div style={{ marginTop: "10px", marginBottom: "20px" }}>
-                  {project_leader}
-                </div>
-                <b>Förbättringsmedlemmar</b>
-                {project_members.map((member, index) => (
-                  <div style={{ marginTop: "10px" }}>{member}</div>
-                ))}
-              </div>
-            </Form.Label>
-          </Form.Group>
-        </div>
-      </div>
-
-      {/* Content that is different for each phase */}
-
-      <Form>
-        <Form.Group style={formGroupStyle}>
-          <Form.Label>
-            <b>Checklista</b>
-          </Form.Label>
-          <div style={whiteContainerStyle}>
-            {checklistItem.map((item, index) => (
-              <Form.Check
-                key={index}
-                type="checkbox"
-                label={
-                  // Print the task followed by the names of the project members assigned to that task (if no one is assigned, only print the task text)
-                  checklistMembers[index] === "none" ? (
-                    item
-                  ) : (
-                    <span>
-                      {item}
-                      <span
-                        style={{
-                          color: "#AEAEAE",
-                          fontSize: "14px",
-                          marginLeft: "7px",
-                        }}
-                      >
-                        ({checklistMembers[index]})
-                      </span>
-                    </span>
-                  )
-                }
-                checked={checklistDone[index]} //Checks if the checkbox should be filled or not based on the state-array "checklistDone"
-                onChange={() => handleCheckboxChange(index)} //Handles checkbox changes
-              />
-            ))}
-
-            <Button
-              style={{
-                backgroundColor: "#FFFFFF",
-                color: "#000000",
-                fontSize: "15.5px",
-                padding: "0px",
-                border: "none",
-                cursor: "pointer",
-                marginTop: "17px",
-              }}
-              onClick={handleShowModal}
+        <Form.Group style={descriptionStyle}>
+          <Tabs defaultActiveKey="idéer" justify>
+            <Tab
+              eventKey="syfte"
+              title={
+                <span style={flexAndCenter}>
+                  <div style={IconCircleStyle}>
+                    <Bullseye
+                      style={{
+                        color: "#C71307",
+                        width: "15px",
+                        height: "15px",
+                      }}
+                    />
+                  </div>
+                  Syfte
+                </span>
+              }
             >
-              <div style={flexAndCenter}>
-                <PlusLg style={{ marginRight: "9px" }} />
-                <div>Lägg till ny åtgärd</div>
+              <div style={whiteDescriptionContainerStyle}>{content}</div>
+            </Tab>
+            <Tab
+              eventKey="mål"
+              title={
+                <span style={flexAndCenter}>
+                  <div style={IconCircleStyle}>
+                    <CheckCircle
+                      style={{
+                        color: "#008000",
+                        width: "15px",
+                        height: "15px",
+                      }}
+                    />
+                  </div>
+                  Mål
+                </span>
+              }
+            >
+              <div style={whiteDescriptionContainerStyle}>
+                Här ska målen beskrivas
               </div>
-            </Button>
-          </div>
-        </Form.Group>
+            </Tab>
+            <Tab
+              eventKey="mäta"
+              title={
+                <span style={flexAndCenter}>
+                  <div style={IconCircleStyle}>
+                    <BarChart
+                      style={{
+                        color: "#32308D",
+                        width: "15px",
+                        height: "15px",
+                      }}
+                    />
+                  </div>
+                  Mäta
+                </span>
+              }
+            >
+              <div style={whiteDescriptionContainerStyle}>
+                Här ska mätningarna beskrivas
+              </div>
+            </Tab>
+            <Tab
+              eventKey="idéer"
+              title={
+                <span style={flexAndCenter}>
+                  <div style={IconCircleStyle}>
+                    <Lightbulb
+                      style={{
+                        color: "#D9C515",
+                        width: "15px",
+                        height: "15px",
+                      }}
+                    />
+                  </div>
+                  Idéer
+                </span>
+              }
+            >
+              <div style={whiteDescriptionContainerStyle}>
+                {ideas.map((idea, index) => (
+                  <Form.Check
+                    key={index}
+                    type="checkbox"
+                    label={idea.text}
+                    checked={idea.checked}
+                    disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
+                    onChange={() => handleIdeaClick(index)}
+                  />
+                ))}
 
-        <Modal
-          show={showModal}
-          onHide={handleCloseModal}
-          style={{ top: "25%", fontFamily: "Avenir" }}
-        >
-          <Modal.Header closeButton></Modal.Header>
-          <Modal.Body className="d-flex justify-content-center align-items-center">
-            <Form style={{ width: "90%" }}>
-              <div className="mb-3 text-center">
-                <label>Åtgärd</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={newTask}
-                  onChange={(e) => setNewTask(e.target.value)}
-                ></input>
-              </div>
-              {/*<div className="mb-3 text-center">
-                <label>Viktning</label>
-                <input
-                  type="range"
-                  className="form-range"
-                  min="1"
-                  max="10"
-                ></input>
-            </div>*/}
-              <div className="mb-3 text-center">
-                {/* When someone is chosen their name will be displayed below the dropdown*/}
-                <Dropdown>
-                  <Dropdown.Toggle
+                {ideas.every((idea) => !idea.checked) ? (
+                  <div
                     style={{
-                      width: "100%",
-                      backgroundColor: "#FFFFFF",
-                      color: "#000000",
-                      border: "1px solid #DDDDDD",
+                      fontSize: "14px",
+                      color: "#C71307",
+                      marginTop: "15px",
                     }}
                   >
-                    Lägg till kollegor
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu style={{ width: "100%" }}>
-                    <Dropdown.Item
-                      style={{
-                        fontWeight: selectedMembers.includes(project_leader)
-                          ? "bold"
-                          : "normal",
-                      }}
-                      onClick={() => handleAlternativeClick(project_leader)}
-                    >
-                      {project_leader}
-                    </Dropdown.Item>
-                    {project_members.map((member) => (
-                      <Dropdown.Item
-                        style={{
-                          fontWeight: selectedMembers.includes(member)
-                            ? "bold"
-                            : "normal",
-                        }}
-                        onClick={() => handleAlternativeClick(member)}
-                      >
-                        {member}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+                    Innan förbättringsarbetet kan påbörjas måste det
+                    specificeras vilken idé som kommer arbetas med under denna
+                    iteration.
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      color: "#008000",
+                      marginTop: "15px",
+                    }}
+                  >
+                    Nu kan du börja arbeta med förbättringarbetet!
+                  </div>
+                )}
               </div>
-              <div className="mb-3 text-center">
-                <Button
-                  style={saveChecklistButtonStyle}
-                  onClick={() => handleSaveModal(newTask)}
-                >
-                  Lägg till ny åtgärd
-                </Button>
+            </Tab>
+          </Tabs>
+        </Form.Group>
+      </div>
+    </>
+  );
+}
+
+//Project leader and project members
+function TopRightContent({ project_leader, project_members }: topRightProps) {
+  return (
+    <>
+      <div style={projectMembersContainer}>
+        <Form.Group>
+          <Form.Label>
+            <div>
+              <b>Förbättringsledare</b>
+              <div style={{ marginTop: "10px", marginBottom: "20px" }}>
+                {project_leader}
               </div>
-            </Form>
-          </Modal.Body>
-        </Modal>
-
-        <Form.Group controlId="planeraNotes" style={formGroupStyle}>
-          <Form.Label>
-            <b>Anteckningar</b>
+              <b>Förbättringsmedlemmar</b>
+              {project_members.map((member, index) => (
+                <div style={{ marginTop: "10px" }}>{member}</div>
+              ))}
+            </div>
           </Form.Label>
-          <textarea className="form-control" rows={3}></textarea>
         </Form.Group>
+      </div>
+    </>
+  );
+}
 
-        <Form.Group controlId="planeraFile" style={formGroupStyle}>
-          <Form.Label>
-            <b>Bilagor</b>
-          </Form.Label>
-          <Form.Control type="file" />
-        </Form.Group>
-      </Form>
+//Section for uploading files
+function FileSection({}) {
+  const [showFileModal, setShowFileModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const handleShowFileModal = () => {
+    setShowFileModal(true);
+  };
+  const handleCloseFileModal = () => {
+    setShowFileModal(false);
+  };
 
-      {/* Content that is the same no matter what phase tab is active */}
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
 
-      <Form.Group controlId="planeraChecklist" style={formGroupStyle}>
+  const handleFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    if (selectedFile) {
+      // You can handle the file upload here
+      console.log("Selected file:", selectedFile);
+    }
+  };
+
+  return (
+    <>
+      <Form.Group style={formGroupStyle}>
+        <Form.Label>
+          <b>Bilagor</b>
+        </Form.Label>
+        <div style={whiteContainerStyle}>
+          <Button
+            style={{
+              backgroundColor: "#FFFFFF",
+              color: "#000000",
+              fontSize: "15.5px",
+              padding: "0px",
+              border: "none",
+              cursor: "pointer",
+              marginTop: "17px",
+            }}
+            onClick={handleShowFileModal}
+          >
+            <div style={flexAndCenter}>
+              <PlusLg style={{ marginRight: "9px" }} />
+              <div>Ladda upp bilaga</div>
+            </div>
+          </Button>
+        </div>
+      </Form.Group>
+
+      <Modal
+        show={showFileModal}
+        onHide={handleCloseFileModal}
+        style={{ top: "25%", fontFamily: "Avenir" }}
+      >
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body className="d-flex justify-content-center align-items-center">
+          <Form style={{ width: "90%" }}>
+            <div className="mb-3 text-center">
+              <input
+                type="file"
+                className="form-control"
+                id="fileInput"
+                name="file"
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className="mb-3 text-center">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Lägg till en beskrivande mening..."
+                style={{ fontStyle: "italic" }}
+              ></input>
+            </div>
+            <div className="mb-3 text-center">
+              <Button
+                style={saveChecklistButtonStyle}
+                onClick={handleCloseFileModal}
+              >
+                Ladda upp bilaga
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+}
+
+//Section for displaying similar projects
+function SimilarImprovementProjectsSection() {
+  return (
+    <>
+      <Form.Group style={formGroupStyle}>
         <Form.Label>
           <b>Liknande förbättringsarbeten</b>
         </Form.Label>
@@ -582,7 +1146,7 @@ function CardModal({
   show,
   onHide,
   title,
-  column,
+  phase,
   content,
   place,
   centrum,
@@ -595,6 +1159,7 @@ function CardModal({
   checklist_study,
   checklist_act,
 }: cardModalProps) {
+  const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const [projectLeaderName, setProjectLeaderName] = useState<string>("");
 
   useEffect(() => {
@@ -608,6 +1173,19 @@ function CardModal({
     fetchProjectLeader();
   }, [project_leader]);
 
+  //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
+  const [ideas, setIdeas] = useState([
+    { text: "Här kommer det finnas en idé", checked: false },
+    { text: "Här kommer det finnas en annan", checked: false },
+    { text: "Och här kanske en tredje", checked: false },
+  ]);
+
+  const handleIdeaClick = (index: number) => {
+    const updatedIdeas = [...ideas];
+    updatedIdeas[index].checked = true;
+    setIdeas(updatedIdeas);
+  };
+
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Body
@@ -617,29 +1195,30 @@ function CardModal({
           fontFamily: "Avenir",
         }}
       >
-        <Tabs defaultActiveKey={"phase" + column} justify>
+        <Tabs defaultActiveKey={"phase" + phase} justify>
           {/*------ PLANERA ------*/}
           <Tab
             eventKey="phase2"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(2, column, 35)}
+                {getPhaseIcon(2, currentPhase, 35)}
                 Planera
               </span>
             }
           >
-            <ModalContent
+            <ModalContentPlan
               title={title}
+              phase={currentPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
-              column={column}
-              active_tab={2}
               checklist={checklist_plan}
               project_leader={projectLeaderName}
               project_members={project_members}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
             />
           </Tab>
 
@@ -649,23 +1228,23 @@ function CardModal({
             eventKey="phase3"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(3, column, 20)}
+                {getPhaseIcon(3, currentPhase, 40)}
                 Göra
               </span>
             }
           >
-            <ModalContent
+            <ModalContentDo
               title={title}
+              phase={currentPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
-              column={column}
-              active_tab={3}
-              checklist={checklist_do}
               project_leader={projectLeaderName}
               project_members={project_members}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
             />
           </Tab>
 
@@ -675,23 +1254,23 @@ function CardModal({
             eventKey="phase4"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(4, column, 30)}
+                {getPhaseIcon(4, currentPhase, 30)}
                 Studera
               </span>
             }
           >
-            <ModalContent
+            <ModalContentStudy
               title={title}
+              phase={currentPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
-              column={column}
-              active_tab={4}
-              checklist={checklist_study}
               project_leader={projectLeaderName}
               project_members={project_members}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
             />
           </Tab>
 
@@ -701,23 +1280,23 @@ function CardModal({
             eventKey="phase5"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(5, column, 40)}
+                {getPhaseIcon(5, currentPhase, 40)}
                 Agera
               </span>
             }
           >
-            <ModalContent
+            <ModalContentAct
               title={title}
+              phase={currentPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
-              column={column}
-              active_tab={5}
-              checklist={checklist_act}
               project_leader={projectLeaderName}
               project_members={project_members}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
             />
           </Tab>
         </Tabs>
