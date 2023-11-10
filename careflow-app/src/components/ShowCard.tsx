@@ -80,7 +80,7 @@ function ShowCard({ project }: ShowCardProps) {
           show={show}
           onHide={modalClose}
           title={project.title}
-          column={project.phase.toString()}
+          phase={project.phase}
           content={project.description}
           place={project.place}
           centrum={project.centrum}
