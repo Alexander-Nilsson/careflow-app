@@ -12,7 +12,6 @@ const TagStyle = {
   marginBottom: "10px",
   color: "white",
   fontSize: "14px",
-  
 };
 
 const TagContainerStyle = {
@@ -40,7 +39,7 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
       {/* Kom ihåh att ändra CSS storleken om ni ändrar style size */}
       <Card
         style={{
-          width: "18vw",
+          width: "16vw",
           maxWidth: "300px",
           minWidth: "150px",
           borderRadius: "15px",
@@ -50,7 +49,7 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
       >
         <div className="outerContainer">
           <div className="tags">
-          {tags.slice(0, 2).map((tag, index) => (
+            {tags.slice(0, 2).map((tag, index) => (
               <React.Fragment key={index}>
                 <span style={TagContainerStyle}>{tag}</span>
               </React.Fragment>

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
-import { Id, Project } from "../types";
+import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -41,7 +41,6 @@ function ShowCard({ project }: ShowCardProps) {
   // Define the style based on drag-and-drop transition
   const style = {
     transition,
-    transform: CSS.Transform.toString(transform),
   };
 
   if (isDragging) {
@@ -88,6 +87,12 @@ function ShowCard({ project }: ShowCardProps) {
           centrum={project.centrum}
           tags={project.tags}
           date_created={project.date_created}
+          project_leader={project.project_leader}
+          project_members={project.project_members}
+          checklist_plan={project.checklist_plan}
+          checklist_do={project.checklist_do}
+          checklist_study={project.checklist_study}
+          checklist_act={project.checklist_act}
         />
       </div>
     </div>

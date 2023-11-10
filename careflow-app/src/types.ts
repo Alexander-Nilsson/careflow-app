@@ -1,9 +1,10 @@
-import {Timestamp} from "firebase/firestore";
+import {Timestamp, DocumentReference, DocumentData} from "firebase/firestore";
 export type Id = string | number;
 
 export type Column = {
   id: Id;
   title: string;
+  columnDescription: string;
 };
 
 export type Project = {
@@ -15,4 +16,26 @@ export type Project = {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  project_leader: DocumentReference<DocumentData>;
+  project_members: Array<string>;
+  checklist_plan: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_do: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_study: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_act: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
 };
