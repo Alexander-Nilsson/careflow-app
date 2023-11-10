@@ -16,6 +16,7 @@ function ProgressSection() {
 
   
 
+  //test
   const progressSectionStyle = {
     background: 'rgba(255, 255, 255, 0.70)',
     width: "56%",
