@@ -6,6 +6,7 @@ import NavigationBar from './components/Navbar';
 import Start from './components/Start';
 import Login from './components/Login'
 import Projects from './components/Projects';
+import Archive from './components/Archive';
 import { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -59,6 +60,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/start" element={<Start />} />
           <Route path="/forandringsarbeten" element={<Projects />} />
+          <Route path="/arkiv" element={<Archive />} />
         </Routes>
       </div>
     </>
