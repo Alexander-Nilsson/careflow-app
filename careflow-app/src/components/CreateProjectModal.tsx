@@ -6,7 +6,13 @@ import {
   Bullseye,
   EnvelopePaper,
 } from "react-bootstrap-icons";
-import { doc, setDoc, addDoc, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  collection,
+  Timestamp,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -58,6 +64,10 @@ interface CreateProjectModalProps {
   show: boolean;
   onHide: () => void;
 }
+interface User {
+  first_name: string;
+  sur_name: string;
+}
 
 // Writes the formdata to database
 async function sendToDataBase(formJson: any) {
@@ -107,8 +117,19 @@ async function sendToDataBase(formJson: any) {
   //await setDoc(doc(db, "projects", formJson.title), formJson);
 }
 
+async function fetchMembers() {
+  const docSnap = await getDocs(collection(db, "users"));
+}
+
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   const [selectedPhase, setselectedPhase] = useState(1); // State for tracking the selected phase/pill
+  console.log(fetchMembers());
+  const options: string[] = ["Option 1", "Option 2", "Option 3"];
+
+  const [selectedOption, setSelectedOption] = useState<any>(options[0]);
+  const handleOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedOption(event.target.value);
+  };
 
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
@@ -390,30 +411,16 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               </div>
             </div>
           </div>
-          <div className="mb-3 text-center">
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
-                Lägg till kollegor
-              </Dropdown.Toggle>
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-          <div className="mb-3 text-center">
-            <Dropdown>
-              <Dropdown.Toggle id="-basic" style={{ width: "100%" }}>
-                Lägg till beskrivande nyckelord
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+          <div>
+            <label style={TitleStyle}>Lägg till kollegor: </label>
+            <select value={selectedOption} onChange={handleOptionChange}>
+              {options.map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            <p>Vald kollega: {selectedOption}</p>
           </div>
           <div className="mb-3 text-center">
             <Button
