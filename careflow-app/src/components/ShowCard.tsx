@@ -74,6 +74,7 @@ function ShowCard({ project }: ShowCardProps) {
         <CardButton
           title={project.title}
           tags={project.tags}
+          date_created={project.date_created}
           onClick={modalShow}
         />
         <CardModal
