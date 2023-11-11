@@ -80,6 +80,7 @@ function ShowCard({ project }: ShowCardProps) {
         <CardModal
           show={show}
           onHide={modalClose}
+          id={project.id}
           title={project.title}
           phase={project.phase}
           content={project.description}

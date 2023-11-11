@@ -38,4 +38,5 @@ export type Project = {
     checklist_done: Array<boolean>;
     checklist_members: Array<string>;
   };
+
 };

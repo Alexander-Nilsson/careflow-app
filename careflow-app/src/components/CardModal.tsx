@@ -6,18 +6,10 @@ import {
   DocumentData,
   doc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import {
-  Modal,
-  Button,
-  Form,
-  Tabs,
-  Tab,
-  Dropdown,
-  Popover,
-  OverlayTrigger,
-} from "react-bootstrap";
+import { Modal, Button, Form, Tabs, Tab, Dropdown } from "react-bootstrap";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
@@ -144,6 +136,7 @@ const projectMembersContainer = {
 interface cardModalProps {
   show: boolean;
   onHide: () => void;
+  id: Id;
   title: string;
   phase: Id;
   content: string;
@@ -195,6 +188,8 @@ interface modalContentPlanProps {
     checked: boolean;
   }[];
   handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
 }
 
 interface modalContentDoStudyActProps {
@@ -212,6 +207,8 @@ interface modalContentDoStudyActProps {
     checked: boolean;
   }[];
   handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
 }
 
 interface topLeftProps {
@@ -229,6 +226,8 @@ interface topLeftProps {
     checked: boolean;
   }[];
   handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
 }
 
 interface topRightProps {
@@ -329,6 +328,8 @@ function ModalContentPlan({
   project_members,
   ideas,
   handleIdeaClick,
+  id,
+  handlePhaseUpdate,
 }: modalContentPlanProps) {
   // Handles changes of the checkboxes in the checklist
   const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
@@ -431,6 +432,8 @@ function ModalContentPlan({
           percentage={calculatePercentage()}
           ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
         <TopRightContent
           project_leader={project_leader}
@@ -603,6 +606,8 @@ function ModalContentDo({
   project_members,
   ideas,
   handleIdeaClick,
+  id,
+  handlePhaseUpdate,
 }: modalContentDoStudyActProps) {
   return (
     <>
@@ -619,6 +624,8 @@ function ModalContentDo({
           percentage={0}
           ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
         <TopRightContent
           project_leader={project_leader}
@@ -668,6 +675,8 @@ function ModalContentStudy({
   project_members,
   ideas,
   handleIdeaClick,
+  id,
+  handlePhaseUpdate,
 }: modalContentDoStudyActProps) {
   return (
     <>
@@ -684,6 +693,8 @@ function ModalContentStudy({
           percentage={0}
           ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
         <TopRightContent
           project_leader={project_leader}
@@ -733,6 +744,8 @@ function ModalContentAct({
   project_members,
   ideas,
   handleIdeaClick,
+  id,
+  handlePhaseUpdate,
 }: modalContentDoStudyActProps) {
   return (
     <>
@@ -749,6 +762,8 @@ function ModalContentAct({
           percentage={0}
           ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
         <TopRightContent
           project_leader={project_leader}
@@ -793,6 +808,8 @@ function TopLeftContent({
   percentage,
   ideas,
   handleIdeaClick,
+  id,
+  handlePhaseUpdate,
 }: topLeftProps) {
   const formattedDate = date_created.toDate().toLocaleString();
 
@@ -844,7 +861,11 @@ function TopLeftContent({
               }}
             >
               <PhasePercentage percentage={percentage} />
-              <Button style={buttonStyle} disabled={phase > active_tab}>
+              <Button
+                style={buttonStyle}
+                disabled={phase > active_tab}
+                onClick={() => handlePhaseUpdate(phase)}
+              >
                 Markera fas som klar
               </Button>
             </div>
@@ -878,7 +899,11 @@ function TopLeftContent({
               }}
             >
               <div style={{ width: 120, height: 120 }}></div>
-              <Button style={buttonStyle} disabled={phase > active_tab}>
+              <Button
+                style={buttonStyle}
+                disabled={phase > active_tab}
+                onClick={() => handlePhaseUpdate(phase)}
+              >
                 Markera fas som klar
               </Button>
             </div>
@@ -1145,6 +1170,7 @@ function SimilarImprovementProjectsSection() {
 function CardModal({
   show,
   onHide,
+  id,
   title,
   phase,
   content,
@@ -1160,6 +1186,9 @@ function CardModal({
   checklist_act,
 }: cardModalProps) {
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
+  const projectId = typeof id === "string" ? id : id.toString();
+
+  //Fetches information about the project leader
   const [projectLeaderName, setProjectLeaderName] = useState<string>("");
 
   useEffect(() => {
@@ -1186,6 +1215,27 @@ function CardModal({
     setIdeas(updatedIdeas);
   };
 
+  //Makes sure that the next phase tab is displayed when the user marks a phase as done
+  const [updatedProjectPhase, setUpdatedProjectPhase] =
+    useState<number>(currentPhase);
+
+  const handlePhaseUpdate = (phase: number) => {
+    setUpdatedProjectPhase(phase + 1);
+    updatePhaseInDb(projectId, phase + 1);
+  };
+
+  //Updates the projects phase in the database when "Markera fas som klar" is clicked
+  async function updatePhaseInDb(projectId: string, newPhase: number) {
+    try {
+      const projectDocRef = doc(db, "projects", projectId);
+      await updateDoc(projectDocRef, { phase: newPhase });
+
+      console.log("Document updated!", newPhase);
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  }
+
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Body
@@ -1195,20 +1245,20 @@ function CardModal({
           fontFamily: "Avenir",
         }}
       >
-        <Tabs defaultActiveKey={"phase" + phase} justify>
+        <Tabs activeKey={updatedProjectPhase.toString()} justify>
           {/*------ PLANERA ------*/}
           <Tab
-            eventKey="phase2"
+            eventKey="2"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(2, currentPhase, 35)}
+                {getPhaseIcon(2, updatedProjectPhase, 35)}
                 Planera
               </span>
             }
           >
             <ModalContentPlan
               title={title}
-              phase={currentPhase}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
@@ -1219,23 +1269,25 @@ function CardModal({
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
             />
           </Tab>
 
           {/*------ GÖRA ------*/}
 
           <Tab
-            eventKey="phase3"
+            eventKey="3"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(3, currentPhase, 40)}
+                {getPhaseIcon(3, updatedProjectPhase, 40)}
                 Göra
               </span>
             }
           >
             <ModalContentDo
               title={title}
-              phase={currentPhase}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
@@ -1245,23 +1297,25 @@ function CardModal({
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
             />
           </Tab>
 
           {/*------STUDERA ------*/}
 
           <Tab
-            eventKey="phase4"
+            eventKey="4"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(4, currentPhase, 30)}
+                {getPhaseIcon(4, updatedProjectPhase, 30)}
                 Studera
               </span>
             }
           >
             <ModalContentStudy
               title={title}
-              phase={currentPhase}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
@@ -1271,23 +1325,25 @@ function CardModal({
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
             />
           </Tab>
 
           {/*------- AGERA ------*/}
 
           <Tab
-            eventKey="phase5"
+            eventKey="5"
             title={
               <span style={flexAndCenter}>
-                {getPhaseIcon(5, currentPhase, 40)}
+                {getPhaseIcon(5, updatedProjectPhase, 40)}
                 Agera
               </span>
             }
           >
             <ModalContentAct
               title={title}
-              phase={currentPhase}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
@@ -1297,6 +1353,8 @@ function CardModal({
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
             />
           </Tab>
         </Tabs>
