@@ -34,9 +34,7 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
 
     const titleStyle = {
         fontFamily: "Avenir",
-        marginLeft: "10px",
-        marginTop: "10px",
-        marginBottom: "1.5rem",
+        // marginBottom: "1.5rem",
         fontSize: "2rem",
     };
 
@@ -45,6 +43,7 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
     }
 
     const [ideaValue, setIdeaValue] = React.useState('');
+    const [isSent, setIsSentValue] = React.useState(false);
     const { isAuthenticated } = useAuth0();
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -65,16 +64,24 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
                 place: userInfo.place,
             });
             setIdeaValue("")
+            setIsSentValue(true)
+            const timer = setTimeout(() => {
+                setIsSentValue(false)
+            }, 3000); // 3000 milliseconds (3 seconds)
+            return () => clearTimeout(timer);
         }
     };
 
     return (
         <div style={ideasSectionStyle}>
-            <h1 style={titleStyle}>Idé på förbättringsarbete
-                <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+            <div className="d-flex">
+                <h1 className="mt-2 ml-2 flex-grow-1" style={titleStyle}>Förslagslåda</h1>
+                <div className="mt-3 mr-2">
                     <HelpPopover content="Har du ett förslag på ett förbättringsarbete? Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
                 </div>
-            </h1>
+            </div>
+            <p className="ml-2">Saknar du tid eller en detaljerad plan för ett förbättringsarbete?<br />
+                Skicka in ditt förslag här!</p>
             <Container className="my-3">
                 <FormControl
                     as="textarea"
@@ -83,9 +90,24 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
                     placeholder="Skicka in ett eget förslag på en förändring."
                     style={ideaInputStyle}
                 />
-                <Button onClick={handleClick} style={ButtonStyle} className="mt-2">
-                    Skicka förslag
-                </Button>
+                <div className="d-flex flex-row-reverse">
+                    {ideaValue == '' ? (
+                        <Button style={ButtonStyle} className="mt-2" disabled>
+                            Skicka förslag
+                        </Button>
+                    ) : (
+                        <Button onClick={handleClick} style={ButtonStyle} className="mt-2">
+                            Skicka förslag
+                        </Button>
+                    )
+                    }
+                    {isSent == true ? (
+                        <p className="m-2 mt-3" style={{ color: '#051F6F'}}>Förslag skickat!</p>
+                    ) : (
+                        null
+                    )
+                    }
+                </div>
             </Container>
 
         </div>
