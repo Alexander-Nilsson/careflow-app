@@ -147,7 +147,6 @@ export async function getUserProjects(hsaID: string, closed: boolean) {
                         projectsData.push(project)
                     }
                 });
-                console.log(projectsData)
                 return (projectsData);
             })
     } catch (error) {
@@ -176,7 +175,6 @@ export async function getAllProjects(closed: boolean) {
                     projectsData.push(project)
                     // }
                 });
-                console.log(projectsData)
                 return (projectsData);
             })
     } catch (error) {
