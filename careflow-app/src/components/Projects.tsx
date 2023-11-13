@@ -30,86 +30,101 @@ interface User {
   sur_name: string;
 }
 
-// class Project {
-//   id: Id;
-//   title: string;
-//   description: string;
-//   phase: Id;
-//   place: string;
-//   centrum: string;
-//   tags: Array<string>;
-//   date_created: Timestamp;
-//   project_leader: DocumentReference<DocumentData>;
-//   project_members: Array<string>;
-//   checklist_plan: {
-//     checklist_item: Array<string>;
-//     checklist_done: Array<boolean>;
-//     checklist_members: Array<string>;
-//   };
-//   checklist_do: {
-//     checklist_item: Array<string>;
-//     checklist_done: Array<boolean>;
-//     checklist_members: Array<string>;
-//   };
-//   checklist_study: {
-//     checklist_item: Array<string>;
-//     checklist_done: Array<boolean>;
-//     checklist_members: Array<string>;
-//   };
-//   checklist_act: {
-//     checklist_item: Array<string>;
-//     checklist_done: Array<boolean>;
-//     checklist_members: Array<string>;
-//   };
+class Project {
+  id: Id;
+  title: string;
+  description: string;
+  phase: Id;
+  place: string;
+  centrum: string;
+  tags: Array<string>;
+  date_created: Timestamp;
+  result_measurements: string;
+  notes_plan: string;
+  notes_do: string;
+  notes_study: string;
+  notes_act: string;
+  project_leader: DocumentReference<DocumentData>;
+  project_members: Array<string>;
+  checklist_plan: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_do: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_study: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_act: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
 
-//   constructor(
-//     id: Id,
-//     title: string,
-//     description: string,
-//     phase: number,
-//     place: string,
-//     centrum: string,
-//     tags: Array<string>,
-//     date_created: Timestamp,
-//     project_leader: DocumentReference<DocumentData>,
-//     project_members: Array<string>,
-//     checklist_plan: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     },
-//     checklist_do: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     },
-//     checklist_study: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     },
-//     checklist_act: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     }
-//   ) {
-//     this.id = id;
-//     this.title = title;
-//     this.description = description;
-//     this.phase = phase;
-//     this.place = place;
-//     this.centrum = centrum;
-//     this.tags = tags;
-//     this.date_created = date_created;
-//     this.project_leader = project_leader;
-//     this.project_members = project_members;
-//     this.checklist_plan = checklist_plan;
-//     this.checklist_do = checklist_do;
-//     this.checklist_study = checklist_study;
-//     this.checklist_act = checklist_act;
-//   }
-// }
+  constructor(
+    id: Id,
+    title: string,
+    description: string,
+    phase: number,
+    place: string,
+    centrum: string,
+    tags: Array<string>,
+    date_created: Timestamp,
+    result_measurements: string,
+    notes_plan: string,
+    notes_do: string,
+    notes_study: string,
+    notes_act: string,
+    project_leader: DocumentReference<DocumentData>,
+    project_members: Array<string>,
+    checklist_plan: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
+    },
+    checklist_do: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
+    },
+    checklist_study: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
+    },
+    checklist_act: {
+      checklist_item: Array<string>;
+      checklist_done: Array<boolean>;
+      checklist_members: Array<string>;
+    }
+  ) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.phase = phase;
+    this.place = place;
+    this.centrum = centrum;
+    this.tags = tags;
+    this.date_created = date_created;
+    this.result_measurements = result_measurements;
+    this.notes_plan = notes_plan;
+    this.notes_do = notes_do;
+    this.notes_study = notes_study;
+    this.notes_act = notes_act;
+    this.project_leader = project_leader;
+    this.project_members = project_members;
+    this.checklist_plan = checklist_plan;
+    this.checklist_do = checklist_do;
+    this.checklist_study = checklist_study;
+    this.checklist_act = checklist_act;
+  }
+}
 
 function Projects() {
   const navigate = useNavigate();
@@ -156,41 +171,46 @@ function Projects() {
   // }
 
   //Firebase project converter, converting the data into instance of Project
-  // const projectConverter = {
-  //   toFirestore: (projectData: any) => ({
-  //     id: projectData.id,
-  //     title: projectData.title,
-  //     description: projectData.description,
-  //     phase: projectData.phase,
-  //     place: projectData.place,
-  //     centrum: projectData.centrum,
-  //     tags: projectData.tags,
-  //     date_created: projectData.date_created,
-  //     project_leader: projectData.project_leader,
-  //     project_members: projectData.project_members,
-  //     checklist_plan: {
-  //       checklist_item: projectData.checklist_plan.checklist_item,
-  //       checklist_done: projectData.checklist_plan.checklist_done,
-  //       checklist_members: projectData.checklist_plan.checklist_members,
-  //     },
-  //     checklist_do: {
-  //       checklist_item: projectData.checklist_do.checklist_item,
-  //       checklist_done: projectData.checklist_do.checklist_done,
-  //       checklist_members: projectData.checklist_do.checklist_members,
-  //     },
-  //     checklist_study: {
-  //       checklist_item: projectData.checklist_study.checklist_item,
-  //       checklist_done: projectData.checklist_study.checklist_done,
-  //       checklist_members: projectData.checklist_study.checklist_members,
-  //     },
-  //     checklist_act: {
-  //       checklist_item: projectData.checklist_act.checklist_item,
-  //       checklist_done: projectData.checklist_act.checklist_done,
-  //       checklist_members: projectData.checklist_act.checklist_members,
-  //     },
-  //   }),
-  //   fromFirestore: (snapshot: any, options: any) => {
-  //     const data = snapshot.data(options);
+  const projectConverter = {
+    toFirestore: (projectData: any) => ({
+      id: projectData.id,
+      title: projectData.title,
+      description: projectData.description,
+      phase: projectData.phase,
+      place: projectData.place,
+      centrum: projectData.centrum,
+      tags: projectData.tags,
+      date_created: projectData.date_created,
+      result_measurements: projectData.result_measurements,
+      notes_plan: projectData.notes_plan,
+      notes_do: projectData.notes_do,
+      notes_study: projectData.notes_study,
+      notes_act: projectData.notes_act,
+      project_leader: projectData.project_leader,
+      project_members: projectData.project_members,
+      checklist_plan: {
+        checklist_item: projectData.checklist_plan.checklist_item,
+        checklist_done: projectData.checklist_plan.checklist_done,
+        checklist_members: projectData.checklist_plan.checklist_members,
+      },
+      checklist_do: {
+        checklist_item: projectData.checklist_do.checklist_item,
+        checklist_done: projectData.checklist_do.checklist_done,
+        checklist_members: projectData.checklist_do.checklist_members,
+      },
+      checklist_study: {
+        checklist_item: projectData.checklist_study.checklist_item,
+        checklist_done: projectData.checklist_study.checklist_done,
+        checklist_members: projectData.checklist_study.checklist_members,
+      },
+      checklist_act: {
+        checklist_item: projectData.checklist_act.checklist_item,
+        checklist_done: projectData.checklist_act.checklist_done,
+        checklist_members: projectData.checklist_act.checklist_members,
+      },
+    }),
+    fromFirestore: (snapshot: any, options: any) => {
+      const data = snapshot.data(options);
 
   //     const checklist_plan = {
   //       checklist_item: data.checklist_plan.checklist_item,
@@ -213,24 +233,29 @@ function Projects() {
   //       checklist_members: data.checklist_act.checklist_members,
   //     };
 
-  //     return new Project(
-  //       snapshot.id,
-  //       data.title,
-  //       data.description,
-  //       data.phase,
-  //       data.place,
-  //       data.centrum,
-  //       data.tags,
-  //       data.date_created,
-  //       data.project_leader,
-  //       data.project_members,
-  //       checklist_plan,
-  //       checklist_do,
-  //       checklist_study,
-  //       checklist_act
-  //     );
-  //   },
-  // };
+      // return new Project(
+      //   snapshot.id,
+      //   data.title,
+      //   data.description,
+      //   data.phase,
+      //   data.place,
+      //   data.centrum,
+      //   data.tags,
+      //   data.date_created,
+      //   data.result_measurements,
+      //   data.notes_plan,
+      //   data.notes_do,
+      //   data.notes_study,
+      //   data.notes_act,
+      //   data.project_leader,
+      //   data.project_members,
+      //   checklist_plan,
+      //   checklist_do,
+      //   checklist_study,
+      //   checklist_act
+      // );
+    },
+  };
 
   async function fetchProjects() {
     if (user?.name) {
