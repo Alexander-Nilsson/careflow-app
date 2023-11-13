@@ -19,8 +19,8 @@ import { getAllProjects, Project2 } from "../ProjectLib";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
-  projectList: Project2[];
-  setProjectList: React.Dispatch<React.SetStateAction<Project2[]>>;
+  projectList: Project[];
+  setProjectList: React.Dispatch<React.SetStateAction<Project[]>>;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -259,7 +259,7 @@ function Projects() {
 
   async function fetchProjects() {
     if (user?.name) {
-      const fetchedProjects: Project2[] | null = await getAllProjects(false)
+      const fetchedProjects: Project[] | null = await getAllProjects(false)
       if (fetchedProjects) setProjectList(fetchedProjects);
     }
 

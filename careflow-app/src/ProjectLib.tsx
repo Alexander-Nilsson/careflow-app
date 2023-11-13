@@ -57,6 +57,11 @@ export interface Project2 {
     centrum: string;
     tags: Array<string>;
     date_created: Timestamp;
+    result_measurements: string;
+    notes_plan: string;
+    notes_do: string;
+    notes_study: string;
+    notes_act: string;
     project_leader: DocumentReference<DocumentData>;
     project_members: Array<string>;
     checklist_plan: {
@@ -167,6 +172,11 @@ export async function getAllProjects(closed: boolean) {
                             centrum: data.centrum,
                             tags: data.tags,
                             date_created: data.date_created,
+                            result_measurements: data.result_measurements,
+                            notes_plan: data.notes_plan,
+                            notes_do: data.notes_do,
+                            notes_study: data.notes_study,
+                            notes_act: data.notes_act,
                             project_leader: data.project_leader,
                             project_members: data.project_members,
                             checklist_plan: {
