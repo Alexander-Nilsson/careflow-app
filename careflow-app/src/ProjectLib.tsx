@@ -141,7 +141,6 @@ export async function getUserProjects(hsaID: string, closed: boolean) {
                 let projectsData: Project[] = [];
                 userProjects.forEach((doc) => {
                     let data = doc.data();
-                    console.log(doc.id)
                     if ((closed && data.closed) || (!closed && !data.closed)) {
                         let project: Project = setProject(doc.id, data)
                         projectsData.push(project)

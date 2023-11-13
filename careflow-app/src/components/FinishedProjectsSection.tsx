@@ -15,7 +15,6 @@ function FinishedProjectsSection() {
         const projectsCollectionRef = collection(db, "projects");
         if (user?.name) {
             const fetchedProjects: Project[] | null = await getUserProjects(user.name, true)
-            console.log(fetchedProjects)
             if (fetchedProjects) setProjects(fetchedProjects);
         }
     };
