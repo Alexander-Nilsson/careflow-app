@@ -129,6 +129,7 @@ function KanbanBoard() {
       tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
       result_measurements: "results",
+      result_analysis: "results",
       notes_plan: "some notes",
       notes_do: "other notes",
       notes_study: "notes",

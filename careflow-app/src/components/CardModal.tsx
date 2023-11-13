@@ -14,6 +14,7 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import CardModalNotes from "./CardModalNotes";
 import CardModalChecklist from "./CardModalChecklist";
 import CardModalSimilarProjects from "./CardModalSimilarProjects";
+import CardModalResultAnalysis from "./CardModalResultAnalysis";
 import "react-circular-progressbar/dist/styles.css";
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
@@ -143,6 +144,7 @@ interface cardModalProps {
   tags: Array<string>;
   date_created: Timestamp;
   result_measurements: string;
+  result_analysis: string;
   notes_plan: string;
   notes_do: string;
   notes_study: string;
@@ -207,6 +209,27 @@ interface modalContentDoProps {
   project_leader: string;
   project_members: Array<string>;
   result_measurements: string;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
+}
+
+interface modalContentStudyProps {
+  title: string;
+  phase: number;
+  tags: Array<string>;
+  date_created: Timestamp;
+  place: string;
+  centrum: string;
+  content: string;
+  project_leader: string;
+  project_members: Array<string>;
+  result_analysis: string;
   ideas: {
     text: string;
     checked: boolean;
@@ -546,12 +569,13 @@ function ModalContentStudy({
   content,
   project_leader,
   project_members,
+  result_analysis,
   ideas,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
   notes,
-}: modalContentDoStudyActProps) {
+}: modalContentStudyProps) {
   return (
     <>
       <div style={{ display: "flex" }}>
@@ -582,12 +606,10 @@ function ModalContentStudy({
       {ideas.some((idea) => idea.checked) ? (
         <div>
           <Form>
-            <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Analys av resultat</b>
-              </Form.Label>
-              <textarea className="form-control" rows={5}></textarea>
-            </Form.Group>
+            <CardModalResultAnalysis
+              result_analysis={result_analysis}
+              projectId={id}
+            />
             <Form.Group style={formGroupStyle}>
               <CardModalNotes
                 notes={notes}
@@ -1050,6 +1072,7 @@ function CardModal({
   tags,
   date_created,
   result_measurements,
+  result_analysis,
   notes_plan,
   notes_do,
   notes_study,
@@ -1213,6 +1236,7 @@ function CardModal({
               content={content}
               project_leader={projectLeaderName}
               project_members={project_members}
+              result_analysis={result_analysis}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
