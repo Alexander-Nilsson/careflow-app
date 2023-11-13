@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase";
 // import { ProjectCardProps } from "./components/ProjectCard";
-import {Timestamp, DocumentReference, DocumentData} from "firebase/firestore";
+import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
 
 // export interface Project {
 //     title: string;
@@ -13,42 +13,42 @@ import {Timestamp, DocumentReference, DocumentData} from "firebase/firestore";
 // }
 
 
-export interface Project1 {
-    id: string;
-    title: string;
-    description: string;
-    phase: number;
-    place: string;
-    centrum: string;
-    tags: Array<string>;
-    date_created: Timestamp;
-    project_leader: DocumentReference<DocumentData>;
-    project_members: Array<string>;
-    checklist_plan: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    };
-    checklist_do: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    };
-    checklist_study: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    };
-    checklist_act: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    };
-}
+// export interface Project1 {
+//     id: string;
+//     title: string;
+//     description: string;
+//     phase: number;
+//     place: string;
+//     centrum: string;
+//     tags: Array<string>;
+//     date_created: Timestamp;
+//     project_leader: DocumentReference<DocumentData>;
+//     project_members: Array<string>;
+//     checklist_plan: {
+//       checklist_item: Array<string>;
+//       checklist_done: Array<boolean>;
+//       checklist_members: Array<string>;
+//     };
+//     checklist_do: {
+//       checklist_item: Array<string>;
+//       checklist_done: Array<boolean>;
+//       checklist_members: Array<string>;
+//     };
+//     checklist_study: {
+//       checklist_item: Array<string>;
+//       checklist_done: Array<boolean>;
+//       checklist_members: Array<string>;
+//     };
+//     checklist_act: {
+//       checklist_item: Array<string>;
+//       checklist_done: Array<boolean>;
+//       checklist_members: Array<string>;
+//     };
+// }
 
-type Id = string | number;
+export type Id = string | number;
 
-export interface Project2 {
+export interface Project {
     id: Id;
     title: string;
     description: string;
@@ -65,25 +65,67 @@ export interface Project2 {
     project_leader: DocumentReference<DocumentData>;
     project_members: Array<string>;
     checklist_plan: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
+        checklist_item: Array<string>;
+        checklist_done: Array<boolean>;
+        checklist_members: Array<string>;
     };
     checklist_do: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
+        checklist_item: Array<string>;
+        checklist_done: Array<boolean>;
+        checklist_members: Array<string>;
     };
     checklist_study: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
+        checklist_item: Array<string>;
+        checklist_done: Array<boolean>;
+        checklist_members: Array<string>;
     };
     checklist_act: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
+        checklist_item: Array<string>;
+        checklist_done: Array<boolean>;
+        checklist_members: Array<string>;
     };
+}
+
+function setProject(id: string, data: DocumentData) {
+    let project: Project = {
+        id: id,
+        title: data.title,
+        description: data.description,
+        phase: data.phase,
+        place: data.place,
+        centrum: data.centrum,
+        tags: data.tags,
+        date_created: data.date_created,
+        result_measurements: data.result_measurements,
+        notes_plan: data.notes_plan,
+        notes_do: data.notes_do,
+        notes_study: data.notes_study,
+        notes_act: data.notes_act,
+        project_leader: data.project_leader,
+        project_members: data.project_members,
+        checklist_plan: {
+            checklist_item: data.checklist_plan.checklist_item,
+            checklist_done: data.checklist_plan.checklist_done,
+            checklist_members: data.checklist_plan.checklist_members,
+        },
+        checklist_do: {
+            checklist_item: data.checklist_do.checklist_item,
+            checklist_done: data.checklist_do.checklist_done,
+            checklist_members: data.checklist_do.checklist_members,
+        },
+        checklist_study: {
+            checklist_item: data.checklist_study.checklist_item,
+            checklist_done: data.checklist_study.checklist_done,
+            checklist_members: data.checklist_study.checklist_members,
+        },
+        checklist_act: {
+            checklist_item: data.checklist_act.checklist_item,
+            checklist_done: data.checklist_act.checklist_done,
+            checklist_members: data.checklist_act.checklist_members,
+        },
+    };
+    return project
+
 }
 
 //fetch the users projects based on hsa-id and if closed or open projects should be fetched.
@@ -96,43 +138,12 @@ export async function getUserProjects(hsaID: string, closed: boolean) {
         return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
             .then(([memberSnapshot, leaderSnapshot]) => {
                 const userProjects = [...memberSnapshot.docs, ...leaderSnapshot.docs]
-                let projectsData: Project1[] = [];
+                let projectsData: Project[] = [];
                 userProjects.forEach((doc) => {
                     let data = doc.data();
                     console.log(doc.id)
                     if ((closed && data.closed) || (!closed && !data.closed)) {
-                        let project: Project1 = {
-                            id: doc.id,
-                            title: data.title,
-                            description: data.description,
-                            phase: data.phase,
-                            place: data.place,
-                            centrum: data.centrum,
-                            tags: data.tags,
-                            date_created: data.date_created,
-                            project_leader: data.project_leader,
-                            project_members: data.project_members,
-                            checklist_plan: {
-                                checklist_item: data.checklist_plan.checklist_item,
-                                checklist_done: data.checklist_plan.checklist_done,
-                                checklist_members: data.checklist_plan.checklist_members,
-                            },
-                            checklist_do: {
-                                checklist_item: data.checklist_do.checklist_item,
-                                checklist_done: data.checklist_do.checklist_done,
-                                checklist_members: data.checklist_do.checklist_members,
-                            },
-                            checklist_study: {
-                                checklist_item: data.checklist_study.checklist_item,
-                                checklist_done: data.checklist_study.checklist_done,
-                                checklist_members: data.checklist_study.checklist_members,
-                            },
-                            checklist_act: {
-                                checklist_item: data.checklist_act.checklist_item,
-                                checklist_done: data.checklist_act.checklist_done,
-                                checklist_members: data.checklist_act.checklist_members,
-                            },
-                        };
+                        let project: Project = setProject(doc.id, data)
                         projectsData.push(project)
                     }
                 });
@@ -158,49 +169,11 @@ export async function getAllProjects(closed: boolean) {
         return Promise.all([getDocs(projectQuery)])
             .then(([memberSnapshot]) => {
                 const projects = [...memberSnapshot.docs]
-                let projectsData: Project2[] = [];
+                let projectsData: Project[] = [];
                 projects.forEach((doc) => {
                     let data = doc.data();
-                    console.log(doc.id)
-                    // if ((closed && data.closed) || (!closed && !data.closed)) {
-                        let project: Project2 = {
-                            id: doc.id,
-                            title: data.title,
-                            description: data.description,
-                            phase: data.phase,
-                            place: data.place,
-                            centrum: data.centrum,
-                            tags: data.tags,
-                            date_created: data.date_created,
-                            result_measurements: data.result_measurements,
-                            notes_plan: data.notes_plan,
-                            notes_do: data.notes_do,
-                            notes_study: data.notes_study,
-                            notes_act: data.notes_act,
-                            project_leader: data.project_leader,
-                            project_members: data.project_members,
-                            checklist_plan: {
-                                checklist_item: data.checklist_plan.checklist_item,
-                                checklist_done: data.checklist_plan.checklist_done,
-                                checklist_members: data.checklist_plan.checklist_members,
-                            },
-                            checklist_do: {
-                                checklist_item: data.checklist_do.checklist_item,
-                                checklist_done: data.checklist_do.checklist_done,
-                                checklist_members: data.checklist_do.checklist_members,
-                            },
-                            checklist_study: {
-                                checklist_item: data.checklist_study.checklist_item,
-                                checklist_done: data.checklist_study.checklist_done,
-                                checklist_members: data.checklist_study.checklist_members,
-                            },
-                            checklist_act: {
-                                checklist_item: data.checklist_act.checklist_item,
-                                checklist_done: data.checklist_act.checklist_done,
-                                checklist_members: data.checklist_act.checklist_members,
-                            },
-                        };
-                        projectsData.push(project)
+                    let project: Project = setProject(doc.id, data)
+                    projectsData.push(project)
                     // }
                 });
                 console.log(projectsData)

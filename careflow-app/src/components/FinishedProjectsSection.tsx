@@ -5,16 +5,16 @@ import { ProjectCardProps } from "./ProjectCard";
 import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from '@auth0/auth0-react';
-import { getUserProjects, Project1 } from "../ProjectLib";
+import { getUserProjects, Project } from "../ProjectLib";
 
 function FinishedProjectsSection() {
-    const [projects, setProjects] = useState<Project1[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const { user } = useAuth0();
 
     const fetchData = async () => {
         const projectsCollectionRef = collection(db, "projects");
         if (user?.name) {
-            const fetchedProjects: Project1[] | null = await getUserProjects(user.name, true)
+            const fetchedProjects: Project[] | null = await getUserProjects(user.name, true)
             console.log(fetchedProjects)
             if (fetchedProjects) setProjects(fetchedProjects);
         }

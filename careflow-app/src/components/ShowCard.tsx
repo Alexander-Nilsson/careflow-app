@@ -3,13 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
-import { Project } from "../types";
+// import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Project2 } from "../ProjectLib";
+import { Project } from "../ProjectLib";
 
 interface ShowCardProps {
-  project: Project2;
+  project: Project;
 }
 function ShowCard({ project }: ShowCardProps) {
   // State to track whether the mouse is over the task card
