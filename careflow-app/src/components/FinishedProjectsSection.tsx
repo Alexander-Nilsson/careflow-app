@@ -5,50 +5,18 @@ import { ProjectCardProps } from "./ProjectCard";
 import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from '@auth0/auth0-react';
+import { getUserProjects, Project1 } from "../ProjectLib";
 
 function FinishedProjectsSection() {
-    const [projects, setProjects] = useState<ProjectCardProps[]>([]);
+    const [projects, setProjects] = useState<Project1[]>([]);
     const { user } = useAuth0();
 
     const fetchData = async () => {
         const projectsCollectionRef = collection(db, "projects");
         if (user?.name) {
-            const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
-            const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", user.name));
-
-
-            try {
-                Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
-                    .then(([memberSnapshot, leaderSnapshot]) => {
-                        const userProjects = [...memberSnapshot.docs, ...leaderSnapshot.docs]
-                        // console.log(userProjects)
-                        let projectsData: ProjectCardProps[] = [];
-                        userProjects.forEach((doc) => {
-                            let data = doc.data();
-
-                            if (data.closed) {
-                                let project: ProjectCardProps = {
-                                    title: data.title,
-                                    date_created: data.date_created,
-                                    place: data.place,
-                                    tags: data.tags,
-                                    phase: data.phase,
-
-                                };
-
-                                projectsData.push(project);
-                            }
-                            console.log(projectsData)
-
-                        });
-                        setProjects(projectsData);
-                    })
-                // const querySnapshot = await getDocs(q);
-
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
+            const fetchedProjects: Project1[] | null = await getUserProjects(user.name, true)
+            console.log(fetchedProjects)
+            if (fetchedProjects) setProjects(fetchedProjects);
         }
     };
 
