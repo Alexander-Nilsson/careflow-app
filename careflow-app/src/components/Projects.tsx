@@ -37,6 +37,11 @@ class Project {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  result_measurements: string;
+  notes_plan: string;
+  notes_do: string;
+  notes_study: string;
+  notes_act: string;
   project_leader: DocumentReference<DocumentData>;
   project_members: Array<string>;
   checklist_plan: {
@@ -69,6 +74,11 @@ class Project {
     centrum: string,
     tags: Array<string>,
     date_created: Timestamp,
+    result_measurements: string,
+    notes_plan: string,
+    notes_do: string,
+    notes_study: string,
+    notes_act: string,
     project_leader: DocumentReference<DocumentData>,
     project_members: Array<string>,
     checklist_plan: {
@@ -100,6 +110,11 @@ class Project {
     this.centrum = centrum;
     this.tags = tags;
     this.date_created = date_created;
+    this.result_measurements = result_measurements;
+    this.notes_plan = notes_plan;
+    this.notes_do = notes_do;
+    this.notes_study = notes_study;
+    this.notes_act = notes_act;
     this.project_leader = project_leader;
     this.project_members = project_members;
     this.checklist_plan = checklist_plan;
@@ -164,6 +179,11 @@ function Projects() {
       centrum: projectData.centrum,
       tags: projectData.tags,
       date_created: projectData.date_created,
+      result_measurements: projectData.result_measurements,
+      notes_plan: projectData.notes_plan,
+      notes_do: projectData.notes_do,
+      notes_study: projectData.notes_study,
+      notes_act: projectData.notes_act,
       project_leader: projectData.project_leader,
       project_members: projectData.project_members,
       checklist_plan: {
@@ -220,6 +240,11 @@ function Projects() {
         data.centrum,
         data.tags,
         data.date_created,
+        data.result_measurements,
+        data.notes_plan,
+        data.notes_do,
+        data.notes_study,
+        data.notes_act,
         data.project_leader,
         data.project_members,
         checklist_plan,
