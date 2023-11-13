@@ -6,9 +6,10 @@ import "./ShowCard.css";
 import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Project2 } from "../ProjectLib";
 
 interface ShowCardProps {
-  project: Project;
+  project: Project2;
 }
 function ShowCard({ project }: ShowCardProps) {
   // State to track whether the mouse is over the task card

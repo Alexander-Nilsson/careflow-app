@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
+import { Project2 } from "../ProjectLib";
 
 const columns: Column[] = [
   {
@@ -69,7 +70,7 @@ function KanbanBoard() {
 
   const userReference = doc(db, "users", "random_user_id");
   const { projectList, setProjectList } = context;
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [activeProject, setActiveProject] = useState<Project2 | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

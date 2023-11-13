@@ -6,6 +6,7 @@ import "../styles/Kanban.css";
 import ShowCard from "./ShowCard";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { QuestionCircleFill } from "react-bootstrap-icons";
+import { Project2 } from "../ProjectLib";
 
 const QuestionmarkStyle = {
   marginRight: "0.5vw",
@@ -18,7 +19,7 @@ const QuestionmarkStyle = {
 interface Props {
   column: Column;
   createProject: (columnId: Id) => void;
-  projectList: Project[];
+  projectList: Project2[];
 }
 
 function ColumnContainer({ column, createProject, projectList }: Props) {
