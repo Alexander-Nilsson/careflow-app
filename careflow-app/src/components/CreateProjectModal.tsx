@@ -153,10 +153,11 @@ async function sendToDataBase(formJson: any) {
     closed: false,
     phase: 1,
     date_created: new Timestamp(0, 0),
-    tags: ["en tag", "en till tag"],
+    tags: [],
     place: "US Linköping",
     description: "En beskrivning av projektet",
     title: "En titel för projektet",
+    project_members: [],
   };
 
   await setDoc(doc(db, "projects", "Sample Project"), allData);
@@ -209,7 +210,9 @@ const tagConverter = {
 };
 
 var users: any[] = [];
+var selectedUsers: any[] = [];
 var tags: any[] = [];
+var selectedTags: any[] = [];
 
 async function fetchUsers() {
   const q = query(collection(db, "users"));
@@ -252,14 +255,22 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   fetchUsers();
   fetchTags();
 
+  //handle dropdown for users
   const [selectedOption, setSelectedOption] = useState<string>(users[0]);
   const handleOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value);
+    if (!selectedUsers.includes(event.target.value)) {
+      selectedUsers.push(event.target.value);
+    }
   };
 
+  //handle dropdown for tags
   const [selectedOption1, setSelectedOption1] = useState<string>(tags[0]);
   const handleOptionChange1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption1(event.target.value);
+    if (!selectedTags.includes(event.target.value)) {
+      selectedTags.push(event.target.value);
+    }
   };
 
   // is executed when submit button is pressed
