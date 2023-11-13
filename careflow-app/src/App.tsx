@@ -11,7 +11,7 @@ function App() {
 
   const { isAuthenticated, isLoading, logout, user} = useAuth0();
   let timeoutId: number | undefined;
-  const inactivityTimeout = 60 * 1000; // 1 hour in milliseconds
+  const inactivityTimeout = 60 * 60 * 1000; // 1 hour in milliseconds
   const location = useLocation();
 
   // updates activity by user
