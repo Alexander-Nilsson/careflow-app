@@ -16,6 +16,8 @@ import KanbanBoard from "./KanbanBoard";
 // import { Id } from "../types";
 import { useAuth0 } from "@auth0/auth0-react";
 import { getAllProjects, Project } from "../ImprovementWorkLib";
+import FinishedProjectsSection from "./FinishedProjectsSection";
+import TitleBox from "./TitleBox";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -209,57 +211,57 @@ function Projects() {
   //       checklist_members: projectData.checklist_act.checklist_members,
   //     },
   //   }),
-    // fromFirestore: (snapshot: any, options: any) => {
-    //   const data = snapshot.data(options);
+  // fromFirestore: (snapshot: any, options: any) => {
+  //   const data = snapshot.data(options);
 
-      //     const checklist_plan = {
-      //       checklist_item: data.checklist_plan.checklist_item,
-      //       checklist_done: data.checklist_plan.checklist_done,
-      //       checklist_members: data.checklist_plan.checklist_members,
-      //     };
-      //     const checklist_do = {
-      //       checklist_item: data.checklist_do.checklist_item,
-      //       checklist_done: data.checklist_do.checklist_done,
-      //       checklist_members: data.checklist_do.checklist_members,
-      //     };
-      //     const checklist_study = {
-      //       checklist_item: data.checklist_study.checklist_item,
-      //       checklist_done: data.checklist_study.checklist_done,
-      //       checklist_members: data.checklist_study.checklist_members,
-      //     };
-      //     const checklist_act = {
-      //       checklist_item: data.checklist_act.checklist_item,
-      //       checklist_done: data.checklist_act.checklist_done,
-      //       checklist_members: data.checklist_act.checklist_members,
-      //     };
+  //     const checklist_plan = {
+  //       checklist_item: data.checklist_plan.checklist_item,
+  //       checklist_done: data.checklist_plan.checklist_done,
+  //       checklist_members: data.checklist_plan.checklist_members,
+  //     };
+  //     const checklist_do = {
+  //       checklist_item: data.checklist_do.checklist_item,
+  //       checklist_done: data.checklist_do.checklist_done,
+  //       checklist_members: data.checklist_do.checklist_members,
+  //     };
+  //     const checklist_study = {
+  //       checklist_item: data.checklist_study.checklist_item,
+  //       checklist_done: data.checklist_study.checklist_done,
+  //       checklist_members: data.checklist_study.checklist_members,
+  //     };
+  //     const checklist_act = {
+  //       checklist_item: data.checklist_act.checklist_item,
+  //       checklist_done: data.checklist_act.checklist_done,
+  //       checklist_members: data.checklist_act.checklist_members,
+  //     };
 
-      // return new Project(
-      //   snapshot.id,
-      //   data.title,
-      //   data.description,
-      //   data.phase,
-      //   data.place,
-      //   data.centrum,
-      //   data.tags,
-      //   data.date_created,
-      //   data.result_measurements,
-      //   data.notes_plan,
-      //   data.notes_do,
-      //   data.notes_study,
-      //   data.notes_act,
-      //   data.project_leader,
-      //   data.project_members,
-      //   checklist_plan,
-      //   checklist_do,
-      //   checklist_study,
-      //   checklist_act
-      // );
+  // return new Project(
+  //   snapshot.id,
+  //   data.title,
+  //   data.description,
+  //   data.phase,
+  //   data.place,
+  //   data.centrum,
+  //   data.tags,
+  //   data.date_created,
+  //   data.result_measurements,
+  //   data.notes_plan,
+  //   data.notes_do,
+  //   data.notes_study,
+  //   data.notes_act,
+  //   data.project_leader,
+  //   data.project_members,
+  //   checklist_plan,
+  //   checklist_do,
+  //   checklist_study,
+  //   checklist_act
+  // );
   //   },
   // };
 
   async function fetchProjects() {
     if (user?.name) {
-      const fetchedProjects: Project[] | null = await getAllProjects(false)
+      const fetchedProjects: Project[] | null = await getAllProjects(false);
       if (fetchedProjects) setProjectList(fetchedProjects);
     }
 
@@ -281,7 +283,6 @@ function Projects() {
     // Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
     //                 .then(([memberSnapshot, leaderSnapshot]) => {
     //                   const querySnapshot = [...memberSnapshot.docs, ...leaderSnapshot.docs]
-
 
     //                   const ids = querySnapshot.docs.map((doc) => doc.id);
 
@@ -347,12 +348,18 @@ function Projects() {
       {isLoading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
-        <h1>Förändringsarbeten</h1>
+        <TitleBox
+          title={"Förändringsarbeten"}
+          description="Här kan du bläddra bland pågående projekt och se vilken status de har.
+        Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
+        Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
+        ></TitleBox>
       )}
 
       <ProjectContext.Provider value={{ projectList, setProjectList }}>
         <KanbanBoard />
       </ProjectContext.Provider>
+      <FinishedProjectsSection />
     </>
   );
 }
