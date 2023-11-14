@@ -6,7 +6,7 @@ import "./ShowCard.css";
 // import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Project } from "../ProjectLib";
+import { Project } from "../ImprovementWorkLib";
 
 interface ShowCardProps {
   project: Project;

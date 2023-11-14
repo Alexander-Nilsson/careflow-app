@@ -25,7 +25,7 @@ import {
 } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
-import { Project } from "../ProjectLib";
+import { Project } from "../ImprovementWorkLib";
 
 const columns: Column[] = [
   {

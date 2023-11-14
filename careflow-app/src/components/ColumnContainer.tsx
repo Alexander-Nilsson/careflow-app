@@ -6,7 +6,7 @@ import "../styles/Kanban.css";
 import ShowCard from "./ShowCard";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { QuestionCircleFill } from "react-bootstrap-icons";
-import { Project } from "../ProjectLib";
+import { Project } from "../ImprovementWorkLib";
 
 const QuestionmarkStyle = {
   marginRight: "0.5vw",

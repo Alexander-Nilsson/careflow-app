@@ -2,26 +2,21 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { ProjectCardProps } from "./ProjectCard";
-import { db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from '@auth0/auth0-react';
-import { getUserProjects, Project, getAllImprovementWorks, ImprovementWork } from "../ProjectLib";
+import {ImprovementWork, getUserImprovementWorks } from "../ImprovementWorkLib";
 
 function ProjectsSection() {
 
-    const [projects, setProjects] = useState<Project[]>([]);
     const [improvementWorks, setImprovementWork] = useState<ImprovementWork[]>([]);
     const { user } = useAuth0();
 
     const fetchData = async () => {
-        const projectsCollectionRef = collection(db, "projects");
         if (user?.name) {
-            const fetchedProjects: Project[] | null = await getUserProjects(user.name, false)
-            if (fetchedProjects) setProjects(fetchedProjects)
+            const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(user.name, false)
+            if (fetchedImprovementWorks) setImprovementWork(fetchedImprovementWorks)
         }
-        const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks()
-        console.log(fetchedImprovementWorks);
+        
+        
     };
     useEffect(() => {
         fetchData();
@@ -83,14 +78,14 @@ function ProjectsSection() {
             </h1>
 
             <div style={projectsContainerStyle}>
-                {projects.map((project, index) => (
+                {improvementWorks.map((improvementWork, index) => (
                     <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
                         <ProjectCard
-                            title={project.title}
-                            date_created={project.date_created}
-                            place={project.place}
-                            tags={project.tags}
-                            phase={project.phase}
+                            title={improvementWork.title}
+                            date_created={improvementWork.date_created}
+                            place={improvementWork.place}
+                            tags={improvementWork.tags}
+                            phase={improvementWork.phase}
                             displayPhaseImage={true}
                         />
                     </div>

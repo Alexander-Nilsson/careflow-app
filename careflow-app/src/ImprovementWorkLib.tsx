@@ -1,50 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase";
-// import { ProjectCardProps } from "./components/ProjectCard";
 import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
-
-// export interface Project {
-//     title: string;
-//     date_created: any;
-//     place: string;
-//     tags: string[];
-//     phase: number;
-//     displayPhaseImage?: boolean;
-// }
-
-
-// export interface Project1 {
-//     id: string;
-//     title: string;
-//     description: string;
-//     phase: number;
-//     place: string;
-//     centrum: string;
-//     tags: Array<string>;
-//     date_created: Timestamp;
-//     project_leader: DocumentReference<DocumentData>;
-//     project_members: Array<string>;
-//     checklist_plan: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     };
-//     checklist_do: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     };
-//     checklist_study: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     };
-//     checklist_act: {
-//       checklist_item: Array<string>;
-//       checklist_done: Array<boolean>;
-//       checklist_members: Array<string>;
-//     };
-// }
 
 export type Id = string | number;
 
@@ -283,6 +239,31 @@ export async function getAllImprovementWorks () {
                     let improvementWork: ImprovementWork = setImprovementWork(data)
                     improvementWorksData.push(improvementWork)
                     // }
+                });
+                return (improvementWorksData);
+            })
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+    }
+}
+
+export async function getUserImprovementWorks(hsaID: string, closed: boolean) {
+    const improvementWorksCollectionRef = collection(db, "improvementWorks");
+    const memberQuery = query(improvementWorksCollectionRef, where("project_members", "array-contains", hsaID));
+    const leaderQuery = query(improvementWorksCollectionRef, where("project_leader", "==", hsaID));
+
+    try {
+        return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
+            .then(([memberSnapshot, leaderSnapshot]) => {
+                const userImprovementWorks = [...memberSnapshot.docs, ...leaderSnapshot.docs]
+                let improvementWorksData: ImprovementWork[] = [];
+                userImprovementWorks.forEach((doc) => {
+                    let data = doc.data();
+                    if ((closed && data.closed) || (!closed && !data.closed)) {
+                        let improvementWork: ImprovementWork = setImprovementWork(data)
+                        improvementWorksData.push(improvementWork)
+                    }
                 });
                 return (improvementWorksData);
             })

@@ -7,7 +7,7 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
-import { Id } from "../ProjectLib";
+import { Id } from "../ImprovementWorkLib";
 
 
 export interface ProjectCardProps {

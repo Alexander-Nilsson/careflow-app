@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 // import { Id } from "../types";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getAllProjects, Project } from "../ProjectLib";
+import { getAllProjects, Project } from "../ImprovementWorkLib";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
