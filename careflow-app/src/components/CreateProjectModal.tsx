@@ -19,7 +19,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
-import Nav from "react-bootstrap/Nav";
 
 export type UserInfoType = {
   hsaID: string | undefined;
@@ -108,6 +107,10 @@ async function sendToDataBase(projectData: object) {
 }
 
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
+  // States for error messages
+  const [titleError, setTitleError] = useState(false);
+  const [ideaError, setIdeaError] = useState(false);
+
   // States for saving text entered by user
   const [ideas, setIdeas] = useState(""); // State for saving the ideas entered by user
   const [measure, setMeasure] = useState(""); // State for saving the ideas entered by user
@@ -228,12 +231,27 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
         },
       },
     };
-    // Clear the textarea when the button is clicked
-    setIdeas("");
-    setMeasure("");
-    setGoals("");
-    sendToDataBase(projectData);
+
+    // Check if title is entered by user
+    if (!formJson.title) {
+      setTitleError(true); // Show error message
+      return; // Stop the function to prevent sending data and closing the modal
+    } else if (projectData.ideas.length == 0) {
+      setIdeaError(true);
+      setTitleError(false);
+      return;
+    } else {
+      setTitleError(false); // Hide error message
+      setIdeaError(false);
+      // Clear textfields
+      setIdeas("");
+      setMeasure("");
+      setGoals("");
+      sendToDataBase(projectData);
+      onHide(); // Only close the modal if the title is provided
+    }
   }
+
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
@@ -258,13 +276,15 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               name="title"
               type="text"
               className="form-control"
-              // this is to prevent it from submitting when pressing enter
-              onKeyPress={(
+              onKeyDown={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => {
                 e.key === "Enter" && e.preventDefault();
               }}
             ></input>
+            {titleError && (
+              <div style={{ color: "red" }}>Vänligen ange en titel</div>
+            )}
           </div>
 
           <div className="mb-3">
@@ -303,7 +323,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   style={{ border: "none", height: "98px" }}
                   value={goals}
                   onChange={(e) => setGoals(e.target.value)}
-                  onKeyPress={(e) =>
+                  onKeyDown={(e) =>
                     handleKeyPressBulletPoint(e, setGoals, goals)
                   }
                   onFocus={() => handleFocusBulletPoint(goals, setGoals)}
@@ -348,7 +368,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   style={{ border: "none", height: "98px" }}
                   value={measure}
                   onChange={(e) => setMeasure(e.target.value)}
-                  onKeyPress={(e) =>
+                  onKeyDown={(e) =>
                     handleKeyPressBulletPoint(e, setMeasure, measure)
                   }
                   onFocus={() => handleFocusBulletPoint(measure, setMeasure)}
@@ -393,13 +413,16 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   style={{ border: "none", height: "98px" }}
                   value={ideas}
                   onChange={(e) => setIdeas(e.target.value)}
-                  onKeyPress={(e) =>
+                  onKeyDown={(e) =>
                     handleKeyPressBulletPoint(e, setIdeas, ideas)
                   }
                   onFocus={() => handleFocusBulletPoint(ideas, setIdeas)}
                 />
               </div>
             </div>
+            {ideaError && (
+              <div style={{ color: "red" }}>Minst en idé måste anges</div>
+            )}
           </div>
 
           <div className="mb-3 text">
@@ -443,11 +466,11 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
             <Button
               type="submit"
               id="SkapaFörbättringsarbete"
-              onClick={() => {
-                onHide();
-                //setIdeas(""); // Clear the textarea when the button is clicked
-                //setMeasure("");
-              }}
+              // onClick={() => {
+              //   onHide();
+              //   //setIdeas(""); // Clear the textarea when the button is clicked
+              //   //setMeasure("");
+              // }}
               style={ButtonStyle}
             >
               Skicka in förbättringsarbete
