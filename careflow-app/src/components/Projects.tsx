@@ -38,6 +38,7 @@ class Project {
   tags: Array<string>;
   date_created: Timestamp;
   result_measurements: string;
+  result_analysis: string;
   notes_plan: string;
   notes_do: string;
   notes_study: string;
@@ -75,6 +76,7 @@ class Project {
     tags: Array<string>,
     date_created: Timestamp,
     result_measurements: string,
+    result_analysis: string,
     notes_plan: string,
     notes_do: string,
     notes_study: string,
@@ -111,6 +113,7 @@ class Project {
     this.tags = tags;
     this.date_created = date_created;
     this.result_measurements = result_measurements;
+    this.result_analysis = result_analysis;
     this.notes_plan = notes_plan;
     this.notes_do = notes_do;
     this.notes_study = notes_study;
@@ -180,6 +183,7 @@ function Projects() {
       tags: projectData.tags,
       date_created: projectData.date_created,
       result_measurements: projectData.result_measurements,
+      result_analysis: projectData.result_analysis,
       notes_plan: projectData.notes_plan,
       notes_do: projectData.notes_do,
       notes_study: projectData.notes_study,
@@ -241,6 +245,7 @@ function Projects() {
         data.tags,
         data.date_created,
         data.result_measurements,
+        data.result_analysis,
         data.notes_plan,
         data.notes_do,
         data.notes_study,

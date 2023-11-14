@@ -17,6 +17,7 @@ export type Project = {
   tags: Array<string>;
   date_created: Timestamp;
   result_measurements: string,
+  result_analysis: string;
   notes_plan: string,
   notes_do: string,
   notes_study: string,
