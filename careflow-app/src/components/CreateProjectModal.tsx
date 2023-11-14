@@ -328,6 +328,24 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     }
   };
 
+  const [selectedMembers, setSelectedMembers] = useState([""]);
+
+  console.log(selectedMembers);
+
+  const handleAlternativeClick = (chosenMember: string) => {
+    //If the selected member already has been chosen, remove from the array
+    if (selectedMembers.includes(chosenMember)) {
+      const updatedChosenMembers = selectedMembers.filter(
+        (member) => member !== chosenMember
+      );
+      setSelectedMembers(updatedChosenMembers);
+      //If the selected member has not already been chosen, add the member to the array
+    } else {
+      const updatedChosenMembers = [...selectedMembers, chosenMember];
+      setSelectedMembers(updatedChosenMembers);
+    }
+  };
+
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
     // Prevent the browser from reloading the page
@@ -348,7 +366,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
-      project_members: selectedUsers,
+      project_members: selectedMembers,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
       measure: transformBulletPoints(measure),
@@ -627,17 +645,32 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               )}
             </div>
           </div>
-          <div>
-            <label style={TitleStyle}>Lägg till kollegor: </label>
-            <select value={selectedOption} onChange={handleOptionChange}>
-              {users.map((user: any, index: any) => (
-                <option key={index} value={user}>
-                  {user}
-                </option>
+          <Dropdown>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
+              }}
+            >
+              Lägg till kollegor
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {users.map((member) => (
+                <Dropdown.Item
+                  style={{
+                    fontWeight: selectedMembers.includes(member)
+                      ? "bold"
+                      : "normal",
+                  }}
+                  onClick={() => handleAlternativeClick(member)}
+                >
+                  {member}
+                </Dropdown.Item>
               ))}
-            </select>
-            <p>Vald kollega: {selectedOption}</p>
-          </div>
+            </Dropdown.Menu>
+          </Dropdown>
           <div>
             <label style={TitleStyle}>Lägg till taggar: </label>
             <select value={selectedOption1} onChange={handleOptionChange1}>
