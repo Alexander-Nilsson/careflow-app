@@ -208,6 +208,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
             checklist: {
               checklist_items: ["En sak som ska göras"],
               checklist_done: [false],
+              checklist_members: [""],
             },
             files: ["protokoll.txt"],
             notes: "Planerings nteckningar",
