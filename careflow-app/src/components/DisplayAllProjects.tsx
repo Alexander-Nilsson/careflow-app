@@ -7,6 +7,8 @@ import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
+import '../font/font.css';
+
 
 function DisplayAllProjects() {
   const [projects, setProjects] = useState<ProjectCardProps[]>([]);

@@ -8,6 +8,7 @@ import DisplayAllProjects from "./DisplayAllProjects";
 import { db } from '../firebase';
 import "../styles/DisplayAllProjects.css";
 import HelpPopover from "./HelpPopover";
+import '../font/font.css';
 
 export type UserInfoType = {
   hsaID: string | undefined;
