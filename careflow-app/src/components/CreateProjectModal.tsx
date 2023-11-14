@@ -126,6 +126,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
 
   const { isAuthenticated, isLoading, user } = useAuth0();
 
+  //Getting data from the active user
   async function getUser2(username: string) {
     const docRef = doc(db, "users", username);
     const docSnap = await getDoc(docRef);
@@ -210,23 +211,35 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               checklist_done: [false],
               checklist_members: [""],
             },
-            files: ["protokoll.txt"],
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
             notes: "Planerings nteckningar",
           },
           do: {
-            files: ["gora_fil.txt"],
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
             notes: "Göra anteckningar",
             idea: "vald ide?", // is this supposed to be here?
             results: "Resulterat resultat",
           },
           study: {
             analysis: "analys av resultatet",
-            files: ["study.txt"],
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
             notes: "Studerings anteckningar",
           },
           act: {
             notes: "Agerande anteckningar",
-            files: ["acting.png"],
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
             choice: "Selected choice",
           },
         },
