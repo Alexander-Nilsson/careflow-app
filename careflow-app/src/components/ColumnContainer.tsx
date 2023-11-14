@@ -1,5 +1,5 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { Column, Id, Project } from "../types";
+import { Column, Id } from "../types";
 import { useMemo } from "react";
 import PlusIcon from "../icons/Plusicon";
 import "../styles/Kanban.css";
