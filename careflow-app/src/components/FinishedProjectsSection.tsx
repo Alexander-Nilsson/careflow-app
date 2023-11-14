@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover"; import ProjectCard from "./ProjectCard";
-import { useAuth0 } from '@auth0/auth0-react';
-import {ImprovementWork, getUserImprovementWorks } from "../ImprovementWorkLib";
+import { ImprovementWork, filterImprovementWorks, getUserImprovementWorks } from "../ImprovementWorkLib";
+import { UserInfoType } from "./Start";
 
-function FinishedProjectsSection() {
-    const [improvementWorks, setImprovementWork] = useState<ImprovementWork[]>([]);
+type IdeasSectionProps = {
+    userInfo: UserInfoType;
+};
 
-    const { user } = useAuth0();
+function FinishedProjectsSection({ userInfo }: IdeasSectionProps) {
+    const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
 
     const fetchData = async () => {
-        if (user?.name) {
-            const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(user.name, true)
-            if (fetchedImprovementWorks) setImprovementWork(fetchedImprovementWorks)
+        const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
+        if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+
+    };
+
+    const handleFilter = async (event: any) => {
+        if (event.target.value == "user") {
+            const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
+            if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
+        }
+        else if (event.target.value == "clinic") {
+            const filteredImprovementWorks: ImprovementWork[] | null = await filterImprovementWorks(event.target.value, userInfo.clinic, true)
+            setImprovementWorks(filteredImprovementWorks)
         }
     };
 
@@ -69,25 +81,36 @@ function FinishedProjectsSection() {
     return (
         <div style={projectsSectionStyle}>
             <style>{scrollBarStyles}</style>
-            <h1 style={titleStyle}>Avslutade förbättringsarbeten
-                <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+            <div className="d-flex">
+                <h1 className="mt-2 ml-2" style={titleStyle}>Avslutade förbättringsarbeten</h1>
+                <div className="ml-2 mt-2">
+                    <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
+                        <option selected value="user">Visa mina</option>
+                        <option value="clinic">Visa klinikens</option>
+                    </select>
+                </div>
+                <div className="mt-3 ml-2">
                     <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att navigera bland avslutade projekt" />
                 </div>
-            </h1>
+            </div>
 
             <div style={projectsContainerStyle}>
-                {improvementWorks.map((improvementWork, index) => (
-                    <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
-                        <ProjectCard
-                            title={improvementWork.title}
-                            date_created={improvementWork.date_created}
-                            place={improvementWork.place}
-                            tags={improvementWork.tags}
-                            phase={improvementWork.phase}
-                            displayPhaseImage={true}
-                        />
-                    </div>
-                ))}
+                {improvementWorks !== null ? (
+                    improvementWorks.map((improvementWork, index) => (
+                        <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
+                            <ProjectCard
+                                title={improvementWork.title}
+                                date_created={improvementWork.date_created}
+                                place={improvementWork.place}
+                                tags={improvementWork.tags}
+                                phase={improvementWork.phase}
+                                displayPhaseImage={true}
+                            />
+                        </div>
+                    ))
+                ) : (
+                    null
+                )}
 
             </div>
 
