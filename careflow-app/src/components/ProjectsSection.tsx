@@ -6,11 +6,12 @@ import { ProjectCardProps } from "./ProjectCard";
 import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from '@auth0/auth0-react';
-import { getUserProjects, Project } from "../ProjectLib";
+import { getUserProjects, Project, getAllImprovementWorks, ImprovementWork } from "../ProjectLib";
 
 function ProjectsSection() {
 
     const [projects, setProjects] = useState<Project[]>([]);
+    const [improvementWorks, setImprovementWork] = useState<ImprovementWork[]>([]);
     const { user } = useAuth0();
 
     const fetchData = async () => {
@@ -19,6 +20,8 @@ function ProjectsSection() {
             const fetchedProjects: Project[] | null = await getUserProjects(user.name, false)
             if (fetchedProjects) setProjects(fetchedProjects)
         }
+        const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks()
+        console.log(fetchedImprovementWorks);
     };
     useEffect(() => {
         fetchData();
