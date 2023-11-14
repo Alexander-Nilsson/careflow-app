@@ -6,7 +6,14 @@ import {
   Bullseye,
   QuestionCircleFill,
 } from "react-bootstrap-icons";
-import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  Timestamp,
+  collection,
+  addDoc,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
@@ -89,9 +96,15 @@ function transformBulletPoints(value: string) {
 
 // Writes the formdata to database
 async function sendToDataBase(projectData: object) {
-  await setDoc(doc(db, "improvementWorks", "Sample Project"), projectData);
-
-  //await setDoc(doc(db, "projects", formJson.title), formJson);
+  try {
+    const docRef = await addDoc(
+      collection(db, "improvementWorks"),
+      projectData
+    );
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
 }
 
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
@@ -142,42 +155,23 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     }
   }, [user]);
 
-  const handleKeyPressBulletPoint = (e: any) => {
+  const handleKeyPressBulletPoint = (
+    e: any,
+    setter: (value: string) => void,
+    currentValue: string
+  ) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      setIdeas(ideas + "\n+ ");
+      setter(currentValue + "\n+ ");
     }
   };
 
-  const handleKeyPressBulletPointMeasure = (e: any) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setMeasure(measure + "\n+ ");
-    }
-  };
-
-  const handleKeyPressBulletPointGoals = (e: any) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setGoals(goals + "\n+ ");
-    }
-  };
-
-  const handleFocusBulletPoint = () => {
-    if (ideas === "") {
-      setIdeas("+ ");
-    }
-  };
-
-  const handleFocusBulletPointMeasure = () => {
-    if (measure === "") {
-      setMeasure("+ ");
-    }
-  };
-
-  const handleFocusBulletPointGoals = () => {
-    if (goals === "") {
-      setGoals("+ ");
+  const handleFocusBulletPoint = (
+    currentValue: string,
+    setter: (value: string) => void
+  ) => {
+    if (currentValue === "") {
+      setter("+ ");
     }
   };
 
@@ -198,11 +192,41 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
       clinic: department,
       closed: false,
       phase: 1,
-      date_created: new Timestamp(0, 0),
+      date_created: Timestamp.fromDate(new Date()),
+      date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
       measure: transformBulletPoints(measure),
+      total_iterations: 1,
+      all_iterations: {
+        iteration1: {
+          plan: {
+            checklist: {
+              checklist_items: ["En sak som ska göras"],
+              checklist_done: [false],
+            },
+            files: ["protokoll.txt"],
+            notes: "Planerings nteckningar",
+          },
+          do: {
+            files: ["gora_fil.txt"],
+            notes: "Göra anteckningar",
+            idea: "vald ide?", // is this supposed to be here?
+            results: "Resulterat resultat",
+          },
+          study: {
+            analysis: "analys av resultatet",
+            files: ["study.txt"],
+            notes: "Studerings anteckningar",
+          },
+          act: {
+            notes: "Agerande anteckningar",
+            files: ["acting.png"],
+            choice: "Selected choice",
+          },
+        },
+      },
     };
     // Clear the textarea when the button is clicked
     setIdeas("");
@@ -279,8 +303,10 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   style={{ border: "none", height: "98px" }}
                   value={goals}
                   onChange={(e) => setGoals(e.target.value)}
-                  onKeyPress={handleKeyPressBulletPointGoals}
-                  onFocus={handleFocusBulletPointGoals}
+                  onKeyPress={(e) =>
+                    handleKeyPressBulletPoint(e, setGoals, goals)
+                  }
+                  onFocus={() => handleFocusBulletPoint(goals, setGoals)}
                 ></textarea>
               </div>
             </div>
@@ -322,8 +348,10 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   style={{ border: "none", height: "98px" }}
                   value={measure}
                   onChange={(e) => setMeasure(e.target.value)}
-                  onKeyPress={handleKeyPressBulletPointMeasure}
-                  onFocus={handleFocusBulletPointMeasure}
+                  onKeyPress={(e) =>
+                    handleKeyPressBulletPoint(e, setMeasure, measure)
+                  }
+                  onFocus={() => handleFocusBulletPoint(measure, setMeasure)}
                 ></textarea>
               </div>
             </div>
@@ -365,8 +393,10 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   style={{ border: "none", height: "98px" }}
                   value={ideas}
                   onChange={(e) => setIdeas(e.target.value)}
-                  onKeyPress={handleKeyPressBulletPoint}
-                  onFocus={handleFocusBulletPoint}
+                  onKeyPress={(e) =>
+                    handleKeyPressBulletPoint(e, setIdeas, ideas)
+                  }
+                  onFocus={() => handleFocusBulletPoint(ideas, setIdeas)}
                 />
               </div>
             </div>
