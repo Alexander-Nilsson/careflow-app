@@ -37,72 +37,45 @@ class Project {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
-  result_measurements: string;
-  result_analysis: string;
-  notes_plan: string;
-  notes_do: string;
-  notes_study: string;
-  notes_act: string;
-  project_leader: DocumentReference<DocumentData>;
+  project_leader: string;
   project_members: Array<string>;
-  checklist_plan: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_do: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_study: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_act: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
+
+  // New fields to match projectData structure
+  closed: boolean;
+  total_iterations: number;
+  all_iterations: {
+    [key: string]: {
+      plan: {
+        checklist: {
+          checklist_items: Array<string>;
+          checklist_done: Array<boolean>;
+          checklist_members: Array<string>;
+        };
+        files: {
+          file_names: Array<string>;
+          file_descriptions: Array<string>;
+        };
+        notes: string;
+      };
+      // ... similar structures for do, study, and act ...
+    };
   };
 
   constructor(
     id: Id,
     title: string,
     description: string,
-    phase: number,
+    phase: Id,
     place: string,
     centrum: string,
     tags: Array<string>,
     date_created: Timestamp,
-    result_measurements: string,
-    result_analysis: string,
-    notes_plan: string,
-    notes_do: string,
-    notes_study: string,
-    notes_act: string,
-    project_leader: DocumentReference<DocumentData>,
+    project_leader: string,
     project_members: Array<string>,
-    checklist_plan: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    },
-    checklist_do: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    },
-    checklist_study: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    },
-    checklist_act: {
-      checklist_item: Array<string>;
-      checklist_done: Array<boolean>;
-      checklist_members: Array<string>;
-    }
+    // New parameters for the updated structure
+    closed: boolean,
+    total_iterations: number,
+    all_iterations: any
   ) {
     this.id = id;
     this.title = title;
@@ -112,18 +85,13 @@ class Project {
     this.centrum = centrum;
     this.tags = tags;
     this.date_created = date_created;
-    this.result_measurements = result_measurements;
-    this.result_analysis = result_analysis;
-    this.notes_plan = notes_plan;
-    this.notes_do = notes_do;
-    this.notes_study = notes_study;
-    this.notes_act = notes_act;
     this.project_leader = project_leader;
     this.project_members = project_members;
-    this.checklist_plan = checklist_plan;
-    this.checklist_do = checklist_do;
-    this.checklist_study = checklist_study;
-    this.checklist_act = checklist_act;
+
+    // Initialize new fields
+    this.closed = closed;
+    this.total_iterations = total_iterations;
+    this.all_iterations = all_iterations;
   }
 }
 
@@ -133,43 +101,7 @@ function Projects() {
 
   const [projectList, setProjectList] = useState<Project[]>([]);
 
-  // Only temporary. Cards will later on be fetched from database
-  const cards = [
-    {
-      id: 1,
-      title: "Card Title 1",
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      column: 1,
-    },
-    { id: 2, title: "Card Title 2", content: "Card content 2", column: 2 },
-    { id: 2, title: "Card Title 3", content: "Card content 3", column: 3 },
-    { id: 2, title: "Card Title 4", content: "Card content 4", column: 4 },
-    { id: 2, title: "Card Title 5", content: "Card content 5", column: 1 },
-    { id: 2, title: "Card Title 6", content: "Card content 5", column: 2 },
-    { id: 2, title: "Card Title 6", content: "Card content 5", column: 5 },
-  ];
   let cardIDs: Array<any> = [];
-
-  // Fetch all projects and store their ID's
-  // async function fetchProjects() {
-  //   const q = query(collection(db, "projects")); //create a query
-
-  //   const querySnapshot = await getDocs(q); //use the query to fetch the items
-
-  //   let i = 0;
-  //   querySnapshot.forEach((doc) => {
-  //     //do something with the response
-  //     // doc.data() is never undefined for query doc snapshots
-  //     cardIDs.push(doc.id);
-  //     // console.log("Pushat till ID: ", cardIDs[i]);
-  //     // console.log("Hämtar in: ", doc.id, " => ", doc.data());
-  //     i++;
-  //   });
-  //   const proj = fetchProjectByID();
-
-  //   return proj;
-  // }
 
   //Firebase project converter, converting the data into instance of Project
   const projectConverter = {
