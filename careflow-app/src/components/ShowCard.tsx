@@ -74,18 +74,26 @@ function ShowCard({ project }: ShowCardProps) {
         <CardButton
           title={project.title}
           tags={project.tags}
+          date_created={project.date_created}
           onClick={modalShow}
         />
         <CardModal
           show={show}
           onHide={modalClose}
+          id={project.id}
           title={project.title}
-          column={project.phase.toString()}
+          phase={project.phase}
           content={project.description}
           place={project.place}
           centrum={project.centrum}
           tags={project.tags}
           date_created={project.date_created}
+          result_measurements={project.result_measurements}
+          result_analysis={project.result_analysis}
+          notes_plan={project.notes_plan}
+          notes_do={project.notes_do}
+          notes_study={project.notes_study}
+          notes_act={project.notes_act}
           project_leader={project.project_leader}
           project_members={project.project_members}
           checklist_plan={project.checklist_plan}

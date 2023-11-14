@@ -128,6 +128,12 @@ function KanbanBoard() {
       centrum: "centrum",
       tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
+      result_measurements: "results",
+      result_analysis: "results",
+      notes_plan: "some notes",
+      notes_do: "other notes",
+      notes_study: "notes",
+      notes_act: "even more notes",
       project_leader: userReference,
       project_members: [],
       checklist_plan: {
