@@ -11,7 +11,7 @@ import "../styles/DisplayAllProjects.css";
 function DisplayAllProjects() {
   const [projects, setProjects] = useState<ProjectCardProps[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 1; // Adjust this based on your layout
+  const projectsPerPage = 12; // Adjust this based on your layout
   const { user } = useAuth0();
 
   const fetchData = async () => {

@@ -54,6 +54,13 @@
     border-radius: 5px;
     cursor: pointer;
     margin-left: 5px
-
   }
-  
+
+  .blue-label {
+    margin-left:2rem ;
+    border-radius: 8px;
+    color: black;
+    font-weight: bold;
+    font-size: 1.7rem;
+    font-family: avenir;
+  }

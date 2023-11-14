@@ -5,7 +5,8 @@ import { doc, getDoc } from "firebase/firestore";
 import ProjectsSection from "./ProjectsSection";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import DisplayAllProjects from "./DisplayAllProjects";
-import { db } from '../firebase'
+import { db } from '../firebase';
+import "../styles/DisplayAllProjects.css";
 
 export type UserInfoType = {
   hsaID: string | undefined;
@@ -83,6 +84,9 @@ function Archive() {
       />
       {isAuthenticated && userInfo ? (
         <div style={contentStyle}>
+          <div className = "blue-label">
+              Alla förbättringsarbeten
+            </div>
           <DisplayAllProjects />
         </div>
       ) : (
