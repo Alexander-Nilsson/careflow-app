@@ -4,14 +4,16 @@ import {
   BarChart,
   Lightbulb,
   Bullseye,
-  QuestionCircleFill,
+  EnvelopePaper,
 } from "react-bootstrap-icons";
 import {
   doc,
   setDoc,
+  getDocs,
   getDoc,
-  Timestamp,
   collection,
+  Timestamp,
+  query,
   addDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
@@ -19,19 +21,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
-
-export type UserInfoType = {
-  hsaID: string | undefined;
-  admin: any;
-  centrum: any;
-  clinic: any;
-  email: any;
-  first_name: any;
-  phone_number: any;
-  place: any;
-  profession: any;
-  sur_name: any;
-};
+import Nav from "react-bootstrap/Nav";
+import { Id } from "../types";
+import { useRoutes } from "react-router-dom";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -79,6 +71,53 @@ interface CreateProjectModalProps {
   show: boolean;
   onHide: () => void;
 }
+class Tag {
+  id: Id;
+  description: string;
+  constructor(id: Id, description: string) {
+    this.id = id;
+    this.description = description;
+  }
+}
+class User {
+  id: Id;
+  admin: boolean;
+  centrum: string;
+  clinic: string;
+  email: string;
+  first_name: string;
+  sur_name: string;
+  phone_number: string;
+  place: string;
+  profession: string;
+  projects: Array<string>;
+
+  constructor(
+    id: Id,
+    admin: boolean,
+    centrum: string,
+    clinic: string,
+    email: string,
+    first_name: string,
+    sur_name: string,
+    phone_number: string,
+    place: string,
+    profession: string,
+    projects: Array<string>
+  ) {
+    this.id = id;
+    this.admin = admin;
+    this.centrum = centrum;
+    this.clinic = clinic;
+    this.email = email;
+    this.first_name = first_name;
+    this.sur_name = sur_name;
+    this.phone_number = phone_number;
+    this.place = place;
+    this.profession = profession;
+    this.projects = projects;
+  }
+}
 
 function transformBulletPoints(value: string) {
   // Split the value by newline characters to get an array of lines
@@ -104,6 +143,90 @@ async function sendToDataBase(projectData: object) {
   } catch (e) {
     console.error("Error adding document: ", e);
   }
+}
+
+const memberConverter = {
+  toFirestore: (memberData: any) => ({
+    id: memberData.id,
+    admin: memberData.admin,
+    centrum: memberData.centrum,
+    clinic: memberData.clinic,
+    email: memberData.email,
+    first_name: memberData.first_name,
+    sur_name: memberData.sur_name,
+    phone_number: memberData.phone_number,
+    place: memberData.place,
+    profession: memberData.profession,
+    projects: memberData.projects,
+  }),
+  fromFirestore: (snapshot: any, options: any) => {
+    const data = snapshot.data(options);
+
+    return new User(
+      snapshot.id,
+      data.admin,
+      data.centrum,
+      data.clinic,
+      data.email,
+      data.first_name,
+      data.sur_name,
+      data.phone_number,
+      data.place,
+      data.profession,
+      data.projects
+    );
+  },
+};
+
+const tagConverter = {
+  toFirestore: (tagData: any) => ({
+    description: tagData.description,
+  }),
+  fromFirestore: (snapshot: any, options: any) => {
+    const data = snapshot.data(options);
+
+    return new Tag(snapshot.id, data.description);
+  },
+};
+
+var users: any[] = [];
+var selectedUsers: any[] = [];
+var tags: any[] = [];
+var selectedTags: any[] = [];
+
+async function fetchUsers() {
+  const q = query(collection(db, "users"));
+  const querySnapshot = await getDocs(q);
+  const ids = querySnapshot.docs.map((doc) => doc.id);
+
+  ids.map(async (id) => {
+    const projectReference = doc(db, "users", id).withConverter(
+      memberConverter
+    );
+    const snapshot = await getDoc(projectReference);
+    const userData = snapshot.data() as User;
+
+    users.push(userData.sur_name);
+  });
+  users.length = 0;
+  //return users;
+}
+
+async function fetchTags() {
+  const q = query(collection(db, "tags"));
+  const querySnapshot = await getDocs(q);
+  const ids = querySnapshot.docs.map((doc) => doc.id);
+
+  ids.map(async (id) => {
+    const tagReference = doc(db, "tags", id).withConverter(tagConverter);
+    const snapshot = await getDoc(tagReference);
+    const tagData = snapshot.data() as Tag;
+
+    tags.push(tagData.description);
+  });
+
+  tags.length = 0;
+  //return tags;
 }
 
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
@@ -176,6 +299,27 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   ) => {
     if (currentValue === "") {
       setter("+ ");
+    }
+  };
+
+  fetchUsers();
+  fetchTags();
+
+  //handle dropdown for users
+  const [selectedOption, setSelectedOption] = useState<string>(users[0]);
+  const handleOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedOption(event.target.value);
+    if (!selectedUsers.includes(event.target.value)) {
+      selectedUsers.push(event.target.value);
+    }
+  };
+
+  //handle dropdown for tags
+  const [selectedOption1, setSelectedOption1] = useState<string>(tags[0]);
+  const handleOptionChange1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedOption1(event.target.value);
+    if (!selectedTags.includes(event.target.value)) {
+      selectedTags.push(event.target.value);
     }
   };
 
@@ -300,7 +444,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               <div style={{ color: "red" }}>Vänligen ange en titel</div>
             )}
           </div>
-
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
@@ -313,6 +456,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 />
               </div>
               <div>
+                <label style={TitleStyle}>Mål</label>
                 <label style={TitleStyle}>Mål</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
                   Vad vill du uppnå med förbättringen?
@@ -434,47 +578,28 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 />
               </div>
             </div>
-            {ideaError && (
-              <div style={{ color: "red" }}>Minst en idé måste anges</div>
-            )}
           </div>
-
-          <div className="mb-3 text">
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
-                Lägg till avdelning
-              </Dropdown.Toggle>
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+          <div>
+            <label style={TitleStyle}>Lägg till kollegor: </label>
+            <select value={selectedOption} onChange={handleOptionChange}>
+              {users.map((user: any, index: any) => (
+                <option key={index} value={user}>
+                  {user}
+                </option>
+              ))}
+            </select>
+            <p>Vald kollega: {selectedOption}</p>
           </div>
-          <div className="mb-3 text-center">
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
-                Lägg till kollegor
-              </Dropdown.Toggle>
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-          <div className="mb-3 text-center">
-            <Dropdown>
-              <Dropdown.Toggle id="-basic" style={{ width: "100%" }}>
-                Lägg till beskrivande nyckelord
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+          <div>
+            <label style={TitleStyle}>Lägg till taggar: </label>
+            <select value={selectedOption1} onChange={handleOptionChange1}>
+              {tags.map((tag: any, index: any) => (
+                <option key={index} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+            <p>Vald tag: {selectedOption1}</p>
           </div>
           <div className="mb-3 text-center">
             <Button
@@ -495,5 +620,4 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     </Modal>
   );
 }
-
 export default CreateProjectModal;

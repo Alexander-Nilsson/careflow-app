@@ -16,7 +16,13 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import "../styles/Kanban.css";
 import { ProjectContext } from "./Projects";
-import { Timestamp, doc, updateDoc } from "firebase/firestore";
+import {
+  Timestamp,
+  doc,
+  updateDoc,
+  DocumentReference,
+  DocumentData,
+} from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
 
@@ -35,7 +41,7 @@ const columns: Column[] = [
   },
   {
     id: 3,
-    title: "Genomföra",
+    title: "Göra",
     columnDescription:
       "Projekt som har genomförts eller genomförs just nu ligger här.",
   },
@@ -61,6 +67,7 @@ function KanbanBoard() {
     );
   }
 
+  const userReference = doc(db, "users", "random_user_id");
   const { projectList, setProjectList } = context;
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
@@ -121,21 +128,27 @@ function KanbanBoard() {
       centrum: "centrum",
       tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
+      project_leader: userReference,
+      project_members: [],
       checklist_plan: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
       checklist_do: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
       checklist_study: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
       checklist_act: {
         checklist_item: [],
         checklist_done: [],
+        checklist_members: [],
       },
     };
     setProjectList([...projectList, newProject]);
