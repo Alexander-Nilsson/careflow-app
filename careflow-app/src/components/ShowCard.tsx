@@ -3,9 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
-import { Project } from "../types";
+// import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Project } from "../ImprovementWorkLib";
 
 interface ShowCardProps {
   project: Project;

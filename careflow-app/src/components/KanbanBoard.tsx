@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Column, Id, Project } from "../types";
+import { Column, Id } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import {
   DndContext,
@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
+import { Project } from "../ImprovementWorkLib";
 
 const columns: Column[] = [
   {
