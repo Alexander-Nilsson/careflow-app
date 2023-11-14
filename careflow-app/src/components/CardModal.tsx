@@ -1,228 +1,624 @@
-import { Timestamp } from "firebase/firestore";
-import React, { useState } from "react";
-import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
-
+import { db } from "../firebase";
+import { Id } from "../types";
 import {
-  Calendar,
-  Folder2Open,
-  GeoAltFill,
-  Circle,
-  CheckCircle,
-} from "react-bootstrap-icons";
+  Timestamp,
+  DocumentReference,
+  DocumentData,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { useState, useEffect, ChangeEvent } from "react";
+import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
+import CardModalNotes from "./CardModalNotes";
+import CardModalChecklist from "./CardModalChecklist";
+import CardModalSimilarProjects from "./CardModalSimilarProjects";
+import CardModalResultMeasurements from "./CardModalResultMeasurements";
+import CardModalResultAnalysis from "./CardModalResultAnalysis";
+import CardModalFiles from "./CardModalFiles";
+import CardModalTopLeft from "./CardModalTopLeft";
+import CardModalTopRight from "./CardModalTopRight";
+import "react-circular-progressbar/dist/styles.css";
+// Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
-const ButtonStyle = {
+import { Circle, CheckCircle } from "react-bootstrap-icons";
+
+const buttonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
-  fontSize: "17px",
+  fontSize: "14px",
   padding: "10px 20px",
   border: "none",
   cursor: "pointer",
-  marginTop: "50px",
+  marginTop: "20px",
 };
 
-const IconStyle = {
-  width: "15px",
-  height: "15px",
-  marginRight: "7px",
-  marginTop: "0px",
-};
-
-const FlexAndCenter = {
+const flexAndCenter = {
   display: "flex",
   alignItems: "center",
 };
 
-const FormGroupStyle = {
+const formGroupStyle = {
   backgroundColor: "#F4F4F4",
   padding: "20px",
   marginBottom: "20px",
-};
-
-const DescriptionStyle = {
-  backgroundColor: "#F4F4F4",
-  padding: "20px",
-  marginBottom: "20px",
-};
-
-const TagStyle = {
-  marginTop: "5px",
-  marginBottom: "10px",
-  color: "#FFFFFF",
-  fontSize: "14px",
-};
-
-const TagContainerStyle = {
-  backgroundColor: "#051F6E",
-  padding: "2px 10px",
-  marginRight: "5px",
   borderRadius: "10px",
 };
 
-const ProjectMembersContainer = {
-  width: "34%",
-  marginTop: "30px",
-  marginBottom: "20px",
-  marginLeft: "3%",
-  background: "#F4F4F4",
-  padding: "20px",
-};
-
-interface CardModalProps {
+interface cardModalProps {
   show: boolean;
   onHide: () => void;
+  id: Id;
   title: string;
-  column: string;
+  phase: Id;
   content: string;
   place: string;
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  result_measurements: string;
+  result_analysis: string;
+  notes_plan: string;
+  notes_do: string;
+  notes_study: string;
+  notes_act: string;
+  project_leader: DocumentReference<DocumentData>;
+  project_members: Array<string>;
+  checklist_plan: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_do: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_study: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  checklist_act: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
 }
 
-interface SharedContentTopProps {
+interface modalContentPlanProps {
   title: string;
+  phase: number;
   tags: Array<string>;
   date_created: Timestamp;
   place: string;
   centrum: string;
   content: string;
+  checklist: {
+    checklist_item: Array<string>;
+    checklist_done: Array<boolean>;
+    checklist_members: Array<string>;
+  };
+  project_leader: string;
+  project_members: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
 }
 
-// The content at the top of the modal (that all phases have in common)
-function SharedContentTop({
-  title,
-  tags,
-  date_created,
-  place,
-  centrum,
-  content,
-}: SharedContentTopProps) {
-  const formattedDate = date_created.toDate().toLocaleString(); //Format the date into a string
-
-  return (
-    <>
-      <div style={{ display: "flex" }}>
-        <div style={{ width: "63%" }}>
-          <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
-          <div style={TagStyle}>
-            {tags.map((tag, index) => (
-              <React.Fragment key={index}>
-                <span style={TagContainerStyle}>{tag}</span>
-              </React.Fragment>
-            ))}
-          </div>
-          <div style={{ marginBottom: "50px" }}>
-            <div style={FlexAndCenter}>
-              <Calendar style={IconStyle} />
-              <div>
-                <label>{formattedDate}</label>
-              </div>
-            </div>
-            <div style={FlexAndCenter}>
-              <Folder2Open style={IconStyle} />
-              <div>
-                <label>{centrum}</label>
-              </div>
-            </div>
-            <div style={FlexAndCenter}>
-              <GeoAltFill style={IconStyle} />
-              <div>
-                <label>{place}</label>
-              </div>
-            </div>
-          </div>
-
-          <Form.Group controlId="planeraDescription" style={DescriptionStyle}>
-            <Form.Label>
-              <b>Beskrivning</b>
-            </Form.Label>
-            <div>{content}</div>
-          </Form.Group>
-        </div>
-
-        <div style={ProjectMembersContainer}>
-          <Form.Group controlId="projectMembersForm">
-            <Form.Label>
-              <div>
-                <b>Medlemmar</b>
-              </div>
-            </Form.Label>
-          </Form.Group>
-        </div>
-      </div>
-    </>
-  );
+interface modalContentDoProps {
+  title: string;
+  phase: number;
+  tags: Array<string>;
+  date_created: Timestamp;
+  place: string;
+  centrum: string;
+  content: string;
+  project_leader: string;
+  project_members: Array<string>;
+  result_measurements: string;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
 }
 
-// The content att the bottom of the modal (that all phases have in common)
-function SharedContentBottom() {
-  return (
-    <>
-      <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
-        <Form.Label>
-          <b>Liknande förbättringsarbeten</b>
-        </Form.Label>
-        <div>Här ska det finnas förslag på liknande förbättringsarbeten</div>
-      </Form.Group>
-    </>
-  );
+interface modalContentStudyProps {
+  title: string;
+  phase: number;
+  tags: Array<string>;
+  date_created: Timestamp;
+  place: string;
+  centrum: string;
+  content: string;
+  project_leader: string;
+  project_members: Array<string>;
+  result_analysis: string;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
 }
 
-// The content that is specific for each phase
-function SpecificContent() {
-  return (
-    <>
-      <Form>
-        <Form.Group controlId="planeraChecklist" style={FormGroupStyle}>
-          <Form.Label>
-            <b>Checklista</b>
-          </Form.Label>
-          <div>Här ska det finnas en checklista</div>
-        </Form.Group>
-
-        <Form.Group controlId="planeraNotes" style={FormGroupStyle}>
-          <Form.Label>
-            <b>Anteckningar</b>
-          </Form.Label>
-          <textarea className="form-control" rows={3}></textarea>
-        </Form.Group>
-
-        <Form.Group controlId="planeraFile" style={FormGroupStyle}>
-          <Form.Label>
-            <b>Bilagor</b>
-          </Form.Label>
-          <Form.Control type="file" />
-        </Form.Group>
-      </Form>
-    </>
-  );
+interface modalContentActProps {
+  title: string;
+  phase: number;
+  tags: Array<string>;
+  date_created: Timestamp;
+  place: string;
+  centrum: string;
+  content: string;
+  project_leader: string;
+  project_members: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
 }
 
-function getPhaseIcon(phase: number, column: string, marginLeft: number) {
-  const isCheck = parseInt(column) > phase;
+//Function that checks if the icon next to the phase (in the tabs at the top) should be checked or not
+function getPhaseIcon(
+  activePhase: number,
+  projectPhase: number,
+  marginLeft: number
+) {
+  const isChecked = projectPhase > activePhase;
   const iconStyle = {
     marginLeft: `${marginLeft}px`,
     marginRight: "10px",
   };
 
-  return isCheck ? (
+  return isChecked ? (
     <CheckCircle style={iconStyle} />
   ) : (
     <Circle style={iconStyle} />
   );
 }
 
+// Asynchronous function that fetches the project leader's name from the database (should probably move this to Projects.tsx)
+async function getProjectLeader(
+  project_leader: DocumentReference<DocumentData>
+) {
+  interface User {
+    first_name: string;
+    sur_name: string;
+  }
+
+  if (project_leader && project_leader.id) {
+    const userReference = doc(db, "users", project_leader.id);
+
+    try {
+      const userDoc = await getDoc(userReference);
+      if (userDoc.exists()) {
+        const userData = userDoc.data() as User;
+        return userData.first_name + " " + userData.sur_name;
+      } else {
+        console.error("User document not found.");
+      }
+    } catch (error) {
+      console.error("Error fetching user document:", error);
+    }
+  }
+
+  return null;
+}
+
+function ModalContentPlan({
+  title,
+  phase,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+  checklist,
+  project_leader,
+  project_members,
+  ideas,
+  handleIdeaClick,
+  id,
+  handlePhaseUpdate,
+  notes,
+}: modalContentPlanProps) {
+  // State variable needed to calculate the percentage finished
+  const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
+
+  //Calculates the phase's progress based on the number of checked tasks in the checklist
+  function calculatePercentage() {
+    const totalItems = checklistDone.length; //Total number of tasks in the checklist
+    const trueCount = checklistDone.filter((value) => value).length; //Number of "true" in the the checklist_done array
+    const percentageFinished = (trueCount / totalItems) * 100; //Calculates the percentage
+    return Math.round(percentageFinished);
+  }
+
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <CardModalTopLeft
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={2}
+          percentage={calculatePercentage()}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
+        />
+        <CardModalTopRight
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Plan phase */}
+
+      {/* Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <CardModalChecklist
+              project_leader={project_leader}
+              project_members={project_members}
+              checklist={checklist}
+              checklistDone={checklistDone}
+              setChecklistDone={setChecklistDone}
+            />
+
+            <Form.Group style={formGroupStyle}>
+              <CardModalNotes
+                notes={notes}
+                projectId={id}
+                notesAttributeInDb={"notes_plan"}
+              />
+            </Form.Group>
+            <CardModalFiles />
+          </Form>
+
+          {/* --------------------------------------------------- */}
+
+          <CardModalSimilarProjects />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function ModalContentDo({
+  title,
+  phase,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+  project_leader,
+  project_members,
+  result_measurements,
+  ideas,
+  handleIdeaClick,
+  id,
+  handlePhaseUpdate,
+  notes,
+}: modalContentDoProps) {
+  //Handles changes made in the text field "Uppmätt resultat"
+  const [resultDataSaved, setResultDataSaved] = useState(false);
+  const [updatedResult, setUpdatedResult] = useState(result_measurements);
+
+  const handleResultInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setUpdatedResult(event.target.value);
+    setResultDataSaved(false);
+  };
+
+  //Updated the database with the new text in "Uppmätt resultat" when the save button is clicked
+  async function updateResultInDb() {
+    try {
+      const projectDocRef = doc(db, "projects", id);
+      await updateDoc(projectDocRef, {
+        result_measurements: updatedResult,
+      });
+      setResultDataSaved(true);
+
+      console.log("Document updated!", updatedResult);
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  }
+
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <CardModalTopLeft
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={3}
+          percentage={0}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
+        />
+        <CardModalTopRight
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Do phase */}
+
+      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <Form.Group style={formGroupStyle}>
+              <CardModalResultMeasurements
+                result_measurements={result_measurements}
+                projectId={id}
+              />
+            </Form.Group>
+            <Form.Group style={formGroupStyle}>
+              <CardModalNotes
+                notes={notes}
+                projectId={id}
+                notesAttributeInDb={"notes_do"}
+              />
+            </Form.Group>
+            <CardModalFiles />
+          </Form>
+
+          {/* ---------------------------------------- */}
+
+          <CardModalSimilarProjects />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function ModalContentStudy({
+  title,
+  phase,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+  project_leader,
+  project_members,
+  result_analysis,
+  ideas,
+  handleIdeaClick,
+  id,
+  handlePhaseUpdate,
+  notes,
+}: modalContentStudyProps) {
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <CardModalTopLeft
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={4}
+          percentage={0}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
+        />
+        <CardModalTopRight
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Study phase */}
+
+      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <CardModalResultAnalysis
+              result_analysis={result_analysis}
+              projectId={id}
+            />
+            <Form.Group style={formGroupStyle}>
+              <CardModalNotes
+                notes={notes}
+                projectId={id}
+                notesAttributeInDb={"notes_study"}
+              />
+            </Form.Group>
+            <CardModalFiles />
+          </Form>
+
+          {/* ----------------------------------------- */}
+
+          <CardModalSimilarProjects />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function ModalContentAct({
+  title,
+  phase,
+  tags,
+  date_created,
+  place,
+  centrum,
+  content,
+  project_leader,
+  project_members,
+  ideas,
+  handleIdeaClick,
+  id,
+  handlePhaseUpdate,
+  notes,
+}: modalContentActProps) {
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <CardModalTopLeft
+          title={title}
+          phase={phase}
+          tags={tags}
+          date_created={date_created}
+          place={place}
+          centrum={centrum}
+          content={content}
+          active_tab={5}
+          percentage={0}
+          ideas={ideas}
+          handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
+        />
+        <CardModalTopRight
+          project_leader={project_leader}
+          project_members={project_members}
+        />
+      </div>
+
+      {/* The content specific for the Act phase */}
+
+      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {ideas.some((idea) => idea.checked) ? (
+        <div>
+          <Form>
+            <Form.Group style={formGroupStyle}>
+              <CardModalNotes
+                notes={notes}
+                projectId={id}
+                notesAttributeInDb={"notes_act"}
+              />
+            </Form.Group>
+            <CardModalFiles />
+          </Form>
+
+          {/* --------------------------------------------*/}
+
+          <CardModalSimilarProjects />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+//The project modal
 function CardModal({
   show,
   onHide,
+  id,
   title,
-  column,
+  phase,
   content,
   place,
   centrum,
   tags,
   date_created,
-}: CardModalProps) {
+  result_measurements,
+  result_analysis,
+  notes_plan,
+  notes_do,
+  notes_study,
+  notes_act,
+  project_leader,
+  project_members,
+  checklist_plan,
+  checklist_do,
+  checklist_study,
+  checklist_act,
+}: cardModalProps) {
+  const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
+  const projectId = typeof id === "string" ? id : id.toString();
+
+  //Fetches information about the project leader
+  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
+
+  useEffect(() => {
+    const fetchProjectLeader = async () => {
+      const name = await getProjectLeader(project_leader);
+      if (name !== null) {
+        setProjectLeaderName(name);
+      }
+    };
+
+    fetchProjectLeader();
+  }, [project_leader]);
+
+  //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
+  const [ideas, setIdeas] = useState([
+    { text: "Här kommer det finnas en idé", checked: false },
+    { text: "Här kommer det finnas en annan", checked: false },
+    { text: "Och här kanske en tredje", checked: false },
+  ]);
+
+  const handleIdeaClick = (index: number) => {
+    const updatedIdeas = [...ideas];
+    updatedIdeas[index].checked = true;
+    setIdeas(updatedIdeas);
+  };
+
+  //Makes sure that the next phase tab is displayed when the user marks a phase as done
+  const [updatedProjectPhase, setUpdatedProjectPhase] =
+    useState<number>(currentPhase);
+  const [selectedTab, setSelectedTab] = useState<string>(
+    currentPhase.toString()
+  );
+
+  useEffect(() => {
+    setSelectedTab(updatedProjectPhase.toString());
+  }, [updatedProjectPhase]);
+
+  const handlePhaseUpdate = (phase: number) => {
+    setUpdatedProjectPhase(phase + 1);
+    updatePhaseInDb(projectId, phase + 1);
+  };
+
+  //Updates the projects phase in the database when "Markera fas som klar" is clicked
+  async function updatePhaseInDb(projectId: string, newPhase: number) {
+    try {
+      const projectDocRef = doc(db, "projects", projectId);
+      await updateDoc(projectDocRef, { phase: newPhase });
+
+      console.log("Document updated!", newPhase);
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  }
+
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Body
@@ -232,108 +628,132 @@ function CardModal({
           fontFamily: "Avenir",
         }}
       >
-        <Tabs defaultActiveKey={"phase" + column} justify>
+        <Tabs
+          activeKey={selectedTab}
+          onSelect={(key) => key !== null && setSelectedTab(key)}
+          justify
+        >
           {/*------ PLANERA ------*/}
-
-          {/* Planera-tabens utseende */}
           <Tab
-            eventKey="phase2"
+            eventKey="2"
             title={
-              <span style={FlexAndCenter}>
-                {getPhaseIcon(2, column, 35)}
+              <span style={flexAndCenter}>
+                {getPhaseIcon(2, updatedProjectPhase, 35)}
                 Planera
               </span>
             }
           >
-            {/* Innehållet i planera-taben */}
-            <SharedContentTop
+            <ModalContentPlan
               title={title}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
+              checklist={checklist_plan}
+              project_leader={projectLeaderName}
+              project_members={project_members}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
+              notes={notes_plan}
             />
-            <SpecificContent />
-            <SharedContentBottom />
           </Tab>
 
-          {/*------ GENOMFÖRA ------*/}
+          {/*------ GÖRA ------*/}
 
-          {/* Genomföra-tabens utseende */}
           <Tab
-            eventKey="phase3"
+            eventKey="3"
             title={
-              <span style={FlexAndCenter}>
-                {getPhaseIcon(3, column, 20)}
-                Genomföra
+              <span style={flexAndCenter}>
+                {getPhaseIcon(3, updatedProjectPhase, 40)}
+                Göra
               </span>
             }
           >
-            {/* Innehållet i genomföra-taben */}
-            <SharedContentTop
+            <ModalContentDo
               title={title}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
+              project_leader={projectLeaderName}
+              project_members={project_members}
+              result_measurements={result_measurements}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
+              notes={notes_do}
             />
-            <SpecificContent />
-            <SharedContentBottom />
           </Tab>
 
           {/*------STUDERA ------*/}
 
           <Tab
-            eventKey="phase4"
+            eventKey="4"
             title={
-              <span style={FlexAndCenter}>
-                {getPhaseIcon(4, column, 30)}
+              <span style={flexAndCenter}>
+                {getPhaseIcon(4, updatedProjectPhase, 30)}
                 Studera
               </span>
             }
           >
-            {/* Innehållet i studera-taben */}
-            <SharedContentTop
+            <ModalContentStudy
               title={title}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
+              project_leader={projectLeaderName}
+              project_members={project_members}
+              result_analysis={result_analysis}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
+              notes={notes_study}
             />
-            <SpecificContent />
-            <SharedContentBottom />
           </Tab>
 
           {/*------- AGERA ------*/}
 
           <Tab
-            eventKey="phase5"
+            eventKey="5"
             title={
-              <span style={FlexAndCenter}>
-                {getPhaseIcon(5, column, 40)}
+              <span style={flexAndCenter}>
+                {getPhaseIcon(5, updatedProjectPhase, 40)}
                 Agera
               </span>
             }
           >
-            {/* Innehållet i agera-taben */}
-            <SharedContentTop
+            <ModalContentAct
               title={title}
+              phase={updatedProjectPhase}
               tags={tags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
+              project_leader={projectLeaderName}
+              project_members={project_members}
+              ideas={ideas}
+              handleIdeaClick={handleIdeaClick}
+              id={projectId}
+              handlePhaseUpdate={handlePhaseUpdate}
+              notes={notes_act}
             />
-            <SpecificContent />
-            <SharedContentBottom />
           </Tab>
         </Tabs>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide} style={ButtonStyle}>
+        <Button onClick={onHide} style={buttonStyle}>
           Spara
         </Button>
       </Modal.Footer>
