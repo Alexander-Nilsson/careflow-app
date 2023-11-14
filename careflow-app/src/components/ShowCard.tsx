@@ -90,6 +90,7 @@ function ShowCard({ project }: ShowCardProps) {
           tags={project.tags}
           date_created={project.date_created}
           result_measurements={project.result_measurements}
+          result_analysis={project.result_analysis}
           notes_plan={project.notes_plan}
           notes_do={project.notes_do}
           notes_study={project.notes_study}

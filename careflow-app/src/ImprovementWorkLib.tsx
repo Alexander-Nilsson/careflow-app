@@ -14,6 +14,7 @@ export interface Project {
     tags: Array<string>;
     date_created: Timestamp;
     result_measurements: string;
+    result_analysis: string;
     notes_plan: string;
     notes_do: string;
     notes_study: string;
@@ -112,6 +113,7 @@ function setProject(id: string, data: DocumentData) {
         tags: data.tags,
         date_created: data.date_created,
         result_measurements: data.result_measurements,
+        result_analysis: data.result_analysis,
         notes_plan: data.notes_plan,
         notes_do: data.notes_do,
         notes_study: data.notes_study,
