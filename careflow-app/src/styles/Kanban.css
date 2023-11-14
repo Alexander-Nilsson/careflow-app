@@ -76,9 +76,9 @@ body {
 
 .board-container {
   margin: auto;
-  height: 100vh;      /* Use the full height of the viewport */
+  /*height: 100vh; */     /* Use the full height of the viewport */
   width: 100vw;       /* Use the full width of the viewport */
-  display: flex;      
+  /*display: flex;  */    
   justify-content: center; 
   align-items: center;     
   overflow: hidden;   /* Hide any potential overflow */

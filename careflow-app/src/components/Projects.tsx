@@ -15,6 +15,7 @@ import KanbanBoard from "./KanbanBoard";
 import { Id } from "../types";
 import { useAuth0 } from "@auth0/auth0-react";
 import FinishedProjectsSection from "./FinishedProjectsSection";
+import TitleBox from "./TitleBox";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -310,7 +311,12 @@ function Projects() {
       {isLoading ? (
         <p>Loading...</p> // Show a loading indicator
       ) : (
-        <h1>Förändringsarbeten</h1>
+        <TitleBox
+          title={"Förändringsarbeten"}
+          description="Här kan du bläddra bland pågående projekt och se vilken status de har.
+        Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
+        Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
+        ></TitleBox>
       )}
 
       <ProjectContext.Provider value={{ projectList, setProjectList }}>
