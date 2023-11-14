@@ -7,6 +7,7 @@ import FinishedProjectsSection from "./FinishedProjectsSection";
 import DisplayAllProjects from "./DisplayAllProjects";
 import { db } from '../firebase';
 import "../styles/DisplayAllProjects.css";
+import HelpPopover from "./HelpPopover";
 
 export type UserInfoType = {
   hsaID: string | undefined;
@@ -84,9 +85,13 @@ function Archive() {
       />
       {isAuthenticated && userInfo ? (
         <div style={contentStyle}>
-          <div className = "blue-label">
-              Alla förbättringsarbeten
-            </div>
+          <h1 className = "blue-label">
+              Alla förbättringsarbeten 
+
+              <div style={{display: "inline-block", marginLeft: "10px"}}>
+                <HelpPopover content="'Alla förbättringsarbeten' är en sida där du kan se avslutade förbättringsarbeten."/>
+                </div>
+            </h1>
           <DisplayAllProjects />
         </div>
       ) : (
