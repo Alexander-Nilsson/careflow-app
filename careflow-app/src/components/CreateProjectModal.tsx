@@ -206,9 +206,11 @@ async function fetchUsers() {
     const snapshot = await getDoc(projectReference);
     const userData = snapshot.data() as User;
 
-    users.push(userData.sur_name);
+    if (!users.includes(userData.sur_name)) {
+      users.push(userData.sur_name);
+    }
   });
-  users.length = 0;
+  //users.length = 0;
   //return users;
 }
 
@@ -222,10 +224,12 @@ async function fetchTags() {
     const snapshot = await getDoc(tagReference);
     const tagData = snapshot.data() as Tag;
 
-    tags.push(tagData.description);
+    if (!tags.includes(tagData.description)) {
+      tags.push(tagData.description);
+    }
   });
 
-  tags.length = 0;
+  //tags.length = 0;
   //return tags;
 }
 
@@ -235,6 +239,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   const [ideaError, setIdeaError] = useState(false);
 
   // States for saving text entered by user
+  const [purpose, setPurpose] = useState("");
   const [ideas, setIdeas] = useState(""); // State for saving the ideas entered by user
   const [measure, setMeasure] = useState(""); // State for saving the ideas entered by user
   const [goals, setGoals] = useState(""); // State for saving the ideas entered by user
@@ -343,9 +348,11 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
+      project_members: selectedUsers,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
       measure: transformBulletPoints(measure),
+      tags: selectedTags,
       total_iterations: 1,
       all_iterations: {
         iteration1: {
@@ -447,6 +454,45 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
+                <EnvelopePaper
+                  style={{
+                    color: "black",
+                    width: "20px",
+                    height: "20px",
+                  }}
+                />
+              </div>
+              <div>
+                <label style={TitleStyle}>Syfte</label>
+                <div className="form-text" style={DescriptiveTextStyle}>
+                  Vad är syftet med förändringen?
+                </div>
+              </div>
+            </div>
+            <div className="card" style={{ height: "100px" }}>
+              <div
+                className="input-group input-group-sm"
+                style={{
+                  position: "absolute",
+                  left: "0",
+                  right: "0",
+                  marginBottom: "0",
+                  fontFamily: "Avenir",
+                }}
+              >
+                <textarea
+                  name="purpose"
+                  className="form-control"
+                  style={{ border: "none", height: "98px" }}
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div className="mb-3">
+            <div style={FlexAndCenter}>
+              <div style={IconCircleStyle}>
                 <Bullseye
                   style={{
                     color: "#FD0B0B",
@@ -456,7 +502,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 />
               </div>
               <div>
-                <label style={TitleStyle}>Mål</label>
                 <label style={TitleStyle}>Mål</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
                   Vad vill du uppnå med förbättringen?
@@ -577,6 +622,9 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   onFocus={() => handleFocusBulletPoint(ideas, setIdeas)}
                 />
               </div>
+              {ideaError && (
+                <div style={{ color: "red" }}>Minst en idé måste anges</div>
+              )}
             </div>
           </div>
           <div>
