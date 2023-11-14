@@ -11,6 +11,7 @@ import { Project } from "../ImprovementWorkLib";
 interface ShowCardProps {
   project: Project;
 }
+
 function ShowCard({ project }: ShowCardProps) {
   // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);

@@ -89,7 +89,8 @@ interface cardModalProps {
 interface modalContentPlanProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -114,7 +115,8 @@ interface modalContentPlanProps {
 interface modalContentDoProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -135,7 +137,8 @@ interface modalContentDoProps {
 interface modalContentStudyProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -156,7 +159,8 @@ interface modalContentStudyProps {
 interface modalContentActProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -223,7 +227,8 @@ async function getProjectLeader(
 function ModalContentPlan({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -254,7 +259,8 @@ function ModalContentPlan({
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -308,7 +314,8 @@ function ModalContentPlan({
 function ModalContentDo({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -322,37 +329,14 @@ function ModalContentDo({
   handlePhaseUpdate,
   notes,
 }: modalContentDoProps) {
-  //Handles changes made in the text field "Uppmätt resultat"
-  const [resultDataSaved, setResultDataSaved] = useState(false);
-  const [updatedResult, setUpdatedResult] = useState(result_measurements);
-
-  const handleResultInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUpdatedResult(event.target.value);
-    setResultDataSaved(false);
-  };
-
-  //Updated the database with the new text in "Uppmätt resultat" when the save button is clicked
-  async function updateResultInDb() {
-    try {
-      const projectDocRef = doc(db, "projects", id);
-      await updateDoc(projectDocRef, {
-        result_measurements: updatedResult,
-      });
-      setResultDataSaved(true);
-
-      console.log("Document updated!", updatedResult);
-    } catch (e) {
-      console.error("Error updating document: ", e);
-    }
-  }
-
   return (
     <>
       <div style={{ display: "flex" }}>
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -404,7 +388,8 @@ function ModalContentDo({
 function ModalContentStudy({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -424,7 +409,8 @@ function ModalContentStudy({
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -474,7 +460,8 @@ function ModalContentStudy({
 function ModalContentAct({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -493,7 +480,8 @@ function ModalContentAct({
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -619,6 +607,9 @@ function CardModal({
     }
   }
 
+  //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
+  const [updatedTags, setUpdatedTags] = useState(tags);
+
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Body
@@ -646,7 +637,8 @@ function CardModal({
             <ModalContentPlan
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
@@ -676,7 +668,8 @@ function CardModal({
             <ModalContentDo
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
@@ -706,7 +699,8 @@ function CardModal({
             <ModalContentStudy
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
@@ -736,7 +730,8 @@ function CardModal({
             <ModalContentAct
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
