@@ -696,7 +696,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <Dropdown>
+          <Dropdown key={tags.length}>
             <Dropdown.Toggle
               style={{
                 width: "100%",
