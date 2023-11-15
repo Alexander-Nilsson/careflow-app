@@ -225,7 +225,7 @@ async function getProjectLeader(
 }
 
 //Asynchronous function that fetches the names of the project members
-async function getProjectMembers(project_members: Array<string>) {
+/*async function getProjectMembers(project_members: Array<string>) {
   interface User {
     first_name: string;
     sur_name: string;
@@ -252,7 +252,7 @@ async function getProjectMembers(project_members: Array<string>) {
   }
 
   return names;
-}
+}*/
 
 function ModalContentPlan({
   title,
@@ -597,7 +597,7 @@ function CardModal({
   }, [project_leader]);
 
   //Fetches information about the project members
-  const [projectMembersNames, setProjectMembersNames] = useState<string[]>([]);
+  /*const [projectMembersNames, setProjectMembersNames] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProjectMembers = async () => {
@@ -606,7 +606,7 @@ function CardModal({
     };
 
     fetchProjectMembers();
-  }, [project_members]);
+  }, [project_members]);*/
 
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
   const [ideas, setIdeas] = useState([
@@ -687,7 +687,7 @@ function CardModal({
               content={content}
               checklist={checklist_plan}
               project_leader={projectLeaderName}
-              project_members={projectMembersNames}
+              project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
@@ -717,7 +717,7 @@ function CardModal({
               centrum={centrum}
               content={content}
               project_leader={projectLeaderName}
-              project_members={projectMembersNames}
+              project_members={project_members}
               result_measurements={result_measurements}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -748,7 +748,7 @@ function CardModal({
               centrum={centrum}
               content={content}
               project_leader={projectLeaderName}
-              project_members={projectMembersNames}
+              project_members={project_members}
               result_analysis={result_analysis}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -779,7 +779,7 @@ function CardModal({
               centrum={centrum}
               content={content}
               project_leader={projectLeaderName}
-              project_members={projectMembersNames}
+              project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
