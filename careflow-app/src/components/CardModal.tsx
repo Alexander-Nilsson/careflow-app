@@ -197,7 +197,7 @@ function getPhaseIcon(
 }
 
 // Asynchronous function that fetches the project leader's name from the database
-async function getProjectLeader(
+/*async function getProjectLeader(
   project_leader: DocumentReference<DocumentData>
 ) {
   interface User {
@@ -222,7 +222,7 @@ async function getProjectLeader(
   }
 
   return null;
-}
+}*/
 
 //Asynchronous function that fetches the names of the project members
 /*async function getProjectMembers(project_members: Array<string>) {
@@ -583,7 +583,7 @@ function CardModal({
   const projectId = typeof id === "string" ? id : id.toString();
 
   //Fetches information about the project leader
-  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
+  /*const [projectLeaderName, setProjectLeaderName] = useState<string>("");
 
   useEffect(() => {
     const fetchProjectLeader = async () => {
@@ -594,7 +594,7 @@ function CardModal({
     };
 
     fetchProjectLeader();
-  }, [project_leader]);
+  }, [project_leader]);*/
 
   //Fetches information about the project members
   /*const [projectMembersNames, setProjectMembersNames] = useState<string[]>([]);
@@ -686,7 +686,7 @@ function CardModal({
               centrum={centrum}
               content={content}
               checklist={checklist_plan}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -716,7 +716,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_measurements={result_measurements}
               ideas={ideas}
@@ -747,7 +747,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_analysis={result_analysis}
               ideas={ideas}
@@ -778,7 +778,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
