@@ -244,10 +244,10 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
 
   // States for saving text entered by user
   const [purpose, setPurpose] = useState("");
-  const [ideas, setIdeas] = useState(""); // State for saving the ideas entered by user
-  const [measure, setMeasure] = useState(""); // State for saving the ideas entered by user
-  const [goals, setGoals] = useState(""); // State for saving the ideas entered by user
-  const [newTag, setTags] = useState(""); // State for saving the ideas entered by user
+  const [ideas, setIdeas] = useState("");
+  const [measure, setMeasure] = useState("");
+  const [goals, setGoals] = useState("");
+  const [newTag, setTags] = useState("");
 
   //User specific data
   const [name, setName] = useState<String>("Namn ej funnet");
@@ -364,6 +364,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
       description: textValue,
     };
     addTags(tag);
+    setTextValue(""); // Nollställ textfältet
     handleAlternativeClick1(tag.description);
   };
 
