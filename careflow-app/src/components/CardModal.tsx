@@ -195,64 +195,52 @@ function getPhaseIcon(
     <Circle style={iconStyle} />
   );
 }
+// Function to fetch the name of the project leader
+const fetchProjectLeaderData = async (
+  leaderRef: DocumentReference<DocumentData, DocumentData>
+) => {
+  try {
+    const leaderDoc = await getDoc(leaderRef);
+    if (leaderDoc.exists()) {
+      const leaderData = leaderDoc.data() as {
+        first_name: string;
+        sur_name: string;
+      };
+      return leaderData.first_name + leaderData.sur_name;
+    } else {
+      console.error("Project leader document not found.");
+    }
+  } catch (error) {
+    console.error("Error fetching project leader document:", error);
+  }
+};
 
-// Asynchronous function that fetches the project leader's name from the database
-async function getProjectLeader(
-  project_leader: DocumentReference<DocumentData>
-) {
+// Function to fetch user data for an array of member IDs
+const fetchMembersData = async (memberIds: Array<string>) => {
   interface User {
     first_name: string;
     sur_name: string;
   }
+  const membersData = [];
 
-  if (project_leader && project_leader.id) {
-    const userReference = doc(db, "users", project_leader.id);
+  for (const memberId of memberIds) {
+    const userDocRef = doc(db, "users", memberId);
 
     try {
-      const userDoc = await getDoc(userReference);
+      const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
         const userData = userDoc.data() as User;
-        return userData.first_name + " " + userData.sur_name;
+        membersData.push(userData.first_name + " " + userData.sur_name);
       } else {
-        console.error("User document not found.");
+        console.error(`User document not found for ID: ${memberId}`);
       }
     } catch (error) {
-      console.error("Error fetching user document:", error);
+      console.error(`Error fetching user document for ID: ${memberId}`, error);
     }
   }
 
-  return null;
-}
-
-//Asynchronous function that fetches the names of the project members
-/*async function getProjectMembers(project_members: Array<string>) {
-  interface User {
-    first_name: string;
-    sur_name: string;
-  }
-
-  const names: string[] = [];
-
-  for (const memberId of project_members) {
-    if (memberId) {
-      const userReference = doc(db, "users", memberId);
-
-      try {
-        const userDoc = await getDoc(userReference);
-        if (userDoc.exists()) {
-          const userData = userDoc.data() as User;
-          names.push(userData.first_name + " " + userData.sur_name);
-        } else {
-          console.error("User document not found.");
-        }
-      } catch (error) {
-        console.error("Error fetching user document:", error);
-      }
-    }
-  }
-
-  return names;
-}*/
+  return membersData;
+};
 
 function ModalContentPlan({
   title,
@@ -581,32 +569,11 @@ function CardModal({
 }: cardModalProps) {
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
+  const projectMemberNames = fetchMembersData(project_members); //Byt ut till projectMemberNames ist för project_member!
+  const projectLeaderRef = doc(db, "users", project_leader.id);
 
-  //Fetches information about the project leader
-  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
-
-  useEffect(() => {
-    const fetchProjectLeader = async () => {
-      const name = await getProjectLeader(project_leader);
-      if (name !== null) {
-        setProjectLeaderName(name);
-      }
-    };
-
-    fetchProjectLeader();
-  }, [project_leader]);
-
-  //Fetches information about the project members
-  /*const [projectMembersNames, setProjectMembersNames] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchProjectMembers = async () => {
-      const names = await getProjectMembers(project_members);
-      setProjectMembersNames(names);
-    };
-
-    fetchProjectMembers();
-  }, [project_members]);*/
+  // Call the function with the project_leader reference
+  const projectLeaderName = fetchProjectLeaderData(projectLeaderRef);
 
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
   const [ideas, setIdeas] = useState([
@@ -651,6 +618,7 @@ function CardModal({
 
   //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
   const [updatedTags, setUpdatedTags] = useState(tags);
+  //TAGGAR BEHÖVER UPPDATERAS I DATABASEN OCKSÅ
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -686,7 +654,7 @@ function CardModal({
               centrum={centrum}
               content={content}
               checklist={checklist_plan}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -716,7 +684,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_measurements={result_measurements}
               ideas={ideas}
@@ -747,7 +715,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_analysis={result_analysis}
               ideas={ideas}
@@ -778,7 +746,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
