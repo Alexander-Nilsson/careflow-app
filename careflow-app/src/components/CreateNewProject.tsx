@@ -15,7 +15,6 @@ function CreateNewProject() {
       <CreateProjectButton onClick={modalShow} />
       {/* <ContinueButton onClick={modalShow}/> */}
       <CreateProjectModal show={show} onHide={modalClose} />
-       
     </div>
   );
 }
