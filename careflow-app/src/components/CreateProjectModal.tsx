@@ -190,9 +190,9 @@ const tagConverter = {
 };
 
 var users: any[] = [];
-var selectedUsers: any[] = [];
+//var selectedUsers: any[] = [];
 var tags: any[] = [];
-var selectedTags: any[] = [];
+//var selectedTags: any[] = [];
 
 async function fetchUsers() {
   const q = query(collection(db, "users"));
@@ -327,13 +327,13 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   //     selectedTags.push(event.target.value);
   //   }
   // };
+  type MembersState = string[];
+  type TagState = string[];
 
-  const [selectedMembers, setSelectedMembers] = useState([""]);
+  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
+  const [selectedTags, setSelectedTags] = useState<TagState>([]);
 
-  const [selectedTags, setSelectedTags] = useState([""]);
-
-  // console.log(selectedTags);
-
+  //console.log(selectedMembers);
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedMembers.includes(chosenMember)) {
