@@ -233,6 +233,10 @@ async function fetchTags() {
   //return tags;
 }
 
+async function addTags(tag: Object) {
+  const docRef = await addDoc(collection(db, "tags"), tag);
+}
+
 function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
@@ -243,6 +247,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   const [ideas, setIdeas] = useState(""); // State for saving the ideas entered by user
   const [measure, setMeasure] = useState(""); // State for saving the ideas entered by user
   const [goals, setGoals] = useState(""); // State for saving the ideas entered by user
+  const [newTag, setTags] = useState(""); // State for saving the ideas entered by user
 
   //User specific data
   const [name, setName] = useState<String>("Namn ej funnet");
@@ -310,30 +315,13 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   fetchUsers();
   fetchTags();
 
-  // //handle dropdown for users
-  // const [selectedOption, setSelectedOption] = useState<string>(users[0]);
-  // const handleOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSelectedOption(event.target.value);
-  //   if (!selectedUsers.includes(event.target.value)) {
-  //     selectedUsers.push(event.target.value);
-  //   }
-  // };
-
-  // //handle dropdown for tags
-  // const [selectedOption1, setSelectedOption1] = useState<string>(tags[0]);
-  // const handleOptionChange1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSelectedOption1(event.target.value);
-  //   if (!selectedTags.includes(event.target.value)) {
-  //     selectedTags.push(event.target.value);
-  //   }
-  // };
   type MembersState = string[];
   type TagState = string[];
 
   const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
   const [selectedTags, setSelectedTags] = useState<TagState>([]);
 
-  //console.log(selectedMembers);
+  //console.log(newTag);
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedMembers.includes(chosenMember)) {
@@ -360,7 +348,27 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
       const updatedChosenMembers = [...selectedTags, chosenMember];
       setSelectedTags(updatedChosenMembers);
     }
+    //fetchTags();
   };
+
+  const [textValue, setTextValue] = useState<string>("");
+  //const [confirmedText, setConfirmedText] = useState<string | null>(null);
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTextValue(event.target.value);
+  };
+
+  const handleConfirm = () => {
+    //tags.push(textValue);
+    const tag = {
+      description: textValue,
+    };
+    addTags(tag);
+    handleAlternativeClick1(tag.description);
+  };
+
+  console.log("alla taggar", tags);
+  console.log("valda taggar", selectedTags);
 
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
@@ -699,6 +707,23 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               Lägg till beskrivande nyckelord
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Form.Control
+                  type="text"
+                  placeholder="Lägg till egna nyckelord"
+                  value={textValue}
+                  onChange={handleTextChange}
+                  className="mr-sm-2"
+                  style={{ width: "80%" }}
+                />
+                <Button
+                  variant="primary"
+                  onClick={handleConfirm}
+                  style={{ marginRight: "0" }}
+                >
+                  Lägg till
+                </Button>
+              </div>
               {tags.map((tag) => (
                 <Dropdown.Item
                   style={{
@@ -711,17 +736,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          {/* <div>
-            <label style={TitleStyle}>Lägg till taggar: </label>
-            <select value={selectedOption1} onChange={handleOptionChange1}>
-              {tags.map((tag: any, index: any) => (
-                <option key={index} value={tag}>
-                  {tag}
-                </option>
-              ))}
-            </select>
-            <p>Vald tag: {selectedOption1}</p>
-          </div> */}
           <div className="mb-3 text-center">
             <Button
               type="submit"
