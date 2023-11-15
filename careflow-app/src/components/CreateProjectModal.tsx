@@ -310,27 +310,29 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   fetchUsers();
   fetchTags();
 
-  //handle dropdown for users
-  const [selectedOption, setSelectedOption] = useState<string>(users[0]);
-  const handleOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption(event.target.value);
-    if (!selectedUsers.includes(event.target.value)) {
-      selectedUsers.push(event.target.value);
-    }
-  };
+  // //handle dropdown for users
+  // const [selectedOption, setSelectedOption] = useState<string>(users[0]);
+  // const handleOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedOption(event.target.value);
+  //   if (!selectedUsers.includes(event.target.value)) {
+  //     selectedUsers.push(event.target.value);
+  //   }
+  // };
 
-  //handle dropdown for tags
-  const [selectedOption1, setSelectedOption1] = useState<string>(tags[0]);
-  const handleOptionChange1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption1(event.target.value);
-    if (!selectedTags.includes(event.target.value)) {
-      selectedTags.push(event.target.value);
-    }
-  };
+  // //handle dropdown for tags
+  // const [selectedOption1, setSelectedOption1] = useState<string>(tags[0]);
+  // const handleOptionChange1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedOption1(event.target.value);
+  //   if (!selectedTags.includes(event.target.value)) {
+  //     selectedTags.push(event.target.value);
+  //   }
+  // };
 
   const [selectedMembers, setSelectedMembers] = useState([""]);
 
-  console.log(selectedMembers);
+  const [selectedTags, setSelectedTags] = useState([""]);
+
+  // console.log(selectedTags);
 
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
@@ -343,6 +345,20 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     } else {
       const updatedChosenMembers = [...selectedMembers, chosenMember];
       setSelectedMembers(updatedChosenMembers);
+    }
+  };
+
+  const handleAlternativeClick1 = (chosenMember: string) => {
+    //If the selected member already has been chosen, remove from the array
+    if (selectedTags.includes(chosenMember)) {
+      const updatedChosenMembers = selectedTags.filter(
+        (member) => member !== chosenMember
+      );
+      setSelectedTags(updatedChosenMembers);
+      //If the selected member has not already been chosen, add the member to the array
+    } else {
+      const updatedChosenMembers = [...selectedTags, chosenMember];
+      setSelectedTags(updatedChosenMembers);
     }
   };
 
@@ -671,7 +687,31 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <div>
+          <Dropdown>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
+              }}
+            >
+              Lägg till beskrivande nyckelord
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {tags.map((tag) => (
+                <Dropdown.Item
+                  style={{
+                    fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
+                  }}
+                  onClick={() => handleAlternativeClick1(tag)}
+                >
+                  {tag}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          {/* <div>
             <label style={TitleStyle}>Lägg till taggar: </label>
             <select value={selectedOption1} onChange={handleOptionChange1}>
               {tags.map((tag: any, index: any) => (
@@ -681,7 +721,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               ))}
             </select>
             <p>Vald tag: {selectedOption1}</p>
-          </div>
+          </div> */}
           <div className="mb-3 text-center">
             <Button
               type="submit"
