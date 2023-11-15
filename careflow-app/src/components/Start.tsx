@@ -34,7 +34,7 @@ function Start() {
     width: "90%",
     height: "60%",
     marginLeft: '5%', // 5% margin on the left
-    marginRight: '5%' // 5% margin on the right
+    marginRight: '5%', // 5% margin on the right
   }
 
   const navigate = useNavigate();
