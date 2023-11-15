@@ -5,18 +5,20 @@ import PlusIcon from "../icons/Plusicon";
 import "../styles/Kanban.css";
 import ShowCard from "./ShowCard";
 import HelpPopover from "./HelpPopover";
+import { ImprovementWork } from "../ImprovementWorkLib";
 
 interface Props {
   column: Column;
-  createProject: (columnId: Id) => void;
-  projectList: Project[];
+  //createProject: (columnId: Id) => void;
+  //projectList: Project[];
+  improvementWorkList: ImprovementWork[];
 }
 
-function ColumnContainer({ column, createProject, projectList }: Props) {
+function ColumnContainer({ column, improvementWorkList }: Props) {
   // Memoize task IDs for use in SortableContext
   const tasksIds = useMemo(() => {
-    return projectList.map((project) => project.id);
-  }, [projectList]);
+    return improvementWorkList.map((improvementWork) => improvementWork.id);
+  }, [improvementWorkList]);
 
   // UseSortable hook for drag-and-drop functionality
   const { setNodeRef } = useSortable({
@@ -28,7 +30,7 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
   });
 
   // Count the number of tasks in the  column
-  const taskCount = projectList.length;
+  const taskCount = improvementWorkList.length;
 
   // Render the column
   return (
@@ -40,19 +42,22 @@ function ColumnContainer({ column, createProject, projectList }: Props) {
       </div>
       <div className="kanban-tasksContainer">
         <SortableContext items={tasksIds}>
-          {projectList.map((project) => (
-            <ShowCard key={project.id} project={project} />
+          {improvementWorkList.map((improvementWork) => (
+            <ShowCard
+              key={improvementWork.id}
+              improvementWork={improvementWork}
+            />
           ))}
         </SortableContext>
       </div>
       <div className="kanban-footerButton">
         Antal: {taskCount}
-        <div
+        {/*} <div
           onClick={() => createProject(column.id)}
           className="clickable-icon"
         >
           <PlusIcon />
-        </div>
+          </div>*/}
       </div>
     </div>
   );

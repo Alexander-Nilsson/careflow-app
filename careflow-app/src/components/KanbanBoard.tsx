@@ -25,7 +25,7 @@ import {
 } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
-import { Project } from "../ImprovementWorkLib";
+import { Project, ImprovementWork } from "../ImprovementWorkLib";
 
 const columns: Column[] = [
   {
@@ -69,8 +69,11 @@ function KanbanBoard() {
   }
 
   const userReference = doc(db, "users", "random_user_id");
-  const { projectList, setProjectList } = context;
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  //const { projectList, setProjectList } = context;
+  //const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const { improvementWorkList, setImprovementWorkList } = context;
+  const [activeImprovementWork, setActiveImprovementWork] =
+    useState<ImprovementWork | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -99,9 +102,9 @@ function KanbanBoard() {
               <ColumnContainer
                 key={col.id}
                 column={col}
-                createProject={createProject}
-                projectList={projectList.filter(
-                  (Project) => Project.phase === col.id
+                //createProject={createProject}
+                improvementWorkList={improvementWorkList.filter(
+                  (ImprovementWork) => ImprovementWork.phase === col.id
                 )}
               />
             ))}
@@ -109,7 +112,9 @@ function KanbanBoard() {
 
           {createPortal(
             <DragOverlay>
-              {activeProject && <ShowCard project={activeProject} />}
+              {activeImprovementWork && (
+                <ShowCard improvementWork={activeImprovementWork} />
+              )}
             </DragOverlay>,
             document.body
           )}
@@ -119,7 +124,7 @@ function KanbanBoard() {
   );
 
   // temp newproject function
-  function createProject(phase: Id) {
+  /*function createProject(phase: Id) {
     const newProject: Project = {
       id: generateId(),
       title: `Project ${projectList.length + 1}`,
@@ -159,7 +164,7 @@ function KanbanBoard() {
       },
     };
     setProjectList([...projectList, newProject]);
-  }
+  }*/
 
   /*
   function deleteProject(id: Id) {
@@ -169,23 +174,23 @@ function KanbanBoard() {
 */
 
   // Update function for dragdrop
-  async function updateProject(id: any, newColumn: any) {
-    const userDoc = doc(db, "projects", id);
+  async function updateImprovementWork(id: any, newColumn: any) {
+    const userDoc = doc(db, "improvementWork", id);
     const newFields = { phase: newColumn };
 
-    console.log("updateProject");
+    console.log("updateImprovementWork");
     await updateDoc(userDoc, newFields);
   }
 
   function onDragStart(event: DragStartEvent) {
-    if (event.active.data.current?.type === "Project") {
-      setActiveProject(event.active.data.current.project);
+    if (event.active.data.current?.type === "ImprovementWork") {
+      setActiveImprovementWork(event.active.data.current.improvementWork);
       return;
     }
   }
 
   function onDragEnd(event: DragEndEvent) {
-    setActiveProject(null);
+    setActiveImprovementWork(null);
 
     const { active, over } = event;
     if (!over) return;
@@ -207,56 +212,75 @@ function KanbanBoard() {
 
     if (activeId === overId) return;
 
-    const isActiveAProjet = active.data.current?.type === "Project";
-    const isOverAProject = over.data.current?.type === "Project";
+    const isActiveAImprovementWork =
+      active.data.current?.type === "ImprovementWork";
+    const isOverAImprovementWork =
+      over.data.current?.type === "ImprovementWork";
 
-    if (!isActiveAProjet) return;
+    if (!isActiveAImprovementWork) return;
 
     // Dropping a Task over another Task
-    if (isActiveAProjet && isOverAProject) {
-      setProjectList((projectList) => {
-        const activeIndex = projectList.findIndex((t) => t.id === activeId);
-        const overIndex = projectList.findIndex((t) => t.id === overId);
+    if (isActiveAImprovementWork && isOverAImprovementWork) {
+      setImprovementWorkList((improvementWorkList) => {
+        const activeIndex = improvementWorkList.findIndex(
+          (t) => t.id === activeId
+        );
+        const overIndex = improvementWorkList.findIndex((t) => t.id === overId);
 
-        let newProjectList;
-        if (projectList[activeIndex].phase !== projectList[overIndex].phase) {
-          projectList[activeIndex].phase = projectList[overIndex].phase;
-          newProjectList = arrayMove(projectList, activeIndex, overIndex - 1);
+        let newImprovementWorkList;
+        if (
+          improvementWorkList[activeIndex].phase !==
+          improvementWorkList[overIndex].phase
+        ) {
+          improvementWorkList[activeIndex].phase =
+            improvementWorkList[overIndex].phase;
+          newImprovementWorkList = arrayMove(
+            improvementWorkList,
+            activeIndex,
+            overIndex - 1
+          );
         } else {
-          newProjectList = arrayMove(projectList, activeIndex, overIndex);
+          newImprovementWorkList = arrayMove(
+            improvementWorkList,
+            activeIndex,
+            overIndex
+          );
         }
 
         console.log("DROPPING PROJECT OVER another task", { activeIndex });
 
         // Update the project in the database after reassigning to a new phase or position
-        updateProject(activeId, projectList[activeIndex].phase).catch(
-          (error) => {
-            console.error(
-              "Kanban - Failed to update project phase in Firestore:",
-              error
-            );
-          }
-        );
+        updateImprovementWork(
+          activeId,
+          improvementWorkList[activeIndex].phase
+        ).catch((error) => {
+          console.error(
+            "Kanban - Failed to update project phase in Firestore:",
+            error
+          );
+        });
 
-        return newProjectList;
+        return newImprovementWorkList;
       });
     }
 
     const isOverAColumn = over.data.current?.type === "Column";
 
     // dropping a Task over a column
-    if (isActiveAProjet && isOverAColumn) {
-      setProjectList((projectList) => {
-        const activeIndex = projectList.findIndex((t) => t.id === activeId);
+    if (isActiveAImprovementWork && isOverAColumn) {
+      setImprovementWorkList((improvementWorkList) => {
+        const activeIndex = improvementWorkList.findIndex(
+          (t) => t.id === activeId
+        );
 
-        projectList[activeIndex].phase = overId;
+        improvementWorkList[activeIndex].phase = overId;
         console.log("DROPPING PROJECT OVER COLUMN", { activeIndex });
-        return arrayMove(projectList, activeIndex, activeIndex);
+        return arrayMove(improvementWorkList, activeIndex, activeIndex);
       });
 
       // `overId` is the new phase for the project
       // uppdate the prodject phase in the database
-      updateProject(activeId, overId).catch((error) => {
+      updateImprovementWork(activeId, overId).catch((error) => {
         console.error(
           "Kanban - Failed to update project phase in Firestore:",
           error

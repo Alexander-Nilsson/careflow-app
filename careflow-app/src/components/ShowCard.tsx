@@ -6,13 +6,13 @@ import "./ShowCard.css";
 // import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Project } from "../ImprovementWorkLib";
+import { Project, ImprovementWork } from "../ImprovementWorkLib";
 
 interface ShowCardProps {
-  project: Project;
+  improvementWork: ImprovementWork;
 }
 
-function ShowCard({ project }: ShowCardProps) {
+function ShowCard({ improvementWork }: ShowCardProps) {
   // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [show, setShow] = useState(false);
@@ -31,10 +31,10 @@ function ShowCard({ project }: ShowCardProps) {
     transition,
     isDragging,
   } = useSortable({
-    id: project.id,
+    id: improvementWork.id,
     data: {
-      type: "Project",
-      project,
+      type: "ImprovementWork",
+      improvementWork,
     },
 
     //disabled: editMode,
@@ -74,11 +74,12 @@ function ShowCard({ project }: ShowCardProps) {
     >
       <div>
         <CardButton
-          title={project.title}
-          tags={project.tags}
-          date_created={project.date_created}
+          title={improvementWork.title}
+          tags={improvementWork.tags}
+          date_created={improvementWork.date_created}
           onClick={modalShow}
         />
+        {/*
         <CardModal
           show={show}
           onHide={modalClose}
@@ -102,7 +103,7 @@ function ShowCard({ project }: ShowCardProps) {
           checklist_do={project.checklist_do}
           checklist_study={project.checklist_study}
           checklist_act={project.checklist_act}
-        />
+    />*/}
       </div>
     </div>
   );
