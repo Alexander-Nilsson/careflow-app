@@ -17,36 +17,35 @@ function ProfileSection() {
   const [role, setRole] = useState<String>("Roll ej funnen");
   const { isAuthenticated, isLoading, user } = useAuth0();
 
+  const entireSectionStyle = {
+    width: "100%",
+    height: "150px",
+    display: 'flex',
+    justifyContent: 'space-between', // Aligns children at opposite ends
+    alignItems: 'center', // Aligns children vertically in the middle
+    marginBottom: "20px",
+  }
+
 
   const profileSectionStyle = {
     background: 'rgba(255, 255, 255, 0.70)',
-    width: "30%",
-    height: "200px",
+    width: "500px",
+    height: "140px",
     borderRadius: "10px",
-    margin: "20px",
+    margin: "0px",
     display: "flex",
     boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     fontFamily: "Avenir",
   };
 
-  const entireSectionStyle = {
-    width: "100%",
-    height: "200px",
-    display: 'flex',
-    justifyContent: 'space-between', // Aligns children at opposite ends
-    alignItems: 'center', // Aligns children vertically in the middle
-  }
-
+ 
   const buttonSectionStyle = {
     width: "30%",
-    height: "200px",
-    // borderRadius: "10px",
-    margin: "20px",
+    height: "140px",
+    margin: "0px",
     display: "flex",
-    // boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
-    // fontFamily: "Avenir",
+    justifyContent: "flex-end",
   }
-
 
   const leftDivStyle = {
     flex: "40%",
@@ -60,8 +59,8 @@ function ProfileSection() {
   };
 
   const circleStyle = {
-    width: "90%",
-    height: "90%",
+    width: "120px",
+    height: "120px",
     backgroundColor: "white",
     borderRadius: "50%", // Create a circular shape
     display: "flex",
@@ -121,15 +120,13 @@ function ProfileSection() {
           <div style={circleStyle}></div>
         </div>
         <div style={rightDivStyle}>
-          {/* <h1>Min Profil</h1> */}
           <h3>{name}</h3>
           <p>{role}</p>
           <p>{department}</p>
-          {/* <CreateNewProject /> */}
         </div>
       </div>
       <div style= {buttonSectionStyle}>
-      <CreateNewProject />
+         <CreateNewProject />
       </div>
     </div>
     

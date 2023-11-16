@@ -19,14 +19,12 @@ function ProgressSection() {
   //test
   const progressSectionStyle = {
     background: 'rgba(255, 255, 255, 0.70)',
-    width: "56%",
+    width: "46%",
     height: "250px",
     borderRadius: "10px",
     padding: "10px",
     margin: "0px",
-    marginLeft: "2%",
-    marginTop: "0px",
-    marginRight: "20px",
+    marginLeft: "4%",
     fontFamily: "Avenir",
     boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
   };

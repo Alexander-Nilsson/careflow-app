@@ -98,7 +98,7 @@ function Start() {
           <IdeasSection userInfo={userInfo} />
           <ProgressSection />
           </div>
-          <FinishedProjectsSection />
+          {/* <FinishedProjectsSection /> */}
         </div>
       ) : (
         <p>Loading...</p> // Show a loading indicator
