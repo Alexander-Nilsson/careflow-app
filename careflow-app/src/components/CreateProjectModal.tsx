@@ -312,8 +312,8 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     }
   };
 
-  fetchUsers();
-  fetchTags();
+  //fetchUsers();
+  //fetchTags();
 
   type MembersState = string[];
   type TagState = string[];
