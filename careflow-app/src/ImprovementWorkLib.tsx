@@ -59,7 +59,7 @@ export interface Iteration {
     };
     idea: string;
     notes: string;
-    result: string;
+    results: string;
   };
   plan: {
     checklist: {

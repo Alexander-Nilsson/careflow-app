@@ -275,6 +275,7 @@ function Projects() {
     if (user?.name) {
       const fetchedImprovementWorks: ImprovementWork[] | null =
         await getAllImprovementWorks();
+      console.log(fetchedImprovementWorks);
       if (fetchedImprovementWorks)
         setImprovementWorkList(fetchedImprovementWorks);
       const fetchedProjects: Project[] | null = await getAllProjects(false);

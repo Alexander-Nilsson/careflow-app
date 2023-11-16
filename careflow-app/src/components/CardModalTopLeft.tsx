@@ -104,7 +104,6 @@ const saveTagButtonStyle = {
 interface cardModalTopLeftProps {
   title: string;
   phase: number;
-  content: string;
   place: string;
   centrum: string;
   updatedTags: Array<string>;
@@ -157,7 +156,6 @@ function PhasePercentage({ percentage }: phasePercentageProps) {
 function CardModalTopLeft({
   title,
   phase,
-  content,
   place,
   centrum,
   updatedTags,
@@ -375,7 +373,7 @@ function CardModalTopLeft({
                 </span>
               }
             >
-              <div style={whiteDescriptionContainerStyle}>{content}</div>
+              <div style={whiteDescriptionContainerStyle}>Ett syfte</div>
             </Tab>
             <Tab
               eventKey="mål"

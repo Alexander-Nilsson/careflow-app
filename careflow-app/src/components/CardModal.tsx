@@ -51,7 +51,6 @@ interface cardModalProps {
   id: Id;
   title: string;
   phase: Id;
-  content: string;
   place: string;
   centrum: string;
   tags: Array<string>;
@@ -62,26 +61,11 @@ interface cardModalProps {
   notes_do: string;
   notes_study: string;
   notes_act: string;
-  project_leader: DocumentReference<DocumentData>;
+  project_leader: string;
   project_members: Array<string>;
   checklist_plan: {
-    checklist_item: Array<string>;
     checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_do: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_study: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_act: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
+    checklist_items: Array<string>;
     checklist_members: Array<string>;
   };
 }
@@ -94,9 +78,8 @@ interface modalContentPlanProps {
   date_created: Timestamp;
   place: string;
   centrum: string;
-  content: string;
   checklist: {
-    checklist_item: Array<string>;
+    checklist_items: Array<string>;
     checklist_done: Array<boolean>;
     checklist_members: Array<string>;
   };
@@ -120,7 +103,6 @@ interface modalContentDoProps {
   date_created: Timestamp;
   place: string;
   centrum: string;
-  content: string;
   project_leader: string;
   project_members: Array<string>;
   result_measurements: string;
@@ -142,7 +124,6 @@ interface modalContentStudyProps {
   date_created: Timestamp;
   place: string;
   centrum: string;
-  content: string;
   project_leader: string;
   project_members: Array<string>;
   result_analysis: string;
@@ -164,7 +145,6 @@ interface modalContentActProps {
   date_created: Timestamp;
   place: string;
   centrum: string;
-  content: string;
   project_leader: string;
   project_members: Array<string>;
   ideas: {
@@ -232,7 +212,6 @@ function ModalContentPlan({
   date_created,
   place,
   centrum,
-  content,
   checklist,
   project_leader,
   project_members,
@@ -264,7 +243,6 @@ function ModalContentPlan({
           date_created={date_created}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={2}
           percentage={calculatePercentage()}
           ideas={ideas}
@@ -319,7 +297,6 @@ function ModalContentDo({
   date_created,
   place,
   centrum,
-  content,
   project_leader,
   project_members,
   result_measurements,
@@ -340,7 +317,6 @@ function ModalContentDo({
           date_created={date_created}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={3}
           percentage={0}
           ideas={ideas}
@@ -393,7 +369,6 @@ function ModalContentStudy({
   date_created,
   place,
   centrum,
-  content,
   project_leader,
   project_members,
   result_analysis,
@@ -414,7 +389,6 @@ function ModalContentStudy({
           date_created={date_created}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={4}
           percentage={0}
           ideas={ideas}
@@ -465,7 +439,6 @@ function ModalContentAct({
   date_created,
   place,
   centrum,
-  content,
   project_leader,
   project_members,
   ideas,
@@ -485,7 +458,6 @@ function ModalContentAct({
           date_created={date_created}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={5}
           percentage={0}
           ideas={ideas}
@@ -531,7 +503,6 @@ function CardModal({
   id,
   title,
   phase,
-  content,
   place,
   centrum,
   tags,
@@ -545,26 +516,9 @@ function CardModal({
   project_leader,
   project_members,
   checklist_plan,
-  checklist_do,
-  checklist_study,
-  checklist_act,
 }: cardModalProps) {
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
-
-  //Fetches information about the project leader
-  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
-
-  useEffect(() => {
-    const fetchProjectLeader = async () => {
-      const name = await getProjectLeader(project_leader);
-      if (name !== null) {
-        setProjectLeaderName(name);
-      }
-    };
-
-    fetchProjectLeader();
-  }, [project_leader]);
 
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
   const [ideas, setIdeas] = useState([
@@ -642,9 +596,8 @@ function CardModal({
               date_created={date_created}
               place={place}
               centrum={centrum}
-              content={content}
               checklist={checklist_plan}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -673,8 +626,7 @@ function CardModal({
               date_created={date_created}
               place={place}
               centrum={centrum}
-              content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_measurements={result_measurements}
               ideas={ideas}
@@ -704,8 +656,7 @@ function CardModal({
               date_created={date_created}
               place={place}
               centrum={centrum}
-              content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_analysis={result_analysis}
               ideas={ideas}
@@ -735,8 +686,7 @@ function CardModal({
               date_created={date_created}
               place={place}
               centrum={centrum}
-              content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
