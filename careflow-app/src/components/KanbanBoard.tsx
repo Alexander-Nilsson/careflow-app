@@ -175,7 +175,7 @@ function KanbanBoard() {
 
   // Update function for dragdrop
   async function updateImprovementWork(id: any, newColumn: any) {
-    const userDoc = doc(db, "improvementWork", id);
+    const userDoc = doc(db, "improvementWorks", id);
     const newFields = { phase: newColumn };
 
     console.log("updateImprovementWork");
@@ -290,9 +290,11 @@ function KanbanBoard() {
   }
 }
 
+/*
 function generateId() {
-  /* Generate a random number between 0 and 10000 */
+  // Generate a random number between 0 and 10000 
   return Math.floor(Math.random() * 10001);
 }
+*/
 
 export default KanbanBoard;
