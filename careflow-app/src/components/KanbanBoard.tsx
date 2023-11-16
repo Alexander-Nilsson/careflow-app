@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Column, Id, Project } from "../types";
+import { Column, Id } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import {
   DndContext,
@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
+import { Project } from "../ImprovementWorkLib";
 
 const columns: Column[] = [
   {
@@ -128,6 +129,12 @@ function KanbanBoard() {
       centrum: "centrum",
       tags: [], // Initialize as an empty array
       date_created: Timestamp.now(),
+      result_measurements: "results",
+      result_analysis: "results",
+      notes_plan: "some notes",
+      notes_do: "other notes",
+      notes_study: "notes",
+      notes_act: "even more notes",
       project_leader: userReference,
       project_members: [],
       checklist_plan: {

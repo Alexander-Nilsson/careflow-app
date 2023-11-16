@@ -35,10 +35,10 @@ function NavigationBar() {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav" className='d-flex'>
         <Nav className="d-flex flex-grow-1">
-          <Link className="p-4" to="/start" style={linkStyle} >Start</Link>
-          <Link className="p-4" to="/forandringsarbeten" style={linkStyle} >Förändringar</Link>
+          <Link className="p-4" to="/start" style={linkStyle} >Hem</Link>
+          <Link className="p-4" to="/forandringsarbeten" style={linkStyle} >Mina förbättringsarbeten</Link>
           <div className="flex-grow-1 p-4">
-            <Link className="pt-4 pb-4" to="/arkiv" style={linkStyle} >Arkiv</Link>
+            <Link className="pt-4 pb-4" to="/arkiv" style={linkStyle} >Alla förbättringsarbeten</Link>
           </div>
           <a className="p-4" style={linkStyle} onClick={handleLogout}>Logga ut</a>
         </Nav>
