@@ -312,8 +312,8 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     }
   };
 
-  //fetchUsers();
-  //fetchTags();
+  fetchUsers();
+  fetchTags();
 
   type MembersState = string[];
   type TagState = string[];
@@ -708,23 +708,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               Lägg till beskrivande nyckelord
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <Form.Control
-                  type="text"
-                  placeholder="Lägg till egna nyckelord"
-                  value={textValue}
-                  onChange={handleTextChange}
-                  className="mr-sm-2"
-                  style={{ width: "80%" }}
-                />
-                <Button
-                  variant="primary"
-                  onClick={handleConfirm}
-                  style={{ marginRight: "0" }}
-                >
-                  Lägg till
-                </Button>
-              </div>
               {tags.map((tag) => (
                 <Dropdown.Item
                   style={{
