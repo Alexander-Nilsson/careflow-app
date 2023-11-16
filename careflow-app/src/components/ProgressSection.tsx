@@ -81,7 +81,8 @@ function ProgressSection() {
     }
 
     fetchData();
-  }, [setCompletedProjects, goal, year]);
+  // }, [setCompletedProjects, goal, year]);
+}, [goal, year]);
 
 
   return (
