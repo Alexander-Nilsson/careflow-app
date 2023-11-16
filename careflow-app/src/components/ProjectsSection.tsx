@@ -17,6 +17,7 @@ type IdeasSectionProps = {
 function ProjectsSection({ userInfo }: IdeasSectionProps) {
 
     const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
+    const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
 
     const fetchData = async () => {
         const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
@@ -34,6 +35,10 @@ function ProjectsSection({ userInfo }: IdeasSectionProps) {
             setImprovementWorks(filteredImprovementWorks)
         }
     };
+
+    const handleTags = (event:any) => {
+        return
+    }
 
 
     useEffect(() => {
@@ -94,6 +99,12 @@ function ProjectsSection({ userInfo }: IdeasSectionProps) {
                 <h1 className="mt-2 ml-2" style={titleStyle}>Pågående förbättringsarbeten</h1>
                 <div className="ml-2 mt-2">
                     <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
+                        <option selected value="user">Visa mina</option>
+                        <option value="clinic">Visa klinikens</option>
+                    </select>
+                </div>
+                <div className="ml-2 mt-2">
+                    <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
                         <option selected value="user">Visa mina</option>
                         <option value="clinic">Visa klinikens</option>
                     </select>
