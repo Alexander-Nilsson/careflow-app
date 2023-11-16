@@ -89,7 +89,8 @@ interface cardModalProps {
 interface modalContentPlanProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -114,7 +115,8 @@ interface modalContentPlanProps {
 interface modalContentDoProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -135,7 +137,8 @@ interface modalContentDoProps {
 interface modalContentStudyProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -156,7 +159,8 @@ interface modalContentStudyProps {
 interface modalContentActProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
   place: string;
   centrum: string;
@@ -192,8 +196,8 @@ function getPhaseIcon(
   );
 }
 
-// Asynchronous function that fetches the project leader's name from the database (should probably move this to Projects.tsx)
-async function getProjectLeader(
+// Asynchronous function that fetches the project leader's name from the database
+/*async function getProjectLeader(
   project_leader: DocumentReference<DocumentData>
 ) {
   interface User {
@@ -218,12 +222,43 @@ async function getProjectLeader(
   }
 
   return null;
-}
+}*/
+
+//Asynchronous function that fetches the names of the project members
+/*async function getProjectMembers(project_members: Array<string>) {
+  interface User {
+    first_name: string;
+    sur_name: string;
+  }
+
+  const names: string[] = [];
+
+  for (const memberId of project_members) {
+    if (memberId) {
+      const userReference = doc(db, "users", memberId);
+
+      try {
+        const userDoc = await getDoc(userReference);
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as User;
+          names.push(userData.first_name + " " + userData.sur_name);
+        } else {
+          console.error("User document not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching user document:", error);
+      }
+    }
+  }
+
+  return names;
+}*/
 
 function ModalContentPlan({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -254,7 +289,8 @@ function ModalContentPlan({
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -308,7 +344,8 @@ function ModalContentPlan({
 function ModalContentDo({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -322,37 +359,14 @@ function ModalContentDo({
   handlePhaseUpdate,
   notes,
 }: modalContentDoProps) {
-  //Handles changes made in the text field "Uppmätt resultat"
-  const [resultDataSaved, setResultDataSaved] = useState(false);
-  const [updatedResult, setUpdatedResult] = useState(result_measurements);
-
-  const handleResultInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUpdatedResult(event.target.value);
-    setResultDataSaved(false);
-  };
-
-  //Updated the database with the new text in "Uppmätt resultat" when the save button is clicked
-  async function updateResultInDb() {
-    try {
-      const projectDocRef = doc(db, "projects", id);
-      await updateDoc(projectDocRef, {
-        result_measurements: updatedResult,
-      });
-      setResultDataSaved(true);
-
-      console.log("Document updated!", updatedResult);
-    } catch (e) {
-      console.error("Error updating document: ", e);
-    }
-  }
-
   return (
     <>
       <div style={{ display: "flex" }}>
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -404,7 +418,8 @@ function ModalContentDo({
 function ModalContentStudy({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -424,7 +439,8 @@ function ModalContentStudy({
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -474,7 +490,8 @@ function ModalContentStudy({
 function ModalContentAct({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
   place,
   centrum,
@@ -493,7 +510,8 @@ function ModalContentAct({
         <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
           place={place}
           centrum={centrum}
@@ -565,7 +583,7 @@ function CardModal({
   const projectId = typeof id === "string" ? id : id.toString();
 
   //Fetches information about the project leader
-  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
+  /*const [projectLeaderName, setProjectLeaderName] = useState<string>("");
 
   useEffect(() => {
     const fetchProjectLeader = async () => {
@@ -576,7 +594,19 @@ function CardModal({
     };
 
     fetchProjectLeader();
-  }, [project_leader]);
+  }, [project_leader]);*/
+
+  //Fetches information about the project members
+  /*const [projectMembersNames, setProjectMembersNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchProjectMembers = async () => {
+      const names = await getProjectMembers(project_members);
+      setProjectMembersNames(names);
+    };
+
+    fetchProjectMembers();
+  }, [project_members]);*/
 
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
   const [ideas, setIdeas] = useState([
@@ -619,6 +649,9 @@ function CardModal({
     }
   }
 
+  //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
+  const [updatedTags, setUpdatedTags] = useState(tags);
+
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Body
@@ -646,13 +679,14 @@ function CardModal({
             <ModalContentPlan
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
               checklist={checklist_plan}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -676,12 +710,13 @@ function CardModal({
             <ModalContentDo
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_measurements={result_measurements}
               ideas={ideas}
@@ -706,12 +741,13 @@ function CardModal({
             <ModalContentStudy
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_analysis={result_analysis}
               ideas={ideas}
@@ -736,12 +772,13 @@ function CardModal({
             <ModalContentAct
               title={title}
               phase={updatedProjectPhase}
-              tags={tags}
+              updatedTags={updatedTags}
+              setUpdatedTags={setUpdatedTags}
               date_created={date_created}
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
