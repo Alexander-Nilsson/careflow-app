@@ -15,15 +15,19 @@ const TitleBox: FC<TitleBoxProps> = ({ title, description }) => {
     fontSize: "1.7rem",
     fontFamily: "avenir",
     marginBottom: "0px",
+    marginTop: "20px",
+    alignItems: "baseline",
   };
 
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "baseline" }}>
         <div style={titleBoxStyle}>
           <h2>{title}</h2>
         </div>
-        <HelpPopover content={description} />
+        <div style={{ marginLeft: "10px" }}>
+          <HelpPopover content={description} />
+        </div>
       </div>
     </>
   );
