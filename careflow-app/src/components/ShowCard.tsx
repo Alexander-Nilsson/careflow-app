@@ -59,11 +59,6 @@ function ShowCard({ improvementWork }: ShowCardProps) {
     );
   }
 
-  console.log(
-    "resultat",
-    improvementWork.all_iterations[improvementWork.total_iterations - 1]
-  );
-
   return (
     <div
       ref={setNodeRef}
