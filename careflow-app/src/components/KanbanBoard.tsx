@@ -8,7 +8,6 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
-  UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -16,16 +15,10 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import "../styles/Kanban.css";
 import { ProjectContext } from "./Projects";
-import {
-  Timestamp,
-  doc,
-  updateDoc,
-  DocumentReference,
-  DocumentData,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
-import { Project, ImprovementWork } from "../ImprovementWorkLib";
+import { ImprovementWork } from "../ImprovementWorkLib";
 
 const columns: Column[] = [
   {
@@ -68,9 +61,6 @@ function KanbanBoard() {
     );
   }
 
-  const userReference = doc(db, "users", "random_user_id");
-  //const { projectList, setProjectList } = context;
-  //const [activeProject, setActiveProject] = useState<Project | null>(null);
   const { improvementWorkList, setImprovementWorkList } = context;
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
@@ -102,7 +92,6 @@ function KanbanBoard() {
               <ColumnContainer
                 key={col.id}
                 column={col}
-                //createProject={createProject}
                 improvementWorkList={improvementWorkList.filter(
                   (ImprovementWork) => ImprovementWork.phase === col.id
                 )}
@@ -123,62 +112,12 @@ function KanbanBoard() {
     </div>
   );
 
-  // temp newproject function
-  /*function createProject(phase: Id) {
-    const newProject: Project = {
-      id: generateId(),
-      title: `Project ${projectList.length + 1}`,
-      description: "", // Replace with a valid description
-      phase: phase,
-      place: "place",
-      centrum: "centrum",
-      tags: [], // Initialize as an empty array
-      date_created: Timestamp.now(),
-      result_measurements: "results",
-      result_analysis: "results",
-      notes_plan: "some notes",
-      notes_do: "other notes",
-      notes_study: "notes",
-      notes_act: "even more notes",
-      project_leader: userReference,
-      project_members: [],
-      checklist_plan: {
-        checklist_item: [],
-        checklist_done: [],
-        checklist_members: [],
-      },
-      checklist_do: {
-        checklist_item: [],
-        checklist_done: [],
-        checklist_members: [],
-      },
-      checklist_study: {
-        checklist_item: [],
-        checklist_done: [],
-        checklist_members: [],
-      },
-      checklist_act: {
-        checklist_item: [],
-        checklist_done: [],
-        checklist_members: [],
-      },
-    };
-    setProjectList([...projectList, newProject]);
-  }*/
-
-  /*
-  function deleteProject(id: Id) {
-    const newProjects = projectList.filter((project) => project.id !== id);
-    setProjectList(newProjects);
-  }
-*/
-
   // Update function for dragdrop
   async function updateImprovementWork(id: any, newColumn: any) {
     const userDoc = doc(db, "improvementWorks", id);
     const newFields = { phase: newColumn };
 
-    console.log("updateImprovementWork");
+    console.log("updateImprovementWork in db");
     await updateDoc(userDoc, newFields);
   }
 
@@ -199,8 +138,7 @@ function KanbanBoard() {
     const overId = over.id;
 
     if (activeId === overId) return;
-
-    console.log("DRAG END");
+    //console.log("DRAG END");
   }
 
   function onDragOver(event: DragOverEvent) {
@@ -247,7 +185,7 @@ function KanbanBoard() {
           );
         }
 
-        console.log("DROPPING PROJECT OVER another task", { activeIndex });
+        //console.log("DROPPING PROJECT OVER another task", { activeIndex });
 
         // Update the project in the database after reassigning to a new phase or position
         updateImprovementWork(
@@ -274,7 +212,7 @@ function KanbanBoard() {
         );
 
         improvementWorkList[activeIndex].phase = overId;
-        console.log("DROPPING PROJECT OVER COLUMN", { activeIndex });
+        //console.log("DROPPING PROJECT OVER COLUMN", { activeIndex });
         return arrayMove(improvementWorkList, activeIndex, activeIndex);
       });
 
@@ -289,12 +227,5 @@ function KanbanBoard() {
     }
   }
 }
-
-/*
-function generateId() {
-  // Generate a random number between 0 and 10000 
-  return Math.floor(Math.random() * 10001);
-}
-*/
 
 export default KanbanBoard;
