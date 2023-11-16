@@ -195,52 +195,6 @@ function getPhaseIcon(
     <Circle style={iconStyle} />
   );
 }
-// Function to fetch the name of the project leader
-const fetchProjectLeaderData = async (
-  leaderRef: DocumentReference<DocumentData, DocumentData>
-) => {
-  try {
-    const leaderDoc = await getDoc(leaderRef);
-    if (leaderDoc.exists()) {
-      const leaderData = leaderDoc.data() as {
-        first_name: string;
-        sur_name: string;
-      };
-      return leaderData.first_name + leaderData.sur_name;
-    } else {
-      console.error("Project leader document not found.");
-    }
-  } catch (error) {
-    console.error("Error fetching project leader document:", error);
-  }
-};
-
-// Function to fetch user data for an array of member IDs
-const fetchMembersData = async (memberIds: Array<string>) => {
-  interface User {
-    first_name: string;
-    sur_name: string;
-  }
-  const membersData = [];
-
-  for (const memberId of memberIds) {
-    const userDocRef = doc(db, "users", memberId);
-
-    try {
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data() as User;
-        membersData.push(userData.first_name + " " + userData.sur_name);
-      } else {
-        console.error(`User document not found for ID: ${memberId}`);
-      }
-    } catch (error) {
-      console.error(`Error fetching user document for ID: ${memberId}`, error);
-    }
-  }
-
-  return membersData;
-};
 
 function ModalContentPlan({
   title,
@@ -569,11 +523,6 @@ function CardModal({
 }: cardModalProps) {
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
-  const projectMemberNames = fetchMembersData(project_members); //Byt ut till projectMemberNames ist för project_member!
-  const projectLeaderRef = doc(db, "users", project_leader.id);
-
-  // Call the function with the project_leader reference
-  const projectLeaderName = fetchProjectLeaderData(projectLeaderRef);
 
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
   const [ideas, setIdeas] = useState([
@@ -654,8 +603,8 @@ function CardModal({
               centrum={centrum}
               content={content}
               checklist={checklist_plan}
-              project_leader={""}
-              project_members={project_members}
+              project_leader={"En projektledare"}
+              project_members={[""]}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
@@ -684,8 +633,8 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={""}
-              project_members={project_members}
+              project_leader={"En projektledare"}
+              project_members={[""]}
               result_measurements={result_measurements}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -715,8 +664,8 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={""}
-              project_members={project_members}
+              project_leader={"En projektledare"}
+              project_members={[""]}
               result_analysis={result_analysis}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -746,8 +695,8 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={""}
-              project_members={project_members}
+              project_leader={"En projektledare"}
+              project_members={[""]}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
