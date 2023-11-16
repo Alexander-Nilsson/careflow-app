@@ -250,7 +250,7 @@ export async function getAllImprovementWorks() {
     }
 }
 
-export async function getUserImprovementWorks(hsaID: string, closed: boolean) {
+export async function getUserImprovementWorks(hsaID: string) {
     const improvementWorksCollectionRef = collection(db, "improvementWorks");
     const memberQuery = query(improvementWorksCollectionRef, where("project_members", "array-contains", hsaID));
     const leaderQuery = query(improvementWorksCollectionRef, where("project_leader", "==", hsaID));
@@ -262,10 +262,8 @@ export async function getUserImprovementWorks(hsaID: string, closed: boolean) {
                 let improvementWorksData: ImprovementWork[] = [];
                 userImprovementWorks.forEach((doc) => {
                     let data = doc.data();
-                    if ((closed && data.closed) || (!closed && !data.closed)) {
-                        let improvementWork: ImprovementWork = setImprovementWork(data)
-                        improvementWorksData.push(improvementWork)
-                    }
+                    let improvementWork: ImprovementWork = setImprovementWork(data)
+                    improvementWorksData.push(improvementWork)
                 });
                 return (improvementWorksData);
             })
@@ -295,5 +293,24 @@ export async function filterImprovementWorks(filter: string, filterValue: string
     } catch (error) {
         console.error("Error fetching data:", error);
         return null;
+    }
+}
+
+export function findUserImprovementWorks(hsa: string, orgImprovementWorks: ImprovementWork[] | null, closed: boolean) {
+    if (orgImprovementWorks) {
+        let newImprovementWorks: ImprovementWork[] = []
+        orgImprovementWorks.forEach((improvementWork) => {
+            if ((improvementWork.closed && closed) || (!improvementWork.closed && !closed)) {
+                if (improvementWork.project_leader === hsa) {
+                    newImprovementWorks.push(improvementWork)
+                } else if (improvementWork.project_members.includes(hsa)) {
+                    newImprovementWorks.push(improvementWork)
+                }
+            }
+        })
+        return newImprovementWorks
+
+    } else {
+        return null
     }
 }

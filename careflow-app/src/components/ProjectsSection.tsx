@@ -6,33 +6,39 @@ import { useAuth0 } from '@auth0/auth0-react';
 import {
     ImprovementWork,
     getUserImprovementWorks,
-    filterImprovementWorks
+    filterImprovementWorks,
+    findUserImprovementWorks
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
-type IdeasSectionProps = {
+type ProjectsSectionProps = {
     userInfo: UserInfoType;
+    improvementWorks: ImprovementWork[] | null;
 };
 
-function ProjectsSection({ userInfo }: IdeasSectionProps) {
+// type ImprovementWorksProps = {
+//     improvementWorks: ImprovementWork[] | null;
+// };
 
-    const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
+function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
+
+    // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
 
-    const fetchData = async () => {
-        const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
-        if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+    // const fetchData = async () => {
+    //     const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
+    //     if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
 
-    };
+    // };
 
     const handleFilter = async (event: any) => {
         if (event.target.value == "user") {
-            const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
-            if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
+            // const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
+            // if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
         }
         else if (event.target.value == "clinic") {
-            const filteredImprovementWorks: ImprovementWork[] | null = await filterImprovementWorks(event.target.value, userInfo.clinic, false)
-            setImprovementWorks(filteredImprovementWorks)
+            // const filteredImprovementWorks: ImprovementWork[] | null = await filterImprovementWorks(event.target.value, userInfo.clinic, false)
+            // setImprovementWorks(filteredImprovementWorks)
         }
     };
 
@@ -42,8 +48,8 @@ function ProjectsSection({ userInfo }: IdeasSectionProps) {
 
 
     useEffect(() => {
-        fetchData();
-        console.log("hej")
+        const userImprovementWorks: ImprovementWork[] | null = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
+        setDisplayedImprovementWorks(userImprovementWorks)
     }, []);
 
 
@@ -115,8 +121,8 @@ function ProjectsSection({ userInfo }: IdeasSectionProps) {
             </div>
 
             <div style={projectsContainerStyle}>
-                {improvementWorks !== null ? (
-                    improvementWorks.map((improvementWork, index) => (
+                {displayedImprovementWorks !== null ? (
+                    displayedImprovementWorks.map((improvementWork, index) => (
                         <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
                             <ProjectCard
                                 title={improvementWork.title}

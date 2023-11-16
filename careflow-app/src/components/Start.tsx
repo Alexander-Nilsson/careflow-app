@@ -9,6 +9,8 @@ import FinishedProjectsSection from "./FinishedProjectsSection";
 import { db } from '../firebase'
 import IdeasSection from "./IdeasSection";
 import ProgressSection from "./ProgressSection";
+import { ImprovementWork, getAllImprovementWorks, getUserImprovementWorks } from "../ImprovementWorkLib";
+
 
 
 export type UserInfoType = {
@@ -36,6 +38,7 @@ function Start() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth0();
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
+  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
 
   //fetches the user data from database, based on the hsa-ID
   async function getUser(username: string) {
@@ -65,6 +68,14 @@ function Start() {
     }
   }
 
+  async function fetchData() {
+    if (user?.name) {
+      getUser(user.name);
+      const improvementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
+      setImprovementWorks(improvementWorks)
+    }
+  }
+
   useEffect(() => {
     // if (isLoading) {
     //   return;
@@ -72,12 +83,10 @@ function Start() {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      if (user?.name) {
-        getUser(user.name);
-      }
-    };
+      fetchData()
+    }
 
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated]);
 
   return (
 
@@ -87,16 +96,16 @@ function Start() {
         alt=""
         src="./background-gradient.jpeg"
       />
-      {isAuthenticated && userInfo ? (
+      {isAuthenticated && userInfo? (
         <div style={contentStyle}>
           <ProfileSection />
           {/* <CreateNewProject /> */}
-          <ProjectsSection userInfo={userInfo} />
+          <ProjectsSection userInfo={userInfo} improvementWorks={improvementWorks}/>
           <div className="d-flex mr-2">
             <IdeasSection userInfo={userInfo} />
-            <ProgressSection />
+            <ProgressSection improvementWorks={improvementWorks}/>
           </div>
-          <FinishedProjectsSection userInfo={userInfo}/>
+          {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
       ) : (
         <p>Loading...</p> // Show a loading indicator
