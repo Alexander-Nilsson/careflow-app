@@ -26,13 +26,21 @@ function CardModalTopRight({
         <Form.Group>
           <Form.Label>
             <div>
-              <b>Förbättringsledare</b>
-              <div style={{ marginTop: "10px", marginBottom: "20px" }}>
+              <b style={{ fontSize: "18px" }}>Förbättringsledare</b>
+              <div
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "20px",
+                  fontSize: "15px",
+                }}
+              >
                 {project_leader}
               </div>
-              <b>Förbättringsmedlemmar</b>
+              <b style={{ fontSize: "18px" }}>Förbättringsmedlemmar</b>
               {project_members.map((member, index) => (
-                <div style={{ marginTop: "10px" }}>{member}</div>
+                <div style={{ marginTop: "10px", fontSize: "15px" }}>
+                  {member}
+                </div>
               ))}
             </div>
           </Form.Label>

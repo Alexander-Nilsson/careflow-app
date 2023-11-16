@@ -196,8 +196,8 @@ function getPhaseIcon(
   );
 }
 
-// Asynchronous function that fetches the project leader's name from the database (should probably move this to Projects.tsx)
-async function getProjectLeader(
+// Asynchronous function that fetches the project leader's name from the database
+/*async function getProjectLeader(
   project_leader: DocumentReference<DocumentData>
 ) {
   interface User {
@@ -222,7 +222,37 @@ async function getProjectLeader(
   }
 
   return null;
-}
+}*/
+
+//Asynchronous function that fetches the names of the project members
+/*async function getProjectMembers(project_members: Array<string>) {
+  interface User {
+    first_name: string;
+    sur_name: string;
+  }
+
+  const names: string[] = [];
+
+  for (const memberId of project_members) {
+    if (memberId) {
+      const userReference = doc(db, "users", memberId);
+
+      try {
+        const userDoc = await getDoc(userReference);
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as User;
+          names.push(userData.first_name + " " + userData.sur_name);
+        } else {
+          console.error("User document not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching user document:", error);
+      }
+    }
+  }
+
+  return names;
+}*/
 
 function ModalContentPlan({
   title,
@@ -553,7 +583,7 @@ function CardModal({
   const projectId = typeof id === "string" ? id : id.toString();
 
   //Fetches information about the project leader
-  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
+  /*const [projectLeaderName, setProjectLeaderName] = useState<string>("");
 
   useEffect(() => {
     const fetchProjectLeader = async () => {
@@ -564,7 +594,19 @@ function CardModal({
     };
 
     fetchProjectLeader();
-  }, [project_leader]);
+  }, [project_leader]);*/
+
+  //Fetches information about the project members
+  /*const [projectMembersNames, setProjectMembersNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchProjectMembers = async () => {
+      const names = await getProjectMembers(project_members);
+      setProjectMembersNames(names);
+    };
+
+    fetchProjectMembers();
+  }, [project_members]);*/
 
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
   const [ideas, setIdeas] = useState([
@@ -644,7 +686,7 @@ function CardModal({
               centrum={centrum}
               content={content}
               checklist={checklist_plan}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
@@ -674,7 +716,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_measurements={result_measurements}
               ideas={ideas}
@@ -705,7 +747,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               result_analysis={result_analysis}
               ideas={ideas}
@@ -736,7 +778,7 @@ function CardModal({
               place={place}
               centrum={centrum}
               content={content}
-              project_leader={projectLeaderName}
+              project_leader={""}
               project_members={project_members}
               ideas={ideas}
               handleIdeaClick={handleIdeaClick}
