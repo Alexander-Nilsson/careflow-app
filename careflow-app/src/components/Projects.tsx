@@ -359,7 +359,7 @@ function Projects() {
       <ProjectContext.Provider value={{ projectList, setProjectList }}>
         <KanbanBoard />
       </ProjectContext.Provider>
-      <FinishedProjectsSection />
+      {/* <FinishedProjectsSection /> */}
     </>
   );
 }
