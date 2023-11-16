@@ -77,12 +77,6 @@ function ProgressSection({ improvementWorks }: ProgressSectionProps) {
     }
   }
 
-  async function fetchData() {
-    let goal, year = await getGoal(); //async function ensures that goal has been fetched before fetching projects
-    // countProjects();
-    // setLoading(false); // Set loading to false when data is loaded
-  }
-
   useEffect(() => {
     if (year != 0 && goal != 0){
       countProjects()
