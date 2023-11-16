@@ -4,12 +4,10 @@ const ButtonStyle: React.CSSProperties = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "20px",
-  top: "260px",
-  left: "860px", // Adjust this as needed to position your button
-  padding: "10px 20px",
+  padding: "20px",
   border: "none",
   cursor: "pointer",
-  position: "absolute",
+  marginRight: "0px",
   display: "flex", // Added for inline elements
   alignItems: "center", // Added to align items vertically
 };
