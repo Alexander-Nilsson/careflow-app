@@ -54,39 +54,43 @@ function ProgressSection({ improvementWorks }: ProgressSectionProps) {
         activeGoals++;
         setGoal(doc.data().goal);
         setYear(doc.data().year);
+        return doc.data().goal, doc.data().year
       }
 
     });
     if (activeGoals === 1) {
       setGoalNotFound(false); //Prevent render on progress when no active goal or more than one active goal
     }
+    return 0
   }
 
   //Function to count all completed projects
   async function countProjects() {
-    // const q = query(collection(db, "improvementWorks")); //create a query    
-    // const querySnapshot = await getDocs(q); //use the query to fetch the items
-
     setCompletedProjects(0); // Set count to 0 in case function is run again during runtime
+
     if (improvementWorks) {
       improvementWorks.forEach((improvementWork) => { //Loop through all projects
         if (improvementWork.closed && year === improvementWork.date_created.toDate().getFullYear()) { //Only increase counter on completed projects
-          // if (doc.data().closed && (doc.data().date_created.toDate().getFullYear() === 2023 || doc.data().date_created.toDate().getFullYear() === 2022)) {// && year === doc.data().date_created.toDate().getFullYear()) //Only increase counter on completed projects
           setCompletedProjects((prev) => (prev + 1)); //Set counter to +1. Prev is used for react to render after database read
-          // console.log(year);
         }
       });
     }
   }
 
+  async function fetchData() {
+    let goal, year = await getGoal(); //async function ensures that goal has been fetched before fetching projects
+    // countProjects();
+    // setLoading(false); // Set loading to false when data is loaded
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      await getGoal(); //async function ensures that goal has been fetched before fetching projects
-      countProjects();
+    if (year != 0 && goal != 0){
+      countProjects()
       setLoading(false); // Set loading to false when data is loaded
+    } else if (year == 0 && goal == 0){
+      getGoal()
     }
-      fetchData();
-  }, [goal, year]);
+  }, [year]);
 
 
   return (
