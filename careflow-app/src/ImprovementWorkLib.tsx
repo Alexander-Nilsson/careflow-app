@@ -230,12 +230,12 @@ export async function getAllImprovementWorks() {
     // const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", hsaID));
 
     const improvementWorksQuery = query(improvementWorksCollectionRef);
-
+    let improvementWorksData: ImprovementWork[] = [];
     try {
         return Promise.all([getDocs(improvementWorksQuery)])
             .then(([snapshot]) => {
                 const improvementWorks = [...snapshot.docs]
-                let improvementWorksData: ImprovementWork[] = [];
+                
                 improvementWorks.forEach((doc) => {
                     let data = doc.data();
                     let improvementWork: ImprovementWork = setImprovementWork(data)
@@ -246,7 +246,7 @@ export async function getAllImprovementWorks() {
             })
     } catch (error) {
         console.error("Error fetching data:", error);
-        return null;
+        return improvementWorksData;
     }
 }
 
@@ -297,8 +297,8 @@ export async function filterImprovementWorks(filter: string, filterValue: string
 }
 
 export function findUserImprovementWorks(hsa: string, orgImprovementWorks: ImprovementWork[] | null, closed: boolean) {
+    let newImprovementWorks: ImprovementWork[] = []
     if (orgImprovementWorks) {
-        let newImprovementWorks: ImprovementWork[] = []
         orgImprovementWorks.forEach((improvementWork) => {
             if ((improvementWork.closed && closed) || (!improvementWork.closed && !closed)) {
                 if (improvementWork.project_leader === hsa) {
@@ -311,6 +311,6 @@ export function findUserImprovementWorks(hsa: string, orgImprovementWorks: Impro
         return newImprovementWorks
 
     } else {
-        return null
+        return newImprovementWorks
     }
 }
