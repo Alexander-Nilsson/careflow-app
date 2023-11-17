@@ -9,10 +9,12 @@ import FinishedProjectsSection from "./FinishedProjectsSection";
 import { db } from '../firebase'
 import IdeasSection from "./IdeasSection";
 import ProgressSection from "./ProgressSection";
+import { ImprovementWork, getAllImprovementWorks, getUserImprovementWorks } from "../ImprovementWorkLib";
+
 
 
 export type UserInfoType = {
-  hsaID: string | undefined;
+  hsaID: string;
   admin: any;
   centrum: any;
   clinic: any;
@@ -41,6 +43,7 @@ function Start() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth0();
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
+  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
 
   //fetches the user data from database, based on the hsa-ID
   async function getUser(username: string) {
@@ -48,23 +51,33 @@ function Start() {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const userData = {
-        hsaID: user?.name,
-        admin: docSnap.data().admin,
-        centrum: docSnap.data().centrum,
-        clinic: docSnap.data().clinic,
-        email: docSnap.data().email,
-        first_name: docSnap.data().first_name,
-        phone_number: docSnap.data().phone_number,
-        place: docSnap.data().place,
-        profession: docSnap.data().profession,
-        sur_name: docSnap.data().sur_name
+      if (user?.name) {
+        const userData: UserInfoType = {
+          hsaID: user.name,
+          admin: docSnap.data().admin,
+          centrum: docSnap.data().centrum,
+          clinic: docSnap.data().clinic,
+          email: docSnap.data().email,
+          first_name: docSnap.data().first_name,
+          phone_number: docSnap.data().phone_number,
+          place: docSnap.data().place,
+          profession: docSnap.data().profession,
+          sur_name: docSnap.data().sur_name
+        }
+        setUserInfo(userData);
       }
-      setUserInfo(userData);
       // console.log("Document data:", docSnap.data());
     } else {
       // docSnap.data() will be undefined in this case
       console.log("No such document!");
+    }
+  }
+
+  async function fetchData() {
+    if (user?.name) {
+      getUser(user.name);
+      const improvementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
+      setImprovementWorks(improvementWorks)
     }
   }
 
@@ -75,31 +88,29 @@ function Start() {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      if (user?.name) {
-        getUser(user.name);
-      }
-    };
+      fetchData()
+    }
 
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated]);
 
   return (
-    
+
     <div>
       <img
         className="background-gradient"
         alt=""
         src="./background-gradient.jpeg"
       />
-      {isAuthenticated && userInfo ? (
+      {isAuthenticated && userInfo? (
         <div style={contentStyle}>
-          <ProfileSection/>
+          <ProfileSection />
           {/* <CreateNewProject /> */}
-          <ProjectsSection />
+          <ProjectsSection userInfo={userInfo} improvementWorks={improvementWorks}/>
           <div className="d-flex mr-2">
-          <IdeasSection userInfo={userInfo} />
-          <ProgressSection />
+            <IdeasSection userInfo={userInfo} />
+            <ProgressSection improvementWorks={improvementWorks}/>
           </div>
-          {/* <FinishedProjectsSection /> */}
+          {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
       ) : (
         <p>Loading...</p> // Show a loading indicator
