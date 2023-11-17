@@ -33,8 +33,13 @@ function Start() {
 
   const contentStyle = {
     marginTop: '20px',
+    width: "90%",
+    height: "60%",
+    marginLeft: '5%', // 5% margin on the left
+    marginRight: '5%', // 5% margin on the right
   }
 
+  
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth0();
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type

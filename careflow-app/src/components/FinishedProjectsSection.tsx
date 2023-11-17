@@ -40,10 +40,10 @@ function FinishedProjectsSection({ userInfo, improvementWorks }: FinishedProject
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
-        width: "97%",
+        width: "100%",
         height: "20rem",
         borderRadius: "10px",
-        margin: "20px",
+        // margin: "20px",
         padding: "10px",
         overflowX: "auto" as "auto",
         boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',

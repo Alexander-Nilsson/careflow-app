@@ -13,7 +13,7 @@ function CreateNewProject() {
   return (
     <div>
       <CreateProjectButton onClick={modalShow} />
-      <ContinueButton onClick={modalShow} />
+      {/* <ContinueButton onClick={modalShow}/> */}
       <CreateProjectModal show={show} onHide={modalClose} />
     </div>
   );
