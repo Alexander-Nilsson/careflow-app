@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useAuth0 } from '@auth0/auth0-react';
 import { UserInfoType } from "./Start";
 import HelpPopover from "./HelpPopover";
+import rightArrow from "../Images/right-arrow.png";
 
 type IdeasSectionProps = {
     userInfo: UserInfoType;
@@ -30,6 +31,7 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
         padding: "10px 20px",
         border: "none",
         cursor: "pointer",
+        width: "20%",
     };
 
     const titleStyle = {
@@ -92,12 +94,18 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
                 />
                 <div className="d-flex flex-row-reverse">
                     {ideaValue == '' ? (
-                        <Button style={ButtonStyle} className="mt-2" disabled>
-                            Skicka förslag
+                        <Button style={{ ...ButtonStyle, display: "flex", alignItems: "center", justifyContent: "center"}}className="mt-2" disabled>
+                            {/* <img src={rightArrow} alt="Arrow" style={{ width: "20px", height: "20px", marginRight: "10px" }}/> */}
+                            Skicka
+                            <img src={rightArrow} alt="Arrow" style={{ width: "20px", height: "20px", marginLeft: "10px", filter: 'invert(100%)' }}/>
+
                         </Button>
                     ) : (
-                        <Button onClick={handleClick} style={ButtonStyle} className="mt-2">
-                            Skicka förslag
+                        <Button onClick={handleClick} style={{ ...ButtonStyle, display: "flex", alignItems: "center", justifyContent: "center"}} className="mt-2">
+                            {/* <img src={rightArrow} alt="Arrow" style={{ width: "20px", height: "20px", marginRight: "10px" }}/> */}
+                            Skicka
+                            <img src={rightArrow} alt="Arrow" style={{ width: "20px", height: "20px", marginLeft: "10px", filter: 'invert(100%)' }}/>
+
                         </Button>
                     )
                     }
