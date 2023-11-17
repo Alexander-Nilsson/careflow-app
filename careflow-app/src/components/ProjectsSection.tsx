@@ -7,7 +7,8 @@ import {
     ImprovementWork,
     getUserImprovementWorks,
     filterImprovementWorks,
-    findUserImprovementWorks
+    findUserImprovementWorks,
+    findTagOptions
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
@@ -24,13 +25,17 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
 
     const [allImprovementWorks, setImprovementWorks] = useState<ImprovementWork[] >(improvementWorks);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
+    const [tagOptions, setTagOptions] = useState<string[]>([]);
+    const [chosenFilter, setFilter] = useState<string>("user");
 
     const handleFilter = async (event: any) => {
         if (event.target.value == "user") {
+            setFilter("user");
             const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.hsaID, false)
-            if (filteredImprovementWorks) setDisplayedImprovementWorks(filteredImprovementWorks)
+            setDisplayedImprovementWorks(filteredImprovementWorks)
         }
         else if (event.target.value == "clinic") {
+            setFilter("clinic");
             console.log("filtrerar på klinik" && userInfo.clinic)
             const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.clinic, false)
             setDisplayedImprovementWorks(filteredImprovementWorks)
@@ -38,14 +43,33 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
     };
 
     const handleTags = (event:any) => {
-        return
-    }
+        if (event.target.value == "all_tags"){
 
+        }
+        else {
+            let chosenImprovementWorks: ImprovementWork[] = [];
+            if (chosenFilter == "user"){
+                chosenImprovementWorks= filterImprovementWorks(allImprovementWorks, "user", userInfo.hsaID, false)
+            } else if (chosenFilter =="clinic"){
+                chosenImprovementWorks = filterImprovementWorks(allImprovementWorks, "clinic", userInfo.clinic, false)
+            }
+            const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(chosenImprovementWorks, "tags", event.target.value, false)
+            setDisplayedImprovementWorks(filteredImprovementWorks);
+        }
+        return;
+    }
+ 
+    function updateTags(){
+        const tags = findTagOptions(displayedImprovementWorks);
+        setTagOptions(tags);
+    }
 
     useEffect(() => {
         const userImprovementWorks: ImprovementWork[] = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
         setDisplayedImprovementWorks(userImprovementWorks)
-
+        const tags = findTagOptions(userImprovementWorks);
+        setTagOptions(tags);
+        
     }, []);
 
 
@@ -108,8 +132,13 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
                 </div>
                 <div className="ml-2 mt-2">
                     <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-                        <option selected value="user">Visa mina</option>
-                        <option value="clinic">Visa klinikens</option>
+                    <option selected value="all_tags">Visa alla taggar</option>
+                        {
+                            tagOptions.map((tag) => (
+                                <option key ={tag} value={tag}> {tag}</option>
+                            ))
+                        }
+                       
                     </select>
                 </div>
                 <div className="mt-3 ml-2">

@@ -289,6 +289,13 @@ export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], f
                     if (improvementWork.project_leader == filterValue || improvementWork.project_members.includes(filterValue)) {
                         filteredImprovementWorks.push(improvementWork)
                     }
+                    break;
+                case "tags":
+                    if (improvementWork.tags.includes(filterValue)) {
+                        console.log(filterValue)
+                        filteredImprovementWorks.push(improvementWork)
+                    }
+                    break;
             }
         }
     });
@@ -312,4 +319,16 @@ export function findUserImprovementWorks(hsa: string, orgImprovementWorks: Impro
     } else {
         return newImprovementWorks
     }
+}
+
+export function findTagOptions(orgImprovementWorks: ImprovementWork[]){
+    let tagOptions: string[] = []
+    orgImprovementWorks.forEach((improvementWork) => {
+        improvementWork.tags.forEach((tags) =>{
+            if (!tagOptions.includes(tags)){
+            tagOptions.push(tags);
+            }
+        })
+    })
+    return tagOptions
 }
