@@ -8,12 +8,15 @@ interface TitleBoxProps {
 
 const TitleBox: FC<TitleBoxProps> = ({ title, description }) => {
   const titleBoxStyle: React.CSSProperties = {
-    marginLeft: "2rem",
-    borderRadius: "8px",
-    color: "black",
+    display: "inline-block",
+    borderRadius: "7px",
+    backgroundColor: "#0a206a",
+    padding: "2vh 2vw",
+    marginLeft: "2vw",
+    color: "white", // You may want to change the text color for better visibility
+    fontFamily: "Avenir",
     fontWeight: "bold",
     fontSize: "1.7rem",
-    fontFamily: "avenir",
     marginBottom: "0px",
     marginTop: "20px",
     alignItems: "baseline",

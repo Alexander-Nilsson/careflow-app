@@ -307,8 +307,8 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     }
   };
 
-  fetchUsers();
-  fetchTags();
+  //fetchUsers();
+  //fetchTags();
 
   //handle dropdown for users
   const [selectedOption, setSelectedOption] = useState<string>(users[0]);

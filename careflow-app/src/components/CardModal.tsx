@@ -176,8 +176,8 @@ function getPhaseIcon(
   );
 }
 
-// Asynchronous function that fetches the project leader's name from the database (should probably move this to Projects.tsx)
-async function getProjectLeader(
+// Asynchronous function that fetches the project leader's name from the database
+/*async function getProjectLeader(
   project_leader: DocumentReference<DocumentData>
 ) {
   interface User {
@@ -202,7 +202,37 @@ async function getProjectLeader(
   }
 
   return null;
-}
+}*/
+
+//Asynchronous function that fetches the names of the project members
+/*async function getProjectMembers(project_members: Array<string>) {
+  interface User {
+    first_name: string;
+    sur_name: string;
+  }
+
+  const names: string[] = [];
+
+  for (const memberId of project_members) {
+    if (memberId) {
+      const userReference = doc(db, "users", memberId);
+
+      try {
+        const userDoc = await getDoc(userReference);
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as User;
+          names.push(userData.first_name + " " + userData.sur_name);
+        } else {
+          console.error("User document not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching user document:", error);
+      }
+    }
+  }
+
+  return names;
+}*/
 
 function ModalContentPlan({
   title,

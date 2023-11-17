@@ -8,42 +8,20 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
 import '../font/font.css';
+import {ImprovementWork, getAllImprovementWorks } from "../ImprovementWorkLib";
 
 
 function DisplayAllProjects() {
-  const [projects, setProjects] = useState<ProjectCardProps[]>([]);
+
+  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 12; // Adjust this based on your layout
   const { user } = useAuth0();
 
   const fetchData = async () => {
-    const projectsCollectionRef = collection(db, "projects");
     if (user?.name) {
-      const q = query(
-        projectsCollectionRef,
-        where("project_members", "array-contains", user.name)
-      );
-
-      try {
-        const querySnapshot = await getDocs(q);
-
-        const projectsData: ProjectCardProps[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const project: ProjectCardProps = {
-            title: data.title,
-            date_created: data.date_created,
-            place: data.place,
-            tags: data.tags,
-            phase: data.phase,
-          };
-
-          projectsData.push(project);
-        });
-        setProjects(projectsData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
+      if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks);
     }
   };
 
@@ -55,10 +33,10 @@ function DisplayAllProjects() {
     setCurrentPage(newPage);
   };
 
-  const totalProjects = projects.length;
+  const totalProjects = improvementWorks.length;
   const lastProjectIndex = currentPage * projectsPerPage;
   const firstProjectIndex = lastProjectIndex - projectsPerPage;
-  const currentProjects = projects.slice(firstProjectIndex, lastProjectIndex);
+  const currentProjects = improvementWorks.slice(firstProjectIndex, lastProjectIndex);
 
   return (
     <div className= "projects-section">

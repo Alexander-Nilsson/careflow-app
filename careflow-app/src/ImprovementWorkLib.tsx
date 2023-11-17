@@ -255,7 +255,7 @@ export async function getAllImprovementWorks() {
   }
 }
 
-export async function getUserImprovementWorks(hsaID: string, closed: boolean) {
+export async function getUserImprovementWorks(hsaID: string) {
   const improvementWorksCollectionRef = collection(db, "improvementWorks");
   const memberQuery = query(
     improvementWorksCollectionRef,
@@ -276,13 +276,11 @@ export async function getUserImprovementWorks(hsaID: string, closed: boolean) {
         let improvementWorksData: ImprovementWork[] = [];
         userImprovementWorks.forEach((doc) => {
           let data = doc.data();
-          if ((closed && data.closed) || (!closed && !data.closed)) {
-            let improvementWork: ImprovementWork = setImprovementWork(
-              doc.id,
-              data
-            );
-            improvementWorksData.push(improvementWork);
-          }
+          let improvementWork: ImprovementWork = setImprovementWork(
+            doc.id,
+            data
+          );
+          improvementWorksData.push(improvementWork);
         });
         return improvementWorksData;
       }
@@ -290,5 +288,62 @@ export async function getUserImprovementWorks(hsaID: string, closed: boolean) {
   } catch (error) {
     console.error("Error fetching data:", error);
     return null;
+  }
+}
+
+export async function filterImprovementWorks(
+  filter: string,
+  filterValue: string,
+  closed: boolean
+) {
+  const improvementWorksCollectionRef = collection(db, "improvementWorks");
+  const clinicQuery = query(
+    improvementWorksCollectionRef,
+    where(filter, "==", filterValue)
+  );
+  try {
+    return Promise.all([getDocs(clinicQuery)]).then(([clinicSnapshot]) => {
+      const userImprovementWorks = [...clinicSnapshot.docs];
+      let improvementWorksData: ImprovementWork[] = [];
+      userImprovementWorks.forEach((doc) => {
+        let data = doc.data();
+        if ((closed && data.closed) || (!closed && !data.closed)) {
+          let improvementWork: ImprovementWork = setImprovementWork(
+            doc.id,
+            data
+          );
+          improvementWorksData.push(improvementWork);
+        }
+      });
+      return improvementWorksData;
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+}
+
+export function findUserImprovementWorks(
+  hsa: string,
+  orgImprovementWorks: ImprovementWork[] | null,
+  closed: boolean
+) {
+  let newImprovementWorks: ImprovementWork[] = [];
+  if (orgImprovementWorks) {
+    orgImprovementWorks.forEach((improvementWork) => {
+      if (
+        (improvementWork.closed && closed) ||
+        (!improvementWork.closed && !closed)
+      ) {
+        if (improvementWork.project_leader === hsa) {
+          newImprovementWorks.push(improvementWork);
+        } else if (improvementWork.project_members.includes(hsa)) {
+          newImprovementWorks.push(improvementWork);
+        }
+      }
+    });
+    return newImprovementWorks;
+  } else {
+    return newImprovementWorks;
   }
 }

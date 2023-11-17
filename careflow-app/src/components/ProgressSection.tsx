@@ -5,17 +5,23 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { useEffect } from "react";
+import { ImprovementWork } from "../ImprovementWorkLib";
 
+type ProgressSectionProps = {
+  // userInfo: UserInfoType;
+  improvementWorks: ImprovementWork[] | null;
+};
 
-function ProgressSection() {
+function ProgressSection({ improvementWorks }: ProgressSectionProps) {
   const [completedProjects, setCompletedProjects] = useState<number>(0);
   const [goal, setGoal] = useState<number>(0);
   const [year, setYear] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true); //True while loading data from firebase
   const [goalNotFound, setGoalNotFound] = useState<boolean>(true); //True when no active year/goal in firebase, or more than one active goal
 
-  
 
+
+  //test
   const progressSectionStyle = {
     background: 'rgba(255, 255, 255, 0.70)',
     width: "56%",
@@ -23,7 +29,7 @@ function ProgressSection() {
     borderRadius: "10px",
     padding: "10px",
     margin: "0px",
-    marginTop: "0px",
+    marginLeft: "2%",
     fontFamily: "Avenir",
     boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
   };
@@ -35,6 +41,12 @@ function ProgressSection() {
     margin: "20px",
     padding: "10px",
     boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)'
+  };
+
+  const headingStyle = {
+    // other styles...
+    marginTop: '15px', // Adjust this value as needed
+    fontStyle: 'italic',
   };
 
 
@@ -49,39 +61,38 @@ function ProgressSection() {
         activeGoals++;
         setGoal(doc.data().goal);
         setYear(doc.data().year);
+        return doc.data().goal, doc.data().year
       }
 
     });
     if (activeGoals === 1) {
       setGoalNotFound(false); //Prevent render on progress when no active goal or more than one active goal
     }
+    return 0
   }
 
   //Function to count all completed projects
   async function countProjects() {
-    const q = query(collection(db, "projects")); //create a query    
-    const querySnapshot = await getDocs(q); //use the query to fetch the items
-
     setCompletedProjects(0); // Set count to 0 in case function is run again during runtime
 
-    querySnapshot.forEach((doc) => { //Loop through all projects
-      if (doc.data().closed && year === doc.data().date_created.toDate().getFullYear()){ //Only increase counter on completed projects
-      // if (doc.data().closed && (doc.data().date_created.toDate().getFullYear() === 2023 || doc.data().date_created.toDate().getFullYear() === 2022)) {// && year === doc.data().date_created.toDate().getFullYear()) //Only increase counter on completed projects
-        setCompletedProjects((prev) => (prev + 1)); //Set counter to +1. Prev is used for react to render after database read
-      // console.log(year);
-      }
-    });
+    if (improvementWorks) {
+      improvementWorks.forEach((improvementWork) => { //Loop through all projects
+        if (improvementWork.closed && year === improvementWork.date_created.toDate().getFullYear()) { //Only increase counter on completed projects
+          setCompletedProjects((prev) => (prev + 1)); //Set counter to +1. Prev is used for react to render after database read
+        }
+      });
+    }
   }
 
   useEffect(() => {
-    async function fetchData() {
-      await getGoal(); //async function ensures that goal has been fetched before fetching projects
-      countProjects();
+    if (year != 0 && goal != 0){
+      countProjects()
       setLoading(false); // Set loading to false when data is loaded
+    } else if (year == 0 && goal == 0){
+      getGoal()
     }
-
-    fetchData();
-  }, [setCompletedProjects, goal, year]);
+    console.log(improvementWorks)
+  }, [year]);
 
 
   return (
@@ -97,22 +108,22 @@ function ProgressSection() {
         <p>Loading data</p>
       ) : (
         <>
-          <h2>Framsteg för Region Östergötland {goalNotFound ? <p> </p> : <>{year}</>} </h2>
+          <h2>Framsteg Region Östergötland {goalNotFound ? <p> </p> : <>{year}</>} </h2>
 
           <div style={innerProgressSectionStyle}>
 
-          <h3>Avslutade förbättringsarbeten: {completedProjects}</h3>
-          <>
-            {goalNotFound ? (
-              <p>No active goal</p>
-            ) : (
-              <>
-                <ProgressBar animated now={goal <= 0 ? 100 : (completedProjects / goal) * 100} label={`${(goal <= 0 ? 100 : (completedProjects / goal) * 100).toFixed(2)}%`} />
-                <h4>Mål till 31 December {year}: {goal}</h4>
-              </>
+            <h4>Avslutade förbättringsarbeten: {completedProjects}</h4>
+            <>
+              {goalNotFound ? (
+                <p>No active goal</p>
+              ) : (
+                <>
+                  <ProgressBar animated now={goal <= 0 ? 100 : (completedProjects / goal) * 100} label={`${(goal <= 0 ? 100 : (completedProjects / goal) * 100).toFixed(2)}%`} />
+                  <h5 style={headingStyle}>Mål till 31 December {year}: {goal}</h5>
+                </>
 
-            )}
-          </>
+              )}
+            </>
 
           </div>
         </>
