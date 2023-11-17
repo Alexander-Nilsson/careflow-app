@@ -85,7 +85,9 @@ export interface Iteration {
 
 export interface ImprovementWork {
   id: Id;
-  all_iterations: Array<Iteration>;
+  all_iterations: {
+    iteration1: Iteration;
+  };
   centrum: string;
   clinic: string;
   closed: boolean;

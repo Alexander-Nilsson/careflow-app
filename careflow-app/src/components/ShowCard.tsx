@@ -91,41 +91,19 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             tags={improvementWork.tags}
             date_created={improvementWork.date_created}
             result_measurements={
-              improvementWork.all_iterations[
-                improvementWork.total_iterations - 1
-              ].do.results
+              improvementWork.all_iterations.iteration1.do.results
             }
             result_analysis={
-              improvementWork.all_iterations[
-                improvementWork.total_iterations - 1
-              ].study.analysis
+              improvementWork.all_iterations.iteration1.study.analysis
             }
-            notes_plan={
-              improvementWork.all_iterations[
-                improvementWork.total_iterations - 1
-              ].plan.notes
-            }
-            notes_do={
-              improvementWork.all_iterations[
-                improvementWork.total_iterations - 1
-              ].do.notes
-            }
-            notes_study={
-              improvementWork.all_iterations[
-                improvementWork.total_iterations - 1
-              ].study.notes
-            }
-            notes_act={
-              improvementWork.all_iterations[
-                improvementWork.total_iterations - 1
-              ].act.notes
-            }
+            notes_plan={improvementWork.all_iterations.iteration1.plan.notes}
+            notes_do={improvementWork.all_iterations.iteration1.do.notes}
+            notes_study={improvementWork.all_iterations.iteration1.study.notes}
+            notes_act={improvementWork.all_iterations.iteration1.act.notes}
             project_leader={improvementWork.project_leader}
             project_members={improvementWork.project_members}
             checklist_plan={
-              improvementWork.all_iterations[
-                improvementWork.total_iterations - 1
-              ].plan.checklist
+              improvementWork.all_iterations.iteration1.plan.checklist
             }
           />
         }
