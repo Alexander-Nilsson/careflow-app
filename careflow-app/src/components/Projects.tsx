@@ -15,7 +15,12 @@ import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 // import { Id } from "../types";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getAllProjects, Project } from "../ImprovementWorkLib";
+import {
+  getAllProjects,
+  Project,
+  getAllImprovementWorks,
+  ImprovementWork,
+} from "../ImprovementWorkLib";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
@@ -24,6 +29,10 @@ import CreateNewProject from "./CreateNewProject";
 export interface ProjectContextType {
   projectList: Project[];
   setProjectList: React.Dispatch<React.SetStateAction<Project[]>>;
+  improvementWorkList: ImprovementWork[];
+  setImprovementWorkList: React.Dispatch<
+    React.SetStateAction<ImprovementWork[]>
+  >;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -134,6 +143,9 @@ function Projects() {
   const { isAuthenticated, isLoading, user } = useAuth0();
 
   const [projectList, setProjectList] = useState<Project[]>([]);
+  const [improvementWorkList, setImprovementWorkList] = useState<
+    ImprovementWork[]
+  >([]);
 
   // Only temporary. Cards will later on be fetched from database
   // const cards = [
@@ -262,6 +274,11 @@ function Projects() {
 
   async function fetchProjects() {
     if (user?.name) {
+      const fetchedImprovementWorks: ImprovementWork[] | null =
+        await getAllImprovementWorks();
+      console.log(fetchedImprovementWorks);
+      if (fetchedImprovementWorks)
+        setImprovementWorkList(fetchedImprovementWorks);
       const fetchedProjects: Project[] | null = await getAllProjects(false);
       if (fetchedProjects) setProjectList(fetchedProjects);
     }
@@ -380,7 +397,14 @@ function Projects() {
         </div>
       </div>
 
-      <ProjectContext.Provider value={{ projectList, setProjectList }}>
+      <ProjectContext.Provider
+        value={{
+          projectList,
+          setProjectList,
+          improvementWorkList,
+          setImprovementWorkList,
+        }}
+      >
         <KanbanBoard />
       </ProjectContext.Provider>
       {/* <FinishedProjectsSection /> */}

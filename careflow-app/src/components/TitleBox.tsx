@@ -16,15 +16,21 @@ const TitleBox: FC<TitleBoxProps> = ({ title, description }) => {
     color: "white", // You may want to change the text color for better visibility
     fontFamily: "Avenir",
     fontWeight: "bold",
+    fontSize: "1.7rem",
+    marginBottom: "0px",
+    marginTop: "20px",
+    alignItems: "baseline",
   };
 
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "baseline" }}>
         <div style={titleBoxStyle}>
           <h2>{title}</h2>
         </div>
-        <HelpPopover content={description} />
+        <div style={{ marginLeft: "10px" }}>
+          <HelpPopover content={description} />
+        </div>
       </div>
     </>
   );
