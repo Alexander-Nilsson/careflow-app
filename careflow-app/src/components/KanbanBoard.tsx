@@ -93,7 +93,8 @@ function KanbanBoard() {
                 key={col.id}
                 column={col}
                 improvementWorkList={improvementWorkList.filter(
-                  (ImprovementWork) => ImprovementWork.phase === col.id
+                  (ImprovementWork) =>
+                    ImprovementWork.phase === col.id && !ImprovementWork.closed //only display non- closed cards in kanban
                 )}
               />
             ))}
