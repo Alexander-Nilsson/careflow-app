@@ -48,8 +48,13 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
 
 
     useEffect(() => {
+        // console.log("får in:")
+        // console.log(improvementWorks)
+        // console.log(userInfo)
         const userImprovementWorks: ImprovementWork[] | null = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
+
         setDisplayedImprovementWorks(userImprovementWorks)
+
     }, []);
 
 
@@ -121,7 +126,7 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
             </div>
 
             <div style={projectsContainerStyle}>
-                {displayedImprovementWorks !== null ? (
+                {displayedImprovementWorks != null ? (
                     displayedImprovementWorks.map((improvementWork, index) => (
                         <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
                             <ProjectCard

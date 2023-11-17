@@ -84,6 +84,7 @@ function ProgressSection({ improvementWorks }: ProgressSectionProps) {
     } else if (year == 0 && goal == 0){
       getGoal()
     }
+    console.log(improvementWorks)
   }, [year]);
 
 
