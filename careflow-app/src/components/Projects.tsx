@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 // import { Id } from "../types";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getAllProjects, Project } from "../ImprovementWorkLib";
+import { getAllProjects, Project, sortByDateCreated, sortByOldestDate } from "../ImprovementWorkLib";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import TitleBox from "./TitleBox";
 
@@ -128,11 +128,30 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 //   }
 // }
 
+
+
 function Projects() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth0();
+  const [sortBy, setSortBy] = useState<"date_created" | "oldest_date">(
+    "date_created"
+  );
 
   const [projectList, setProjectList] = useState<Project[]>([]);
+
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedSortOption = event.target.value as "date_created" | "oldest_date";
+    setSortBy(selectedSortOption);
+
+    if (selectedSortOption === "oldest_date") {
+      const sortedProjects = sortByOldestDate(projectList);
+      setProjectList(sortedProjects);
+    } else {
+      const sortedProjects = sortByDateCreated(projectList);
+      setProjectList(sortedProjects);
+    }
+  };
+
 
   // Only temporary. Cards will later on be fetched from database
   // const cards = [
@@ -354,8 +373,16 @@ function Projects() {
         Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
         Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
         ></TitleBox>
+        
       )}
-
+      <div>
+        <label htmlFor="sortDropdown">Sortera på datum:</label>
+        <select id="sortDropdown" onChange={handleSortChange} value={sortBy}>
+          <option value="date_created">Senaste</option>
+          <option value="oldest_date">Äldsta</option>
+        </select>
+      </div>
+      
       <ProjectContext.Provider value={{ projectList, setProjectList }}>
         <KanbanBoard />
       </ProjectContext.Provider>

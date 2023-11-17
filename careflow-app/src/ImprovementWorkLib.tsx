@@ -186,7 +186,7 @@ export async function getUserProjects(hsaID: string, closed: boolean) {
                         projectsData.push(project)
                     }
                 });
-                return (projectsData);
+                return sortByDateCreated(projectsData);;
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -215,7 +215,7 @@ export async function getAllProjects(closed: boolean) {
                     projectsData.push(project)
                     // }
                 });
-                return (projectsData);
+                return sortByDateCreated(projectsData);;
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -242,7 +242,7 @@ export async function getAllImprovementWorks() {
                     improvementWorksData.push(improvementWork)
                     // }
                 });
-                return (improvementWorksData);
+                return sortByDateCreated(improvementWorksData);;
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -265,13 +265,15 @@ export async function getUserImprovementWorks(hsaID: string) {
                     let improvementWork: ImprovementWork = setImprovementWork(data)
                     improvementWorksData.push(improvementWork)
                 });
-                return (improvementWorksData);
+                return sortByDateCreated(improvementWorksData);
             })
     } catch (error) {
         console.error("Error fetching data:", error);
         return null;
     }
 }
+
+
 
 export async function filterImprovementWorks(filter: string, filterValue: string, closed: boolean) {
     const improvementWorksCollectionRef = collection(db, "improvementWorks");
@@ -288,7 +290,7 @@ export async function filterImprovementWorks(filter: string, filterValue: string
                         improvementWorksData.push(improvementWork)
                     }
                 });
-                return (improvementWorksData);
+                return sortByDateCreated(improvementWorksData);
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -308,9 +310,17 @@ export function findUserImprovementWorks(hsa: string, orgImprovementWorks: Impro
                 }
             }
         })
-        return newImprovementWorks
+        return sortByDateCreated(newImprovementWorks);
 
     } else {
         return null
     }
+}
+
+export function sortByDateCreated<T extends { date_created: Timestamp }>(data: T[]): T[] {
+    return data.sort((a, b) => a.date_created.seconds - b.date_created.seconds);
+}
+
+export function sortByOldestDate<T extends { date_created: Timestamp }>(data: T[]): T[] {
+    return data.sort((a, b) => b.date_created.seconds - a.date_created.seconds);
 }
