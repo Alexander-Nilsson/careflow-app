@@ -20,7 +20,7 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
         // margin: "10px",
         // marginLeft: "20px",
         marginTop: "0px",
-        width: "50%",
+        width: "42%",
         boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     };
 

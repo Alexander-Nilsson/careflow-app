@@ -19,12 +19,12 @@ function ProgressSection() {
   //test
   const progressSectionStyle = {
     background: 'rgba(255, 255, 255, 0.70)',
-    width: "46%",
+    width: "56%",
     height: "250px",
     borderRadius: "10px",
     padding: "10px",
     margin: "0px",
-    marginLeft: "4%",
+    marginLeft: "2%",
     fontFamily: "Avenir",
     boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
   };
@@ -36,6 +36,12 @@ function ProgressSection() {
     margin: "20px",
     padding: "10px",
     boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)'
+  };
+
+  const headingStyle = {
+    // other styles...
+    marginTop: '15px', // Adjust this value as needed
+    fontStyle: 'italic',
   };
 
 
@@ -98,18 +104,18 @@ function ProgressSection() {
         <p>Loading data</p>
       ) : (
         <>
-          <h2>Framsteg för Region Östergötland {goalNotFound ? <p> </p> : <>{year}</>} </h2>
+          <h2>Framsteg Region Östergötland {goalNotFound ? <p> </p> : <>{year}</>} </h2>
 
           <div style={innerProgressSectionStyle}>
 
-          <h3>Avslutade förbättringsarbeten: {completedProjects}</h3>
+          <h4>Avslutade förbättringsarbeten: {completedProjects}</h4>
           <>
             {goalNotFound ? (
               <p>No active goal</p>
             ) : (
               <>
                 <ProgressBar animated now={goal <= 0 ? 100 : (completedProjects / goal) * 100} label={`${(goal <= 0 ? 100 : (completedProjects / goal) * 100).toFixed(2)}%`} />
-                <h4>Mål till 31 December {year}: {goal}</h4>
+                <h5 style={headingStyle}>Mål till 31 December {year}: {goal}</h5>
               </>
 
             )}

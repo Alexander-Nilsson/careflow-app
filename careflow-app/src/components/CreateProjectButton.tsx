@@ -7,7 +7,7 @@ const ButtonStyle: React.CSSProperties = {
   padding: "20px",
   border: "none",
   cursor: "pointer",
-  marginRight: "0px",
+  marginBottom: "0px",
   display: "flex", // Added for inline elements
   alignItems: "center", // Added to align items vertically
 };

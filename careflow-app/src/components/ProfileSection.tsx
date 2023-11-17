@@ -48,7 +48,7 @@ function ProfileSection() {
   }
 
   const leftDivStyle = {
-    flex: "40%",
+    flex: "20%",
     padding: "10px",
   };
 
@@ -56,7 +56,9 @@ function ProfileSection() {
     marginTop: "2%",
     flex: "60%",
     padding: "10px",
-  };
+    lineHeight: "0.5", 
+    marginBottom: "0.1em", 
+  };  
 
   const circleStyle = {
     width: "120px",
