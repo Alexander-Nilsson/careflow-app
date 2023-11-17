@@ -40,7 +40,7 @@ function CardModalResultAnalysis({
 
   //Updated the database with the new text in "Analys av resultat" when the save button is clicked
   async function updateResultInDb() {
-    try {
+    /*try {
       const projectDocRef = doc(db, "projects", projectId);
       await updateDoc(projectDocRef, {
         result_analysis: updatedResult,
@@ -50,7 +50,7 @@ function CardModalResultAnalysis({
       console.log("Document updated!", updatedResult);
     } catch (e) {
       console.error("Error updating document: ", e);
-    }
+    }*/
   }
 
   return (

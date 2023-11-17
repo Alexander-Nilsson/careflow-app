@@ -90,6 +90,9 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             centrum={improvementWork.centrum}
             tags={improvementWork.tags}
             date_created={improvementWork.date_created}
+            goal={improvementWork.goal}
+            ideas_array={improvementWork.ideas}
+            measure={improvementWork.measure}
             result_measurements={
               improvementWork.all_iterations.iteration1.do.results
             }

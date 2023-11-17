@@ -33,7 +33,7 @@ function CardModalResultMeasurements({
 
   //Updated the database with the new text in "Uppmätt resultat" when the save button is clicked
   async function updateResultInDb() {
-    try {
+    /*try {
       const projectDocRef = doc(db, "projects", projectId);
       await updateDoc(projectDocRef, {
         result_measurements: updatedResult,
@@ -43,7 +43,7 @@ function CardModalResultMeasurements({
       console.log("Document updated!", updatedResult);
     } catch (e) {
       console.error("Error updating document: ", e);
-    }
+    }*/
   }
 
   return (

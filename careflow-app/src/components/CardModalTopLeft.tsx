@@ -109,12 +109,14 @@ interface cardModalTopLeftProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  active_tab: number;
-  percentage: number;
+  goal: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
   }[];
+  measure: Array<string>;
+  active_tab: number;
+  percentage: number;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -161,6 +163,8 @@ function CardModalTopLeft({
   updatedTags,
   setUpdatedTags,
   date_created,
+  goal,
+  measure,
   active_tab,
   percentage,
   ideas,
@@ -393,7 +397,18 @@ function CardModalTopLeft({
               }
             >
               <div style={whiteDescriptionContainerStyle}>
-                Här ska målen beskrivas
+                {goal ? (
+                  <ul style={{ listStyleType: "none", paddingLeft: "4px" }}>
+                    {goal.map((item, index) => (
+                      <li key={index} style={{ marginBottom: "8px" }}>
+                        {"• "}
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Inga mål satta.</p>
+                )}
               </div>
             </Tab>
             <Tab
@@ -414,7 +429,18 @@ function CardModalTopLeft({
               }
             >
               <div style={whiteDescriptionContainerStyle}>
-                Här ska mätningarna beskrivas
+                {measure ? (
+                  <ul style={{ listStyleType: "none", paddingLeft: "4px" }}>
+                    {measure.map((item, index) => (
+                      <li key={index} style={{ marginBottom: "8px" }}>
+                        {"• "}
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Inga mätningar satta.</p>
+                )}
               </div>
             </Tab>
             <Tab

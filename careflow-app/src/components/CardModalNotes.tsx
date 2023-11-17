@@ -36,7 +36,7 @@ function CardModalNotes({
 
   //Updated the database with the new text in "Övriga anteckningar" when the save button is clicked
   async function updateNotesInDb() {
-    try {
+    /*try {
       const projectDocRef = doc(db, "projects", projectId);
       const updateData = {
         [notesAttributeInDb]: updatedNotes, // phaseNotes will either be notes_plan, notes_do, notes_study or notes_act depending on what phase CardModalNotes is used
@@ -47,7 +47,7 @@ function CardModalNotes({
       console.log("Document updated!", updatedNotes);
     } catch (e) {
       console.error("Error updating document: ", e);
-    }
+    }*/
   }
 
   return (

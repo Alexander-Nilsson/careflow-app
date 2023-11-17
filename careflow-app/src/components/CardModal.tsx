@@ -55,6 +55,9 @@ interface cardModalProps {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  goal: Array<string>;
+  ideas_array: Array<string>;
+  measure: Array<string>;
   result_measurements: string;
   result_analysis: string;
   notes_plan: string;
@@ -76,6 +79,12 @@ interface modalContentPlanProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  goal: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  measure: Array<string>;
   place: string;
   centrum: string;
   checklist: {
@@ -85,10 +94,6 @@ interface modalContentPlanProps {
   };
   project_leader: string;
   project_members: Array<string>;
-  ideas: {
-    text: string;
-    checked: boolean;
-  }[];
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -101,15 +106,17 @@ interface modalContentDoProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  goal: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  measure: Array<string>;
   place: string;
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
   result_measurements: string;
-  ideas: {
-    text: string;
-    checked: boolean;
-  }[];
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -122,15 +129,17 @@ interface modalContentStudyProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  goal: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  measure: Array<string>;
   place: string;
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
   result_analysis: string;
-  ideas: {
-    text: string;
-    checked: boolean;
-  }[];
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -143,14 +152,16 @@ interface modalContentActProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  place: string;
-  centrum: string;
-  project_leader: string;
-  project_members: Array<string>;
+  goal: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
   }[];
+  measure: Array<string>;
+  place: string;
+  centrum: string;
+  project_leader: string;
+  project_members: Array<string>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -240,12 +251,14 @@ function ModalContentPlan({
   updatedTags,
   setUpdatedTags,
   date_created,
+  goal,
+  ideas,
+  measure,
   place,
   centrum,
   checklist,
   project_leader,
   project_members,
-  ideas,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -271,11 +284,13 @@ function ModalContentPlan({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goal={goal}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
           active_tab={2}
           percentage={calculatePercentage()}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
           id={id}
           handlePhaseUpdate={handlePhaseUpdate}
@@ -325,12 +340,14 @@ function ModalContentDo({
   updatedTags,
   setUpdatedTags,
   date_created,
+  goal,
+  ideas,
+  measure,
   place,
   centrum,
   project_leader,
   project_members,
   result_measurements,
-  ideas,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -345,11 +362,13 @@ function ModalContentDo({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goal={goal}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
           active_tab={3}
           percentage={0}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
           id={id}
           handlePhaseUpdate={handlePhaseUpdate}
@@ -397,12 +416,14 @@ function ModalContentStudy({
   updatedTags,
   setUpdatedTags,
   date_created,
+  goal,
+  ideas,
+  measure,
   place,
   centrum,
   project_leader,
   project_members,
   result_analysis,
-  ideas,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -417,11 +438,13 @@ function ModalContentStudy({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goal={goal}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
           active_tab={4}
           percentage={0}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
           id={id}
           handlePhaseUpdate={handlePhaseUpdate}
@@ -467,11 +490,13 @@ function ModalContentAct({
   updatedTags,
   setUpdatedTags,
   date_created,
+  goal,
+  ideas,
+  measure,
   place,
   centrum,
   project_leader,
   project_members,
-  ideas,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -486,11 +511,13 @@ function ModalContentAct({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goal={goal}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
           active_tab={5}
           percentage={0}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
           id={id}
           handlePhaseUpdate={handlePhaseUpdate}
@@ -537,6 +564,9 @@ function CardModal({
   centrum,
   tags,
   date_created,
+  goal,
+  ideas_array,
+  measure,
   result_measurements,
   result_analysis,
   notes_plan,
@@ -549,13 +579,12 @@ function CardModal({
 }: cardModalProps) {
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
-
+  const initialIdeasState = ideas_array.map((idea) => ({
+    text: idea,
+    checked: false,
+  }));
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
-  const [ideas, setIdeas] = useState([
-    { text: "Här kommer det finnas en idé", checked: false },
-    { text: "Här kommer det finnas en annan", checked: false },
-    { text: "Och här kanske en tredje", checked: false },
-  ]);
+  const [ideas, setIdeas] = useState(initialIdeasState);
 
   const handleIdeaClick = (index: number) => {
     const updatedIdeas = [...ideas];
@@ -624,12 +653,14 @@ function CardModal({
               updatedTags={updatedTags}
               setUpdatedTags={setUpdatedTags}
               date_created={date_created}
+              goal={goal}
+              ideas={ideas}
+              measure={measure}
               place={place}
               centrum={centrum}
               checklist={checklist_plan}
               project_leader={""}
               project_members={project_members}
-              ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
@@ -654,12 +685,14 @@ function CardModal({
               updatedTags={updatedTags}
               setUpdatedTags={setUpdatedTags}
               date_created={date_created}
+              goal={goal}
+              ideas={ideas}
+              measure={measure}
               place={place}
               centrum={centrum}
               project_leader={""}
               project_members={project_members}
               result_measurements={result_measurements}
-              ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
@@ -684,12 +717,14 @@ function CardModal({
               updatedTags={updatedTags}
               setUpdatedTags={setUpdatedTags}
               date_created={date_created}
+              goal={goal}
+              ideas={ideas}
+              measure={measure}
               place={place}
               centrum={centrum}
               project_leader={""}
               project_members={project_members}
               result_analysis={result_analysis}
-              ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
@@ -714,11 +749,13 @@ function CardModal({
               updatedTags={updatedTags}
               setUpdatedTags={setUpdatedTags}
               date_created={date_created}
+              goal={goal}
+              ideas={ideas}
+              measure={measure}
               place={place}
               centrum={centrum}
               project_leader={""}
               project_members={project_members}
-              ideas={ideas}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
