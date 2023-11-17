@@ -235,7 +235,7 @@ export async function getAllImprovementWorks() {
         return Promise.all([getDocs(improvementWorksQuery)])
             .then(([snapshot]) => {
                 const improvementWorks = [...snapshot.docs]
-                
+
                 improvementWorks.forEach((doc) => {
                     let data = doc.data();
                     let improvementWork: ImprovementWork = setImprovementWork(data)
@@ -273,27 +273,26 @@ export async function getUserImprovementWorks(hsaID: string) {
     }
 }
 
-export async function filterImprovementWorks(filter: string, filterValue: string, closed: boolean) {
-    const improvementWorksCollectionRef = collection(db, "improvementWorks");
-    const clinicQuery = query(improvementWorksCollectionRef, where(filter, "==", filterValue));
-    try {
-        return Promise.all([getDocs(clinicQuery)])
-            .then(([clinicSnapshot]) => {
-                const userImprovementWorks = [...clinicSnapshot.docs]
-                let improvementWorksData: ImprovementWork[] = [];
-                userImprovementWorks.forEach((doc) => {
-                    let data = doc.data();
-                    if ((closed && data.closed) || (!closed && !data.closed)) {
-                        let improvementWork: ImprovementWork = setImprovementWork(data)
-                        improvementWorksData.push(improvementWork)
+export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: string, filterValue: string, closed: boolean) {
+    let filteredImprovementWorks: ImprovementWork[] = [];
+
+    orgImprovementWorks.forEach((improvementWork) => {
+
+        if ((closed && improvementWork.closed) || (!closed && !improvementWork.closed)) {
+            switch (filter) {
+                case "clinic":
+                    if (improvementWork.clinic == filterValue) {
+                        filteredImprovementWorks.push(improvementWork)
                     }
-                });
-                return (improvementWorksData);
-            })
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return null;
-    }
+                    break;
+                case "user":
+                    if (improvementWork.project_leader == filterValue || improvementWork.project_members.includes(filterValue)) {
+                        filteredImprovementWorks.push(improvementWork)
+                    }
+            }
+        }
+    });
+    return (filteredImprovementWorks);
 }
 
 export function findUserImprovementWorks(hsa: string, orgImprovementWorks: ImprovementWork[] | null, closed: boolean) {

@@ -13,7 +13,7 @@ import { UserInfoType } from "./Start";
 
 type ProjectsSectionProps = {
     userInfo: UserInfoType;
-    improvementWorks: ImprovementWork[] | null;
+    improvementWorks: ImprovementWork[];
 };
 
 // type ImprovementWorksProps = {
@@ -22,23 +22,18 @@ type ProjectsSectionProps = {
 
 function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
 
-    // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
-    const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
-
-    // const fetchData = async () => {
-    //     const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
-    //     if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
-
-    // };
+    const [allImprovementWorks, setImprovementWorks] = useState<ImprovementWork[] >(improvementWorks);
+    const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
 
     const handleFilter = async (event: any) => {
         if (event.target.value == "user") {
-            // const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
-            // if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
+            const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.hsaID, false)
+            if (filteredImprovementWorks) setDisplayedImprovementWorks(filteredImprovementWorks)
         }
         else if (event.target.value == "clinic") {
-            // const filteredImprovementWorks: ImprovementWork[] | null = await filterImprovementWorks(event.target.value, userInfo.clinic, false)
-            // setImprovementWorks(filteredImprovementWorks)
+            console.log("filtrerar på klinik" && userInfo.clinic)
+            const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.clinic, false)
+            setDisplayedImprovementWorks(filteredImprovementWorks)
         }
     };
 
@@ -48,11 +43,7 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
 
 
     useEffect(() => {
-        // console.log("får in:")
-        // console.log(improvementWorks)
-        // console.log(userInfo)
-        const userImprovementWorks: ImprovementWork[] | null = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
-
+        const userImprovementWorks: ImprovementWork[] = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
         setDisplayedImprovementWorks(userImprovementWorks)
 
     }, []);
