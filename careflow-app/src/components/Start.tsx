@@ -107,7 +107,7 @@ function Start() {
         <div style={contentStyle}>
           <ProfileSection />
           {/* <CreateNewProject /> */}
-          <ProjectsSection userInfo={userInfo} allImprovementWorks={improvementWorks}/>
+          <ProjectsSection userInfo={userInfo} improvementWorks={improvementWorks}/>
           <div className="d-flex mr-2">
             <IdeasSection userInfo={userInfo} />
             <ProgressSection improvementWorks={improvementWorks}/>
