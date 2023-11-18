@@ -14,37 +14,19 @@ const buttonStyle = {
 };
 
 interface cardModalResultMeasurementsProps {
-  result_measurements: string;
+  updatedResultMeasurements: string;
+  setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   projectId: string;
 }
 
 function CardModalResultMeasurements({
-  result_measurements,
+  updatedResultMeasurements,
+  setUpdatedResultMeasurements,
   projectId,
 }: cardModalResultMeasurementsProps) {
-  //Handles changes made in the text field "Uppmätt resultat"
-  const [resultDataSaved, setResultDataSaved] = useState(false);
-  const [updatedResult, setUpdatedResult] = useState(result_measurements);
-
   const handleResultInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUpdatedResult(event.target.value);
-    setResultDataSaved(false);
+    setUpdatedResultMeasurements(event.target.value);
   };
-
-  //Updated the database with the new text in "Uppmätt resultat" when the save button is clicked
-  async function updateResultInDb() {
-    /*try {
-      const projectDocRef = doc(db, "projects", projectId);
-      await updateDoc(projectDocRef, {
-        result_measurements: updatedResult,
-      });
-      setResultDataSaved(true);
-
-      console.log("Document updated!", updatedResult);
-    } catch (e) {
-      console.error("Error updating document: ", e);
-    }*/
-  }
 
   return (
     <>
@@ -54,16 +36,9 @@ function CardModalResultMeasurements({
       <textarea
         className="form-control"
         rows={5}
-        value={updatedResult}
+        value={updatedResultMeasurements}
         onChange={handleResultInputChange}
       ></textarea>
-      <Button
-        style={buttonStyle}
-        onClick={() => updateResultInDb()}
-        disabled={result_measurements === updatedResult || resultDataSaved}
-      >
-        Spara
-      </Button>
     </>
   );
 }

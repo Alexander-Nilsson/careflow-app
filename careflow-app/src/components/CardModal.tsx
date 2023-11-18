@@ -98,6 +98,7 @@ interface modalContentPlanProps {
   id: string;
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
+  setUpdatedNotesPlan: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface modalContentDoProps {
@@ -117,10 +118,12 @@ interface modalContentDoProps {
   project_leader: string;
   project_members: Array<string>;
   result_measurements: string;
+  setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
+  setUpdatedNotesDo: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface modalContentStudyProps {
@@ -140,10 +143,12 @@ interface modalContentStudyProps {
   project_leader: string;
   project_members: Array<string>;
   result_analysis: string;
+  setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
+  setUpdatedNotesStudy: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface modalContentActProps {
@@ -166,6 +171,7 @@ interface modalContentActProps {
   id: string;
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
+  setUpdatedNotesAct: React.Dispatch<React.SetStateAction<string>>;
 }
 
 //Function that checks if the icon next to the phase (in the tabs at the top) should be checked or not
@@ -263,6 +269,7 @@ function ModalContentPlan({
   id,
   handlePhaseUpdate,
   notes,
+  setUpdatedNotesPlan,
 }: modalContentPlanProps) {
   // State variable needed to calculate the percentage finished
   const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
@@ -318,8 +325,7 @@ function ModalContentPlan({
             <Form.Group style={formGroupStyle}>
               <CardModalNotes
                 notes={notes}
-                projectId={id}
-                notesAttributeInDb={"notes_plan"}
+                setUpdatedNotes={setUpdatedNotesPlan}
               />
             </Form.Group>
             <CardModalFiles />
@@ -348,10 +354,12 @@ function ModalContentDo({
   project_leader,
   project_members,
   result_measurements,
+  setUpdatedResultMeasurements,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
   notes,
+  setUpdatedNotesDo,
 }: modalContentDoProps) {
   return (
     <>
@@ -387,15 +395,15 @@ function ModalContentDo({
           <Form>
             <Form.Group style={formGroupStyle}>
               <CardModalResultMeasurements
-                result_measurements={result_measurements}
+                updatedResultMeasurements={result_measurements}
+                setUpdatedResultMeasurements={setUpdatedResultMeasurements}
                 projectId={id}
               />
             </Form.Group>
             <Form.Group style={formGroupStyle}>
               <CardModalNotes
                 notes={notes}
-                projectId={id}
-                notesAttributeInDb={"notes_do"}
+                setUpdatedNotes={setUpdatedNotesDo}
               />
             </Form.Group>
             <CardModalFiles />
@@ -424,10 +432,12 @@ function ModalContentStudy({
   project_leader,
   project_members,
   result_analysis,
+  setUpdatedResultAnalysis,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
   notes,
+  setUpdatedNotesStudy,
 }: modalContentStudyProps) {
   return (
     <>
@@ -462,14 +472,14 @@ function ModalContentStudy({
         <div>
           <Form>
             <CardModalResultAnalysis
-              result_analysis={result_analysis}
+              updatedResultAnalysis={result_analysis}
+              setUpdatedResultAnalysis={setUpdatedResultAnalysis}
               projectId={id}
             />
             <Form.Group style={formGroupStyle}>
               <CardModalNotes
                 notes={notes}
-                projectId={id}
-                notesAttributeInDb={"notes_study"}
+                setUpdatedNotes={setUpdatedNotesStudy}
               />
             </Form.Group>
             <CardModalFiles />
@@ -501,6 +511,7 @@ function ModalContentAct({
   id,
   handlePhaseUpdate,
   notes,
+  setUpdatedNotesAct,
 }: modalContentActProps) {
   return (
     <>
@@ -537,8 +548,7 @@ function ModalContentAct({
             <Form.Group style={formGroupStyle}>
               <CardModalNotes
                 notes={notes}
-                projectId={id}
-                notesAttributeInDb={"notes_act"}
+                setUpdatedNotes={setUpdatedNotesAct}
               />
             </Form.Group>
             <CardModalFiles />
@@ -605,23 +615,71 @@ function CardModal({
 
   const handlePhaseUpdate = (phase: number) => {
     setUpdatedProjectPhase(phase + 1);
-    updatePhaseInDb(projectId, phase + 1);
   };
-
-  //Updates the projects phase in the database when "Markera fas som klar" is clicked
-  async function updatePhaseInDb(projectId: string, newPhase: number) {
-    try {
-      const projectDocRef = doc(db, "projects", projectId);
-      await updateDoc(projectDocRef, { phase: newPhase });
-
-      console.log("Document updated!", newPhase);
-    } catch (e) {
-      console.error("Error updating document: ", e);
-    }
-  }
 
   //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
   const [updatedTags, setUpdatedTags] = useState(tags);
+
+  //State variable that contains the updated content of the text field "Analys av resultat"
+  const [updatedResultAnalysis, setUpdatedResultAnalysis] =
+    useState(result_analysis);
+
+  //State variable that contains the updated content of the text field "Uppmätt resultat"
+  const [updatedResultMeasurements, setUpdatedResultMeasurements] =
+    useState(result_measurements);
+
+  //State variables that contains the updated content of the text fiels "Övriga anteckningar" of each phase
+  const [updatedNotesPlan, setUpdatedNotesPlan] = useState(notes_plan);
+  const [updatedNotesDo, setUpdatedNotesDo] = useState(notes_do);
+  const [updatedNotesStudy, setUpdatedNotesStudy] = useState(notes_study);
+  const [updatedNotesAct, setUpdatedNotesAct] = useState(notes_act);
+
+  //Updates the database with the changes made when the save button is clicked
+  async function updateDb() {
+    console.log(updatedProjectPhase);
+    onHide();
+    try {
+      const projectDocRef = doc(db, "improvementWorks", projectId);
+      const projectDoc = await getDoc(projectDocRef);
+
+      if (projectDoc.exists()) {
+        const data = projectDoc.data();
+        const updatedData = {
+          phase: updatedProjectPhase, // Updates the phase
+          tags: updatedTags, // Updates the tags
+          all_iterations: {
+            ...data.all_iterations,
+            iteration1: {
+              ...data.all_iterations?.iteration1,
+              plan: {
+                ...data.all_iterations?.iteration1?.plan,
+                notes: updatedNotesPlan, // Updates "Övriga anteckningar" in the plan phase
+              },
+              do: {
+                ...data.all_iterations?.iteration1?.do,
+                results: updatedResultMeasurements, // Updates "Uppmätt resultat"
+                notes: updatedNotesDo, // Updates "Övriga anteckningar" in the do phase
+              },
+              study: {
+                ...data.all_iterations?.iteration1?.study,
+                analysis: updatedResultAnalysis, // Updates "Analys av resultat"
+                notes: updatedNotesStudy, // Updates "Övriga anteckningar" in the study phase
+              },
+              act: {
+                ...data.all_iterations?.iteration1?.act,
+                notes: updatedNotesAct, // Updates "Övriga anteckningar" in the act phase
+              },
+            },
+          },
+        };
+
+        await updateDoc(projectDocRef, updatedData);
+        console.log("Improvement work updated successfully");
+      }
+    } catch (e) {
+      console.error("Error updating improvement work: ", e);
+    }
+  }
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -664,7 +722,8 @@ function CardModal({
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
-              notes={notes_plan}
+              notes={updatedNotesPlan}
+              setUpdatedNotesPlan={setUpdatedNotesPlan}
             />
           </Tab>
 
@@ -692,11 +751,13 @@ function CardModal({
               centrum={centrum}
               project_leader={""}
               project_members={project_members}
-              result_measurements={result_measurements}
+              result_measurements={updatedResultMeasurements}
+              setUpdatedResultMeasurements={setUpdatedResultMeasurements}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
-              notes={notes_do}
+              notes={updatedNotesDo}
+              setUpdatedNotesDo={setUpdatedNotesDo}
             />
           </Tab>
 
@@ -724,11 +785,13 @@ function CardModal({
               centrum={centrum}
               project_leader={""}
               project_members={project_members}
-              result_analysis={result_analysis}
+              result_analysis={updatedResultAnalysis}
+              setUpdatedResultAnalysis={setUpdatedResultAnalysis}
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
-              notes={notes_study}
+              notes={updatedNotesStudy}
+              setUpdatedNotesStudy={setUpdatedNotesStudy}
             />
           </Tab>
 
@@ -759,13 +822,14 @@ function CardModal({
               handleIdeaClick={handleIdeaClick}
               id={projectId}
               handlePhaseUpdate={handlePhaseUpdate}
-              notes={notes_act}
+              notes={updatedNotesAct}
+              setUpdatedNotesAct={setUpdatedNotesAct}
             />
           </Tab>
         </Tabs>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide} style={buttonStyle}>
+        <Button onClick={() => updateDb()} style={buttonStyle}>
           Spara
         </Button>
       </Modal.Footer>

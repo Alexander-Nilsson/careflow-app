@@ -21,37 +21,19 @@ const buttonStyle = {
 };
 
 interface cardModalResultAnalysisProps {
-  result_analysis: string;
+  updatedResultAnalysis: string;
+  setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
   projectId: string;
 }
 
 function CardModalResultAnalysis({
-  result_analysis,
+  updatedResultAnalysis,
+  setUpdatedResultAnalysis,
   projectId,
 }: cardModalResultAnalysisProps) {
-  //Handles changes made in the text field "Analys av resultat"
-  const [resultDataSaved, setResultDataSaved] = useState(false);
-  const [updatedResult, setUpdatedResult] = useState(result_analysis);
-
   const handleResultInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUpdatedResult(event.target.value);
-    setResultDataSaved(false);
+    setUpdatedResultAnalysis(event.target.value);
   };
-
-  //Updated the database with the new text in "Analys av resultat" when the save button is clicked
-  async function updateResultInDb() {
-    /*try {
-      const projectDocRef = doc(db, "projects", projectId);
-      await updateDoc(projectDocRef, {
-        result_analysis: updatedResult,
-      });
-      setResultDataSaved(true);
-
-      console.log("Document updated!", updatedResult);
-    } catch (e) {
-      console.error("Error updating document: ", e);
-    }*/
-  }
 
   return (
     <>
@@ -62,16 +44,9 @@ function CardModalResultAnalysis({
         <textarea
           className="form-control"
           rows={3}
-          value={updatedResult}
+          value={updatedResultAnalysis}
           onChange={handleResultInputChange}
         ></textarea>
-        <Button
-          style={buttonStyle}
-          onClick={() => updateResultInDb()}
-          disabled={result_analysis === updatedResult || resultDataSaved}
-        >
-          Spara
-        </Button>
       </Form.Group>
     </>
   );
