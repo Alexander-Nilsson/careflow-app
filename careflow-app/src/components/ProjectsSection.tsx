@@ -17,15 +17,15 @@ type ProjectsSectionProps = {
     allImprovementWorks: ImprovementWork[];
 };
 
+// denna används istället för att ha olika variabler för olika filter.
+// nu samlas alla filter d.v.s. om vi ska visa användarens eller klinikens (filter),
+// vilken tag som ska visas,
+// samt om vi vill ha öppna eller stängda arbeten.
 interface FilterState {
     filter: string;
     tagFilter: string;
     closed: boolean;
 }
-
-// type ImprovementWorksProps = {
-//     improvementWorks: ImprovementWork[] | null;
-// };
 
 function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps) {
 
@@ -35,138 +35,17 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     const [tagOptions, setTagOptions] = useState<string[]>([]);
     const [chosenFilter1, setFilter1] = useState<string>("user");
     const [chosenFilter2, setFilter2] = useState<string>("all_tags");
-    // const [filterState, setFilterState] = useState<FilterState>({ filter: "user", tagFilter: "all_tags", closed: false });
+    const [filterState, setFilterState] = useState<FilterState>({ filter: "user", tagFilter: "all_tags", closed: false });
 
-    let filterState: FilterState = {
-        filter: "user",
-        tagFilter: "all_tags",
-        closed: false
-    }
-    // const filteredImprovementWorks = allImprovementWorks.filter((improvementWork) => {
-    //     // Check if improvementWork is assigned to the selected user (if any)
-    //     if (filterState.filter == "user" && (improvementWork.project_leader !== userInfo.hsaID || !improvementWork.project_members.includes(userInfo.hsaID))) {
-    //       return false;
-    //     }
-
-    //     // Check if improvementWork belongs to the selected clinic (if any)
-    //     if (filterState.filter == "clinic"  && improvementWork.clinic !== userInfo.clinic) {
-    //       return false;
-    //     }
-
-    //     // Check if improvementWork has the selected tag (if any)
-    //     if (
-    //       filterState.tagFilter &&
-    //       !improvementWork.tags.includes(filterState.tagFilter.toLowerCase())
-    //     ) {
-    //       return false;
-    //     }
-
-    //     return true;
-    //   });
-
-
-
-
-
-    // function filter(filter: string){
-    //     let filteredImprovementWorks: ImprovementWork[] = []
-    //     if (filter == "user") {
-    //         // filteredImprovementWorks = filterImprovementWorks(allImprovementWorks, filter, userInfo.hsaID, false)
-    //     }
-    //     else if (filter == "clinic") {
-    //         // filteredImprovementWorks= filterImprovementWorks(allImprovementWorks, filter, userInfo.clinic, false)
-    //     }
-    //     setfiltered1ImprovementWorks(filteredImprovementWorks)
-    //     setDisplayedImprovementWorks(filteredImprovementWorks)
-    //     setFilter1(filter);
+    // använder denna istället för en state-variabel pga en ändring av statevariabel görs
+    // asynchront, det valda filtret hinner inte uppdateras innan filtreringen om man har en state-variabel.
+    // let filterState: FilterState = {
+    //     filter: "user",
+    //     tagFilter: "all_tags",
+    //     closed: false
     // }
 
-    // function filterTags(filter:string) {
-    //     if (filter == "all_tags"){
-    //         // filter(chosenFilter1)
-    //     }
-    //     else {
-    //         let chosenImprovementWorks: ImprovementWork[] = [];
-    //         // if (chosenFilter1 == "user"){
-    //         //     chosenImprovementWorks= filterImprovementWorks(allImprovementWorks, "user", userInfo.hsaID, false)
-    //         // } else if (chosenFilter1 =="clinic"){
-    //         //     chosenImprovementWorks = filterImprovementWorks(allImprovementWorks, "clinic", userInfo.clinic, false)
-    //         // }
-    //         // const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(filtered1ImprovementWorks, "tags", filter, false)
-    //         // setDisplayedImprovementWorks(filteredImprovementWorks);
-    //     }
-    //     setFilter2(filter)
-    // }
-
-    const handleFilter = async (event: any) => {
-        
-        // filter(event.target.value)
-        // filterTags(chosenFilter2)
-        // filter2
-        // console.log(event.target.value)
-        if (event.target.value == "user") {
-            
-            
-            // console.log("user!!")
-            // setFilterState((prev) => ({ ...prev, filter: "user" }));
-            filterState = {
-                filter: "user",
-                tagFilter: filterState.tagFilter,
-                closed: filterState.closed
-            }
-            // setFilter("user");
-            // const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.hsaID, false)
-            // setDisplayedImprovementWorks(filteredImprovementWorks)
-        }
-        else if (event.target.value == "clinic") {
-            filterState = {
-                filter: "clinic",
-                tagFilter: filterState.tagFilter,
-                closed: filterState.closed
-            }
-            // console.log("clinic!!")
-            // setFilterState((prev) => ({ ...prev, filter: "clinic" }));
-            // setFilter("clinic");
-            // console.log("filtrerar på klinik" && userInfo.clinic)
-            // const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.clinic, false)
-            // setDisplayedImprovementWorks(filteredImprovementWorks)
-        }
-        console.log(filterState.filter)
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
-        // console.log("filtrerar på: " + event.target.value)
-        // console.log(filteredImprovementWorks)
-        setDisplayedImprovementWorks(filteredImprovementWorks)
-        //filter2
-    };
-
-    const handleTags = (event: any) => {
-        filterState = {
-            filter: filterState.filter,
-            tagFilter: event.target.value,
-            closed: filterState.closed
-        }
-        // setFilterState((prev) => ({ ...prev, tagFilter: event.target.value }));
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
-        setDisplayedImprovementWorks(filteredImprovementWorks)
-        // console.log(filterImprovementWorks)
-        // filter(chosenFilter1)
-        // filterTags(event.target.value)
-        //filter1
-        // if (event.target.value == "all_tags"){
-
-        // }
-        // else {
-        //     let chosenImprovementWorks: ImprovementWork[] = [];
-        //     if (chosenFilter1 == "user"){
-        //         chosenImprovementWorks= filterImprovementWorks(allImprovementWorks, "user", userInfo.hsaID, false)
-        //     } else if (chosenFilter1 =="clinic"){
-        //         chosenImprovementWorks = filterImprovementWorks(allImprovementWorks, "clinic", userInfo.clinic, false)
-        //     }
-        //     const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(chosenImprovementWorks, "tags", event.target.value, false)
-        //     setDisplayedImprovementWorks(filteredImprovementWorks);
-        // }
-    }
-
+    //allmän filtrering som kollar om ett aktuellt projekt ska filtreras bort eller inte.
     function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
         // if we are searching for closed ImpWorks and the focal ImpWork is open
         // OR if we are searching for open ImpWorks and the focal ImpWork is closed,
@@ -179,21 +58,27 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
         // don't include it
         if (filter.filter == "user" && !(improvementWork.project_leader == userInfo.hsaID || improvementWork.project_members.includes(userInfo.hsaID))) {
             return false;
-        // if we are filtering on the user's clinic and the focal ImpWork is not in the user's clinic,
-        // don't include it
-        } 
-        else if (filter.filter == "clinic" && improvementWork.clinic != userInfo.clinic) {
+            // if we are filtering on the user's clinic and the focal ImpWork is not in the user's clinic,
+            // don't include it
+        } else if (filter.filter == "clinic" && improvementWork.clinic != userInfo.clinic) {
             return false
         }
 
-        if (!improvementWork.tags.includes(filter.tagFilter)) {
-            return false
+        // if we are filtering on specific tags, if filtering on specific tags, check if
+        // focal ImpWork has the tag. If not, don't include it.
+        if (filter.tagFilter !== "all_tags") {
+            if (!improvementWork.tags.includes(filter.tagFilter)) {
+                return false
+            }
         }
 
         return true;
     }
 
+    // denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
+    // filtreras bort genom att anropa include
     function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState) {
+        console.log(filter)
         let filteredImprovementWorks: ImprovementWork[] = []
         orgImprovementWorks.forEach((improvementWork) => {
             // console.log(improvementWork)
@@ -204,13 +89,41 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
         return filteredImprovementWorks
     }
 
+    // denna kollar om vi ska filtrera på användaren eller kliniken
+    const handleFilter = async (event: any) => {
+        if (event.target.value == "user") {
+            // gör så att vi filtrerar på användaren
+            setFilterState(prev => ({ ...prev, filter: "user" })); //FUNKAR EJ pga tar tid att uppdatera state-variabel
+        }
+        else if (event.target.value == "clinic") {
+            // gör så att vi filtrerar på kliniken
+            setFilterState(prev => ({ ...prev, filter: "clinic" })); //FUNKAR EJ pga tar tid att uppdatera state-variabel
+        }
+        // filtreringen anropas här.
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
+        setDisplayedImprovementWorks(filteredImprovementWorks)
+    };
+
+    // denna uppdaterar vilken tag som ska filtreras på.
+    const handleTags = (event: any) => {
+        setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //FUNKAR EJ pga tar tid att uppdatera state-variabel
+        // efter uppdateringen görs filtreringen
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
+        setDisplayedImprovementWorks(filteredImprovementWorks)
+    }
+
+    //ser till så att vi i början visar användarens arbeten vid första rendering.
+    // hämtar dock taggar från ALLA projekt vilket inte är det vi bestämde, så det behöver ändras
+    // så att det blir så som vi sa.
     useEffect(() => {
-        const filtered1ImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
-        setDisplayedImprovementWorks(filtered1ImprovementWorks)
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
+        setDisplayedImprovementWorks(filteredImprovementWorks)
         const tags = findTagOptions(allImprovementWorks);
         setTagOptions(tags);
 
     }, []);
+
+
 
 
 
