@@ -25,7 +25,6 @@ interface FilterState {
 
 function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps) {
 
-    // const [allImprovementWorks, setImprovementWorks] = useState<ImprovementWork[] >(improvementWorks);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
     const [filterState, setFilterState] = useState<FilterState>({ filter: "user", tagFilter: "all_tags", closed: false });
@@ -105,11 +104,6 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
         const tags = findTagOptions(allImprovementWorks);
         setTagOptions(tags);
     }, []); // Empty dependency array makes this effect run only once
-
-
-
-
-
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
