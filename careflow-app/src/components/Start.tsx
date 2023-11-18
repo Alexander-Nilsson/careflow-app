@@ -84,7 +84,6 @@ function Start() {
         await getAllImprovementWorks();
       if (improvementWorks !== null) {
         setImprovementWorks(improvementWorks);
-        console.log("hämtat");
       } else {
         console.error("Failed to fetch improvement works");
       }
