@@ -70,53 +70,8 @@ const FlexAndCenter = {
 interface CreateProjectModalProps {
   show: boolean;
   onHide: () => void;
-}
-class Tag {
-  id: Id;
-  description: string;
-  constructor(id: Id, description: string) {
-    this.id = id;
-    this.description = description;
-  }
-}
-class User {
-  id: Id;
-  admin: boolean;
-  centrum: string;
-  clinic: string;
-  email: string;
-  first_name: string;
-  sur_name: string;
-  phone_number: string;
-  place: string;
-  profession: string;
-  projects: Array<string>;
-
-  constructor(
-    id: Id,
-    admin: boolean,
-    centrum: string,
-    clinic: string,
-    email: string,
-    first_name: string,
-    sur_name: string,
-    phone_number: string,
-    place: string,
-    profession: string,
-    projects: Array<string>
-  ) {
-    this.id = id;
-    this.admin = admin;
-    this.centrum = centrum;
-    this.clinic = clinic;
-    this.email = email;
-    this.first_name = first_name;
-    this.sur_name = sur_name;
-    this.phone_number = phone_number;
-    this.place = place;
-    this.profession = profession;
-    this.projects = projects;
-  }
+  users: any[];
+  tags: any[];
 }
 
 function transformBulletPoints(value: string) {
@@ -145,99 +100,16 @@ async function sendToDataBase(projectData: object) {
   }
 }
 
-const memberConverter = {
-  toFirestore: (memberData: any) => ({
-    id: memberData.id,
-    admin: memberData.admin,
-    centrum: memberData.centrum,
-    clinic: memberData.clinic,
-    email: memberData.email,
-    first_name: memberData.first_name,
-    sur_name: memberData.sur_name,
-    phone_number: memberData.phone_number,
-    place: memberData.place,
-    profession: memberData.profession,
-    projects: memberData.projects,
-  }),
-  fromFirestore: (snapshot: any, options: any) => {
-    const data = snapshot.data(options);
+// async function addTags(tag: Object) {
+//   const docRef = await addDoc(collection(db, "tags"), tag);
+// }
 
-    return new User(
-      snapshot.id,
-      data.admin,
-      data.centrum,
-      data.clinic,
-      data.email,
-      data.first_name,
-      data.sur_name,
-      data.phone_number,
-      data.place,
-      data.profession,
-      data.projects
-    );
-  },
-};
-
-const tagConverter = {
-  toFirestore: (tagData: any) => ({
-    description: tagData.description,
-  }),
-  fromFirestore: (snapshot: any, options: any) => {
-    const data = snapshot.data(options);
-
-    return new Tag(snapshot.id, data.description);
-  },
-};
-
-var users: any[] = [];
-//var selectedUsers: any[] = [];
-var tags: any[] = [];
-//var selectedTags: any[] = [];
-
-async function fetchUsers() {
-  const q = query(collection(db, "users"));
-  const querySnapshot = await getDocs(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
-
-  ids.map(async (id) => {
-    const projectReference = doc(db, "users", id).withConverter(
-      memberConverter
-    );
-    const snapshot = await getDoc(projectReference);
-    const userData = snapshot.data() as User;
-
-    if (!users.includes(userData.sur_name)) {
-      users.push(userData.sur_name);
-    }
-  });
-  //users.length = 0;
-  //return users;
-}
-
-async function fetchTags() {
-  const q = query(collection(db, "tags"));
-  const querySnapshot = await getDocs(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
-
-  ids.map(async (id) => {
-    const tagReference = doc(db, "tags", id).withConverter(tagConverter);
-    const snapshot = await getDoc(tagReference);
-    const tagData = snapshot.data() as Tag;
-
-    if (!tags.includes(tagData.description)) {
-      tags.push(tagData.description);
-    }
-  });
-
-  //tags.length = 0;
-  //return tags;
-}
-
-async function addTags(tag: Object) {
-  const docRef = await addDoc(collection(db, "tags"), tag);
-}
-
-function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
+function CreateProjectModal({
+  show,
+  onHide,
+  users,
+  tags,
+}: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
   const [ideaError, setIdeaError] = useState(false);
@@ -312,8 +184,8 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     }
   };
 
-  fetchUsers();
-  fetchTags();
+  //fetchUsers();
+  //fetchTags();
 
   type MembersState = string[];
   type TagState = string[];
@@ -358,18 +230,15 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     setTextValue(event.target.value);
   };
 
-  const handleConfirm = () => {
-    //tags.push(textValue);
-    const tag = {
-      description: textValue,
-    };
-    addTags(tag);
-    setTextValue(""); // Nollställ textfältet
-    handleAlternativeClick1(tag.description);
-  };
-
-  console.log("alla taggar", tags);
-  console.log("valda taggar", selectedTags);
+  // const handleConfirm = () => {
+  //   //tags.push(textValue);
+  //   const tag = {
+  //     description: textValue,
+  //   };
+  //   addTags(tag);
+  //   setTextValue(""); // Nollställ textfältet
+  //   handleAlternativeClick1(tag.description);
+  // };
 
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
