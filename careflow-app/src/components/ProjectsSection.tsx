@@ -2,12 +2,8 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { useAuth0 } from '@auth0/auth0-react';
 import {
     ImprovementWork,
-    // getUserImprovementWorks,
-    // filterImprovementWorks,
-    // findUserImprovementWorks,
     findTagOptions
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
@@ -31,19 +27,8 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
 
     // const [allImprovementWorks, setImprovementWorks] = useState<ImprovementWork[] >(improvementWorks);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
-    const [filtered1ImprovementWorks, setfiltered1ImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
-    const [chosenFilter1, setFilter1] = useState<string>("user");
-    const [chosenFilter2, setFilter2] = useState<string>("all_tags");
     const [filterState, setFilterState] = useState<FilterState>({ filter: "user", tagFilter: "all_tags", closed: false });
-
-    // använder denna istället för en state-variabel pga en ändring av statevariabel görs
-    // asynchront, det valda filtret hinner inte uppdateras innan filtreringen om man har en state-variabel.
-    // let filterState: FilterState = {
-    //     filter: "user",
-    //     tagFilter: "all_tags",
-    //     closed: false
-    // }
 
     //allmän filtrering som kollar om ett aktuellt projekt ska filtreras bort eller inte.
     function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
@@ -93,35 +78,34 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     const handleFilter = async (event: any) => {
         if (event.target.value == "user") {
             // gör så att vi filtrerar på användaren
-            setFilterState(prev => ({ ...prev, filter: "user" })); //FUNKAR EJ pga tar tid att uppdatera state-variabel
+            setFilterState(prev => ({ ...prev, filter: "user" })); //när denna är färdiguppdaterad körs alltså useEffect
         }
         else if (event.target.value == "clinic") {
             // gör så att vi filtrerar på kliniken
-            setFilterState(prev => ({ ...prev, filter: "clinic" })); //FUNKAR EJ pga tar tid att uppdatera state-variabel
+            setFilterState(prev => ({ ...prev, filter: "clinic" })); //när denna är färdiguppdaterad körs alltså useEffect
         }
-        // filtreringen anropas här.
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
-        setDisplayedImprovementWorks(filteredImprovementWorks)
     };
 
     // denna uppdaterar vilken tag som ska filtreras på.
     const handleTags = (event: any) => {
-        setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //FUNKAR EJ pga tar tid att uppdatera state-variabel
-        // efter uppdateringen görs filtreringen
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
-        setDisplayedImprovementWorks(filteredImprovementWorks)
+        setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
     }
 
-    //ser till så att vi i början visar användarens arbeten vid första rendering.
-    // hämtar dock taggar från ALLA projekt vilket inte är det vi bestämde, så det behöver ändras
-    // så att det blir så som vi sa.
+    //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
+    // d.v.s. när man har klickat på ett filter
     useEffect(() => {
         const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
         setDisplayedImprovementWorks(filteredImprovementWorks)
+    }, [filterState]);
+
+    // denna useEffect ser till att man hämtar taggar endast en gång, eftersom den inte har en hook som den ovan har.
+    // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
+    // så att det funkar som vi sa.
+    useEffect(() => {
         const tags = findTagOptions(allImprovementWorks);
         setTagOptions(tags);
+    }, []); // Empty dependency array makes this effect run only once
 
-    }, []);
 
 
 
