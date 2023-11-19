@@ -104,8 +104,8 @@ function Start() {
 export default Start;
 
 //fetches the user data from database, based on the hsa-ID
-export async function getUser(username: string, user: any, setUserInfo: any) {
-  const docRef = doc(db, "users", username);
+export async function getUser(hsaId: string, user: any, setUserInfo: any) {
+  const docRef = doc(db, "users", hsaId);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
