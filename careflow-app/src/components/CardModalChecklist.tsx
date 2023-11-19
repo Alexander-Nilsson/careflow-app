@@ -38,7 +38,7 @@ interface cardModalChecklistProps {
   project_leader: string;
   project_members: Array<string>;
   checklist: {
-    checklist_item: Array<string>;
+    checklist_items: Array<string>;
     checklist_done: Array<boolean>;
     checklist_members: Array<string>;
   };
@@ -79,7 +79,7 @@ function CardModalChecklist({
   //State variables related to the checkbox
   const [selectedMembers, setSelectedMembers] = useState([""]);
   const [newTask, setNewTask] = useState("");
-  const [checklistItem, setChecklistItem] = useState(checklist.checklist_item);
+  const [checklistItem, setChecklistItem] = useState(checklist.checklist_items);
   const [checklistMembers, setChecklistMembers] = useState(
     checklist.checklist_members
   );

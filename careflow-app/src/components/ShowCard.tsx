@@ -3,14 +3,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
-import { Project } from "../types";
+// import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Project, ImprovementWork } from "../ImprovementWorkLib";
 
 interface ShowCardProps {
-  project: Project;
+  improvementWork: ImprovementWork;
 }
-function ShowCard({ project }: ShowCardProps) {
+
+function ShowCard({ improvementWork }: ShowCardProps) {
   // State to track whether the mouse is over the task card
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [show, setShow] = useState(false);
@@ -29,10 +31,10 @@ function ShowCard({ project }: ShowCardProps) {
     transition,
     isDragging,
   } = useSortable({
-    id: project.id,
+    id: improvementWork.id,
     data: {
-      type: "Project",
-      project,
+      type: "ImprovementWork",
+      improvementWork,
     },
 
     //disabled: editMode,
@@ -72,35 +74,42 @@ function ShowCard({ project }: ShowCardProps) {
     >
       <div>
         <CardButton
-          title={project.title}
-          tags={project.tags}
-          date_created={project.date_created}
+          title={improvementWork.title}
+          tags={improvementWork.tags}
+          date_created={improvementWork.date_created}
           onClick={modalShow}
         />
-        <CardModal
-          show={show}
-          onHide={modalClose}
-          id={project.id}
-          title={project.title}
-          phase={project.phase}
-          content={project.description}
-          place={project.place}
-          centrum={project.centrum}
-          tags={project.tags}
-          date_created={project.date_created}
-          result_measurements={project.result_measurements}
-          result_analysis={project.result_analysis}
-          notes_plan={project.notes_plan}
-          notes_do={project.notes_do}
-          notes_study={project.notes_study}
-          notes_act={project.notes_act}
-          project_leader={project.project_leader}
-          project_members={project.project_members}
-          checklist_plan={project.checklist_plan}
-          checklist_do={project.checklist_do}
-          checklist_study={project.checklist_study}
-          checklist_act={project.checklist_act}
-        />
+        {
+          <CardModal
+            show={show}
+            onHide={modalClose}
+            id={improvementWork.id}
+            title={improvementWork.title}
+            phase={improvementWork.phase}
+            place={improvementWork.place}
+            centrum={improvementWork.centrum}
+            tags={improvementWork.tags}
+            date_created={improvementWork.date_created}
+            goal={improvementWork.goal}
+            ideas_array={improvementWork.ideas}
+            measure={improvementWork.measure}
+            result_measurements={
+              improvementWork.all_iterations.iteration1.do.results
+            }
+            result_analysis={
+              improvementWork.all_iterations.iteration1.study.analysis
+            }
+            notes_plan={improvementWork.all_iterations.iteration1.plan.notes}
+            notes_do={improvementWork.all_iterations.iteration1.do.notes}
+            notes_study={improvementWork.all_iterations.iteration1.study.notes}
+            notes_act={improvementWork.all_iterations.iteration1.act.notes}
+            project_leader={improvementWork.project_leader}
+            project_members={improvementWork.project_members}
+            checklist_plan={
+              improvementWork.all_iterations.iteration1.plan.checklist
+            }
+          />
+        }
       </div>
     </div>
   );
