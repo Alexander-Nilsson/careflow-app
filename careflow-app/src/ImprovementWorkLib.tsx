@@ -324,3 +324,11 @@ export function sortByDateCreated<T extends { date_created: Timestamp }>(data: T
 export function sortByOldestDate<T extends { date_created: Timestamp }>(data: T[]): T[] {
     return data.sort((a, b) => b.date_created.seconds - a.date_created.seconds);
 }
+
+export function sortByTitleAscending<T extends { title: string }>(data: T[]): T[] {
+    return data.sort((a, b) => a.title.localeCompare(b.title, 'sv', { sensitivity: 'base' }));
+}
+
+export function sortByTitleDescending<T extends { title: string }>(data: T[]): T[] {
+    return data.sort((a, b) => b.title.localeCompare(a.title, 'sv', { sensitivity: 'base' }));
+}
