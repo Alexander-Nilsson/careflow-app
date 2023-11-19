@@ -1,29 +1,17 @@
 import React, { useState, useEffect } from "react"; //Nytt
-import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import {
   BarChart,
   Lightbulb,
   Bullseye,
   EnvelopePaper,
 } from "react-bootstrap-icons";
-import {
-  doc,
-  setDoc,
-  getDocs,
-  getDoc,
-  collection,
-  Timestamp,
-  query,
-  addDoc,
-} from "firebase/firestore";
+import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
-import Nav from "react-bootstrap/Nav";
-import { Id } from "../types";
-import { useRoutes } from "react-router-dom";
+import { userIDname } from "./CreateNewProject";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -70,53 +58,9 @@ const FlexAndCenter = {
 interface CreateProjectModalProps {
   show: boolean;
   onHide: () => void;
-}
-class Tag {
-  id: Id;
-  description: string;
-  constructor(id: Id, description: string) {
-    this.id = id;
-    this.description = description;
-  }
-}
-class User {
-  id: Id;
-  admin: boolean;
-  centrum: string;
-  clinic: string;
-  email: string;
-  first_name: string;
-  sur_name: string;
-  phone_number: string;
-  place: string;
-  profession: string;
-  projects: Array<string>;
-
-  constructor(
-    id: Id,
-    admin: boolean,
-    centrum: string,
-    clinic: string,
-    email: string,
-    first_name: string,
-    sur_name: string,
-    phone_number: string,
-    place: string,
-    profession: string,
-    projects: Array<string>
-  ) {
-    this.id = id;
-    this.admin = admin;
-    this.centrum = centrum;
-    this.clinic = clinic;
-    this.email = email;
-    this.first_name = first_name;
-    this.sur_name = sur_name;
-    this.phone_number = phone_number;
-    this.place = place;
-    this.profession = profession;
-    this.projects = projects;
-  }
+  users: any[];
+  tags: any[];
+  usersClassArray: any[];
 }
 
 function transformBulletPoints(value: string) {
@@ -125,11 +69,26 @@ function transformBulletPoints(value: string) {
 
   // Remove the bullet points from each line
   lines = lines.map((line) => line.replace("+ ", ""));
+  lines = lines.map((line) => line.replace("◯ ", ""));
+  lines = lines.map((line) => line.replace("+", ""));
+  lines = lines.map((line) => line.replace("◯", ""));
 
   // Remove any empty lines
   lines = lines.filter((line) => line !== "");
 
   return lines;
+}
+
+function findUserIds(members: string[], usersClassArray: userIDname[]) {
+  let userIDs = [];
+  for (let i = 0; i < members.length; i++) {
+    for (let j = 0; j < usersClassArray.length; j++) {
+      if (members[i] == usersClassArray[j].sur_name) {
+        userIDs.push(usersClassArray[j].id);
+      }
+    }
+  }
+  return userIDs;
 }
 
 // Writes the formdata to database
@@ -145,104 +104,23 @@ async function sendToDataBase(projectData: object) {
   }
 }
 
-const memberConverter = {
-  toFirestore: (memberData: any) => ({
-    id: memberData.id,
-    admin: memberData.admin,
-    centrum: memberData.centrum,
-    clinic: memberData.clinic,
-    email: memberData.email,
-    first_name: memberData.first_name,
-    sur_name: memberData.sur_name,
-    phone_number: memberData.phone_number,
-    place: memberData.place,
-    profession: memberData.profession,
-    projects: memberData.projects,
-  }),
-  fromFirestore: (snapshot: any, options: any) => {
-    const data = snapshot.data(options);
-
-    return new User(
-      snapshot.id,
-      data.admin,
-      data.centrum,
-      data.clinic,
-      data.email,
-      data.first_name,
-      data.sur_name,
-      data.phone_number,
-      data.place,
-      data.profession,
-      data.projects
-    );
-  },
-};
-
-const tagConverter = {
-  toFirestore: (tagData: any) => ({
-    description: tagData.description,
-  }),
-  fromFirestore: (snapshot: any, options: any) => {
-    const data = snapshot.data(options);
-
-    return new Tag(snapshot.id, data.description);
-  },
-};
-
-var users: any[] = [];
-var selectedUsers: any[] = [];
-var tags: any[] = [];
-var selectedTags: any[] = [];
-
-async function fetchUsers() {
-  const q = query(collection(db, "users"));
-  const querySnapshot = await getDocs(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
-
-  ids.map(async (id) => {
-    const projectReference = doc(db, "users", id).withConverter(
-      memberConverter
-    );
-    const snapshot = await getDoc(projectReference);
-    const userData = snapshot.data() as User;
-
-    if (!users.includes(userData.sur_name)) {
-      users.push(userData.sur_name);
-    }
-  });
-  //users.length = 0;
-  //return users;
-}
-
-async function fetchTags() {
-  const q = query(collection(db, "tags"));
-  const querySnapshot = await getDocs(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
-
-  ids.map(async (id) => {
-    const tagReference = doc(db, "tags", id).withConverter(tagConverter);
-    const snapshot = await getDoc(tagReference);
-    const tagData = snapshot.data() as Tag;
-
-    if (!tags.includes(tagData.description)) {
-      tags.push(tagData.description);
-    }
-  });
-
-  //tags.length = 0;
-  //return tags;
-}
-
-function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
+function CreateProjectModal({
+  show,
+  onHide,
+  users,
+  tags,
+  usersClassArray,
+}: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
   const [ideaError, setIdeaError] = useState(false);
 
   // States for saving text entered by user
   const [purpose, setPurpose] = useState("");
-  const [ideas, setIdeas] = useState(""); // State for saving the ideas entered by user
-  const [measure, setMeasure] = useState(""); // State for saving the ideas entered by user
-  const [goals, setGoals] = useState(""); // State for saving the ideas entered by user
+  const [ideas, setIdeas] = useState("");
+  const [measure, setMeasure] = useState("");
+  const [goals, setGoals] = useState("");
+  const [newTag, setTags] = useState("");
 
   //User specific data
   const [name, setName] = useState<String>("Namn ej funnet");
@@ -251,6 +129,12 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
   const [place, setPlace] = useState<String>("Plats ej funnen");
   const [centrum, setCentrum] = useState<String>("Centrum ej funnen");
   const [userID, setUserID] = useState<string>("UserID");
+
+  // To handle tags and members in dropdown menus
+  type MembersState = string[];
+  type TagState = string[];
+  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
+  const [selectedTags, setSelectedTags] = useState<TagState>([]);
 
   const { isAuthenticated, isLoading, user } = useAuth0();
 
@@ -307,25 +191,54 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     }
   };
 
-  //fetchUsers();
-  //fetchTags();
-
-  //handle dropdown for users
-  const [selectedOption, setSelectedOption] = useState<string>(users[0]);
-  const handleOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption(event.target.value);
-    if (!selectedUsers.includes(event.target.value)) {
-      selectedUsers.push(event.target.value);
+  const handleKeyPressBulletPointGoals = (
+    e: any,
+    setter: (value: string) => void,
+    currentValue: string
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setter(currentValue + "\n◯ ");
     }
   };
 
-  //handle dropdown for tags
-  const [selectedOption1, setSelectedOption1] = useState<string>(tags[0]);
-  const handleOptionChange1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption1(event.target.value);
-    if (!selectedTags.includes(event.target.value)) {
-      selectedTags.push(event.target.value);
+  const handleFocusBulletPointGoals = (
+    currentValue: string,
+    setter: (value: string) => void
+  ) => {
+    if (currentValue === "") {
+      setter("◯ ");
     }
+  };
+
+  //console.log(newTag);
+  const handleAlternativeClick = (chosenMember: string) => {
+    //If the selected member already has been chosen, remove from the array
+    if (selectedMembers.includes(chosenMember)) {
+      const updatedChosenMembers = selectedMembers.filter(
+        (member) => member !== chosenMember
+      );
+      setSelectedMembers(updatedChosenMembers);
+      //If the selected member has not already been chosen, add the member to the array
+    } else {
+      const updatedChosenMembers = [...selectedMembers, chosenMember];
+      setSelectedMembers(updatedChosenMembers);
+    }
+  };
+
+  const handleAlternativeClick1 = (chosenMember: string) => {
+    //If the selected member already has been chosen, remove from the array
+    if (selectedTags.includes(chosenMember)) {
+      const updatedChosenMembers = selectedTags.filter(
+        (member) => member !== chosenMember
+      );
+      setSelectedTags(updatedChosenMembers);
+      //If the selected member has not already been chosen, add the member to the array
+    } else {
+      const updatedChosenMembers = [...selectedTags, chosenMember];
+      setSelectedTags(updatedChosenMembers);
+    }
+    //fetchTags();
   };
 
   // is executed when submit button is pressed
@@ -338,17 +251,22 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
+    let project_members = findUserIds(selectedMembers, usersClassArray);
+    // Remove logged in user from members list
+    project_members = project_members.filter((item) => item != userID);
+
     const projectData = {
       title: formJson.title,
       centrum: centrum,
       place: place,
       clinic: department,
       closed: false,
-      phase: 1,
+      phase: 2, // planning phase is phase 2?
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
-      project_members: selectedUsers,
+      project_members: findUserIds(selectedMembers, usersClassArray),
+      purpose: purpose,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
       measure: transformBulletPoints(measure),
@@ -400,6 +318,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     // Check if title is entered by user
     if (!formJson.title) {
       setTitleError(true); // Show error message
+      setTitleError(false);
       return; // Stop the function to prevent sending data and closing the modal
     } else if (projectData.ideas.length == 0) {
       setIdeaError(true);
@@ -409,6 +328,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
       setTitleError(false); // Hide error message
       setIdeaError(false);
       // Clear textfields
+      setPurpose("");
       setIdeas("");
       setMeasure("");
       setGoals("");
@@ -423,13 +343,6 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
         <div>
           <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
         </div>
-        {/* <OverlayTrigger
-          trigger={["hover", "focus"]}
-          placement="right"
-          overlay={HelpPopover}
-        >
-          <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
-        </OverlayTrigger> */}
         <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
 
@@ -441,6 +354,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               name="title"
               type="text"
               className="form-control"
+              // förhindra att trycka på enter stänger modalen
               onKeyDown={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => {
@@ -522,14 +436,14 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 <textarea
                   name="goals"
                   className="form-control"
-                  placeholder="+ Lägg till"
+                  placeholder="◯ Lägg till"
                   style={{ border: "none", height: "98px" }}
                   value={goals}
                   onChange={(e) => setGoals(e.target.value)}
                   onKeyDown={(e) =>
-                    handleKeyPressBulletPoint(e, setGoals, goals)
+                    handleKeyPressBulletPointGoals(e, setGoals, goals)
                   }
-                  onFocus={() => handleFocusBulletPoint(goals, setGoals)}
+                  onFocus={() => handleFocusBulletPointGoals(goals, setGoals)}
                 ></textarea>
               </div>
             </div>
@@ -598,6 +512,9 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                 </div>
               </div>
             </div>
+            {ideaError && (
+              <div style={{ color: "red" }}>Minst en idé måste anges</div>
+            )}
             <div className="card" style={{ height: "100px" }}>
               <div
                 className="input-group input-group-sm"
@@ -622,42 +539,79 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   onFocus={() => handleFocusBulletPoint(ideas, setIdeas)}
                 />
               </div>
-              {ideaError && (
-                <div style={{ color: "red" }}>Minst en idé måste anges</div>
-              )}
             </div>
           </div>
-          <div>
-            <label style={TitleStyle}>Lägg till kollegor: </label>
-            <select value={selectedOption} onChange={handleOptionChange}>
-              {users.map((user: any, index: any) => (
-                <option key={index} value={user}>
-                  {user}
-                </option>
+          <Dropdown>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
+              }}
+            >
+              Lägg till kollegor
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {users.map((member) => (
+                <Dropdown.Item
+                  style={{
+                    fontWeight: selectedMembers.includes(member)
+                      ? "bold"
+                      : "normal",
+                  }}
+                  onClick={() => handleAlternativeClick(member)}
+                >
+                  {member}
+                </Dropdown.Item>
               ))}
-            </select>
-            <p>Vald kollega: {selectedOption}</p>
-          </div>
-          <div>
-            <label style={TitleStyle}>Lägg till taggar: </label>
-            <select value={selectedOption1} onChange={handleOptionChange1}>
-              {tags.map((tag: any, index: any) => (
-                <option key={index} value={tag}>
+            </Dropdown.Menu>
+          </Dropdown>
+          <Dropdown key={tags.length}>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
+              }}
+            >
+              Lägg till beskrivande nyckelord
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {/* <div style={{ display: "flex", alignItems: "center" }}>
+                <Form.Control
+                  type="text"
+                  placeholder="Lägg till egna nyckelord"
+                  value={textValue}
+                  onChange={handleTextChange}
+                  className="mr-sm-2"
+                  style={{ width: "80%" }}
+                />
+                <Button
+                  variant="primary"
+                  onClick={handleConfirm}
+                  style={{ marginRight: "0" }}
+                >
+                  Lägg till
+                </Button>
+              </div> */}
+              {tags.map((tag) => (
+                <Dropdown.Item
+                  style={{
+                    fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
+                  }}
+                  onClick={() => handleAlternativeClick1(tag)}
+                >
                   {tag}
-                </option>
+                </Dropdown.Item>
               ))}
-            </select>
-            <p>Vald tag: {selectedOption1}</p>
-          </div>
+            </Dropdown.Menu>
+          </Dropdown>
           <div className="mb-3 text-center">
             <Button
               type="submit"
               id="SkapaFörbättringsarbete"
-              // onClick={() => {
-              //   onHide();
-              //   //setIdeas(""); // Clear the textarea when the button is clicked
-              //   //setMeasure("");
-              // }}
               style={ButtonStyle}
             >
               Skicka in förbättringsarbete
