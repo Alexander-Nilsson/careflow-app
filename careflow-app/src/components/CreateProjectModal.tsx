@@ -261,6 +261,7 @@ function CreateProjectModal({
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
       project_members: selectedMembers,
+      purpose: purpose,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
       measure: transformBulletPoints(measure),
@@ -321,6 +322,7 @@ function CreateProjectModal({
       setTitleError(false); // Hide error message
       setIdeaError(false);
       // Clear textfields
+      setPurpose("");
       setIdeas("");
       setMeasure("");
       setGoals("");
@@ -353,6 +355,7 @@ function CreateProjectModal({
               name="title"
               type="text"
               className="form-control"
+              // förhindra att trycka på enter stänger modalen
               onKeyDown={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => {
