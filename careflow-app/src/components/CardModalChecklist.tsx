@@ -166,7 +166,8 @@ function CardModalChecklist({
               padding: "0px",
               border: "none",
               cursor: "pointer",
-              marginTop: "17px",
+              marginTop:
+                checklist.checklist_items.length === 0 ? "0px" : "17px",
             }}
             onClick={handleShowTaskModal}
           >

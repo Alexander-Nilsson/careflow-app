@@ -109,7 +109,7 @@ interface cardModalTopLeftProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
@@ -163,7 +163,7 @@ function CardModalTopLeft({
   updatedTags,
   setUpdatedTags,
   date_created,
-  goal,
+  goals,
   measure,
   active_tab,
   percentage,
@@ -183,8 +183,6 @@ function CardModalTopLeft({
       (_, index) => index !== indexToRemove
     );
     setUpdatedTags(updatedTagsArray);
-
-    // MÅSTE UPPDATERA DATABASEN HÄR OCKSÅ
   };
 
   const handleShowTagModal = () => {
@@ -202,8 +200,6 @@ function CardModalTopLeft({
       const updatedTagsArray = [...updatedTags, newTag.toLowerCase()];
       setUpdatedTags(updatedTagsArray);
       setNewTag("");
-
-      // MÅSTE UPPDATERA DATABASEN HÄR OCKSÅ
     }
   };
 
@@ -397,9 +393,9 @@ function CardModalTopLeft({
               }
             >
               <div style={whiteDescriptionContainerStyle}>
-                {goal ? (
+                {goals ? (
                   <ul style={{ listStyleType: "none", paddingLeft: "4px" }}>
-                    {goal.map((item, index) => (
+                    {goals.map((item, index) => (
                       <li key={index} style={{ marginBottom: "8px" }}>
                         {"• "}
                         {item}
