@@ -16,7 +16,19 @@ const formGroupStyle = {
   borderRadius: "10px",
 };
 
-function CardModalSimilarProjects() {
+const projectsContainerStyle = {
+  display: "flex" as "flex",
+  flexDirection: "row" as "row",
+  maxWidth: "100%", // Set a maximum width to prevent overflowing
+  overflowX: "auto" as "auto",
+  paddingBottom: "1rem",
+};
+
+interface similarImprovementWorksProps {
+  tags: Array<string>;
+}
+
+function CardModalSimilarProjects({ tags }: similarImprovementWorksProps) {
   return (
     <>
       <Form.Group style={formGroupStyle}>
@@ -24,7 +36,24 @@ function CardModalSimilarProjects() {
           <b>Liknande förbättringsarbeten</b>
         </Form.Label>
         <div style={whiteContainerStyle}>
-          Här ska det finnas förslag på liknande förbättringsarbeten
+          <div style={projectsContainerStyle}>
+            {/*{displayedImprovementWorks != null ? (
+                    displayedImprovementWorks.map((improvementWork, index) => (
+                        <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
+                            <ProjectCard
+                                title={improvementWork.title}
+                                date_created={improvementWork.date_created}
+                                place={improvementWork.place}
+                                tags={improvementWork.tags}
+                                phase={improvementWork.phase}
+                                displayPhaseImage={true}
+                            />
+                        </div>
+                    ))
+                ) : (
+                    null
+                )}*/}
+          </div>
         </div>
       </Form.Group>
     </>
