@@ -62,7 +62,6 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     // denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
     // filtreras bort genom att anropa include
     function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState) {
-        console.log(filter)
         let filteredImprovementWorks: ImprovementWork[] = []
         orgImprovementWorks.forEach((improvementWork) => {
             // console.log(improvementWork)
@@ -73,16 +72,9 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
         return filteredImprovementWorks
     }
 
-    // denna kollar om vi ska filtrera på användaren eller kliniken
+    // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {
-        if (event.target.value == "user") {
-            // gör så att vi filtrerar på användaren
-            setFilterState(prev => ({ ...prev, filter: "user" })); //när denna är färdiguppdaterad körs alltså useEffect
-        }
-        else if (event.target.value == "clinic") {
-            // gör så att vi filtrerar på kliniken
-            setFilterState(prev => ({ ...prev, filter: "clinic" })); //när denna är färdiguppdaterad körs alltså useEffect
-        }
+        setFilterState(prev => ({ ...prev, filter: event.target.value }));
     };
 
     // denna uppdaterar vilken tag som ska filtreras på.
@@ -103,7 +95,7 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     useEffect(() => {
         const tags = findTagOptions(allImprovementWorks);
         setTagOptions(tags);
-    }, []); // Empty dependency array makes this effect run only once
+    }, []);
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
