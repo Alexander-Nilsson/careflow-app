@@ -169,7 +169,6 @@ function CreateNewProject() {
 
   fetchUsers();
   fetchTags();
-  console.log("users: ", users);
 
   return (
     <div>

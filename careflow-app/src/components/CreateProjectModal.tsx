@@ -80,7 +80,6 @@ function transformBulletPoints(value: string) {
 }
 
 function findUserIds(members: string[], usersClassArray: userIDname[]) {
-  console.log("Selected Members här:");
   let userIDs = [];
   for (let i = 0; i < members.length; i++) {
     for (let j = 0; j < usersClassArray.length; j++) {
