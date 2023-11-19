@@ -69,6 +69,9 @@ function transformBulletPoints(value: string) {
 
   // Remove the bullet points from each line
   lines = lines.map((line) => line.replace("+ ", ""));
+  lines = lines.map((line) => line.replace("◯ ", ""));
+  lines = lines.map((line) => line.replace("+", ""));
+  lines = lines.map((line) => line.replace("◯", ""));
 
   // Remove any empty lines
   lines = lines.filter((line) => line !== "");
@@ -189,6 +192,26 @@ function CreateProjectModal({
     }
   };
 
+  const handleKeyPressBulletPointGoals = (
+    e: any,
+    setter: (value: string) => void,
+    currentValue: string
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setter(currentValue + "\n◯ ");
+    }
+  };
+
+  const handleFocusBulletPointGoals = (
+    currentValue: string,
+    setter: (value: string) => void
+  ) => {
+    if (currentValue === "") {
+      setter("◯ ");
+    }
+  };
+
   //console.log(newTag);
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
@@ -296,6 +319,7 @@ function CreateProjectModal({
     // Check if title is entered by user
     if (!formJson.title) {
       setTitleError(true); // Show error message
+      setTitleError(false);
       return; // Stop the function to prevent sending data and closing the modal
     } else if (projectData.ideas.length == 0) {
       setIdeaError(true);
@@ -413,14 +437,14 @@ function CreateProjectModal({
                 <textarea
                   name="goals"
                   className="form-control"
-                  placeholder="+ Lägg till"
+                  placeholder="◯ Lägg till"
                   style={{ border: "none", height: "98px" }}
                   value={goals}
                   onChange={(e) => setGoals(e.target.value)}
                   onKeyDown={(e) =>
-                    handleKeyPressBulletPoint(e, setGoals, goals)
+                    handleKeyPressBulletPointGoals(e, setGoals, goals)
                   }
-                  onFocus={() => handleFocusBulletPoint(goals, setGoals)}
+                  onFocus={() => handleFocusBulletPointGoals(goals, setGoals)}
                 ></textarea>
               </div>
             </div>
@@ -489,6 +513,9 @@ function CreateProjectModal({
                 </div>
               </div>
             </div>
+            {ideaError && (
+              <div style={{ color: "red" }}>Minst en idé måste anges</div>
+            )}
             <div className="card" style={{ height: "100px" }}>
               <div
                 className="input-group input-group-sm"
@@ -513,9 +540,6 @@ function CreateProjectModal({
                   onFocus={() => handleFocusBulletPoint(ideas, setIdeas)}
                 />
               </div>
-              {ideaError && (
-                <div style={{ color: "red" }}>Minst en idé måste anges</div>
-              )}
             </div>
           </div>
           <Dropdown>
