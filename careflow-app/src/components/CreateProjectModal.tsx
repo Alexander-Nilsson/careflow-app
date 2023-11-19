@@ -257,7 +257,9 @@ function CreateProjectModal({
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
+    let project_members = findUserIds(selectedMembers, usersClassArray);
     // Remove logged in user from members list
+    project_members = project_members.filter((item) => item != userID);
 
     const projectData = {
       title: formJson.title,
