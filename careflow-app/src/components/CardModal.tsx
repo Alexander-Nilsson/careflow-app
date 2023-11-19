@@ -55,7 +55,7 @@ interface cardModalProps {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas_array: Array<string>;
   measure: Array<string>;
   result_measurements: string;
@@ -64,6 +64,22 @@ interface cardModalProps {
   notes_do: string;
   notes_study: string;
   notes_act: string;
+  files_plan: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
+  files_do: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
+  files_study: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
+  files_act: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
   project_leader: string;
   project_members: Array<string>;
   checklist_plan: {
@@ -79,7 +95,7 @@ interface modalContentPlanProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
@@ -102,6 +118,16 @@ interface modalContentPlanProps {
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
   setUpdatedNotesPlan: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesPlan: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
 interface modalContentDoProps {
@@ -110,7 +136,7 @@ interface modalContentDoProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
@@ -127,6 +153,16 @@ interface modalContentDoProps {
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
   setUpdatedNotesDo: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesDo: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
 interface modalContentStudyProps {
@@ -135,7 +171,7 @@ interface modalContentStudyProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
@@ -152,6 +188,16 @@ interface modalContentStudyProps {
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
   setUpdatedNotesStudy: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesStudy: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
 interface modalContentActProps {
@@ -160,7 +206,7 @@ interface modalContentActProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
@@ -175,6 +221,16 @@ interface modalContentActProps {
   handlePhaseUpdate: (phase: number) => void;
   notes: string;
   setUpdatedNotesAct: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesAct: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
 //Function that checks if the icon next to the phase (in the tabs at the top) should be checked or not
@@ -260,7 +316,7 @@ function ModalContentPlan({
   updatedTags,
   setUpdatedTags,
   date_created,
-  goal,
+  goals,
   ideas,
   measure,
   place,
@@ -276,10 +332,16 @@ function ModalContentPlan({
   handlePhaseUpdate,
   notes,
   setUpdatedNotesPlan,
+  files,
+  setUpdatedFilesPlan,
 }: modalContentPlanProps) {
   //Calculates the phase's progress based on the number of checked tasks in the checklist
   function calculatePercentage() {
     const totalItems = checklist.checklist_done.length; //Total number of tasks in the checklist
+
+    if (totalItems === 0) {
+      return 0;
+    }
     const trueCount = checklist.checklist_done.filter((value) => value).length; //Number of "true" in the the checklist_done array
     const percentageFinished = (trueCount / totalItems) * 100; //Calculates the percentage
     return Math.round(percentageFinished);
@@ -294,7 +356,7 @@ function ModalContentPlan({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
-          goal={goal}
+          goals={goals}
           ideas={ideas}
           measure={measure}
           place={place}
@@ -336,7 +398,10 @@ function ModalContentPlan({
                 setUpdatedNotes={setUpdatedNotesPlan}
               />
             </Form.Group>
-            <CardModalFiles />
+            <CardModalFiles
+              files={files}
+              setUpdatedFiles={setUpdatedFilesPlan}
+            />
           </Form>
 
           {/* --------------------------------------------------- */}
@@ -354,7 +419,7 @@ function ModalContentDo({
   updatedTags,
   setUpdatedTags,
   date_created,
-  goal,
+  goals,
   ideas,
   measure,
   place,
@@ -368,6 +433,8 @@ function ModalContentDo({
   handlePhaseUpdate,
   notes,
   setUpdatedNotesDo,
+  files,
+  setUpdatedFilesDo,
 }: modalContentDoProps) {
   return (
     <>
@@ -378,7 +445,7 @@ function ModalContentDo({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
-          goal={goal}
+          goals={goals}
           ideas={ideas}
           measure={measure}
           place={place}
@@ -414,7 +481,7 @@ function ModalContentDo({
                 setUpdatedNotes={setUpdatedNotesDo}
               />
             </Form.Group>
-            <CardModalFiles />
+            <CardModalFiles files={files} setUpdatedFiles={setUpdatedFilesDo} />
           </Form>
 
           {/* ---------------------------------------- */}
@@ -432,7 +499,7 @@ function ModalContentStudy({
   updatedTags,
   setUpdatedTags,
   date_created,
-  goal,
+  goals,
   ideas,
   measure,
   place,
@@ -446,6 +513,8 @@ function ModalContentStudy({
   handlePhaseUpdate,
   notes,
   setUpdatedNotesStudy,
+  files,
+  setUpdatedFilesStudy,
 }: modalContentStudyProps) {
   return (
     <>
@@ -456,7 +525,7 @@ function ModalContentStudy({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
-          goal={goal}
+          goals={goals}
           ideas={ideas}
           measure={measure}
           place={place}
@@ -490,7 +559,10 @@ function ModalContentStudy({
                 setUpdatedNotes={setUpdatedNotesStudy}
               />
             </Form.Group>
-            <CardModalFiles />
+            <CardModalFiles
+              files={files}
+              setUpdatedFiles={setUpdatedFilesStudy}
+            />
           </Form>
 
           {/* ----------------------------------------- */}
@@ -508,7 +580,7 @@ function ModalContentAct({
   updatedTags,
   setUpdatedTags,
   date_created,
-  goal,
+  goals,
   ideas,
   measure,
   place,
@@ -520,6 +592,8 @@ function ModalContentAct({
   handlePhaseUpdate,
   notes,
   setUpdatedNotesAct,
+  files,
+  setUpdatedFilesAct,
 }: modalContentActProps) {
   return (
     <>
@@ -530,7 +604,7 @@ function ModalContentAct({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
-          goal={goal}
+          goals={goals}
           ideas={ideas}
           measure={measure}
           place={place}
@@ -559,7 +633,10 @@ function ModalContentAct({
                 setUpdatedNotes={setUpdatedNotesAct}
               />
             </Form.Group>
-            <CardModalFiles />
+            <CardModalFiles
+              files={files}
+              setUpdatedFiles={setUpdatedFilesAct}
+            />
           </Form>
 
           {/* --------------------------------------------*/}
@@ -582,7 +659,7 @@ function CardModal({
   centrum,
   tags,
   date_created,
-  goal,
+  goals,
   ideas_array,
   measure,
   result_measurements,
@@ -591,6 +668,10 @@ function CardModal({
   notes_do,
   notes_study,
   notes_act,
+  files_plan,
+  files_do,
+  files_study,
+  files_act,
   project_leader,
   project_members,
   checklist_plan,
@@ -639,7 +720,26 @@ function CardModal({
       updatedIdeas[selectedIdeaIndex].checked = true;
       setIdeas(updatedIdeas);
 
-      //Här måste också alla variabler sättas till tomma!!!
+      //Set the active phase back to plan and clear everything
+      handlePhaseUpdate(1);
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+
+      //Update the database with the cleared field
+      updateDb();
+
+      //Här måste vi också byta vald idé i databasen!
     }
   };
 
@@ -675,6 +775,12 @@ function CardModal({
   const [updatedNotesStudy, setUpdatedNotesStudy] = useState(notes_study);
   const [updatedNotesAct, setUpdatedNotesAct] = useState(notes_act);
 
+  //State variables that contains the updated file arrays of each phase
+  const [updatedFilesPlan, setUpdatedFilesPlan] = useState(files_plan);
+  const [updatedFilesDo, setUpdatedFilesDo] = useState(files_do);
+  const [updatedFilesStudy, setUpdatedFilesStudy] = useState(files_study);
+  const [updatedFilesAct, setUpdatedFilesAct] = useState(files_act);
+
   //State variables that contains the updated version of the checklist of the plan phase
   const [checklistItems, setChecklistItems] = useState(
     checklist_plan.checklist_items
@@ -688,8 +794,6 @@ function CardModal({
 
   //Updates the database with the changes made when the save button is clicked
   async function updateDb() {
-    console.log(updatedProjectPhase);
-    onHide();
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       const projectDoc = await getDoc(projectDocRef);
@@ -710,20 +814,36 @@ function CardModal({
                   checklist_items: checklistItems,
                   checklist_members: checklistMembers,
                 },
+                files: {
+                  file_names: updatedFilesPlan.file_names,
+                  file_descriptions: updatedFilesPlan.file_descriptions,
+                },
                 notes: updatedNotesPlan, // Updates "Övriga anteckningar" in the plan phase
               },
               do: {
                 ...data.all_iterations?.iteration1?.do,
                 results: updatedResultMeasurements, // Updates "Uppmätt resultat"
+                files: {
+                  file_names: updatedFilesDo.file_names,
+                  file_descriptions: updatedFilesDo.file_descriptions,
+                },
                 notes: updatedNotesDo, // Updates "Övriga anteckningar" in the do phase
               },
               study: {
                 ...data.all_iterations?.iteration1?.study,
                 analysis: updatedResultAnalysis, // Updates "Analys av resultat"
+                files: {
+                  file_names: updatedFilesStudy.file_names,
+                  file_descriptions: updatedFilesStudy.file_descriptions,
+                },
                 notes: updatedNotesStudy, // Updates "Övriga anteckningar" in the study phase
               },
               act: {
                 ...data.all_iterations?.iteration1?.act,
+                files: {
+                  file_names: updatedFilesAct.file_names,
+                  file_descriptions: updatedFilesAct.file_descriptions,
+                },
                 notes: updatedNotesAct, // Updates "Övriga anteckningar" in the act phase
               },
             },
@@ -769,7 +889,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
-                goal={goal}
+                goals={goals}
                 ideas={ideas}
                 measure={measure}
                 place={place}
@@ -789,6 +909,8 @@ function CardModal({
                 handlePhaseUpdate={handlePhaseUpdate}
                 notes={updatedNotesPlan}
                 setUpdatedNotesPlan={setUpdatedNotesPlan}
+                files={updatedFilesPlan}
+                setUpdatedFilesPlan={setUpdatedFilesPlan}
               />
             </Tab>
 
@@ -809,7 +931,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
-                goal={goal}
+                goals={goals}
                 ideas={ideas}
                 measure={measure}
                 place={place}
@@ -823,6 +945,8 @@ function CardModal({
                 handlePhaseUpdate={handlePhaseUpdate}
                 notes={updatedNotesDo}
                 setUpdatedNotesDo={setUpdatedNotesDo}
+                files={updatedFilesDo}
+                setUpdatedFilesDo={setUpdatedFilesDo}
               />
             </Tab>
 
@@ -843,7 +967,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
-                goal={goal}
+                goals={goals}
                 ideas={ideas}
                 measure={measure}
                 place={place}
@@ -857,6 +981,8 @@ function CardModal({
                 handlePhaseUpdate={handlePhaseUpdate}
                 notes={updatedNotesStudy}
                 setUpdatedNotesStudy={setUpdatedNotesStudy}
+                files={updatedFilesStudy}
+                setUpdatedFilesStudy={setUpdatedFilesStudy}
               />
             </Tab>
 
@@ -877,7 +1003,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
-                goal={goal}
+                goals={goals}
                 ideas={ideas}
                 measure={measure}
                 place={place}
@@ -889,12 +1015,20 @@ function CardModal({
                 handlePhaseUpdate={handlePhaseUpdate}
                 notes={updatedNotesAct}
                 setUpdatedNotesAct={setUpdatedNotesAct}
+                files={updatedFilesAct}
+                setUpdatedFilesAct={setUpdatedFilesAct}
               />
             </Tab>
           </Tabs>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={() => updateDb()} style={buttonStyle}>
+          <Button
+            onClick={() => {
+              onHide();
+              updateDb();
+            }}
+            style={buttonStyle}
+          >
             Spara
           </Button>
         </Modal.Footer>

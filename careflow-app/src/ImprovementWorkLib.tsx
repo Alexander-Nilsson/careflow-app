@@ -93,7 +93,7 @@ export interface ImprovementWork {
   closed: boolean;
   date_created: Timestamp;
   date_last_updated: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas: Array<string>;
   measure: Array<string>;
   phase: Id;
@@ -156,7 +156,7 @@ function setImprovementWork(id: string, data: DocumentData) {
     closed: data.closed,
     date_created: data.date_created,
     date_last_updated: data.date_last_updated,
-    goal: data.goal,
+    goals: data.goals,
     ideas: data.ideas,
     measure: data.measure,
     phase: data.phase,

@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { PlusLg } from "react-bootstrap-icons";
+import { PlusLg, Paperclip } from "react-bootstrap-icons";
 
 const saveFileButtonStyle = {
   backgroundColor: "#051F6F",
@@ -33,10 +33,25 @@ const whiteContainerStyle = {
   borderRadius: "10px",
 };
 
+interface cardModalFilesProps {
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFiles: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
+}
+
 //The section of the modal where the user uploads files
-function CardModalFiles({}) {
+function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
   const [showFileModal, setShowFileModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [newFileDescription, setNewFileDescription] = useState("");
+
   const handleShowFileModal = () => {
     setShowFileModal(true);
   };
@@ -44,18 +59,34 @@ function CardModalFiles({}) {
     setShowFileModal(false);
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    }
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0] || null;
+    setNewFile(selectedFile);
   };
 
-  const handleSaveFile = (event: FormEvent) => {
-    handleCloseFileModal();
-    event.preventDefault();
-    if (selectedFile) {
-      // You can handle the file upload here
-      console.log("Selected file:", selectedFile);
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNewFileDescription(event.target.value);
+  };
+
+  const handleUploadFile = () => {
+    if (newFile) {
+      const updatedFileNames = [...files.file_names, newFile.name];
+      const updatedFileDescriptions = [
+        ...files.file_descriptions,
+        newFileDescription,
+      ];
+
+      setUpdatedFiles({
+        file_names: updatedFileNames,
+        file_descriptions: updatedFileDescriptions,
+      });
+
+      // Clear new file and description field
+      setNewFile(null);
+      setNewFileDescription("");
+      handleCloseFileModal();
     }
   };
 
@@ -66,6 +97,36 @@ function CardModalFiles({}) {
           <b>Bilagor</b>
         </Form.Label>
         <div style={whiteContainerStyle}>
+          {files.file_names.map((item, index) => (
+            <div key={index} style={{ display: "flex", alignItems: "center" }}>
+              <Paperclip
+                style={{
+                  marginRight: "9px",
+                  fontWeight: "bold",
+                  width: "17px",
+                  height: "17px",
+                }}
+              />
+              {/* Print the file name followed by the decription (if there is no description, only print the file name) */}
+              {files.file_descriptions[index] === "" ? (
+                <span>{item}</span>
+              ) : (
+                <span>
+                  {item}
+                  <span
+                    style={{
+                      color: "#AEAEAE",
+                      fontSize: "14px",
+                      marginLeft: "7px",
+                    }}
+                  >
+                    ({files.file_descriptions[index]})
+                  </span>
+                </span>
+              )}
+            </div>
+          ))}
+
           <Button
             style={{
               backgroundColor: "#FFFFFF",
@@ -74,7 +135,7 @@ function CardModalFiles({}) {
               padding: "0px",
               border: "none",
               cursor: "pointer",
-              marginTop: "17px",
+              marginTop: files.file_names.length === 0 ? "0px" : "17px",
             }}
             onClick={handleShowFileModal}
           >
@@ -109,10 +170,12 @@ function CardModalFiles({}) {
                 className="form-control"
                 placeholder="Lägg till en beskrivande mening..."
                 style={{ fontStyle: "italic" }}
+                value={newFileDescription}
+                onChange={handleDescriptionChange}
               ></input>
             </div>
             <div className="mb-3 text-center">
-              <Button style={saveFileButtonStyle} onClick={handleSaveFile}>
+              <Button style={saveFileButtonStyle} onClick={handleUploadFile}>
                 Ladda upp bilaga
               </Button>
             </div>
