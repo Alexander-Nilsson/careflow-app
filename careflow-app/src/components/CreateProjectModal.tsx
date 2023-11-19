@@ -1,29 +1,16 @@
 import React, { useState, useEffect } from "react"; //Nytt
-import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import {
   BarChart,
   Lightbulb,
   Bullseye,
   EnvelopePaper,
 } from "react-bootstrap-icons";
-import {
-  doc,
-  setDoc,
-  getDocs,
-  getDoc,
-  collection,
-  Timestamp,
-  query,
-  addDoc,
-} from "firebase/firestore";
+import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
-import Nav from "react-bootstrap/Nav";
-import { Id } from "../types";
-import { useRoutes } from "react-router-dom";
 import { userIDname } from "./CreateNewProject";
 
 const TitleStyle = {
@@ -99,7 +86,6 @@ function findUserIds(members: string[], usersClassArray: userIDname[]) {
       }
     }
   }
-  console.log(userIDs);
   return userIDs;
 }
 
@@ -115,10 +101,6 @@ async function sendToDataBase(projectData: object) {
     console.error("Error adding document: ", e);
   }
 }
-
-// async function addTags(tag: Object) {
-//   const docRef = await addDoc(collection(db, "tags"), tag);
-// }
 
 function CreateProjectModal({
   show,
@@ -145,6 +127,12 @@ function CreateProjectModal({
   const [place, setPlace] = useState<String>("Plats ej funnen");
   const [centrum, setCentrum] = useState<String>("Centrum ej funnen");
   const [userID, setUserID] = useState<string>("UserID");
+
+  // To handle tags and members in dropdown menus
+  type MembersState = string[];
+  type TagState = string[];
+  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
+  const [selectedTags, setSelectedTags] = useState<TagState>([]);
 
   const { isAuthenticated, isLoading, user } = useAuth0();
 
@@ -201,15 +189,6 @@ function CreateProjectModal({
     }
   };
 
-  //fetchUsers();
-  //fetchTags();
-
-  type MembersState = string[];
-  type TagState = string[];
-
-  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
-  const [selectedTags, setSelectedTags] = useState<TagState>([]);
-
   //console.log(newTag);
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
@@ -238,13 +217,6 @@ function CreateProjectModal({
       setSelectedTags(updatedChosenMembers);
     }
     //fetchTags();
-  };
-
-  const [textValue, setTextValue] = useState<string>("");
-  //const [confirmedText, setConfirmedText] = useState<string | null>(null);
-
-  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTextValue(event.target.value);
   };
 
   // is executed when submit button is pressed
@@ -348,13 +320,6 @@ function CreateProjectModal({
         <div>
           <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
         </div>
-        {/* <OverlayTrigger
-          trigger={["hover", "focus"]}
-          placement="right"
-          overlay={HelpPopover}
-        >
-          <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
-        </OverlayTrigger> */}
         <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
 
@@ -624,11 +589,6 @@ function CreateProjectModal({
             <Button
               type="submit"
               id="SkapaFörbättringsarbete"
-              // onClick={() => {
-              //   onHide();
-              //   //setIdeas(""); // Clear the textarea when the button is clicked
-              //   //setMeasure("");
-              // }}
               style={ButtonStyle}
             >
               Skicka in förbättringsarbete
