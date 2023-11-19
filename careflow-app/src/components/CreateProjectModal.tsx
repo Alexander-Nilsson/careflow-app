@@ -267,7 +267,7 @@ function CreateProjectModal({
       place: place,
       clinic: department,
       closed: false,
-      phase: 2,
+      phase: 2, // planning phase is phase 2?
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
