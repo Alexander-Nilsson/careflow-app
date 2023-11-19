@@ -48,37 +48,9 @@ function Start() {
     ImprovementWork[] | null
   >(null);
 
-  //fetches the user data from database, based on the hsa-ID
-  async function getUser(username: string) {
-    const docRef = doc(db, "users", username);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      if (user?.name) {
-        const userData: UserInfoType = {
-          hsaID: user.name,
-          admin: docSnap.data().admin,
-          centrum: docSnap.data().centrum,
-          clinic: docSnap.data().clinic,
-          email: docSnap.data().email,
-          first_name: docSnap.data().first_name,
-          phone_number: docSnap.data().phone_number,
-          place: docSnap.data().place,
-          profession: docSnap.data().profession,
-          sur_name: docSnap.data().sur_name,
-        };
-        setUserInfo(userData);
-      }
-      // console.log("Document data:", docSnap.data());
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
-    }
-  }
-
   async function fetchData() {
     if (user?.name) {
-      getUser(user.name);
+      getUser(user.name, user, setUserInfo);
 
       const improvementWorks: ImprovementWork[] | null =
         await getAllImprovementWorks();
@@ -130,3 +102,31 @@ function Start() {
 }
 
 export default Start;
+
+//fetches the user data from database, based on the hsa-ID
+export async function getUser(username: string, user: any, setUserInfo: any) {
+  const docRef = doc(db, "users", username);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    if (user?.name) {
+      const userData: UserInfoType = {
+        hsaID: user.name,
+        admin: docSnap.data().admin,
+        centrum: docSnap.data().centrum,
+        clinic: docSnap.data().clinic,
+        email: docSnap.data().email,
+        first_name: docSnap.data().first_name,
+        phone_number: docSnap.data().phone_number,
+        place: docSnap.data().place,
+        profession: docSnap.data().profession,
+        sur_name: docSnap.data().sur_name,
+      };
+      setUserInfo(userData);
+    }
+    // console.log("Document data:", docSnap.data());
+  } else {
+    // docSnap.data() will be undefined in this case
+    console.log("No such document!");
+  }
+}
