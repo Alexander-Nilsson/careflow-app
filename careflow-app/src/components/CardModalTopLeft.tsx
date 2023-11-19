@@ -300,7 +300,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
                 onClick={() => handlePhaseUpdate(phase)}
@@ -323,7 +323,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
               >
@@ -347,7 +347,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
                 onClick={() => handlePhaseUpdate(phase)}
@@ -467,7 +467,7 @@ function CardModalTopLeft({
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
-                    disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
+                    //disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
                     onChange={() => handleIdeaClick(index)}
                   />
                 ))}
