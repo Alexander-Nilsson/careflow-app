@@ -24,6 +24,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Nav from "react-bootstrap/Nav";
 import { Id } from "../types";
 import { useRoutes } from "react-router-dom";
+import { userIDname } from "./CreateNewProject";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -72,6 +73,7 @@ interface CreateProjectModalProps {
   onHide: () => void;
   users: any[];
   tags: any[];
+  usersClassArray: any[];
 }
 
 function transformBulletPoints(value: string) {
@@ -85,6 +87,20 @@ function transformBulletPoints(value: string) {
   lines = lines.filter((line) => line !== "");
 
   return lines;
+}
+
+function findUserIds(members: string[], usersClassArray: userIDname[]) {
+  console.log("Selected Members här:");
+  let userIDs = [];
+  for (let i = 0; i < members.length; i++) {
+    for (let j = 0; j < usersClassArray.length; j++) {
+      if (members[i] == usersClassArray[j].sur_name) {
+        userIDs.push(usersClassArray[j].id);
+      }
+    }
+  }
+  console.log(userIDs);
+  return userIDs;
 }
 
 // Writes the formdata to database
@@ -109,6 +125,7 @@ function CreateProjectModal({
   onHide,
   users,
   tags,
+  usersClassArray,
 }: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
@@ -230,16 +247,6 @@ function CreateProjectModal({
     setTextValue(event.target.value);
   };
 
-  // const handleConfirm = () => {
-  //   //tags.push(textValue);
-  //   const tag = {
-  //     description: textValue,
-  //   };
-  //   addTags(tag);
-  //   setTextValue(""); // Nollställ textfältet
-  //   handleAlternativeClick1(tag.description);
-  // };
-
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
     // Prevent the browser from reloading the page
@@ -250,17 +257,19 @@ function CreateProjectModal({
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
+    // Remove logged in user from members list
+
     const projectData = {
       title: formJson.title,
       centrum: centrum,
       place: place,
       clinic: department,
       closed: false,
-      phase: 1,
+      phase: 2,
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
-      project_members: selectedMembers,
+      project_members: findUserIds(selectedMembers, usersClassArray),
       purpose: purpose,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),

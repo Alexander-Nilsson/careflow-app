@@ -17,6 +17,16 @@ import {
 import { db } from "../firebase";
 
 var users: any[] = [];
+var usersClassArray: any[] = [];
+
+export class userIDname {
+  id: string;
+  sur_name: string;
+  constructor(id: string, sur_name: string) {
+    this.id = id;
+    this.sur_name = sur_name;
+  }
+}
 
 async function fetchUsers() {
   const q = query(collection(db, "users"));
@@ -32,6 +42,7 @@ async function fetchUsers() {
 
     if (!users.includes(userData.sur_name)) {
       users.push(userData.sur_name);
+      usersClassArray.push(new userIDname(id, userData.sur_name));
     }
   });
 }
@@ -169,6 +180,7 @@ function CreateNewProject() {
         onHide={modalClose}
         users={users}
         tags={tags}
+        usersClassArray={usersClassArray}
       />
     </div>
   );
