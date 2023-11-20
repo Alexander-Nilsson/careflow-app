@@ -11,7 +11,14 @@ import { db } from "../firebase";
 import { useAuth0 } from "@auth0/auth0-react";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
-import { userIDname } from "./CreateNewProject";
+import {
+  transformBulletPoints,
+  handleKeyPressBulletPoint,
+  handleFocusBulletPoint,
+  handleFocusBulletPointGoals,
+  handleKeyPressBulletPointGoals,
+  findUserIds,
+} from "./CreateProjectModalHelp";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -39,6 +46,16 @@ const ButtonStyle = {
   marginTop: "50px",
 };
 
+const ButtonStyleGrey = {
+  backgroundColor: "grey",
+  fontFamily: "Avenir",
+  fontSize: "17px",
+  padding: "10px 20px",
+  border: "none",
+  cursor: "not-allowed",
+  marginTop: "50px",
+};
+
 const IconCircleStyle = {
   borderRadius: "50%",
   width: "35px",
@@ -61,34 +78,6 @@ interface CreateProjectModalProps {
   users: any[];
   tags: any[];
   usersClassArray: any[];
-}
-
-function transformBulletPoints(value: string) {
-  // Split the value by newline characters to get an array of lines
-  let lines = value.split("\n");
-
-  // Remove the bullet points from each line
-  lines = lines.map((line) => line.replace("+ ", ""));
-  lines = lines.map((line) => line.replace("◯ ", ""));
-  lines = lines.map((line) => line.replace("+", ""));
-  lines = lines.map((line) => line.replace("◯", ""));
-
-  // Remove any empty lines
-  lines = lines.filter((line) => line !== "");
-
-  return lines;
-}
-
-function findUserIds(members: string[], usersClassArray: userIDname[]) {
-  let userIDs = [];
-  for (let i = 0; i < members.length; i++) {
-    for (let j = 0; j < usersClassArray.length; j++) {
-      if (members[i] == usersClassArray[j].sur_name) {
-        userIDs.push(usersClassArray[j].id);
-      }
-    }
-  }
-  return userIDs;
 }
 
 // Writes the formdata to database
@@ -116,11 +105,15 @@ function CreateProjectModal({
   const [ideaError, setIdeaError] = useState(false);
 
   // States for saving text entered by user
+  const [title, setTitle] = useState("");
   const [purpose, setPurpose] = useState("");
   const [ideas, setIdeas] = useState("");
   const [measure, setMeasure] = useState("");
   const [goals, setGoals] = useState("");
   const [newTag, setTags] = useState("");
+
+  // Check if both title and ideas are filled in
+  const isFormFilled = title.trim() !== "" && ideas.trim() !== "";
 
   //User specific data
   const [name, setName] = useState<String>("Namn ej funnet");
@@ -171,46 +164,6 @@ function CreateProjectModal({
     }
   }, [user]);
 
-  const handleKeyPressBulletPoint = (
-    e: any,
-    setter: (value: string) => void,
-    currentValue: string
-  ) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setter(currentValue + "\n+ ");
-    }
-  };
-
-  const handleFocusBulletPoint = (
-    currentValue: string,
-    setter: (value: string) => void
-  ) => {
-    if (currentValue === "") {
-      setter("+ ");
-    }
-  };
-
-  const handleKeyPressBulletPointGoals = (
-    e: any,
-    setter: (value: string) => void,
-    currentValue: string
-  ) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setter(currentValue + "\n◯ ");
-    }
-  };
-
-  const handleFocusBulletPointGoals = (
-    currentValue: string,
-    setter: (value: string) => void
-  ) => {
-    if (currentValue === "") {
-      setter("◯ ");
-    }
-  };
-
   //console.log(newTag);
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
@@ -238,7 +191,6 @@ function CreateProjectModal({
       const updatedChosenMembers = [...selectedTags, chosenMember];
       setSelectedTags(updatedChosenMembers);
     }
-    //fetchTags();
   };
 
   // is executed when submit button is pressed
@@ -315,10 +267,13 @@ function CreateProjectModal({
       },
     };
 
-    // Check if title is entered by user
-    if (!formJson.title) {
+    // Check if necessary is entered by user
+    if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
-      setTitleError(false);
+      setIdeaError(true);
+    } else if (!formJson.title) {
+      setTitleError(true); // Show error message
+      setIdeaError(false);
       return; // Stop the function to prevent sending data and closing the modal
     } else if (projectData.ideas.length == 0) {
       setIdeaError(true);
@@ -354,6 +309,7 @@ function CreateProjectModal({
               name="title"
               type="text"
               className="form-control"
+              onChange={(e) => setTitle(e.target.value)}
               // förhindra att trycka på enter stänger modalen
               onKeyDown={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -612,7 +568,7 @@ function CreateProjectModal({
             <Button
               type="submit"
               id="SkapaFörbättringsarbete"
-              style={ButtonStyle}
+              style={!isFormFilled ? ButtonStyleGrey : ButtonStyle}
             >
               Skicka in förbättringsarbete
             </Button>
