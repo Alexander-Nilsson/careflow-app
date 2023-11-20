@@ -93,9 +93,23 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
     // så att det funkar som vi sa.
     useEffect(() => {
-        const tags = findTagOptions(allImprovementWorks);
+        const fetchTagsForFilter = (filter: string) => {
+            let filteredWorks: ImprovementWork[] = [];
+            if (filter === "user") {
+                const userFilterState = { ...filterState, filter: "user", tagFilter: "all_tags" };
+                filteredWorks = filterImprovementWorks(allImprovementWorks, userFilterState);
+            } else if (filter === "clinic") {
+                const clinicFilterState = { ...filterState, filter: "clinic", tagFilter: "all_tags" };
+                filteredWorks = filterImprovementWorks(allImprovementWorks, clinicFilterState);
+            }
+    
+            const tags = findTagOptions(filteredWorks);
+            return tags;
+        };
+    
+        const tags = fetchTagsForFilter(filterState.filter);
         setTagOptions(tags);
-    }, []);
+    }, [filterState.filter]);
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
