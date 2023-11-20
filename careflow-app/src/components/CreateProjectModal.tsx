@@ -47,7 +47,7 @@ const ButtonStyle = {
 };
 
 const ButtonStyleGrey = {
-  backgroundColor: "grey",
+  backgroundColor: "lightgrey",
   fontFamily: "Avenir",
   fontSize: "17px",
   padding: "10px 20px",
@@ -308,6 +308,7 @@ function CreateProjectModal({
             <input
               name="title"
               type="text"
+              value={title}
               className="form-control"
               onChange={(e) => setTitle(e.target.value)}
               // förhindra att trycka på enter stänger modalen
