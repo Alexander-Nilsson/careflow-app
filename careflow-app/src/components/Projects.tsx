@@ -6,6 +6,7 @@ import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
 import { UserInfoType, getUser } from "./Start";
+import FinishedProjectsSection from "./FinishedProjectsSection";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -93,7 +94,7 @@ function Projects() {
           <CreateNewProject />
         </div>
       </div>
-      {/* Display "Admin user" text if the user is an admin */}
+      {/* TEMP  Display "Admin user" text if the user is an admin */}
       {userInfo?.admin && <p>Admin user</p>}
 
       <ProjectContext.Provider
@@ -104,7 +105,15 @@ function Projects() {
       >
         <KanbanBoard />
       </ProjectContext.Provider>
-      {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
+
+      {isAuthenticated && userInfo ? (
+        <FinishedProjectsSection
+          userInfo={userInfo}
+          improvementWorks={improvementWorkList}
+        />
+      ) : (
+        <p>Loading...</p> // Show a loading indicator
+      )}
     </>
   );
 }
