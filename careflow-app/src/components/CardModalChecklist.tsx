@@ -42,16 +42,18 @@ interface cardModalChecklistProps {
     checklist_done: Array<boolean>;
     checklist_members: Array<string>;
   };
-  checklistDone: Array<boolean>;
+  setChecklistItems: React.Dispatch<React.SetStateAction<string[]>>;
   setChecklistDone: React.Dispatch<React.SetStateAction<boolean[]>>;
+  setChecklistMembers: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 function CardModalChecklist({
   project_leader,
   project_members,
   checklist,
-  checklistDone,
+  setChecklistItems,
   setChecklistDone,
+  setChecklistMembers,
 }: cardModalChecklistProps) {
   //const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
 
@@ -61,8 +63,6 @@ function CardModalChecklist({
       newChecklistDone[index] = !newChecklistDone[index]; //Change the state of the copy
       return newChecklistDone; //Return the new state
     });
-
-    //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA BOOLEAN-VÄRDET
   };
 
   //Handles the modal that opens up when you create a new checklist task
@@ -79,10 +79,6 @@ function CardModalChecklist({
   //State variables related to the checkbox
   const [selectedMembers, setSelectedMembers] = useState([""]);
   const [newTask, setNewTask] = useState("");
-  const [checklistItem, setChecklistItem] = useState(checklist.checklist_items);
-  const [checklistMembers, setChecklistMembers] = useState(
-    checklist.checklist_members
-  );
 
   //Adds members to a checklist task when their name is clicked
   const handleAlternativeClick = (chosenMember: string) => {
@@ -104,8 +100,8 @@ function CardModalChecklist({
     //Makes sure that the "aktivitet" field is filled before the task can be added
     if (newTask.trim() !== "") {
       setShowTaskModal(false);
-      const updatedChecklistItem = [...checklistItem, newTask];
-      const updatedChecklistDone = [...checklistDone, false];
+      const updatedChecklistItem = [...checklist.checklist_items, newTask];
+      const updatedChecklistDone = [...checklist.checklist_done, false];
 
       //If members have been chosen, convert the selectedMembers array to a string on the (Member 1, Member 2) format. If no one has been chosen, set selectedMembers to "none".
       const selectedMembersString =
@@ -114,11 +110,11 @@ function CardModalChecklist({
           : "none";
 
       const updateChecklistMembers = [
-        ...checklistMembers,
+        ...checklist.checklist_members,
         selectedMembersString,
       ];
 
-      setChecklistItem(updatedChecklistItem);
+      setChecklistItems(updatedChecklistItem);
       setChecklistDone(updatedChecklistDone);
       setChecklistMembers(updateChecklistMembers);
 
@@ -134,13 +130,13 @@ function CardModalChecklist({
           <b>Aktiviteter för att genomföra idén</b>
         </Form.Label>
         <div style={whiteContainerStyle}>
-          {checklistItem.map((item, index) => (
+          {checklist.checklist_items.map((item, index) => (
             <Form.Check
               key={index}
               type="checkbox"
               label={
                 // Print the task followed by the names of the project members assigned to that task (if no one is assigned, only print the task text)
-                checklistMembers[index] === "none" ? (
+                checklist.checklist_members[index] === "none" ? (
                   item
                 ) : (
                   <span>
@@ -152,12 +148,12 @@ function CardModalChecklist({
                         marginLeft: "7px",
                       }}
                     >
-                      ({checklistMembers[index]})
+                      ({checklist.checklist_members[index]})
                     </span>
                   </span>
                 )
               }
-              checked={checklistDone[index]} //Checks if the checkbox should be filled or not based on the state-array "checklistDone"
+              checked={checklist.checklist_done[index]} //Checks if the checkbox should be filled or not based on the state-array "checklistDone"
               onChange={() => handleCheckboxChange(index)} //Handles checkbox changes
             />
           ))}
@@ -170,7 +166,8 @@ function CardModalChecklist({
               padding: "0px",
               border: "none",
               cursor: "pointer",
-              marginTop: "17px",
+              marginTop:
+                checklist.checklist_items.length === 0 ? "0px" : "17px",
             }}
             onClick={handleShowTaskModal}
           >

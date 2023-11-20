@@ -109,7 +109,7 @@ interface cardModalTopLeftProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  goal: Array<string>;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
@@ -163,7 +163,7 @@ function CardModalTopLeft({
   updatedTags,
   setUpdatedTags,
   date_created,
-  goal,
+  goals,
   measure,
   active_tab,
   percentage,
@@ -183,8 +183,6 @@ function CardModalTopLeft({
       (_, index) => index !== indexToRemove
     );
     setUpdatedTags(updatedTagsArray);
-
-    // MÅSTE UPPDATERA DATABASEN HÄR OCKSÅ
   };
 
   const handleShowTagModal = () => {
@@ -202,8 +200,6 @@ function CardModalTopLeft({
       const updatedTagsArray = [...updatedTags, newTag.toLowerCase()];
       setUpdatedTags(updatedTagsArray);
       setNewTag("");
-
-      // MÅSTE UPPDATERA DATABASEN HÄR OCKSÅ
     }
   };
 
@@ -300,7 +296,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
                 onClick={() => handlePhaseUpdate(phase)}
@@ -323,7 +319,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
               >
@@ -347,7 +343,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
                 onClick={() => handlePhaseUpdate(phase)}
@@ -397,9 +393,9 @@ function CardModalTopLeft({
               }
             >
               <div style={whiteDescriptionContainerStyle}>
-                {goal ? (
+                {goals ? (
                   <ul style={{ listStyleType: "none", paddingLeft: "4px" }}>
-                    {goal.map((item, index) => (
+                    {goals.map((item, index) => (
                       <li key={index} style={{ marginBottom: "8px" }}>
                         {"• "}
                         {item}
@@ -467,7 +463,7 @@ function CardModalTopLeft({
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
-                    disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
+                    //disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
                     onChange={() => handleIdeaClick(index)}
                   />
                 ))}
