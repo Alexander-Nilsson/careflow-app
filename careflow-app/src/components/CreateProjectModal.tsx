@@ -12,6 +12,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
 import { userIDname } from "./CreateNewProject";
+import { handleKeyPressBulletPoint, handleFocusBulletPoint, handleFocusBulletPointGoals, handleKeyPressBulletPointGoals } from "./CreateProjectModalHelp";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -171,45 +172,6 @@ function CreateProjectModal({
     }
   }, [user]);
 
-  const handleKeyPressBulletPoint = (
-    e: any,
-    setter: (value: string) => void,
-    currentValue: string
-  ) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setter(currentValue + "\n+ ");
-    }
-  };
-
-  const handleFocusBulletPoint = (
-    currentValue: string,
-    setter: (value: string) => void
-  ) => {
-    if (currentValue === "") {
-      setter("+ ");
-    }
-  };
-
-  const handleKeyPressBulletPointGoals = (
-    e: any,
-    setter: (value: string) => void,
-    currentValue: string
-  ) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setter(currentValue + "\n◯ ");
-    }
-  };
-
-  const handleFocusBulletPointGoals = (
-    currentValue: string,
-    setter: (value: string) => void
-  ) => {
-    if (currentValue === "") {
-      setter("◯ ");
-    }
-  };
 
   //console.log(newTag);
   const handleAlternativeClick = (chosenMember: string) => {
@@ -315,7 +277,7 @@ function CreateProjectModal({
       },
     };
 
-    // Check if title is entered by user
+    // Check if necessary is entered by user
     if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
       setIdeaError(true);
