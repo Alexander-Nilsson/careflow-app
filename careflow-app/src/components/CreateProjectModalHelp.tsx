@@ -1,52 +1,69 @@
-// export handleKeyPressBulletPoint = (
-//     e: any,
-//     setter: (value: string) => void,
-//     currentValue: string
-//   ) => {
-//     if (e.key === "Enter") {
-//       e.preventDefault();
-//       setter(currentValue + "\n+ ");
-//     }
-//   };
+import { userIDname } from "./CreateNewProject";
+
+export function findUserIds(members: string[], usersClassArray: userIDname[]) {
+  let userIDs = [];
+  for (let i = 0; i < members.length; i++) {
+    for (let j = 0; j < usersClassArray.length; j++) {
+      if (members[i] == usersClassArray[j].sur_name) {
+        userIDs.push(usersClassArray[j].id);
+      }
+    }
+  }
+  return userIDs;
+}
 
 export function handleKeyPressBulletPoint(
-    e: any,
-    setter: (value: string) => void,
-    currentValue: string
-  ) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setter(currentValue + "\n+ ");
-    }
-};
+  e: any,
+  setter: (value: string) => void,
+  currentValue: string
+) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    setter(currentValue + "\n+ ");
+  }
+}
 
 export function handleFocusBulletPoint(
-    currentValue: string,
-    setter: (value: string) => void
-  ) {
-    if (currentValue === "") {
-      setter("+ ");
-    }
-};
+  currentValue: string,
+  setter: (value: string) => void
+) {
+  if (currentValue === "") {
+    setter("+ ");
+  }
+}
 
 export function handleKeyPressBulletPointGoals(
-    e: any,
-    setter: (value: string) => void,
-    currentValue: string
-  ){
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setter(currentValue + "\n◯ ");
-    }
-  };
+  e: any,
+  setter: (value: string) => void,
+  currentValue: string
+) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    setter(currentValue + "\n◯ ");
+  }
+}
 
 export function handleFocusBulletPointGoals(
-    currentValue: string,
-    setter: (value: string) => void
-  ){
-    if (currentValue === "") {
-      setter("◯ ");
-    }
-  };
+  currentValue: string,
+  setter: (value: string) => void
+) {
+  if (currentValue === "") {
+    setter("◯ ");
+  }
+}
 
-  
+export function transformBulletPoints(value: string) {
+  // Split the value by newline characters to get an array of lines
+  let lines = value.split("\n");
+
+  // Remove the bullet points from each line
+  lines = lines.map((line) => line.replace("+ ", ""));
+  lines = lines.map((line) => line.replace("◯ ", ""));
+  lines = lines.map((line) => line.replace("+", ""));
+  lines = lines.map((line) => line.replace("◯", ""));
+
+  // Remove any empty lines
+  lines = lines.filter((line) => line !== "");
+
+  return lines;
+}
