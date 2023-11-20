@@ -72,22 +72,25 @@ function Projects() {
           height: "150px",
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "baseline",
-          marginTop: "20px",
+          //alignItems: "baseline",
+          //marginTop: "20px",
+          whiteSpace: "pre-line"
         }}
       >
         <TitleBox
           title={"Förändringsarbeten"}
-          description="Här kan du bläddra bland pågående projekt och se vilken status de har.
-        Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
-        Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
+          description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
+        Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
+          Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
         ></TitleBox>
         <div
           style={{
             width: "30%",
             height: "140px",
             margin: "0px",
-            display: "flex",
+            marginRight: " 4vw",
+            marginTop: "2vh",
+           display: "flex",
             justifyContent: "flex-end",
           }}
         >
