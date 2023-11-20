@@ -316,9 +316,12 @@ function CreateProjectModal({
     };
 
     // Check if title is entered by user
-    if (!formJson.title) {
+    if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
-      setTitleError(false);
+      setIdeaError(true);
+    } else if (!formJson.title) {
+      setTitleError(true); // Show error message
+      setIdeaError(false);
       return; // Stop the function to prevent sending data and closing the modal
     } else if (projectData.ideas.length == 0) {
       setIdeaError(true);
