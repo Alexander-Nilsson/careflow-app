@@ -1,16 +1,17 @@
-import React, { useState } from "react"; //Nytt
-import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
+import React, { useState, useEffect } from "react"; //Nytt
+import { Modal, Button, Form } from "react-bootstrap";
 import {
   BarChart,
   Lightbulb,
   Bullseye,
-  QuestionCircleFill,
+  EnvelopePaper,
 } from "react-bootstrap-icons";
-import { doc, setDoc, addDoc, Timestamp } from "firebase/firestore";
+import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { useAuth0 } from "@auth0/auth0-react";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
-import Nav from "react-bootstrap/Nav";
+import { userIDname } from "./CreateNewProject";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -57,110 +58,292 @@ const FlexAndCenter = {
 interface CreateProjectModalProps {
   show: boolean;
   onHide: () => void;
+  users: any[];
+  tags: any[];
+  usersClassArray: any[];
+}
+
+function transformBulletPoints(value: string) {
+  // Split the value by newline characters to get an array of lines
+  let lines = value.split("\n");
+
+  // Remove the bullet points from each line
+  lines = lines.map((line) => line.replace("+ ", ""));
+  lines = lines.map((line) => line.replace("◯ ", ""));
+  lines = lines.map((line) => line.replace("+", ""));
+  lines = lines.map((line) => line.replace("◯", ""));
+
+  // Remove any empty lines
+  lines = lines.filter((line) => line !== "");
+
+  return lines;
+}
+
+function findUserIds(members: string[], usersClassArray: userIDname[]) {
+  let userIDs = [];
+  for (let i = 0; i < members.length; i++) {
+    for (let j = 0; j < usersClassArray.length; j++) {
+      if (members[i] == usersClassArray[j].sur_name) {
+        userIDs.push(usersClassArray[j].id);
+      }
+    }
+  }
+  return userIDs;
 }
 
 // Writes the formdata to database
-async function sendToDataBase(formJson: any) {
-  console.log(formJson);
-
-  // Temp solution to avoid crash
-  const checklist_act_map = {
-    checklist_done: [false],
-    checklist_item: ["Köp fika"],
-    checklist_members: [""],
-  };
-  const checklist_plan_map = {
-    checklist_done: [false],
-    checklist_item: ["Planera fika"],
-    checklist_members: [""],
-  };
-  const checklist_study_map = {
-    checklist_done: [false],
-    checklist_item: ["Studera fika"],
-    checklist_members: [""],
-  };
-  const checklist_do_map = {
-    checklist_done: [false],
-    checklist_item: ["Gör fika"],
-    checklist_members: [""],
-  };
-
-  const allData = {
-    id: 42,
-    centrum: "Ett centrum",
-    checklist_act: checklist_act_map,
-    checklist_do: checklist_do_map,
-    checklist_plan: checklist_plan_map,
-    checklist_study: checklist_study_map,
-    clinic: "en klinik",
-    closed: false,
-    phase: 1,
-    date_created: new Timestamp(0, 0),
-    tags: ["en tag", "en till tag"],
-    place: "US Linköping",
-    description: "En beskrivning av projektet",
-    title: "En titel för projektet",
-  };
-
-  await setDoc(doc(db, "projects", "Sample Project"), allData);
-
-  //await setDoc(doc(db, "projects", formJson.title), formJson);
+async function sendToDataBase(projectData: object) {
+  try {
+    const docRef = await addDoc(
+      collection(db, "improvementWorks"),
+      projectData
+    );
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
 }
 
-function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
-  const [selectedPhase, setselectedPhase] = useState(1); // State for tracking the selected phase/pill
+function CreateProjectModal({
+  show,
+  onHide,
+  users,
+  tags,
+  usersClassArray,
+}: CreateProjectModalProps) {
+  // States for error messages
+  const [titleError, setTitleError] = useState(false);
+  const [ideaError, setIdeaError] = useState(false);
+
+  // States for saving text entered by user
+  const [purpose, setPurpose] = useState("");
+  const [ideas, setIdeas] = useState("");
+  const [measure, setMeasure] = useState("");
+  const [goals, setGoals] = useState("");
+  const [newTag, setTags] = useState("");
+
+  //User specific data
+  const [name, setName] = useState<String>("Namn ej funnet");
+  const [department, setDepartment] = useState<String>("Avdelning ej funnen");
+  const [role, setRole] = useState<String>("Roll ej funnen");
+  const [place, setPlace] = useState<String>("Plats ej funnen");
+  const [centrum, setCentrum] = useState<String>("Centrum ej funnen");
+  const [userID, setUserID] = useState<string>("UserID");
+
+  // To handle tags and members in dropdown menus
+  type MembersState = string[];
+  type TagState = string[];
+  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
+  const [selectedTags, setSelectedTags] = useState<TagState>([]);
+
+  const { isAuthenticated, isLoading, user } = useAuth0();
+
+  //Getting data from the active user
+  async function getUser2(username: string) {
+    const docRef = doc(db, "users", username);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      //  console.log("Document data:", docSnap.data());
+      setName(docSnap.data().first_name);
+      setDepartment(docSnap.data().clinic);
+      setRole(docSnap.data().profession);
+      setPlace(docSnap.data().place);
+      setCentrum(docSnap.data().centrum);
+      setUserID(username);
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
+    return docSnap.data();
+  }
+  async function setItems() {
+    if (user?.name) {
+      getUser2(user.name);
+    }
+  }
+  useEffect(() => {
+    async function fetchData() {
+      await setItems(); //async function ensures that goal has been fetched before fetching projects
+    }
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
+  const handleKeyPressBulletPoint = (
+    e: any,
+    setter: (value: string) => void,
+    currentValue: string
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setter(currentValue + "\n+ ");
+    }
+  };
+
+  const handleFocusBulletPoint = (
+    currentValue: string,
+    setter: (value: string) => void
+  ) => {
+    if (currentValue === "") {
+      setter("+ ");
+    }
+  };
+
+  const handleKeyPressBulletPointGoals = (
+    e: any,
+    setter: (value: string) => void,
+    currentValue: string
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setter(currentValue + "\n◯ ");
+    }
+  };
+
+  const handleFocusBulletPointGoals = (
+    currentValue: string,
+    setter: (value: string) => void
+  ) => {
+    if (currentValue === "") {
+      setter("◯ ");
+    }
+  };
+
+  //console.log(newTag);
+  const handleAlternativeClick = (chosenMember: string) => {
+    //If the selected member already has been chosen, remove from the array
+    if (selectedMembers.includes(chosenMember)) {
+      const updatedChosenMembers = selectedMembers.filter(
+        (member) => member !== chosenMember
+      );
+      setSelectedMembers(updatedChosenMembers);
+      //If the selected member has not already been chosen, add the member to the array
+    } else {
+      const updatedChosenMembers = [...selectedMembers, chosenMember];
+      setSelectedMembers(updatedChosenMembers);
+    }
+  };
+
+  const handleAlternativeClick1 = (chosenMember: string) => {
+    //If the selected member already has been chosen, remove from the array
+    if (selectedTags.includes(chosenMember)) {
+      const updatedChosenMembers = selectedTags.filter(
+        (member) => member !== chosenMember
+      );
+      setSelectedTags(updatedChosenMembers);
+      //If the selected member has not already been chosen, add the member to the array
+    } else {
+      const updatedChosenMembers = [...selectedTags, chosenMember];
+      setSelectedTags(updatedChosenMembers);
+    }
+    //fetchTags();
+  };
 
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
     // Prevent the browser from reloading the page
     e.preventDefault();
 
-    // Read the form data
+    // Gather info from textfields
     const form = e.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
-    formJson.phase = selectedPhase.toString();
 
-    let allFieldsFilled = true;
-    let emptyFields = []; // Keep track of empty fields
+    let project_members = findUserIds(selectedMembers, usersClassArray);
+    // Remove logged in user from members list
+    project_members = project_members.filter((item) => item != userID);
 
-    for (const [key, value] of Object.entries(formJson)) {
-      if (value === "") {
-        allFieldsFilled = false;
-        emptyFields.push(key); // Add the key of the empty field to the array
-      }
-    }
+    const projectData = {
+      title: formJson.title,
+      centrum: centrum,
+      place: place,
+      clinic: department,
+      closed: false,
+      phase: 2, // planning phase is phase 2?
+      date_created: Timestamp.fromDate(new Date()),
+      date_last_updated: Timestamp.fromDate(new Date()),
+      project_leader: userID,
+      project_members: findUserIds(selectedMembers, usersClassArray),
+      purpose: purpose,
+      goals: transformBulletPoints(goals),
+      ideas: transformBulletPoints(ideas),
+      measure: transformBulletPoints(measure),
+      tags: selectedTags,
+      total_iterations: 1,
+      all_iterations: {
+        iteration1: {
+          plan: {
+            checklist: {
+              checklist_items: ["En sak som ska göras"],
+              checklist_done: [false],
+              checklist_members: ["none"],
+            },
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
+            notes: "Planerings nteckningar",
+          },
+          do: {
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
+            notes: "Göra anteckningar",
+            idea: "vald ide?", // is this supposed to be here?
+            results: "Resulterat resultat",
+          },
+          study: {
+            analysis: "analys av resultatet",
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
+            notes: "Studerings anteckningar",
+          },
+          act: {
+            notes: "Agerande anteckningar",
+            files: {
+              file_names: ["protokoll.txt"],
+              file_descriptions: ["ett protokoll"],
+            },
+            choice: "Selected choice",
+          },
+        },
+      },
+    };
 
-    // If all fields are filled, or the user confirms they want to submit with empty fields
-    if (
-      allFieldsFilled ||
-      (emptyFields.length > 0 &&
-        window.confirm(
-          `Some fields are empty: ${emptyFields.join(
-            ", "
-          )}. Are you sure you want to submit the form?`
-        ))
-    ) {
-      sendToDataBase(formJson);
+    // Check if title is entered by user
+    if (!formJson.title) {
+      setTitleError(true); // Show error message
+      setTitleError(false);
+      return; // Stop the function to prevent sending data and closing the modal
+    } else if (projectData.ideas.length == 0) {
+      setIdeaError(true);
+      setTitleError(false);
+      return;
     } else {
-      // If not all fields are filled and the user does not confirm, handle it here
-      console.log("Form submission cancelled.");
-      e.preventDefault();
+      setTitleError(false); // Hide error message
+      setIdeaError(false);
+      // Clear textfields
+      setPurpose("");
+      setIdeas("");
+      setMeasure("");
+      setGoals("");
+      sendToDataBase(projectData);
+      onHide(); // Only close the modal if the title is provided
     }
   }
+
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <div>
           <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
         </div>
-        {/* <OverlayTrigger
-          trigger={["hover", "focus"]}
-          placement="right"
-          overlay={HelpPopover}
-        >
-          <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
-        </OverlayTrigger> */}
+        <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
@@ -171,54 +354,32 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               name="title"
               type="text"
               className="form-control"
-              // this is to prevent it from submitting when pressing enter
-              onKeyPress={(
+              // förhindra att trycka på enter stänger modalen
+              onKeyDown={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => {
                 e.key === "Enter" && e.preventDefault();
               }}
             ></input>
-            {/* Phase selection */}
-            <label style={TitleStyle}>PGSA</label>
-            <Nav variant="pills" justify defaultActiveKey={1}>
-              <Nav.Item>
-                <Nav.Link eventKey={1} onClick={() => setselectedPhase(1)}>
-                  Planera
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey={2} onClick={() => setselectedPhase(2)}>
-                  Göra
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey={3} onClick={() => setselectedPhase(3)}>
-                  Studera
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey={4} onClick={() => setselectedPhase(4)}>
-                  Agera
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
+            {titleError && (
+              <div style={{ color: "red" }}>Vänligen ange en titel</div>
+            )}
           </div>
-
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
-                <Bullseye
+                <EnvelopePaper
                   style={{
-                    color: "#FD0B0B",
+                    color: "black",
                     width: "20px",
                     height: "20px",
                   }}
                 />
               </div>
               <div>
-                <label style={TitleStyle}>Mål och syfte</label>
+                <label style={TitleStyle}>Syfte</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Vad vill vi åstadkomma med förändringen?
+                  Vad är syftet med förändringen?
                 </div>
               </div>
             </div>
@@ -233,26 +394,57 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span
-                  className="input-group-text"
-                  style={{ border: "none", background: "white" }}
-                >
-                  +
-                </span>
-                <input
-                  name="malochsyfte"
-                  type="text"
+                <textarea
+                  name="purpose"
                   className="form-control"
-                  placeholder="Lägg till"
-                  style={{ border: "none" }}
-                  onKeyPress={(
-                    e: React.KeyboardEvent<
-                      HTMLInputElement | HTMLTextAreaElement
-                    >
-                  ) => {
-                    e.key === "Enter" && e.preventDefault();
+                  style={{ border: "none", height: "98px" }}
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div className="mb-3">
+            <div style={FlexAndCenter}>
+              <div style={IconCircleStyle}>
+                <Bullseye
+                  style={{
+                    color: "#FD0B0B",
+                    width: "20px",
+                    height: "20px",
                   }}
-                ></input>
+                />
+              </div>
+              <div>
+                <label style={TitleStyle}>Mål</label>
+                <div className="form-text" style={DescriptiveTextStyle}>
+                  Vad vill du uppnå med förbättringen?
+                </div>
+              </div>
+            </div>
+            <div className="card" style={{ height: "100px" }}>
+              <div
+                className="input-group input-group-sm"
+                style={{
+                  position: "absolute",
+                  left: "0",
+                  right: "0",
+                  marginBottom: "0",
+                  fontFamily: "Avenir",
+                }}
+              >
+                <textarea
+                  name="goals"
+                  className="form-control"
+                  placeholder="◯ Lägg till"
+                  style={{ border: "none", height: "98px" }}
+                  value={goals}
+                  onChange={(e) => setGoals(e.target.value)}
+                  onKeyDown={(e) =>
+                    handleKeyPressBulletPointGoals(e, setGoals, goals)
+                  }
+                  onFocus={() => handleFocusBulletPointGoals(goals, setGoals)}
+                ></textarea>
               </div>
             </div>
           </div>
@@ -271,7 +463,7 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               <div>
                 <label style={TitleStyle}>Mäta och följa upp</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Hur vet vi om förändringen är en förbättring?
+                  Hur mäter vi om förändringen gör skillnad?
                 </div>
               </div>
             </div>
@@ -286,27 +478,18 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span
-                  className="input-group-text"
-                  style={{ border: "none", background: "white" }}
-                >
-                  +
-                </span>
-                <input
-                  name="mataochfoljaupp"
-                  type="text"
+                <textarea
+                  name="measure"
                   className="form-control"
-                  placeholder="Lägg till"
-                  style={{ border: "none" }}
-                  // this is to prevent it from submitting when pressing enter
-                  onKeyPress={(
-                    e: React.KeyboardEvent<
-                      HTMLInputElement | HTMLTextAreaElement
-                    >
-                  ) => {
-                    e.key === "Enter" && e.preventDefault();
-                  }}
-                ></input>
+                  placeholder="+ Lägg till"
+                  style={{ border: "none", height: "98px" }}
+                  value={measure}
+                  onChange={(e) => setMeasure(e.target.value)}
+                  onKeyDown={(e) =>
+                    handleKeyPressBulletPoint(e, setMeasure, measure)
+                  }
+                  onFocus={() => handleFocusBulletPoint(measure, setMeasure)}
+                ></textarea>
               </div>
             </div>
           </div>
@@ -325,10 +508,13 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
               <div>
                 <label style={TitleStyle}>Samla idéer</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Vilka förändringar kan vi göra som leder till en förbättring?
+                  Brainstorma idéer för för nå målen
                 </div>
               </div>
             </div>
+            {ideaError && (
+              <div style={{ color: "red" }}>Minst en idé måste anges</div>
+            )}
             <div className="card" style={{ height: "100px" }}>
               <div
                 className="input-group input-group-sm"
@@ -340,86 +526,92 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
                   fontFamily: "Avenir",
                 }}
               >
-                <span
-                  className="input-group-text"
-                  style={{ border: "none", background: "white" }}
-                >
-                  +
-                </span>
-                <input
+                <textarea
                   name="samlaideer"
-                  type="text"
                   className="form-control"
-                  placeholder="Lägg till"
-                  style={{ border: "none" }}
-                  onKeyPress={(
-                    e: React.KeyboardEvent<
-                      HTMLInputElement | HTMLTextAreaElement
-                    >
-                  ) => {
-                    e.key === "Enter" && e.preventDefault();
-                  }}
-                ></input>
+                  placeholder="+ Lägg till"
+                  style={{ border: "none", height: "98px" }}
+                  value={ideas}
+                  onChange={(e) => setIdeas(e.target.value)}
+                  onKeyDown={(e) =>
+                    handleKeyPressBulletPoint(e, setIdeas, ideas)
+                  }
+                  onFocus={() => handleFocusBulletPoint(ideas, setIdeas)}
+                />
               </div>
             </div>
           </div>
-          <div className="mb-3 text-center">
-            <label style={TitleStyle}>Lägg till en beskrivning</label>
-            <input
-              name="description"
-              type="text"
-              className="form-control"
-              // this is to prevent it from submitting when pressing enter
-              onKeyPress={(
-                e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-              ) => {
-                e.key === "Enter" && e.preventDefault();
+          <Dropdown>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
               }}
-            ></input>
-          </div>
-
-          <div className="mb-3 text">
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
-                Lägg till avdelning
-              </Dropdown.Toggle>
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-          <div className="mb-3 text-center">
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" style={{ width: "100%" }}>
-                Lägg till kollegor
-              </Dropdown.Toggle>
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-          <div className="mb-3 text-center">
-            <Dropdown>
-              <Dropdown.Toggle id="-basic" style={{ width: "100%" }}>
-                Lägg till beskrivande nyckelord
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
+            >
+              Lägg till kollegor
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {users.map((member) => (
+                <Dropdown.Item
+                  style={{
+                    fontWeight: selectedMembers.includes(member)
+                      ? "bold"
+                      : "normal",
+                  }}
+                  onClick={() => handleAlternativeClick(member)}
+                >
+                  {member}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <Dropdown key={tags.length}>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
+              }}
+            >
+              Lägg till beskrivande nyckelord
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {/* <div style={{ display: "flex", alignItems: "center" }}>
+                <Form.Control
+                  type="text"
+                  placeholder="Lägg till egna nyckelord"
+                  value={textValue}
+                  onChange={handleTextChange}
+                  className="mr-sm-2"
+                  style={{ width: "80%" }}
+                />
+                <Button
+                  variant="primary"
+                  onClick={handleConfirm}
+                  style={{ marginRight: "0" }}
+                >
+                  Lägg till
+                </Button>
+              </div> */}
+              {tags.map((tag) => (
+                <Dropdown.Item
+                  style={{
+                    fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
+                  }}
+                  onClick={() => handleAlternativeClick1(tag)}
+                >
+                  {tag}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
           <div className="mb-3 text-center">
             <Button
               type="submit"
               id="SkapaFörbättringsarbete"
-              onClick={onHide}
               style={ButtonStyle}
             >
               Skicka in förbättringsarbete
@@ -430,5 +622,4 @@ function CreateProjectModal({ show, onHide }: CreateProjectModalProps) {
     </Modal>
   );
 }
-
 export default CreateProjectModal;

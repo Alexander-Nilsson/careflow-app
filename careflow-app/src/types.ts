@@ -16,6 +16,12 @@ export type Project = {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  result_measurements: string,
+  result_analysis: string;
+  notes_plan: string,
+  notes_do: string,
+  notes_study: string,
+  notes_act: string,
   project_leader: DocumentReference<DocumentData>;
   project_members: Array<string>;
   checklist_plan: {
@@ -38,4 +44,5 @@ export type Project = {
     checklist_done: Array<boolean>;
     checklist_members: Array<string>;
   };
+
 };

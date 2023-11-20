@@ -4,12 +4,12 @@ const ButtonStyle: React.CSSProperties = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "20px",
-  top: "260px",
-  left: "860px",
-  padding: "10px 20px",
+  padding: "20px",
   border: "none",
   cursor: "pointer",
-  position: "absolute",
+  marginBottom: "0px",
+  display: "flex", // Added for inline elements
+  alignItems: "center", // Added to align items vertically
 };
 
 interface CreateProjectButtonProps {
@@ -19,12 +19,12 @@ interface CreateProjectButtonProps {
 function CreateProjectButton({ onClick }: CreateProjectButtonProps) {
   return (
     <Button id="NyttFörbättringsarbete" onClick={onClick} style={ButtonStyle}>
-      Nytt förbättringsarbete
       <img
         src="./Plus.png"
         alt="Image"
-        style={{ width: "20px", height: "20px", marginLeft: "15px" }}
+        style={{ width: "20px", height: "20px", marginRight: "10px" }}
       />
+      Nytt förbättringsarbete
     </Button>
   );
 }
