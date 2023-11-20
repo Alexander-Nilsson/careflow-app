@@ -92,10 +92,7 @@ function Start() {
             <IdeasSection userInfo={userInfo} />
             <ProgressSection improvementWorks={improvementWorks} />
           </div>
-          <FinishedProjectsSection
-            userInfo={userInfo}
-            improvementWorks={improvementWorks}
-          />
+          {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
       ) : (
         <p>Loading...</p> // Show a loading indicator
