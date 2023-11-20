@@ -2,14 +2,11 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import {
-  getAllProjects,
-  Project,
-  getAllImprovementWorks,
-  ImprovementWork,
-} from "../ImprovementWorkLib";
+import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
+import { UserInfoType, getUser } from "./Start";
+import FinishedProjectsSection from "./FinishedProjectsSection";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -24,6 +21,9 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 function Projects() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth0();
+
+  // for admin func
+  const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
 
   const [improvementWorkList, setImprovementWorkList] = useState<
     ImprovementWork[]
@@ -47,6 +47,12 @@ function Projects() {
     if (!isAuthenticated) {
       navigate("/login");
       return;
+    }
+
+    // Fetch user info to check if admin
+    if (user?.name) {
+      getUser(user.name, user, setUserInfo);
+      console.log("User info:", userInfo);
     }
 
     // Fetch projects only if the user is authenticated and data is not loading.
@@ -88,6 +94,8 @@ function Projects() {
           <CreateNewProject />
         </div>
       </div>
+      {/* TEMP  Display "Admin user" text if the user is an admin */}
+      {userInfo?.admin && <p>Admin user</p>}
 
       <ProjectContext.Provider
         value={{
@@ -97,7 +105,15 @@ function Projects() {
       >
         <KanbanBoard />
       </ProjectContext.Provider>
-      {/* <FinishedProjectsSection /> */}
+
+      {isAuthenticated && userInfo ? (
+        <FinishedProjectsSection
+          userInfo={userInfo}
+          improvementWorks={improvementWorkList}
+        />
+      ) : (
+        <p>Loading...</p> // Show a loading indicator
+      )}
     </>
   );
 }
