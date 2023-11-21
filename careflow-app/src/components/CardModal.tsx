@@ -55,6 +55,7 @@ interface cardModalProps {
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
+  purpose: string;
   goals: Array<string>;
   ideas_array: Array<string>;
   measure: Array<string>;
@@ -64,6 +65,7 @@ interface cardModalProps {
   notes_do: string;
   notes_study: string;
   notes_act: string;
+  total_iterations: number;
   files_plan: {
     file_descriptions: Array<string>;
     file_names: Array<string>;
@@ -95,6 +97,7 @@ interface modalContentPlanProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  purpose: string;
   goals: Array<string>;
   ideas: {
     text: string;
@@ -136,6 +139,7 @@ interface modalContentDoProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  purpose: string;
   goals: Array<string>;
   ideas: {
     text: string;
@@ -171,6 +175,7 @@ interface modalContentStudyProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  purpose: string;
   goals: Array<string>;
   ideas: {
     text: string;
@@ -206,6 +211,7 @@ interface modalContentActProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  purpose: string;
   goals: Array<string>;
   ideas: {
     text: string;
@@ -316,6 +322,7 @@ function ModalContentPlan({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
@@ -358,6 +365,7 @@ function ModalContentPlan({
           date_created={date_created}
           goals={goals}
           ideas={ideas}
+          purpose={purpose}
           measure={measure}
           place={place}
           centrum={centrum}
@@ -419,6 +427,7 @@ function ModalContentDo({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
@@ -445,6 +454,7 @@ function ModalContentDo({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          purpose={purpose}
           goals={goals}
           ideas={ideas}
           measure={measure}
@@ -499,6 +509,7 @@ function ModalContentStudy({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
@@ -525,6 +536,7 @@ function ModalContentStudy({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          purpose={purpose}
           goals={goals}
           ideas={ideas}
           measure={measure}
@@ -580,6 +592,7 @@ function ModalContentAct({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
@@ -604,6 +617,7 @@ function ModalContentAct({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          purpose={purpose}
           goals={goals}
           ideas={ideas}
           measure={measure}
@@ -659,6 +673,7 @@ function CardModal({
   centrum,
   tags,
   date_created,
+  purpose,
   goals,
   ideas_array,
   measure,
@@ -889,6 +904,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
+                purpose={purpose}
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
@@ -931,6 +947,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
+                purpose={purpose}
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
@@ -967,6 +984,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
+                purpose={purpose}
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
@@ -1003,6 +1021,7 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
+                purpose={purpose}
                 goals={goals}
                 ideas={ideas}
                 measure={measure}

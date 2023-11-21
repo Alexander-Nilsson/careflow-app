@@ -109,6 +109,7 @@ interface cardModalTopLeftProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  purpose: string;
   goals: Array<string>;
   ideas: {
     text: string;
@@ -163,6 +164,7 @@ function CardModalTopLeft({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   measure,
   active_tab,
@@ -373,7 +375,7 @@ function CardModalTopLeft({
                 </span>
               }
             >
-              <div style={whiteDescriptionContainerStyle}>Ett syfte</div>
+              <div style={whiteDescriptionContainerStyle}>{purpose}</div>
             </Tab>
             <Tab
               eventKey="mål"
