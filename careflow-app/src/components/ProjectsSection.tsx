@@ -120,13 +120,13 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
                 </div>
                 <div className="ml-2 mt-2">
                     <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-                        <option selected value="all_tags">Visa alla taggar</option>
+                    <option selected value="all_tags">Visa alla taggar</option>
                         {
                             tagOptions.map((tag) => (
-                                <option key={tag} value={tag}> {tag}</option>
+                                <option key ={tag} value={tag}> {tag}</option>
                             ))
                         }
-
+                       
                     </select>
                 </div>
                 <div className="mt-3 ml-2">
