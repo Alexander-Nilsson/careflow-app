@@ -88,6 +88,7 @@ interface cardModalProps {
     checklist_items: Array<string>;
     checklist_members: Array<string>;
   };
+  closed: boolean;
 }
 
 interface modalContentPlanProps {
@@ -689,6 +690,7 @@ function CardModal({
   project_leader,
   project_members,
   checklist_plan,
+  closed,
 }: cardModalProps) {
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
@@ -751,7 +753,7 @@ function CardModal({
       setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
 
       //Update the database with the cleared field
-      updateDb();
+      //updateDb(); Fixa!!!!
 
       //Här måste vi också byta vald idé i databasen!
     }
@@ -769,8 +771,16 @@ function CardModal({
   }, [updatedProjectPhase]);
 
   const handlePhaseUpdate = (phase: number) => {
-    setUpdatedProjectPhase(phase + 1);
+    if (phase === 5) {
+      onHide();
+      setIsClosed(true);
+    } else {
+      setUpdatedProjectPhase(phase + 1);
+    }
   };
+
+  //State variable that is updated when the improvement work is marked as finished
+  const [isClosed, setIsClosed] = useState(closed);
 
   //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
   const [updatedTags, setUpdatedTags] = useState(tags);
@@ -806,15 +816,23 @@ function CardModal({
     checklist_plan.checklist_members
   );
 
+  //This is run when the user clicks "finish improvement work" in the act-stage, so that the db is updated with closed = true
+  useEffect(() => {
+    if (isClosed) {
+      updateDb();
+    }
+  }, [isClosed]);
+
   //Updates the database with the changes made when the save button is clicked
   async function updateDb() {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       const projectDoc = await getDoc(projectDocRef);
-
+      console.log(isClosed);
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const updatedData = {
+          closed: isClosed,
           phase: updatedProjectPhase, // Updates the phase
           tags: updatedTags, // Updates the tags
           all_iterations: {

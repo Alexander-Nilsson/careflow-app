@@ -31,7 +31,6 @@ function ShowCard({ improvementWork }: ShowCardProps) {
       }
 
       try {
-        console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
@@ -146,6 +145,7 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             checklist_plan={
               improvementWork.all_iterations.iteration1.plan.checklist
             }
+            closed={improvementWork.closed}
           />
         }
       </div>
