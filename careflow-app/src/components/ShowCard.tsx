@@ -7,6 +7,7 @@ import "./ShowCard.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Project, ImprovementWork } from "../ImprovementWorkLib";
+import TrashIcon from "../icons/Trashicon";
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
@@ -18,6 +19,16 @@ function ShowCard({ improvementWork }: ShowCardProps) {
   const [show, setShow] = useState(false);
   const modalClose = () => setShow(false);
   const modalShow = () => setShow(true);
+
+  const handleMouseEnter = () => {
+    setMouseIsOver(true);
+    console.log(`Hovered over card`);
+  };
+
+  const handleMouseLeave = () => {
+    setMouseIsOver(false);
+    console.log(`Left card`);
+  };
 
   // State to toggle edit mode for the task content
   //const [editMode, setEditMode] = useState(true);
@@ -65,12 +76,8 @@ function ShowCard({ improvementWork }: ShowCardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      onMouseEnter={() => {
-        setMouseIsOver(true);
-      }}
-      onMouseLeave={() => {
-        setMouseIsOver(false);
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div>
         <CardButton
@@ -79,6 +86,18 @@ function ShowCard({ improvementWork }: ShowCardProps) {
           date_created={improvementWork.date_created}
           onClick={modalShow}
         />
+        <div>
+          {mouseIsOver && (
+            <button
+              onClick={() => {
+                //deleteTask(task.id);
+              }}
+              className="stroke-black absolute top-0 right-0 p-2 rounded opacity-60 hover:opacity-100 bg-columnBackgroundColor"
+            >
+              <TrashIcon />
+            </button>
+          )}
+        </div>
         {
           <CardModal
             show={show}
