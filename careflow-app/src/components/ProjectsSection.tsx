@@ -15,11 +15,6 @@ type ProjectsSectionProps = {
     allImprovementWorks: ImprovementWork[];
 };
 
-// denna används istället för att ha olika variabler för olika filter.
-// nu samlas alla filter d.v.s. om vi ska visa användarens eller klinikens (filter),
-// vilken tag som ska visas,
-// samt om vi vill ha öppna eller stängda arbeten.
-
 
 function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps) {
 
@@ -35,7 +30,6 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
         } else if (event.target.value == "clinic") {
             setFilterState(prev => ({ ...prev, includeClinic: true }));
         }
-        
     };
 
     // denna uppdaterar vilken tag som ska filtreras på.
@@ -59,7 +53,6 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
         setImprovementWorks(improvementWorks)
         setTagOptions(tags);
         setFilterState(prev => ({ ...prev, includeClinic: false }));
-        
     }, []);
 
     const projectsSectionStyle = {

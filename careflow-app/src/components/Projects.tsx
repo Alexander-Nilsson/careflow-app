@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getAllProjects, Project, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
+import { filterImprovementWorks, FilterState, findTagOptions, getAllProjects, Project, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
 import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
@@ -26,10 +26,16 @@ function Projects() {
     "date_created"
   );
 
-    // const [projectList, setProjectList] = useState<Project[]>([])
+  // const [projectList, setProjectList] = useState<Project[]>([])
+  const [improvementWorkList, setImprovementWorkList] = useState<ImprovementWork[]>([]);
+
 
   // for admin func
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
+  const [allImprovementWorks, setAllImprovementWorks] = useState<ImprovementWork[]>([]);
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
+  const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: false, tagFilter: "all_tags", closed: false });
+
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedSortOption = event.target.value as "date_created" | "oldest_date" | "ascending" | "descending";
@@ -44,15 +50,13 @@ function Projects() {
     } else if (selectedSortOption === "ascending") {
       const sortedProjects = sortByTitleAscending(improvementWorkList);
       setImprovementWorkList(sortedProjects);
-    } else if (selectedSortOption === "descending"){
+    } else if (selectedSortOption === "descending") {
       const sortedProjects = sortByTitleDescending(improvementWorkList);
       setImprovementWorkList(sortedProjects);
     }
   };
 
-  const [improvementWorkList, setImprovementWorkList] = useState<
-    ImprovementWork[]
-  >([]);
+
 
   async function fetchProjects() {
     if (user?.name) {
@@ -60,15 +64,27 @@ function Projects() {
         await getAllImprovementWorks();
       // console.log(fetchedImprovementWorks);
       if (fetchedImprovementWorks)
-        setImprovementWorkList(fetchedImprovementWorks);
+        setAllImprovementWorks(fetchedImprovementWorks);
     }
+  }
+
+  const handleFilter = async (event: any) => {
+    if (event.target.value == "user") {
+      setFilterState(prev => ({ ...prev, includeUser: true }));
+    } else if (event.target.value == "clinic") {
+      setFilterState(prev => ({ ...prev, includeClinic: true }));
+    }
+  };
+
+  // denna uppdaterar vilken tag som ska filtreras på.
+  const handleTags = (event: any) => {
+    setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
   }
 
   useEffect(() => {
     if (isLoading) {
       return;
     }
-
     if (!isAuthenticated) {
       navigate("/login");
       return;
@@ -77,12 +93,29 @@ function Projects() {
     // Fetch user info to check if admin
     if (user?.name) {
       getUser(user.name, user, setUserInfo);
-      console.log("User info:", userInfo);
     }
 
     // Fetch projects only if the user is authenticated and data is not loading.
     fetchProjects();
-  }, [isLoading, isAuthenticated, user]);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (allImprovementWorks) {
+      const tags = findTagOptions(allImprovementWorks)
+      setTagOptions(tags);
+      if (userInfo) {
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+        setImprovementWorkList(filteredImprovementWorks)
+      }
+    }
+  }, [allImprovementWorks])
+
+  useEffect(() => {
+    if (userInfo) {
+      const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+      setImprovementWorkList(filteredImprovementWorks)
+    }
+  }, [filterState])
 
   return (
     <>
@@ -115,7 +148,7 @@ function Projects() {
             margin: "0px",
             marginRight: " 4vw",
             marginTop: "2vh",
-           display: "flex",
+            display: "flex",
             justifyContent: "flex-end",
           }}
         >
@@ -125,10 +158,11 @@ function Projects() {
       {/* TEMP  Display "Admin user" text if the user is an admin */}
       {userInfo?.admin && <p>Admin user</p>}
 
-  
-          <div className="ml-2 mt-2 d-flex align-items-center">
+
+      <div className="d-flex">
+        <div className="ml-2">
           <label htmlFor="sortDropdown" className="form-label me-2">
-            Sortera: 
+            Sortera:
           </label>
           <select
             id="sortDropdown"
@@ -136,7 +170,7 @@ function Projects() {
             className="form-select"
             aria-label="Filtrera"
             onChange={handleSortChange}
-            style={{ width: "8.5rem" }} // Adjust the width as needed
+            // style={{ width: "8.5rem" }} // Adjust the width as needed
           >
             <option selected value="date_created">
               Visa senaste
@@ -148,10 +182,28 @@ function Projects() {
             <option value="descending">Visa ö-a</option>
           </select>
         </div>
-        
-      
-    
-      
+        <div className="ml-2">
+          <label className="form-label me-2">
+            Filtrera:
+          </label>
+          <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
+            <option selected value="user">Visa mina</option>
+            <option value="clinic">Visa klinikens</option>
+          </select>
+        </div>
+        <div className="ml-2 align-self-end">
+          <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
+            <option selected value="all_tags">Visa alla taggar</option>
+            {
+              tagOptions.map((tag) => (
+                <option key={tag} value={tag}> {tag}</option>
+              ))
+            }
+
+          </select>
+        </div>
+      </div>
+
       {/* <ProjectContext.Provider value={{ projectList, setProjectList }}> */}
       <ProjectContext.Provider
         value={{
