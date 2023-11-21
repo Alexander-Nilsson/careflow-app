@@ -753,7 +753,7 @@ function CardModal({
       setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
 
       //Update the database with the cleared field
-      //updateDb(); Fixa!!!!
+      clearDb();
 
       //Här måste vi också byta vald idé i databasen!
     }
@@ -819,6 +819,7 @@ function CardModal({
   //This is run when the user clicks "finish improvement work" in the act-stage, so that the db is updated with closed = true
   useEffect(() => {
     if (isClosed) {
+      console.log("Updating db with closed = true");
       updateDb();
     }
   }, [isClosed]);
@@ -828,7 +829,6 @@ function CardModal({
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       const projectDoc = await getDoc(projectDocRef);
-      console.log(isClosed);
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const updatedData = {
@@ -884,6 +884,70 @@ function CardModal({
 
         await updateDoc(projectDocRef, updatedData);
         console.log("Improvement work updated successfully");
+      }
+    } catch (e) {
+      console.error("Error updating improvement work: ", e);
+    }
+  }
+
+  //Clears the fields in the database when the user changes the chosen idea
+  async function clearDb() {
+    try {
+      const projectDocRef = doc(db, "improvementWorks", projectId);
+      const projectDoc = await getDoc(projectDocRef);
+      if (projectDoc.exists()) {
+        const data = projectDoc.data();
+        const updatedData = {
+          phase: 2, // Updates the phase to plan
+          all_iterations: {
+            ...data.all_iterations,
+            iteration1: {
+              ...data.all_iterations?.iteration1,
+              plan: {
+                ...data.all_iterations?.iteration1?.plan,
+                checklist: {
+                  checklist_done: [],
+                  checklist_items: [],
+                  checklist_members: [],
+                },
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                },
+                notes: [],
+              },
+              do: {
+                ...data.all_iterations?.iteration1?.do,
+                results: [],
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                },
+                notes: [],
+              },
+              study: {
+                ...data.all_iterations?.iteration1?.study,
+                analysis: [],
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                },
+                notes: [],
+              },
+              act: {
+                ...data.all_iterations?.iteration1?.act,
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                },
+                notes: [],
+              },
+            },
+          },
+        };
+
+        await updateDoc(projectDocRef, updatedData);
+        console.log("Improvement work fields cleared successfully");
       }
     } catch (e) {
       console.error("Error updating improvement work: ", e);
