@@ -19,6 +19,8 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
+import { ImprovementWork } from "../ImprovementWorkLib";
+
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
 import { Circle, CheckCircle } from "react-bootstrap-icons";
@@ -48,6 +50,10 @@ const formGroupStyle = {
 interface cardModalProps {
   show: boolean;
   onHide: () => void;
+  improvementWork: ImprovementWork; // passing the improvementWork with all its variables
+  project_leader: string;
+  project_members: Array<string>;
+  /*
   id: Id;
   title: string;
   phase: Id;
@@ -59,6 +65,7 @@ interface cardModalProps {
   goals: Array<string>;
   ideas_array: Array<string>;
   measure: Array<string>;
+  purpose: string;
   result_measurements: string;
   result_analysis: string;
   notes_plan: string;
@@ -89,6 +96,7 @@ interface cardModalProps {
     checklist_items: Array<string>;
     checklist_members: Array<string>;
   };
+  */
 }
 
 interface modalContentPlanProps {
@@ -104,6 +112,7 @@ interface modalContentPlanProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   checklist: {
@@ -146,6 +155,7 @@ interface modalContentDoProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
@@ -182,6 +192,7 @@ interface modalContentStudyProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
@@ -218,6 +229,7 @@ interface modalContentActProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
@@ -326,6 +338,7 @@ function ModalContentPlan({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   checklist,
@@ -367,6 +380,7 @@ function ModalContentPlan({
           ideas={ideas}
           purpose={purpose}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={2}
@@ -431,6 +445,7 @@ function ModalContentDo({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   project_leader,
@@ -458,6 +473,7 @@ function ModalContentDo({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={3}
@@ -513,6 +529,7 @@ function ModalContentStudy({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   project_leader,
@@ -540,6 +557,7 @@ function ModalContentStudy({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={4}
@@ -596,6 +614,7 @@ function ModalContentAct({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   project_leader,
@@ -621,6 +640,7 @@ function ModalContentAct({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={5}
@@ -666,31 +686,39 @@ function ModalContentAct({
 function CardModal({
   show,
   onHide,
-  id,
-  title,
-  phase,
-  place,
-  centrum,
-  tags,
-  date_created,
-  purpose,
-  goals,
-  ideas_array,
-  measure,
-  result_measurements,
-  result_analysis,
-  notes_plan,
-  notes_do,
-  notes_study,
-  notes_act,
-  files_plan,
-  files_do,
-  files_study,
-  files_act,
+  improvementWork,
   project_leader,
   project_members,
-  checklist_plan,
 }: cardModalProps) {
+  // Now, you can directly use the destructured values
+  const {
+    id,
+    title,
+    phase,
+    place,
+    centrum,
+    tags,
+    date_created,
+    goals,
+    ideas: ideas_array, // Renamed from ideas
+    measure,
+    purpose,
+    all_iterations,
+  } = improvementWork;
+
+  // Accessing properties from the all_iterations object
+  const result_measurements = all_iterations?.iteration1?.do?.results || "";
+  const result_analysis = all_iterations?.iteration1?.study?.analysis || "";
+  const notes_plan = all_iterations?.iteration1?.plan?.notes || "";
+  const notes_do = all_iterations?.iteration1?.do?.notes || "";
+  const notes_study = all_iterations?.iteration1?.study?.notes || "";
+  const notes_act = all_iterations?.iteration1?.act?.notes || "";
+  const files_plan = all_iterations?.iteration1?.plan?.files || {};
+  const files_do = all_iterations?.iteration1?.do?.files || {};
+  const files_study = all_iterations?.iteration1?.study?.files || {};
+  const files_act = all_iterations?.iteration1?.act?.files || {};
+  const checklist_plan = all_iterations?.iteration1?.plan?.checklist || {};
+
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
   const initialIdeasState = ideas_array.map((idea) => ({
@@ -908,6 +936,7 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
                 checklist={{
@@ -918,7 +947,7 @@ function CardModal({
                 setChecklistItems={setChecklistItems}
                 setChecklistDone={setChecklistDone}
                 setChecklistMembers={setChecklistMembers}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 handleIdeaClick={handleIdeaClick}
                 id={projectId}
@@ -951,9 +980,10 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 result_measurements={updatedResultMeasurements}
                 setUpdatedResultMeasurements={setUpdatedResultMeasurements}
@@ -988,9 +1018,10 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 result_analysis={updatedResultAnalysis}
                 setUpdatedResultAnalysis={setUpdatedResultAnalysis}
@@ -1025,9 +1056,10 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 handleIdeaClick={handleIdeaClick}
                 id={projectId}
