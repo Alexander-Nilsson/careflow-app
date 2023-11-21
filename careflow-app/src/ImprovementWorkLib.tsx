@@ -59,6 +59,7 @@ export interface Project {
 }
 
 export interface Iteration {
+  selected_idea: string;
   act: {
     choice: string;
     files: {
@@ -100,9 +101,7 @@ export interface Iteration {
 
 export interface ImprovementWork {
   id: Id;
-  all_iterations: {
-    iteration1: Iteration;
-  };
+  all_iterations: Array<Iteration>;
   centrum: string;
   clinic: string;
   closed: boolean;
@@ -110,6 +109,7 @@ export interface ImprovementWork {
   date_last_updated: Timestamp;
   goals: Array<string>;
   ideas: Array<string>;
+  ideas_done: Array<boolean>;
   measure: Array<string>;
   purpose: string;
   phase: Id;
@@ -174,12 +174,13 @@ function setImprovementWork(id: string, data: DocumentData) {
     date_last_updated: data.date_last_updated,
     goals: data.goals,
     ideas: data.ideas,
+    ideas_done: data.ideas_done,
     measure: data.measure,
-    purpose: data.purpose,
     phase: data.phase,
     place: data.place,
     project_leader: data.project_leader,
     project_members: data.project_members,
+    purpose: data.purpose,
     tags: data.tags,
     title: data.title,
     total_iterations: data.total_iterations,

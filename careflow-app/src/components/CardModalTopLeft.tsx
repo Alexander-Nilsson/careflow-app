@@ -364,6 +364,7 @@ function CardModalTopLeft({
                   phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
+                onClick={() => handlePhaseUpdate(6)}
               >
                 Påbörja ny iteration
                 <span style={{ fontSize: "10px", display: "block" }}>
