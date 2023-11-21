@@ -214,7 +214,7 @@ function CreateProjectModal({
       place: place,
       clinic: department,
       closed: false,
-      phase: 2, // planning phase is phase 2?
+      phase: 2, // planning phase is phase 2
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
@@ -227,48 +227,49 @@ function CreateProjectModal({
       total_iterations: 1,
       all_iterations: {
         iteration1: {
+          selected_idea: "",
           plan: {
             checklist: {
-              checklist_items: ["En sak som ska göras"],
-              checklist_done: [false],
-              checklist_members: ["none"],
+              checklist_items: [],
+              checklist_done: [],
+              checklist_members: [],
             },
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            notes: "Planerings nteckningar",
+            notes: "",
           },
           do: {
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            notes: "Göra anteckningar",
-            idea: "vald ide?", // is this supposed to be here?
-            results: "Resulterat resultat",
+            notes: "",
+            
+            results: "",
           },
           study: {
-            analysis: "analys av resultatet",
+            analysis: "",
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            notes: "Studerings anteckningar",
+            notes: "",
           },
           act: {
-            notes: "Agerande anteckningar",
+            notes: "",
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            choice: "Selected choice",
+            choice: "",
           },
         },
       },
     };
 
-    // Check if necessary is entered by user
+    // Check if necessary fields is entered by user
     if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
       setIdeaError(true);
