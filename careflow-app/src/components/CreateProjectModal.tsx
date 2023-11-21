@@ -283,6 +283,7 @@ function CreateProjectModal({
       setTitleError(false); // Hide error message
       setIdeaError(false);
       // Clear textfields
+      setTitle("");
       setPurpose("");
       setIdeas("");
       setMeasure("");
