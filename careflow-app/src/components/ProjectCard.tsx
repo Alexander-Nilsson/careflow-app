@@ -7,6 +7,7 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
+import { Id } from "../ImprovementWorkLib";
 
 
 export interface ProjectCardProps {
@@ -14,7 +15,7 @@ export interface ProjectCardProps {
     date_created: any;
     place: string;
     tags: string[];
-    phase: number;
+    phase: Id;
     displayPhaseImage?: boolean;
 }
 
@@ -56,7 +57,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ title, date_created, place, t
         return timestamp.toDate().toLocaleDateString("sv-SE");
     };
 
-    const getPhaseImage = (phase: number) => {
+    const getPhaseImage = (phase: Id) => {
         switch (phase) {
             case 1:
                 return <img src={pImage} />;

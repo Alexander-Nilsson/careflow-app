@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from "react"; //Nytt
-import { Modal, Button, Form, Popover, OverlayTrigger } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import {
   BarChart,
   Lightbulb,
   Bullseye,
   EnvelopePaper,
 } from "react-bootstrap-icons";
-import {
-  doc,
-  setDoc,
-  getDocs,
-  getDoc,
-  collection,
-  Timestamp,
-  query,
-  addDoc,
-} from "firebase/firestore";
+import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
-import Nav from "react-bootstrap/Nav";
-import { Id } from "../types";
-import { useRoutes } from "react-router-dom";
+import {
+  transformBulletPoints,
+  handleKeyPressBulletPoint,
+  handleFocusBulletPoint,
+  handleFocusBulletPointGoals,
+  handleKeyPressBulletPointGoals,
+  findUserIds,
+} from "./CreateProjectModalHelp";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -51,6 +46,16 @@ const ButtonStyle = {
   marginTop: "50px",
 };
 
+const ButtonStyleGrey = {
+  backgroundColor: "lightgrey",
+  fontFamily: "Avenir",
+  fontSize: "17px",
+  padding: "10px 20px",
+  border: "none",
+  cursor: "not-allowed",
+  marginTop: "50px",
+};
+
 const IconCircleStyle = {
   borderRadius: "50%",
   width: "35px",
@@ -72,19 +77,7 @@ interface CreateProjectModalProps {
   onHide: () => void;
   users: any[];
   tags: any[];
-}
-
-function transformBulletPoints(value: string) {
-  // Split the value by newline characters to get an array of lines
-  let lines = value.split("\n");
-
-  // Remove the bullet points from each line
-  lines = lines.map((line) => line.replace("+ ", ""));
-
-  // Remove any empty lines
-  lines = lines.filter((line) => line !== "");
-
-  return lines;
+  usersClassArray: any[];
 }
 
 // Writes the formdata to database
@@ -100,26 +93,27 @@ async function sendToDataBase(projectData: object) {
   }
 }
 
-// async function addTags(tag: Object) {
-//   const docRef = await addDoc(collection(db, "tags"), tag);
-// }
-
 function CreateProjectModal({
   show,
   onHide,
   users,
   tags,
+  usersClassArray,
 }: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
   const [ideaError, setIdeaError] = useState(false);
 
   // States for saving text entered by user
+  const [title, setTitle] = useState("");
   const [purpose, setPurpose] = useState("");
   const [ideas, setIdeas] = useState("");
   const [measure, setMeasure] = useState("");
   const [goals, setGoals] = useState("");
   const [newTag, setTags] = useState("");
+
+  // Check if both title and ideas are filled in
+  const isFormFilled = title.trim() !== "" && ideas.trim() !== "";
 
   //User specific data
   const [name, setName] = useState<String>("Namn ej funnet");
@@ -128,6 +122,12 @@ function CreateProjectModal({
   const [place, setPlace] = useState<String>("Plats ej funnen");
   const [centrum, setCentrum] = useState<String>("Centrum ej funnen");
   const [userID, setUserID] = useState<string>("UserID");
+
+  // To handle tags and members in dropdown menus
+  type MembersState = string[];
+  type TagState = string[];
+  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
+  const [selectedTags, setSelectedTags] = useState<TagState>([]);
 
   const { isAuthenticated, isLoading, user } = useAuth0();
 
@@ -164,35 +164,6 @@ function CreateProjectModal({
     }
   }, [user]);
 
-  const handleKeyPressBulletPoint = (
-    e: any,
-    setter: (value: string) => void,
-    currentValue: string
-  ) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setter(currentValue + "\n+ ");
-    }
-  };
-
-  const handleFocusBulletPoint = (
-    currentValue: string,
-    setter: (value: string) => void
-  ) => {
-    if (currentValue === "") {
-      setter("+ ");
-    }
-  };
-
-  //fetchUsers();
-  //fetchTags();
-
-  type MembersState = string[];
-  type TagState = string[];
-
-  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
-  const [selectedTags, setSelectedTags] = useState<TagState>([]);
-
   //console.log(newTag);
   const handleAlternativeClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
@@ -220,25 +191,7 @@ function CreateProjectModal({
       const updatedChosenMembers = [...selectedTags, chosenMember];
       setSelectedTags(updatedChosenMembers);
     }
-    //fetchTags();
   };
-
-  const [textValue, setTextValue] = useState<string>("");
-  //const [confirmedText, setConfirmedText] = useState<string | null>(null);
-
-  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTextValue(event.target.value);
-  };
-
-  // const handleConfirm = () => {
-  //   //tags.push(textValue);
-  //   const tag = {
-  //     description: textValue,
-  //   };
-  //   addTags(tag);
-  //   setTextValue(""); // Nollställ textfältet
-  //   handleAlternativeClick1(tag.description);
-  // };
 
   // is executed when submit button is pressed
   function handleSubmit(e: any) {
@@ -250,17 +203,22 @@ function CreateProjectModal({
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
+    let project_members = findUserIds(selectedMembers, usersClassArray);
+    // Remove logged in user from members list
+    project_members = project_members.filter((item) => item != userID);
+
     const projectData = {
       title: formJson.title,
       centrum: centrum,
       place: place,
       clinic: department,
       closed: false,
-      phase: 1,
+      phase: 2, // planning phase is phase 2?
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
-      project_members: selectedMembers,
+      project_members: findUserIds(selectedMembers, usersClassArray),
+      purpose: purpose,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
       measure: transformBulletPoints(measure),
@@ -272,7 +230,7 @@ function CreateProjectModal({
             checklist: {
               checklist_items: ["En sak som ska göras"],
               checklist_done: [false],
-              checklist_members: [""],
+              checklist_members: ["none"],
             },
             files: {
               file_names: ["protokoll.txt"],
@@ -309,9 +267,13 @@ function CreateProjectModal({
       },
     };
 
-    // Check if title is entered by user
-    if (!formJson.title) {
+    // Check if necessary is entered by user
+    if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
+      setIdeaError(true);
+    } else if (!formJson.title) {
+      setTitleError(true); // Show error message
+      setIdeaError(false);
       return; // Stop the function to prevent sending data and closing the modal
     } else if (projectData.ideas.length == 0) {
       setIdeaError(true);
@@ -321,6 +283,8 @@ function CreateProjectModal({
       setTitleError(false); // Hide error message
       setIdeaError(false);
       // Clear textfields
+      setTitle("");
+      setPurpose("");
       setIdeas("");
       setMeasure("");
       setGoals("");
@@ -335,13 +299,6 @@ function CreateProjectModal({
         <div>
           <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
         </div>
-        {/* <OverlayTrigger
-          trigger={["hover", "focus"]}
-          placement="right"
-          overlay={HelpPopover}
-        >
-          <QuestionCircleFill style={QuestionmarkStyle}></QuestionCircleFill>
-        </OverlayTrigger> */}
         <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
 
@@ -352,7 +309,10 @@ function CreateProjectModal({
             <input
               name="title"
               type="text"
+              value={title}
               className="form-control"
+              onChange={(e) => setTitle(e.target.value)}
+              // förhindra att trycka på enter stänger modalen
               onKeyDown={(
                 e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
               ) => {
@@ -434,14 +394,14 @@ function CreateProjectModal({
                 <textarea
                   name="goals"
                   className="form-control"
-                  placeholder="+ Lägg till"
+                  placeholder="◯ Lägg till"
                   style={{ border: "none", height: "98px" }}
                   value={goals}
                   onChange={(e) => setGoals(e.target.value)}
                   onKeyDown={(e) =>
-                    handleKeyPressBulletPoint(e, setGoals, goals)
+                    handleKeyPressBulletPointGoals(e, setGoals, goals)
                   }
-                  onFocus={() => handleFocusBulletPoint(goals, setGoals)}
+                  onFocus={() => handleFocusBulletPointGoals(goals, setGoals)}
                 ></textarea>
               </div>
             </div>
@@ -510,6 +470,9 @@ function CreateProjectModal({
                 </div>
               </div>
             </div>
+            {ideaError && (
+              <div style={{ color: "red" }}>Minst en idé måste anges</div>
+            )}
             <div className="card" style={{ height: "100px" }}>
               <div
                 className="input-group input-group-sm"
@@ -534,9 +497,6 @@ function CreateProjectModal({
                   onFocus={() => handleFocusBulletPoint(ideas, setIdeas)}
                 />
               </div>
-              {ideaError && (
-                <div style={{ color: "red" }}>Minst en idé måste anges</div>
-              )}
             </div>
           </div>
           <Dropdown>
@@ -610,12 +570,7 @@ function CreateProjectModal({
             <Button
               type="submit"
               id="SkapaFörbättringsarbete"
-              // onClick={() => {
-              //   onHide();
-              //   //setIdeas(""); // Clear the textarea when the button is clicked
-              //   //setMeasure("");
-              // }}
-              style={ButtonStyle}
+              style={!isFormFilled ? ButtonStyleGrey : ButtonStyle}
             >
               Skicka in förbättringsarbete
             </Button>

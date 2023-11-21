@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -67,34 +67,56 @@ const whiteDescriptionContainerStyle = {
   borderBottomRightRadius: "10px",
 };
 
-const tagStyle = {
+const tagStyle: React.CSSProperties = {
   marginTop: "5px",
-  marginBottom: "10px",
   color: "#FFFFFF",
   fontSize: "14px",
+  display: "flex",
+  flexWrap: "wrap",
 };
 
 const tagContainerStyle = {
   backgroundColor: "#051F6E",
   padding: "2px 10px",
   marginRight: "5px",
+  marginBottom: "8px",
   borderRadius: "10px",
+};
+
+const addTagContainerStyle = {
+  backgroundColor: "#AEAEAE",
+  padding: "2px 10px",
+  marginRight: "5px",
+  marginBottom: "8px",
+  borderRadius: "10px",
+};
+
+const saveTagButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontSize: "16px",
+  padding: "10px 20px",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "20px",
+  width: "100%",
 };
 
 interface cardModalTopLeftProps {
   title: string;
   phase: number;
-  content: string;
   place: string;
   centrum: string;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  active_tab: number;
-  percentage: number;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
   }[];
+  measure: Array<string>;
+  active_tab: number;
+  percentage: number;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -136,11 +158,13 @@ function PhasePercentage({ percentage }: phasePercentageProps) {
 function CardModalTopLeft({
   title,
   phase,
-  content,
   place,
   centrum,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
+  goals,
+  measure,
   active_tab,
   percentage,
   ideas,
@@ -149,6 +173,35 @@ function CardModalTopLeft({
   handlePhaseUpdate,
 }: cardModalTopLeftProps) {
   const formattedDate = date_created.toDate().toLocaleString();
+  //const [updatedTags, setUpdatedTags] = useState(tags);
+  const [showTagModal, setShowTagModal] = useState(false);
+  const [newTag, setNewTag] = useState("");
+
+  //Handles the deletion of tags
+  const handleRemoveTag = (indexToRemove: number) => {
+    const updatedTagsArray = updatedTags.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setUpdatedTags(updatedTagsArray);
+  };
+
+  const handleShowTagModal = () => {
+    setShowTagModal(true);
+  };
+  const handleCloseTagModal = () => {
+    setShowTagModal(false);
+  };
+
+  //Adds the new tag to the tag array when the "lägg till tagg" button is clicked
+  const handleSaveTag = (newTag: string) => {
+    //Makes sure that the input field is filled before the tag can be added
+    if (newTag.trim() !== "") {
+      handleCloseTagModal();
+      const updatedTagsArray = [...updatedTags, newTag.toLowerCase()];
+      setUpdatedTags(updatedTagsArray);
+      setNewTag("");
+    }
+  };
 
   return (
     <>
@@ -157,11 +210,22 @@ function CardModalTopLeft({
           <div style={{ width: "60%" }}>
             <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
             <div style={tagStyle}>
-              {tags.map((tag, index) => (
+              {updatedTags.map((tag, index) => (
                 <React.Fragment key={index}>
-                  <span style={tagContainerStyle}>{tag}</span>
+                  <span style={tagContainerStyle}>
+                    {tag}
+                    <span
+                      style={{ marginLeft: "6px" }}
+                      onClick={() => handleRemoveTag(index)}
+                    >
+                      &times;
+                    </span>
+                  </span>
                 </React.Fragment>
               ))}
+              <span style={addTagContainerStyle} onClick={handleShowTagModal}>
+                ny tagg +
+              </span>
             </div>
             <div>
               <div style={flexAndCenter}>
@@ -185,6 +249,37 @@ function CardModalTopLeft({
             </div>
           </div>
 
+          {/* The modal that opens up when "add new tag" is clicked */}
+          <Modal
+            show={showTagModal}
+            onHide={handleCloseTagModal}
+            style={{ top: "25%", fontFamily: "Avenir" }}
+          >
+            <Modal.Header closeButton></Modal.Header>
+            <Modal.Body className="d-flex justify-content-center align-items-center">
+              <Form style={{ width: "90%" }}>
+                <div className="mb-3 text-center">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Lägg till en tagg..."
+                    style={{ fontStyle: "italic" }}
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                  ></input>
+                </div>
+                <div className="mb-3 text-center">
+                  <Button
+                    style={saveTagButtonStyle}
+                    onClick={() => handleSaveTag(newTag)}
+                  >
+                    Lägg till tagg
+                  </Button>
+                </div>
+              </Form>
+            </Modal.Body>
+          </Modal>
+
           {/* If the active tab is Planera the donut is shown, if not only the "Markera fas som klar" button is shown */}
           {active_tab === 2 ? ( //If active_tab is plan, show the donut
             <div
@@ -201,7 +296,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
                 onClick={() => handlePhaseUpdate(phase)}
@@ -224,7 +319,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
               >
@@ -248,7 +343,7 @@ function CardModalTopLeft({
               <Button
                 style={buttonStyle}
                 disabled={
-                  phase > active_tab ||
+                  phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
                 onClick={() => handlePhaseUpdate(phase)}
@@ -278,7 +373,7 @@ function CardModalTopLeft({
                 </span>
               }
             >
-              <div style={whiteDescriptionContainerStyle}>{content}</div>
+              <div style={whiteDescriptionContainerStyle}>Ett syfte</div>
             </Tab>
             <Tab
               eventKey="mål"
@@ -298,7 +393,18 @@ function CardModalTopLeft({
               }
             >
               <div style={whiteDescriptionContainerStyle}>
-                Här ska målen beskrivas
+                {goals ? (
+                  <ul style={{ listStyleType: "none", paddingLeft: "4px" }}>
+                    {goals.map((item, index) => (
+                      <li key={index} style={{ marginBottom: "8px" }}>
+                        {"• "}
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Inga mål satta.</p>
+                )}
               </div>
             </Tab>
             <Tab
@@ -319,7 +425,18 @@ function CardModalTopLeft({
               }
             >
               <div style={whiteDescriptionContainerStyle}>
-                Här ska mätningarna beskrivas
+                {measure ? (
+                  <ul style={{ listStyleType: "none", paddingLeft: "4px" }}>
+                    {measure.map((item, index) => (
+                      <li key={index} style={{ marginBottom: "8px" }}>
+                        {"• "}
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Inga mätningar satta.</p>
+                )}
               </div>
             </Tab>
             <Tab
@@ -346,7 +463,7 @@ function CardModalTopLeft({
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
-                    disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
+                    //disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
                     onChange={() => handleIdeaClick(index)}
                   />
                 ))}
