@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0 } from "@auth0/auth0-react";
 import { doc, getDoc } from "firebase/firestore";
 import ProfileSection from "./ProfileSection";
 import ProjectsSection from "./ProjectsSection";
 // import IdeasAndProgressSection from "./IdeasAndProgressSection";
 import FinishedProjectsSection from "./FinishedProjectsSection";
-import { db } from '../firebase'
+import { db } from "../firebase";
 import IdeasSection from "./IdeasSection";
 import ProgressSection from "./ProgressSection";
-import { ImprovementWork, getAllImprovementWorks, getUserImprovementWorks } from "../ImprovementWorkLib";
-
-
+import {
+  ImprovementWork,
+  getAllImprovementWorks,
+  getUserImprovementWorks,
+} from "../ImprovementWorkLib";
 
 export type UserInfoType = {
   hsaID: string;
@@ -32,53 +34,31 @@ function Start() {
   };
 
   const contentStyle = {
-    marginTop: '20px',
+    marginTop: "20px",
     width: "90%",
     height: "60%",
-    marginLeft: '5%', // 5% margin on the left
-    marginRight: '5%', // 5% margin on the right
-  }
+    marginLeft: "5%", // 5% margin on the left
+    marginRight: "5%", // 5% margin on the right
+  };
 
-  
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth0();
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
-  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>(null);
-
-  //fetches the user data from database, based on the hsa-ID
-  async function getUser(username: string) {
-    const docRef = doc(db, "users", username);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      if (user?.name) {
-        const userData: UserInfoType = {
-          hsaID: user.name,
-          admin: docSnap.data().admin,
-          centrum: docSnap.data().centrum,
-          clinic: docSnap.data().clinic,
-          email: docSnap.data().email,
-          first_name: docSnap.data().first_name,
-          phone_number: docSnap.data().phone_number,
-          place: docSnap.data().place,
-          profession: docSnap.data().profession,
-          sur_name: docSnap.data().sur_name
-        }
-        setUserInfo(userData);
-      }
-      // console.log("Document data:", docSnap.data());
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
-    }
-  }
+  const [improvementWorks, setImprovementWorks] = useState<
+    ImprovementWork[] | null
+  >(null);
 
   async function fetchData() {
     if (user?.name) {
-      getUser(user.name);
-      const improvementWorks: ImprovementWork[] = await getAllImprovementWorks();
-      setImprovementWorks(improvementWorks)
-      console.log("hämtat")
+      getUser(user.name, user, setUserInfo);
+
+      const improvementWorks: ImprovementWork[] | null =
+        await getAllImprovementWorks();
+      if (improvementWorks !== null) {
+        setImprovementWorks(improvementWorks);
+      } else {
+        console.error("Failed to fetch improvement works");
+      }
     }
   }
 
@@ -89,14 +69,11 @@ function Start() {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      fetchData()
+      fetchData();
     }
-
-
   }, [isAuthenticated]);
 
   return (
-
     <div>
       <img
         className="background-gradient"
@@ -110,7 +87,7 @@ function Start() {
           <ProjectsSection userInfo={userInfo} allImprovementWorks={improvementWorks}/>
           <div className="d-flex mr-2">
             <IdeasSection userInfo={userInfo} />
-            <ProgressSection improvementWorks={improvementWorks}/>
+            <ProgressSection improvementWorks={improvementWorks} />
           </div>
           {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
@@ -122,3 +99,31 @@ function Start() {
 }
 
 export default Start;
+
+//fetches the user data from database, based on the hsa-ID
+export async function getUser(hsaId: string, user: any, setUserInfo: any) {
+  const docRef = doc(db, "users", hsaId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    if (user?.name) {
+      const userData: UserInfoType = {
+        hsaID: user.name,
+        admin: docSnap.data().admin,
+        centrum: docSnap.data().centrum,
+        clinic: docSnap.data().clinic,
+        email: docSnap.data().email,
+        first_name: docSnap.data().first_name,
+        phone_number: docSnap.data().phone_number,
+        place: docSnap.data().place,
+        profession: docSnap.data().profession,
+        sur_name: docSnap.data().sur_name,
+      };
+      setUserInfo(userData);
+    }
+    // console.log("Document data:", docSnap.data());
+  } else {
+    // docSnap.data() will be undefined in this case
+    console.log("No such document!");
+  }
+}
