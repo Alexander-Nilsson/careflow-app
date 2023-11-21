@@ -176,7 +176,6 @@ function setImprovementWork(id: string, data: DocumentData) {
     ideas: data.ideas,
     ideas_done: data.ideas_done,
     measure: data.measure,
-    purpose: data.purpose,
     phase: data.phase,
     place: data.place,
     project_leader: data.project_leader,

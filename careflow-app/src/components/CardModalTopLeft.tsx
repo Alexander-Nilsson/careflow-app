@@ -109,7 +109,6 @@ interface cardModalTopLeftProps {
   updatedTags: Array<string>;
   setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  purpose: string;
   goals: Array<string>;
   ideas: {
     text: string;
@@ -165,7 +164,6 @@ function CardModalTopLeft({
   updatedTags,
   setUpdatedTags,
   date_created,
-  purpose,
   goals,
   measure,
   purpose,
