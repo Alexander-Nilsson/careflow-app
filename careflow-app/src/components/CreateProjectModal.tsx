@@ -222,11 +222,12 @@ function CreateProjectModal({
       purpose: purpose,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
+      ideas_done: Array(transformBulletPoints(ideas).length).fill(false),
       measure: transformBulletPoints(measure),
       tags: selectedTags,
       total_iterations: 1,
-      all_iterations: {
-        iteration1: {
+      all_iterations: [
+        {
           selected_idea: "",
           plan: {
             checklist: {
@@ -266,7 +267,7 @@ function CreateProjectModal({
             choice: "",
           },
         },
-      },
+      ],
     };
 
     // Check if necessary fields is entered by user
