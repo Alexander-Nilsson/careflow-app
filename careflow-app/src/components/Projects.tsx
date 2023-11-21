@@ -26,7 +26,7 @@ function Projects() {
     "date_created"
   );
 
-    const [projectList, setProjectList] = useState<Project[]>([])
+    // const [projectList, setProjectList] = useState<Project[]>([])
 
   // for admin func
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
@@ -36,17 +36,17 @@ function Projects() {
     setSortBy(selectedSortOption);
 
     if (selectedSortOption === "oldest_date") {
-      const sortedProjects = sortByOldestDate(projectList);
-      setProjectList(sortedProjects);
+      const sortedProjects = sortByOldestDate(improvementWorkList);
+      setImprovementWorkList(sortedProjects);
     } else if (selectedSortOption === "date_created") {
-      const sortedProjects = sortByDateCreated(projectList);
-      setProjectList(sortedProjects);
+      const sortedProjects = sortByDateCreated(improvementWorkList);
+      setImprovementWorkList(sortedProjects);
     } else if (selectedSortOption === "ascending") {
-      const sortedProjects = sortByTitleAscending(projectList);
-      setProjectList(sortedProjects);
+      const sortedProjects = sortByTitleAscending(improvementWorkList);
+      setImprovementWorkList(sortedProjects);
     } else if (selectedSortOption === "descending"){
-      const sortedProjects = sortByTitleDescending(projectList);
-      setProjectList(sortedProjects);
+      const sortedProjects = sortByTitleDescending(improvementWorkList);
+      setImprovementWorkList(sortedProjects);
     }
   };
 
