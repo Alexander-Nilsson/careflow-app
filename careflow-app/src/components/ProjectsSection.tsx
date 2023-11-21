@@ -2,77 +2,65 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { useAuth0 } from '@auth0/auth0-react';
 import {
+    FilterState,
     ImprovementWork,
-    getUserImprovementWorks,
     filterImprovementWorks,
-    findUserImprovementWorks,
     findTagOptions
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type ProjectsSectionProps = {
     userInfo: UserInfoType;
-    improvementWorks: ImprovementWork[];
+    allImprovementWorks: ImprovementWork[];
 };
 
-// type ImprovementWorksProps = {
-//     improvementWorks: ImprovementWork[] | null;
-// };
+// denna används istället för att ha olika variabler för olika filter.
+// nu samlas alla filter d.v.s. om vi ska visa användarens eller klinikens (filter),
+// vilken tag som ska visas,
+// samt om vi vill ha öppna eller stängda arbeten.
 
-function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
 
-    const [allImprovementWorks, setImprovementWorks] = useState<ImprovementWork[] >(improvementWorks);
+function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps) {
+
+    const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
-    const [chosenFilter, setFilter] = useState<string>("user");
+    const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: true, tagFilter: "all_tags", closed: true });
 
+    // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {
         if (event.target.value == "user") {
-            setFilter("user");
-            const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.hsaID, false)
-            setDisplayedImprovementWorks(filteredImprovementWorks)
+            setFilterState(prev => ({ ...prev, includeUser: true }));
+        } else if (event.target.value == "clinic") {
+            setFilterState(prev => ({ ...prev, includeClinic: true }));
         }
-        else if (event.target.value == "clinic") {
-            setFilter("clinic");
-            console.log("filtrerar på klinik" && userInfo.clinic)
-            const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, event.target.value, userInfo.clinic, false)
-            setDisplayedImprovementWorks(filteredImprovementWorks)
-        }
+        
     };
 
-    const handleTags = (event:any) => {
-        if (event.target.value == "all_tags"){
-
-        }
-        else {
-            let chosenImprovementWorks: ImprovementWork[] = [];
-            if (chosenFilter == "user"){
-                chosenImprovementWorks= filterImprovementWorks(allImprovementWorks, "user", userInfo.hsaID, false)
-            } else if (chosenFilter =="clinic"){
-                chosenImprovementWorks = filterImprovementWorks(allImprovementWorks, "clinic", userInfo.clinic, false)
-            }
-            const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(chosenImprovementWorks, "tags", event.target.value, false)
-            setDisplayedImprovementWorks(filteredImprovementWorks);
-        }
-        return;
-    }
- 
-    function updateTags(){
-        const tags = findTagOptions(displayedImprovementWorks);
-        setTagOptions(tags);
+    // denna uppdaterar vilken tag som ska filtreras på.
+    const handleTags = (event: any) => {
+        setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
     }
 
+    //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
+    // d.v.s. när man har klickat på ett filter
     useEffect(() => {
-        const userImprovementWorks: ImprovementWork[] = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
-        setDisplayedImprovementWorks(userImprovementWorks)
-        const tags = findTagOptions(userImprovementWorks);
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(improvementWorks, filterState, userInfo)
+        setDisplayedImprovementWorks(filteredImprovementWorks)
+    }, [filterState]);
+
+    // denna useEffect ser till att man hämtar taggar endast en gång, eftersom den inte har en hook som den ovan har.
+    // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
+    // så att det funkar som vi sa.
+    useEffect(() => {
+        const improvementWorks = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+        const tags = findTagOptions(improvementWorks)
+        setImprovementWorks(improvementWorks)
         setTagOptions(tags);
+        setFilterState(prev => ({ ...prev, includeClinic: false }));
         
     }, []);
-
-
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
