@@ -3,7 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
 import {
+    FilterState,
     ImprovementWork,
+    filterImprovementWorks,
     findTagOptions
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
@@ -17,64 +19,23 @@ type ProjectsSectionProps = {
 // nu samlas alla filter d.v.s. om vi ska visa användarens eller klinikens (filter),
 // vilken tag som ska visas,
 // samt om vi vill ha öppna eller stängda arbeten.
-interface FilterState {
-    filter: string;
-    tagFilter: string;
-    closed: boolean;
-}
+
 
 function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps) {
 
+    const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
-    const [filterState, setFilterState] = useState<FilterState>({ filter: "user", tagFilter: "all_tags", closed: false });
-
-    //allmän filtrering som kollar om ett aktuellt projekt ska filtreras bort eller inte.
-    function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
-        // if we are searching for closed ImpWorks and the focal ImpWork is open
-        // OR if we are searching for open ImpWorks and the focal ImpWork is closed,
-        // don't include it.
-        if ((filter.closed && !improvementWork.closed) || (!filter.closed && improvementWork.closed)) {
-            return false;
-        }
-
-        // if we are filtering users ImpWorks and the user neither a member nor a leader,
-        // don't include it
-        if (filter.filter == "user" && !(improvementWork.project_leader == userInfo.hsaID || improvementWork.project_members.includes(userInfo.hsaID))) {
-            return false;
-            // if we are filtering on the user's clinic and the focal ImpWork is not in the user's clinic,
-            // don't include it
-        } else if (filter.filter == "clinic" && improvementWork.clinic != userInfo.clinic) {
-            return false
-        }
-
-        // if we are filtering on specific tags, if filtering on specific tags, check if
-        // focal ImpWork has the tag. If not, don't include it.
-        if (filter.tagFilter !== "all_tags") {
-            if (!improvementWork.tags.includes(filter.tagFilter)) {
-                return false
-            }
-        }
-
-        return true;
-    }
-
-    // denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
-    // filtreras bort genom att anropa include
-    function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState) {
-        let filteredImprovementWorks: ImprovementWork[] = []
-        orgImprovementWorks.forEach((improvementWork) => {
-            // console.log(improvementWork)
-            if (include(improvementWork, filter, userInfo)) {
-                filteredImprovementWorks.push(improvementWork)
-            }
-        })
-        return filteredImprovementWorks
-    }
+    const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: true, tagFilter: "all_tags", closed: true });
 
     // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {
-        setFilterState(prev => ({ ...prev, filter: event.target.value }));
+        if (event.target.value == "user") {
+            setFilterState(prev => ({ ...prev, includeUser: true }));
+        } else if (event.target.value == "clinic") {
+            setFilterState(prev => ({ ...prev, includeClinic: true }));
+        }
+        
     };
 
     // denna uppdaterar vilken tag som ska filtreras på.
@@ -85,7 +46,7 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
     useEffect(() => {
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState)
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(improvementWorks, filterState, userInfo)
         setDisplayedImprovementWorks(filteredImprovementWorks)
     }, [filterState]);
 
@@ -93,23 +54,13 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
     // så att det funkar som vi sa.
     useEffect(() => {
-        const fetchTagsForFilter = (filter: string) => {
-            let filteredWorks: ImprovementWork[] = [];
-            if (filter === "user") {
-                const userFilterState = { ...filterState, filter: "user", tagFilter: "all_tags" };
-                filteredWorks = filterImprovementWorks(allImprovementWorks, userFilterState);
-            } else if (filter === "clinic") {
-                const clinicFilterState = { ...filterState, filter: "clinic", tagFilter: "all_tags" };
-                filteredWorks = filterImprovementWorks(allImprovementWorks, clinicFilterState);
-            }
-    
-            const tags = findTagOptions(filteredWorks);
-            return tags;
-        };
-    
-        const tags = fetchTagsForFilter(filterState.filter);
+        const improvementWorks = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+        const tags = findTagOptions(improvementWorks)
+        setImprovementWorks(improvementWorks)
         setTagOptions(tags);
-    }, [filterState.filter]);
+        setFilterState(prev => ({ ...prev, includeClinic: false }));
+        
+    }, []);
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
