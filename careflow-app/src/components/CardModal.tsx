@@ -19,6 +19,8 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
+import { ImprovementWork } from "../ImprovementWorkLib";
+
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
 import { Circle, CheckCircle } from "react-bootstrap-icons";
@@ -48,6 +50,10 @@ const formGroupStyle = {
 interface cardModalProps {
   show: boolean;
   onHide: () => void;
+  improvementWork: ImprovementWork; // passing the improvementWork with all its variables
+  project_leader: string;
+  project_members: Array<string>;
+  /*
   id: Id;
   title: string;
   phase: Id;
@@ -88,6 +94,7 @@ interface cardModalProps {
     checklist_items: Array<string>;
     checklist_members: Array<string>;
   };
+  */
 }
 
 interface modalContentPlanProps {
@@ -665,31 +672,39 @@ function ModalContentAct({
 function CardModal({
   show,
   onHide,
-  id,
-  title,
-  phase,
-  place,
-  centrum,
-  tags,
-  date_created,
-  goals,
-  ideas_array,
-  measure,
-  purpose,
-  result_measurements,
-  result_analysis,
-  notes_plan,
-  notes_do,
-  notes_study,
-  notes_act,
-  files_plan,
-  files_do,
-  files_study,
-  files_act,
+  improvementWork,
   project_leader,
   project_members,
-  checklist_plan,
 }: cardModalProps) {
+  // Now, you can directly use the destructured values
+  const {
+    id,
+    title,
+    phase,
+    place,
+    centrum,
+    tags,
+    date_created,
+    goals,
+    ideas: ideas_array, // Renamed from ideas
+    measure,
+    purpose,
+    all_iterations,
+  } = improvementWork;
+
+  // Accessing properties from the all_iterations object
+  const result_measurements = all_iterations?.iteration1?.do?.results || "";
+  const result_analysis = all_iterations?.iteration1?.study?.analysis || "";
+  const notes_plan = all_iterations?.iteration1?.plan?.notes || "";
+  const notes_do = all_iterations?.iteration1?.do?.notes || "";
+  const notes_study = all_iterations?.iteration1?.study?.notes || "";
+  const notes_act = all_iterations?.iteration1?.act?.notes || "";
+  const files_plan = all_iterations?.iteration1?.plan?.files || {};
+  const files_do = all_iterations?.iteration1?.do?.files || {};
+  const files_study = all_iterations?.iteration1?.study?.files || {};
+  const files_act = all_iterations?.iteration1?.act?.files || {};
+  const checklist_plan = all_iterations?.iteration1?.plan?.checklist || {};
+
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
   const initialIdeasState = ideas_array.map((idea) => ({

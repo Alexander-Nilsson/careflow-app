@@ -112,11 +112,13 @@ function ShowCard({ improvementWork }: ShowCardProps) {
           date_created={improvementWork.date_created}
           onClick={modalShow}
         />
+
         {
+          /*
           <CardModal
             show={show}
             onHide={modalClose}
-            id={improvementWork.id}
+             id={improvementWork.id}
             title={improvementWork.title}
             phase={improvementWork.phase}
             place={improvementWork.place}
@@ -146,6 +148,14 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             checklist_plan={
               improvementWork.all_iterations.iteration1.plan.checklist
             }
+          />
+        */
+          <CardModal
+            show={show}
+            onHide={modalClose}
+            improvementWork={improvementWork}
+            project_leader={leaderName?.toString() || ""}
+            project_members={memberNames}
           />
         }
       </div>
