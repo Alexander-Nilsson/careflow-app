@@ -25,7 +25,7 @@ function FinishedProjectsSection({ userInfo, improvementWorks }: FinishedProject
             // if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
         }
         else if (event.target.value == "clinic") {
-            const filteredImprovementWorks: ImprovementWork[] | null = await filterImprovementWorks(event.target.value, userInfo.clinic, true)
+            // const filteredImprovementWorks: ImprovementWork[] = await filterImprovementWorks(event.target.value, userInfo.clinic, true)
             // setImprovementWorks(filteredImprovementWorks)
         }
     };
