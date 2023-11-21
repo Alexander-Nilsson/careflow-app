@@ -113,7 +113,8 @@ function CreateProjectModal({
   const [newTag, setTags] = useState("");
 
   // Check if both title and ideas are filled in
-  const isFormFilled = title.trim() !== "" && ideas.trim() !== "";
+  const isFormFilled =
+    title.trim() !== "" && ideas.replace("+ ", "").trim() !== "";
 
   //User specific data
   const [name, setName] = useState<String>("Namn ej funnet");
@@ -217,7 +218,7 @@ function CreateProjectModal({
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
-      project_members: findUserIds(selectedMembers, usersClassArray),
+      project_members: project_members,
       purpose: purpose,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
