@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState }, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import { BiComment, BiFileBlank } from "react-icons/bi";
@@ -7,8 +7,8 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
-import { Id } from "../ImprovementWorkLib";
-import TrashIcon from "../icons/Trashicon";
+import { Id, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import CardModal from "./CardModal";import TrashIcon from "../icons/Trashicon";
 
 export interface ProjectCardProps {
   title: string;
@@ -17,6 +17,7 @@ export interface ProjectCardProps {
   tags: string[];
   phase: Id;
   displayPhaseImage?: boolean;
+  improvementWork: ImprovementWork;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -26,6 +27,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   tags,
   phase,
   displayPhaseImage,
+  improvementWork,
 }) => {
   const cardBodyStyle = {
     height: "180px",
@@ -75,6 +77,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
   };
 
+  const [show, setShow] = useState(false);
+  const modalClose = () => setShow(false);
+  const modalShow = () => setShow(true);
+
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const handleMouseEnter = () => {
     setMouseIsOver(true);
@@ -86,65 +92,92 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     //console.log(`Left ${title} card`);
   };
 
+  const [leaderName, setLeaderName] = useState<string | null>(null);
+  const [memberNames, setMemberNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Hej");
+        const leaderName = await getMemberName(improvementWork.project_leader);
+        setLeaderName(leaderName);
+
+        const names = await Promise.all(
+          improvementWork.project_members.map(
+            async (member) => await getMemberName(member)
+          )
+        );
+        const filteredNames = names.filter(
+          (name) => name !== null
+        ) as Array<string>;
+        setMemberNames(filteredNames);
+      } catch (error) {
+        console.error("Error fetching member names:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <Card onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <Card.Body style={cardBodyStyle}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div>
-            {tags ? (
-              tags.map((tag, index) => (
-                <React.Fragment key={index}>
-                  <span style={badgeStyle}>{tag}</span>
-                </React.Fragment>
-              ))
-            ) : (
-              <p>Inga taggar</p>
-            )}
-            <Card.Title style={titleStyle}>{title}</Card.Title>
-            <Card.Text style={{ fontFamily: "Avenir", marginBottom: "1rem" }}>
-              {formatDate(date_created)}
-            </Card.Text>
-            <Card.Text style={{ fontFamily: "Avenir", margin: "0rem" }}>
-              <span
-                role="img"
-                aria-label="Pin Emoji"
-                style={{ fontSize: "15px" }}
-              >
-                📍
-              </span>
-              {place}
-            </Card.Text>
-            <div style={iconContainerStyle}>
-              <GrTextAlignLeft
-                style={{ marginLeft: "0.5rem", marginRight: "0.6rem" }}
-              />
-              <BiFileBlank style={{ marginRight: "0.6rem" }} />
-              <BiComment style={{ marginRight: "10rem" }} />
+    <div>
+      <Card onClick={modalShow}>
+        <Card.Body style={cardBodyStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div>
+              {tags ? (
+                tags.map((tag, index) => (
+                  <React.Fragment key={index}>
+                    <span style={badgeStyle}>{tag}</span>
+                  </React.Fragment>
+                ))
+              ) : (
+                <p>Inga taggar</p>
+              )}
+              <Card.Title style={titleStyle}>{title}</Card.Title>
+              <Card.Text style={{ fontFamily: "Avenir", marginBottom: "1rem" }}>
+                {formatDate(date_created)}
+              </Card.Text>
+              <Card.Text style={{ fontFamily: "Avenir", margin: "0rem" }}>
+                <span
+                  role="img"
+                  aria-label="Pin Emoji"
+                  style={{ fontSize: "15px" }}
+                >
+                  📍
+                </span>
+                {place}
+              </Card.Text>
+              <div style={iconContainerStyle}>
+                <GrTextAlignLeft
+                  style={{ marginLeft: "0.5rem", marginRight: "0.6rem" }}
+                />
+                <BiFileBlank style={{ marginRight: "0.6rem" }} />
+                <BiComment style={{ marginRight: "10rem" }} />
+              </div>
             </div>
-          </div>
-          {displayPhaseImage && (
-            <div
-              style={{ position: "absolute", bottom: "1rem", right: "1rem" }}
-            >
-              {getPhaseImage(phase)}
-            </div>
-          )}
-          <div>
-            {mouseIsOver && (
-              <button
-                onClick={() => {
-                  //deleteTask(task.id);
-                }}
-                className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+            {displayPhaseImage && (
+              <div
+                style={{ position: "absolute", bottom: "1rem", right: "1rem" }}
               >
-                <TrashIcon />
-              </button>
+                {getPhaseImage(phase)}
+              </div>
             )}
+            <div></div>
           </div>
-        </div>
-        <div></div>
-      </Card.Body>
-    </Card>
+          <div></div>
+        </Card.Body>
+      </Card>
+      {
+        <CardModal
+          show={show}
+          onHide={modalClose}
+          improvementWork={improvementWork}
+          project_leader={leaderName?.toString() || ""}
+          project_members={memberNames}
+        />
+      }
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
@@ -6,7 +6,8 @@ import "./ShowCard.css";
 // import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Project, ImprovementWork } from "../ImprovementWorkLib";
+import { Project, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import { useAuth0 } from "@auth0/auth0-react";
 import TrashIcon from "../icons/Trashicon";
 
 interface ShowCardProps {
@@ -29,6 +30,38 @@ function ShowCard({ improvementWork }: ShowCardProps) {
     setMouseIsOver(false);
     console.log(`Left card`);
   };
+
+  const { isLoading } = useAuth0();
+  const [leaderName, setLeaderName] = useState<string | null>(null);
+  const [memberNames, setMemberNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isLoading) {
+        return;
+      }
+
+      try {
+        console.log("Hej");
+        const leaderName = await getMemberName(improvementWork.project_leader);
+        setLeaderName(leaderName);
+
+        const names = await Promise.all(
+          improvementWork.project_members.map(
+            async (member) => await getMemberName(member)
+          )
+        );
+        const filteredNames = names.filter(
+          (name) => name !== null
+        ) as Array<string>;
+        setMemberNames(filteredNames);
+      } catch (error) {
+        console.error("Error fetching member names:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // State to toggle edit mode for the task content
   //const [editMode, setEditMode] = useState(true);
@@ -98,11 +131,13 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             </button>
           )}
         </div>
+
         {
+          /*
           <CardModal
             show={show}
             onHide={modalClose}
-            id={improvementWork.id}
+             id={improvementWork.id}
             title={improvementWork.title}
             phase={improvementWork.phase}
             place={improvementWork.place}
@@ -112,6 +147,7 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             goals={improvementWork.goals}
             ideas_array={improvementWork.ideas}
             measure={improvementWork.measure}
+            purpose={improvementWork.purpose}
             result_measurements={
               improvementWork.all_iterations.iteration1.do.results
             }
@@ -126,11 +162,19 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             files_do={improvementWork.all_iterations.iteration1.do.files}
             files_study={improvementWork.all_iterations.iteration1.study.files}
             files_act={improvementWork.all_iterations.iteration1.act.files}
-            project_leader={improvementWork.project_leader}
-            project_members={improvementWork.project_members}
+            project_leader={leaderName?.toString() || ""}
+            project_members={memberNames}
             checklist_plan={
               improvementWork.all_iterations.iteration1.plan.checklist
             }
+          />
+        */
+          <CardModal
+            show={show}
+            onHide={modalClose}
+            improvementWork={improvementWork}
+            project_leader={leaderName?.toString() || ""}
+            project_members={memberNames}
           />
         }
       </div>
