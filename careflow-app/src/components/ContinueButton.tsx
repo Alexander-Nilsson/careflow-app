@@ -1,15 +1,15 @@
 import { Button } from "react-bootstrap";
+import rightArrow from "../Images/right-arrow.png";
+
 
 const ButtonStyle: React.CSSProperties = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "20px",
-  top: "320px",
-  left: "860px", // Adjust this as needed to position your button
-  padding: "10px 20px",
+  padding: "15px",
   border: "none",
   cursor: "pointer",
-  position: "absolute",
+  marginBottom: "0px",
   display: "flex", // Added for inline elements
   alignItems: "center", // Added to align items vertically
 };
@@ -21,10 +21,8 @@ interface ContinueButtonProps {
 function ContinueButton({ onClick }: ContinueButtonProps) {
   return (
     <Button id="NyttFörbättringsarbete" onClick={onClick} style={ButtonStyle}>
-      <img
-        src="./Plus.png"
-        alt="Image"
-        style={{ width: "20px", height: "20px", marginRight: "10px" }}
+      <img src={rightArrow} alt="Arrow"
+        style={{ width: "20px", height: "20px", marginRight: "10px", filter: 'invert(100%)' }}
       />
       Fortsätt där jag slutade
     </Button>
