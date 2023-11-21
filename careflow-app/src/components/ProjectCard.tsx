@@ -78,12 +78,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const handleMouseEnter = () => {
     setMouseIsOver(true);
-    console.log(`Hovered over ${title} card`);
+    //console.log(`Hovered over ${title} card`);
   };
 
   const handleMouseLeave = () => {
     setMouseIsOver(false);
-    console.log(`Left ${title} card`);
+    //console.log(`Left ${title} card`);
   };
 
   return (
@@ -135,7 +135,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 onClick={() => {
                   //deleteTask(task.id);
                 }}
-                className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+                className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
               >
                 <TrashIcon />
               </button>
