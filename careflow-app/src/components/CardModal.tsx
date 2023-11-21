@@ -71,6 +71,7 @@ interface cardModalProps {
   notes_do: string;
   notes_study: string;
   notes_act: string;
+  total_iterations: number;
   files_plan: {
     file_descriptions: Array<string>;
     file_names: Array<string>;
@@ -460,10 +461,10 @@ function ModalContentDo({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          purpose={purpose}
           goals={goals}
           ideas={ideas}
           measure={measure}
-          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={3}
@@ -515,10 +516,10 @@ function ModalContentStudy({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
-  purpose,
   place,
   centrum,
   project_leader,
@@ -598,10 +599,10 @@ function ModalContentAct({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
-  purpose,
   place,
   centrum,
   project_leader,
@@ -693,17 +694,17 @@ function CardModal({
   } = improvementWork;
 
   // Accessing properties from the all_iterations object
-  const result_measurements = all_iterations?.iteration1?.do?.results || "";
-  const result_analysis = all_iterations?.iteration1?.study?.analysis || "";
-  const notes_plan = all_iterations?.iteration1?.plan?.notes || "";
-  const notes_do = all_iterations?.iteration1?.do?.notes || "";
-  const notes_study = all_iterations?.iteration1?.study?.notes || "";
-  const notes_act = all_iterations?.iteration1?.act?.notes || "";
-  const files_plan = all_iterations?.iteration1?.plan?.files || {};
-  const files_do = all_iterations?.iteration1?.do?.files || {};
-  const files_study = all_iterations?.iteration1?.study?.files || {};
-  const files_act = all_iterations?.iteration1?.act?.files || {};
-  const checklist_plan = all_iterations?.iteration1?.plan?.checklist || {};
+  const result_measurements = all_iterations[0].do?.results || "";
+  const result_analysis = all_iterations[0].study?.analysis || "";
+  const notes_plan = all_iterations[0].plan?.notes || "";
+  const notes_do = all_iterations[0].do?.notes || "";
+  const notes_study = all_iterations[0].study?.notes || "";
+  const notes_act = all_iterations[0].act?.notes || "";
+  const files_plan = all_iterations[0].plan?.files || {};
+  const files_do = all_iterations[0].do?.files || {};
+  const files_study = all_iterations[0].study?.files || {};
+  const files_act = all_iterations[0].act?.files || {};
+  const checklist_plan = all_iterations[0].plan?.checklist || {};
 
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
@@ -998,10 +999,10 @@ function CardModal({
                 updatedTags={updatedTags}
                 setUpdatedTags={setUpdatedTags}
                 date_created={date_created}
+                purpose={purpose}
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
-                purpose={purpose}
                 place={place}
                 centrum={centrum}
                 project_leader={project_leader}

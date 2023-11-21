@@ -125,28 +125,29 @@ function ShowCard({ improvementWork }: ShowCardProps) {
             centrum={improvementWork.centrum}
             tags={improvementWork.tags}
             date_created={improvementWork.date_created}
+            purpose={improvementWork.purpose}
             goals={improvementWork.goals}
             ideas_array={improvementWork.ideas}
             measure={improvementWork.measure}
-            purpose={improvementWork.purpose}
+            total_iterations={improvementWork.total_iterations}
             result_measurements={
-              improvementWork.all_iterations.iteration1.do.results
+              improvementWork.all_iterations[improvementWork.total_iterations-1].do.results
             }
             result_analysis={
-              improvementWork.all_iterations.iteration1.study.analysis
+              improvementWork.all_iterations[improvementWork.total_iterations-1].study.analysis
             }
-            notes_plan={improvementWork.all_iterations.iteration1.plan.notes}
-            notes_do={improvementWork.all_iterations.iteration1.do.notes}
-            notes_study={improvementWork.all_iterations.iteration1.study.notes}
-            notes_act={improvementWork.all_iterations.iteration1.act.notes}
-            files_plan={improvementWork.all_iterations.iteration1.plan.files}
-            files_do={improvementWork.all_iterations.iteration1.do.files}
-            files_study={improvementWork.all_iterations.iteration1.study.files}
-            files_act={improvementWork.all_iterations.iteration1.act.files}
+            notes_plan={improvementWork.all_iterations[improvementWork.total_iterations-1].plan.notes}
+            notes_do={improvementWork.all_iterations[improvementWork.total_iterations-1].do.notes}
+            notes_study={improvementWork.all_iterations[improvementWork.total_iterations-1].study.notes}
+            notes_act={improvementWork.all_iterations[improvementWork.total_iterations-1].act.notes}
+            files_plan={improvementWork.all_iterations[improvementWork.total_iterations-1].plan.files}
+            files_do={improvementWork.all_iterations[improvementWork.total_iterations-1].do.files}
+            files_study={improvementWork.all_iterations[improvementWork.total_iterations-1].study.files}
+            files_act={improvementWork.all_iterations[improvementWork.total_iterations-1].act.files}
             project_leader={leaderName?.toString() || ""}
             project_members={memberNames}
             checklist_plan={
-              improvementWork.all_iterations.iteration1.plan.checklist
+              improvementWork.all_iterations[improvementWork.total_iterations-1].plan.checklist
             }
           />
         */
