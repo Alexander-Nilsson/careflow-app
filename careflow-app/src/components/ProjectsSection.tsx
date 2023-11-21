@@ -26,7 +26,7 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
-    const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: true, tagFilter: "all_tags", closed: true });
+    const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: true, tagFilter: "all_tags", closed: false });
 
     // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {

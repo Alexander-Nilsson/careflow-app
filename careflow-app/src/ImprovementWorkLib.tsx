@@ -194,7 +194,7 @@ export async function getUserProjects(hsaID: string, closed: boolean) {
                         projectsData.push(project)
                     }
                 });
-                return (projectsData);
+                return sortByDateCreated(projectsData);;
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -223,7 +223,7 @@ export async function getAllProjects(closed: boolean) {
                     projectsData.push(project)
                     // }
                 });
-                return (projectsData);
+                return sortByDateCreated(projectsData);;
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -250,7 +250,7 @@ export async function getAllImprovementWorks() {
                     improvementWorksData.push(improvementWork)
                     // }
                 });
-                return (improvementWorksData);
+                return sortByDateCreated(improvementWorksData);;
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -273,7 +273,7 @@ export async function getUserImprovementWorks(hsaID: string) {
                     let improvementWork: ImprovementWork = setImprovementWork(data)
                     improvementWorksData.push(improvementWork)
                 });
-                return (improvementWorksData);
+                return sortByDateCreated(improvementWorksData);
             })
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -293,13 +293,29 @@ export function findUserImprovementWorks(hsa: string, orgImprovementWorks: Impro
                 }
             }
         })
-        return newImprovementWorks
+        return sortByDateCreated(newImprovementWorks);
 
     } else {
-        return newImprovementWorks
+        return sortByDateCreated(newImprovementWorks)
     }
 }
 
+export function sortByDateCreated<T extends { date_created: Timestamp }>(data: T[]): T[] {
+    return data.sort((a, b) => a.date_created.seconds - b.date_created.seconds);
+}
+
+export function sortByOldestDate<T extends { date_created: Timestamp }>(data: T[]): T[] {
+    return data.sort((a, b) => b.date_created.seconds - a.date_created.seconds);
+}
+
+export function sortByTitleAscending<T extends { title: string }>(data: T[]): T[] {
+    return data.sort((a, b) => a.title.localeCompare(b.title, 'sv', { sensitivity: 'base' }));
+}
+
+export function sortByTitleDescending<T extends { title: string }>(data: T[]): T[] {
+    return data.sort((a, b) => b.title.localeCompare(a.title, 'sv', { sensitivity: 'base' }));
+
+}
 export function findTagOptions(orgImprovementWorks: ImprovementWork[]) {
     let tagOptions: string[] = []
     orgImprovementWorks.forEach((improvementWork) => {
@@ -322,7 +338,7 @@ export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], f
             filteredImprovementWorks.push(improvementWork)
         }
     })
-    return filteredImprovementWorks
+    return sortByOldestDate(filteredImprovementWorks)
 }
 
 function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
