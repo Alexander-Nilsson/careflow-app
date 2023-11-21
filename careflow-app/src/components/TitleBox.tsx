@@ -18,18 +18,21 @@ const TitleBox: FC<TitleBoxProps> = ({ title, description }) => {
     fontWeight: "bold",
     fontSize: "1.7rem",
     marginBottom: "0px",
-    marginTop: "20px",
+    marginTop: "2vh",
     alignItems: "baseline",
   };
 
+  // Replace "\n" with newline characters
+  const formattedDescription = description.replace(/\\n/g, "\n");
+
   return (
     <>
-      <div style={{ display: "flex", alignItems: "baseline" }}>
+      <div style={{ display: "flex", alignItems: "baseline" }} >
         <div style={titleBoxStyle}>
           <h2>{title}</h2>
         </div>
         <div style={{ marginLeft: "10px" }}>
-          <HelpPopover content={description} />
+          <HelpPopover content={formattedDescription} />
         </div>
       </div>
     </>
