@@ -2,64 +2,73 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { useAuth0 } from '@auth0/auth0-react';
 import {
+    FilterState,
     ImprovementWork,
-    getUserImprovementWorks,
     filterImprovementWorks,
-    findUserImprovementWorks
+    findTagOptions
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type ProjectsSectionProps = {
     userInfo: UserInfoType;
-    improvementWorks: ImprovementWork[] | null;
+    allImprovementWorks: ImprovementWork[];
 };
 
-// type ImprovementWorksProps = {
-//     improvementWorks: ImprovementWork[] | null;
-// };
+// denna används istället för att ha olika variabler för olika filter.
+// nu samlas alla filter d.v.s. om vi ska visa användarens eller klinikens (filter),
+// vilken tag som ska visas,
+// samt om vi vill ha öppna eller stängda arbeten.
 
-function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
 
-    // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
-    const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
+function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps) {
 
-    // const fetchData = async () => {
-    //     const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
-    //     if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+    const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
+    const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
+    const [tagOptions, setTagOptions] = useState<string[]>([]);
+    const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: true, tagFilter: "all_tags", closed: false });
 
-    // };
-
+    // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {
         if (event.target.value == "user") {
-            // const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
-            // if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
+            setFilterState(prev => ({ ...prev, includeUser: true }));
+        } else if (event.target.value == "clinic") {
+            setFilterState(prev => ({ ...prev, includeClinic: true }));
         }
-        else if (event.target.value == "clinic") {
-            // const filteredImprovementWorks: ImprovementWork[] | null = await filterImprovementWorks(event.target.value, userInfo.clinic, false)
-            // setImprovementWorks(filteredImprovementWorks)
-        }
+        
     };
 
-    const handleTags = (event:any) => {
-        return
+    // denna uppdaterar vilken tag som ska filtreras på.
+    const handleTags = (event: any) => {
+        setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
     }
 
-
+    //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
+    // d.v.s. när man har klickat på ett filter
     useEffect(() => {
-        const userImprovementWorks: ImprovementWork[] | null = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
-        setDisplayedImprovementWorks(userImprovementWorks)
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(improvementWorks, filterState, userInfo)
+        setDisplayedImprovementWorks(filteredImprovementWorks)
+    }, [filterState]);
+
+    // denna useEffect ser till att man hämtar taggar endast en gång, eftersom den inte har en hook som den ovan har.
+    // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
+    // så att det funkar som vi sa.
+    useEffect(() => {
+        const improvementWorks = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+        const tags = findTagOptions(improvementWorks)
+        setImprovementWorks(improvementWorks)
+        setTagOptions(tags);
+        setFilterState(prev => ({ ...prev, includeClinic: false }));
+        
     }, []);
-
-
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
-        width: "97%",
+        width: "100%",
         height: "20rem",
         borderRadius: "10px",
-        margin: "20px",
+        margin: "0px",
+        marginBottom: "20px", // Added this line
         padding: "10px",
         overflowX: "auto" as "auto",
         boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
@@ -111,8 +120,13 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
                 </div>
                 <div className="ml-2 mt-2">
                     <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-                        <option selected value="user">Visa mina</option>
-                        <option value="clinic">Visa klinikens</option>
+                    <option selected value="all_tags">Visa alla taggar</option>
+                        {
+                            tagOptions.map((tag) => (
+                                <option key ={tag} value={tag}> {tag}</option>
+                            ))
+                        }
+                       
                     </select>
                 </div>
                 <div className="mt-3 ml-2">
@@ -121,7 +135,7 @@ function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
             </div>
 
             <div style={projectsContainerStyle}>
-                {displayedImprovementWorks !== null ? (
+                {displayedImprovementWorks != null ? (
                     displayedImprovementWorks.map((improvementWork, index) => (
                         <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
                             <ProjectCard

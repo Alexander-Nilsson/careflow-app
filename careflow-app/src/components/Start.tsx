@@ -33,12 +33,17 @@ function Start() {
 
   const contentStyle = {
     marginTop: '20px',
+    width: "90%",
+    height: "60%",
+    marginLeft: '5%', // 5% margin on the left
+    marginRight: '5%', // 5% margin on the right
   }
 
+  
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth0();
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
-  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
+  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>(null);
 
   //fetches the user data from database, based on the hsa-ID
   async function getUser(username: string) {
@@ -71,8 +76,9 @@ function Start() {
   async function fetchData() {
     if (user?.name) {
       getUser(user.name);
-      const improvementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
+      const improvementWorks: ImprovementWork[] = await getAllImprovementWorks();
       setImprovementWorks(improvementWorks)
+      console.log("hämtat")
     }
   }
 
@@ -86,6 +92,7 @@ function Start() {
       fetchData()
     }
 
+
   }, [isAuthenticated]);
 
   return (
@@ -96,11 +103,11 @@ function Start() {
         alt=""
         src="./background-gradient.jpeg"
       />
-      {isAuthenticated && userInfo? (
+      {isAuthenticated && userInfo && improvementWorks ? (
         <div style={contentStyle}>
           <ProfileSection />
           {/* <CreateNewProject /> */}
-          <ProjectsSection userInfo={userInfo} improvementWorks={improvementWorks}/>
+          <ProjectsSection userInfo={userInfo} allImprovementWorks={improvementWorks}/>
           <div className="d-flex mr-2">
             <IdeasSection userInfo={userInfo} />
             <ProgressSection improvementWorks={improvementWorks}/>

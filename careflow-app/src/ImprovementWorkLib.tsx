@@ -1,8 +1,16 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase";
 import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
+import { UserInfoType } from "./components/Start";
 
 export type Id = string | number;
+
+export interface FilterState {
+    includeUser: boolean;
+    includeClinic: boolean;
+    tagFilter: string;
+    closed: boolean;
+}
 
 export interface Project {
     id: Id;
@@ -230,12 +238,12 @@ export async function getAllImprovementWorks() {
     // const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", hsaID));
 
     const improvementWorksQuery = query(improvementWorksCollectionRef);
-
+    let improvementWorksData: ImprovementWork[] = [];
     try {
         return Promise.all([getDocs(improvementWorksQuery)])
             .then(([snapshot]) => {
                 const improvementWorks = [...snapshot.docs]
-                let improvementWorksData: ImprovementWork[] = [];
+
                 improvementWorks.forEach((doc) => {
                     let data = doc.data();
                     let improvementWork: ImprovementWork = setImprovementWork(data)
@@ -246,7 +254,7 @@ export async function getAllImprovementWorks() {
             })
     } catch (error) {
         console.error("Error fetching data:", error);
-        return null;
+        return improvementWorksData;
     }
 }
 
@@ -273,34 +281,9 @@ export async function getUserImprovementWorks(hsaID: string) {
     }
 }
 
-
-
-export async function filterImprovementWorks(filter: string, filterValue: string, closed: boolean) {
-    const improvementWorksCollectionRef = collection(db, "improvementWorks");
-    const clinicQuery = query(improvementWorksCollectionRef, where(filter, "==", filterValue));
-    try {
-        return Promise.all([getDocs(clinicQuery)])
-            .then(([clinicSnapshot]) => {
-                const userImprovementWorks = [...clinicSnapshot.docs]
-                let improvementWorksData: ImprovementWork[] = [];
-                userImprovementWorks.forEach((doc) => {
-                    let data = doc.data();
-                    if ((closed && data.closed) || (!closed && !data.closed)) {
-                        let improvementWork: ImprovementWork = setImprovementWork(data)
-                        improvementWorksData.push(improvementWork)
-                    }
-                });
-                return sortByDateCreated(improvementWorksData);
-            })
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return null;
-    }
-}
-
 export function findUserImprovementWorks(hsa: string, orgImprovementWorks: ImprovementWork[] | null, closed: boolean) {
+    let newImprovementWorks: ImprovementWork[] = []
     if (orgImprovementWorks) {
-        let newImprovementWorks: ImprovementWork[] = []
         orgImprovementWorks.forEach((improvementWork) => {
             if ((improvementWork.closed && closed) || (!improvementWork.closed && !closed)) {
                 if (improvementWork.project_leader === hsa) {
@@ -313,7 +296,7 @@ export function findUserImprovementWorks(hsa: string, orgImprovementWorks: Impro
         return sortByDateCreated(newImprovementWorks);
 
     } else {
-        return null
+        return sortByDateCreated(newImprovementWorks)
     }
 }
 
@@ -331,4 +314,60 @@ export function sortByTitleAscending<T extends { title: string }>(data: T[]): T[
 
 export function sortByTitleDescending<T extends { title: string }>(data: T[]): T[] {
     return data.sort((a, b) => b.title.localeCompare(a.title, 'sv', { sensitivity: 'base' }));
+
+}
+export function findTagOptions(orgImprovementWorks: ImprovementWork[]) {
+    let tagOptions: string[] = []
+    orgImprovementWorks.forEach((improvementWork) => {
+        improvementWork.tags.forEach((tags) => {
+            if (!tagOptions.includes(tags)) {
+                tagOptions.push(tags);
+            }
+        })
+    })
+    return tagOptions
+}
+
+// denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
+// filtreras bort genom att anropa include
+export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState, userInfo: UserInfoType) {
+    let filteredImprovementWorks: ImprovementWork[] = []
+    orgImprovementWorks.forEach((improvementWork) => {
+        // console.log(improvementWork)
+        if (include(improvementWork, filter, userInfo)) {
+            filteredImprovementWorks.push(improvementWork)
+        }
+    })
+    return sortByOldestDate(filteredImprovementWorks)
+}
+
+function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
+    // if we are searching for closed ImpWorks and the focal ImpWork is open
+    // OR if we are searching for open ImpWorks and the focal ImpWork is closed,
+    // don't include it.
+    if ((filter.closed && !improvementWork.closed) || (!filter.closed && improvementWork.closed)) {
+        return false;
+    }
+
+    // if we are filtering users ImpWorks and the user neither a member nor a leader,
+    // don't include it
+    if (filter.includeUser && !(improvementWork.project_leader == userInfo.hsaID || improvementWork.project_members.includes(userInfo.hsaID))) {
+        return false;
+        // if we are filtering on the user's clinic and the focal ImpWork is not in the user's clinic,
+        // don't include it
+    }
+
+    if (filter.includeClinic && improvementWork.clinic != userInfo.clinic) {
+        return false
+    }
+
+    // if we are filtering on specific tags, if filtering on specific tags, check if
+    // focal ImpWork has the tag. If not, don't include it.
+    if (filter.tagFilter !== "all_tags") {
+        if (!improvementWork.tags.includes(filter.tagFilter)) {
+            return false
+        }
+    }
+
+    return true;
 }
