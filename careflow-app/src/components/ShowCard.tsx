@@ -16,20 +16,10 @@ interface ShowCardProps {
 
 function ShowCard({ improvementWork }: ShowCardProps) {
   // State to track whether the mouse is over the task card
-  const [mouseIsOver, setMouseIsOver] = useState(false);
+
   const [show, setShow] = useState(false);
   const modalClose = () => setShow(false);
   const modalShow = () => setShow(true);
-
-  const handleMouseEnter = () => {
-    setMouseIsOver(true);
-    console.log(`Hovered over card`);
-  };
-
-  const handleMouseLeave = () => {
-    setMouseIsOver(false);
-    console.log(`Left card`);
-  };
 
   const { isLoading } = useAuth0();
   const [leaderName, setLeaderName] = useState<string | null>(null);
@@ -104,14 +94,7 @@ function ShowCard({ improvementWork }: ShowCardProps) {
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <div>
         <CardButton
           title={improvementWork.title}
@@ -119,18 +102,6 @@ function ShowCard({ improvementWork }: ShowCardProps) {
           date_created={improvementWork.date_created}
           onClick={modalShow}
         />
-        <div>
-          {mouseIsOver && (
-            <button
-              onClick={() => {
-                //deleteTask(task.id);
-              }}
-              className="stroke-black absolute top-0 right-0 p-2 rounded opacity-60 hover:opacity-100 bg-columnBackgroundColor"
-            >
-              <TrashIcon />
-            </button>
-          )}
-        </div>
 
         {
           /*

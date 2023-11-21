@@ -6,6 +6,7 @@ import CommentIconComponent from "./CommentIcon";
 import ListIconComponent from "./ListIcon";
 import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
+import TrashIcon from "../icons/Trashicon";
 
 const TagStyle = {
   marginTop: "5px",
@@ -30,6 +31,17 @@ interface CardButtonProps {
 
 function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
   const formattedDate = date_created.toDate().toLocaleString().slice(0, 10); //Format the date into a string only first 10 char
+
+  const [mouseIsOver, setMouseIsOver] = useState(false);
+  const handleMouseEnter = () => {
+    setMouseIsOver(true);
+    //console.log(`Hovered over card`);
+  };
+
+  const handleMouseLeave = () => {
+    setMouseIsOver(false);
+    //console.log(`Left card`);
+  };
   return (
     <a
       href="#"
@@ -46,6 +58,8 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
 
           margin: "1vw",
         }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <div className="outerContainer">
           <div className="tags">
@@ -72,6 +86,19 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
               <PersonFill />
             </div>
           </div>
+        </div>
+
+        <div>
+          {mouseIsOver && (
+            <button
+              onClick={() => {
+                //deleteTask(task.id);
+              }}
+              className="stroke-black absolute right-4 top-4 p-2 rounded opacity-60 hover:opacity-100 bg-columnBackgroundColor"
+            >
+              <TrashIcon />
+            </button>
+          )}
         </div>
       </Card>
     </a>

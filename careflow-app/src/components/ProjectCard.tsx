@@ -1,4 +1,4 @@
-import React, { useEffect, useState }, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import { BiComment, BiFileBlank } from "react-icons/bi";
@@ -8,7 +8,8 @@ import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
 import { Id, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
-import CardModal from "./CardModal";import TrashIcon from "../icons/Trashicon";
+import CardModal from "./CardModal";
+import TrashIcon from "../icons/Trashicon";
 
 export interface ProjectCardProps {
   title: string;
@@ -121,7 +122,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div>
-      <Card onClick={modalShow}>
+      <Card
+        onClick={modalShow}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         <Card.Body style={cardBodyStyle}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div>
@@ -163,11 +168,25 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 {getPhaseImage(phase)}
               </div>
             )}
-            <div></div>
+            <div>
+              {" "}
+              {mouseIsOver && (
+                <button
+                  onClick={() => {
+                    console.log("Button clicked!");
+                    modalClose();
+                  }}
+                  className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+                >
+                  <TrashIcon />
+                </button>
+              )}
+            </div>
           </div>
           <div></div>
         </Card.Body>
       </Card>
+
       {
         <CardModal
           show={show}
