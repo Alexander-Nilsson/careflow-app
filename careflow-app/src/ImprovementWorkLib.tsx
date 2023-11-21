@@ -1,8 +1,20 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
 import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
 
 export type Id = string | number;
+
+export interface User {
+  first_name: string;
+  sur_name: string;
+}
 
 export interface Project {
   id: Id;
@@ -96,6 +108,7 @@ export interface ImprovementWork {
   goals: Array<string>;
   ideas: Array<string>;
   measure: Array<string>;
+  purpose: string;
   phase: Id;
   place: string;
   project_leader: string;
@@ -159,6 +172,7 @@ function setImprovementWork(id: string, data: DocumentData) {
     goals: data.goals,
     ideas: data.ideas,
     measure: data.measure,
+    purpose: data.purpose,
     phase: data.phase,
     place: data.place,
     project_leader: data.project_leader,
@@ -346,4 +360,30 @@ export function findUserImprovementWorks(
   } else {
     return newImprovementWorks;
   }
+}
+
+export async function getMemberName(hsaId: string) {
+  const docRef = doc(db, "users", hsaId);
+
+  try {
+    return Promise.all([getDoc(docRef)]).then(([userSnapshot]) => {
+      if (userSnapshot && userSnapshot.exists()) {
+        let userData: string =
+          userSnapshot.data().first_name + " " + userSnapshot.data().sur_name;
+        return userData;
+      } else {
+        console.error("Document not found");
+        return null;
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+
+  //if (docSnap.exists()) {
+  //  return docSnap.data().first_name;
+  //} else {
+  //  console.log("No such document!");
+  //}
 }

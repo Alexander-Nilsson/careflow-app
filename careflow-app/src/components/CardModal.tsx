@@ -58,6 +58,7 @@ interface cardModalProps {
   goals: Array<string>;
   ideas_array: Array<string>;
   measure: Array<string>;
+  purpose: string;
   result_measurements: string;
   result_analysis: string;
   notes_plan: string;
@@ -101,6 +102,7 @@ interface modalContentPlanProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   checklist: {
@@ -142,6 +144,7 @@ interface modalContentDoProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
@@ -177,6 +180,7 @@ interface modalContentStudyProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
@@ -212,6 +216,7 @@ interface modalContentActProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
@@ -319,6 +324,7 @@ function ModalContentPlan({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   checklist,
@@ -359,6 +365,7 @@ function ModalContentPlan({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={2}
@@ -422,6 +429,7 @@ function ModalContentDo({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   project_leader,
@@ -448,6 +456,7 @@ function ModalContentDo({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={3}
@@ -502,6 +511,7 @@ function ModalContentStudy({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   project_leader,
@@ -528,6 +538,7 @@ function ModalContentStudy({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={4}
@@ -583,6 +594,7 @@ function ModalContentAct({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   project_leader,
@@ -607,6 +619,7 @@ function ModalContentAct({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={5}
@@ -662,6 +675,7 @@ function CardModal({
   goals,
   ideas_array,
   measure,
+  purpose,
   result_measurements,
   result_analysis,
   notes_plan,
@@ -892,6 +906,7 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
                 checklist={{
@@ -902,7 +917,7 @@ function CardModal({
                 setChecklistItems={setChecklistItems}
                 setChecklistDone={setChecklistDone}
                 setChecklistMembers={setChecklistMembers}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 handleIdeaClick={handleIdeaClick}
                 id={projectId}
@@ -934,9 +949,10 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 result_measurements={updatedResultMeasurements}
                 setUpdatedResultMeasurements={setUpdatedResultMeasurements}
@@ -970,9 +986,10 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 result_analysis={updatedResultAnalysis}
                 setUpdatedResultAnalysis={setUpdatedResultAnalysis}
@@ -1006,9 +1023,10 @@ function CardModal({
                 goals={goals}
                 ideas={ideas}
                 measure={measure}
+                purpose={purpose}
                 place={place}
                 centrum={centrum}
-                project_leader={""}
+                project_leader={project_leader}
                 project_members={project_members}
                 handleIdeaClick={handleIdeaClick}
                 id={projectId}
