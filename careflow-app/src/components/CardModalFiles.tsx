@@ -1,6 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { PlusLg, Paperclip } from "react-bootstrap-icons";
+import { db, fileStorage } from "../firebase";
+import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+
 
 const saveFileButtonStyle = {
   backgroundColor: "#051F6F",
@@ -46,6 +50,10 @@ interface cardModalFilesProps {
   >;
 }
 
+interface fileURL {
+
+}
+
 //The section of the modal where the user uploads files
 function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
   const [showFileModal, setShowFileModal] = useState(false);
@@ -81,7 +89,35 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
       setUpdatedFiles({
         file_names: updatedFileNames,
         file_descriptions: updatedFileDescriptions,
+
+
+
+
+        
       });
+  
+//CLOUD STORAGE UPLOADING
+      const [fileUrl, setFileUrl] = useState(null);
+      const [progresspercent, setProgresspercent] = useState(0);
+
+      const storageRef = ref(fileStorage, `files/${newFile.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, newFile);
+  
+      uploadTask.on("state_changed",
+        (snapshot) => {
+          const progress =
+            Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          setProgresspercent(progress);
+        },
+        (error) => {
+          alert(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            //setFileUrl(downloadURL)
+          });
+        }
+      );
 
       // Clear new file and description field
       setNewFile(null);
@@ -89,6 +125,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
       handleCloseFileModal();
     }
   };
+
 
   return (
     <>
