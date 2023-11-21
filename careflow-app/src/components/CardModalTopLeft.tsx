@@ -115,6 +115,7 @@ interface cardModalTopLeftProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   active_tab: number;
   percentage: number;
   handleIdeaClick: (index: number) => void;
@@ -165,6 +166,7 @@ function CardModalTopLeft({
   date_created,
   goals,
   measure,
+  purpose,
   active_tab,
   percentage,
   ideas,
@@ -373,7 +375,7 @@ function CardModalTopLeft({
                 </span>
               }
             >
-              <div style={whiteDescriptionContainerStyle}>Ett syfte</div>
+              <div style={whiteDescriptionContainerStyle}>{purpose}</div>
             </Tab>
             <Tab
               eventKey="mål"
@@ -463,6 +465,7 @@ function CardModalTopLeft({
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
+                    style={{ color: idea.checked ? "#000000" : "#AEAEAE" }}
                     //disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
                     onChange={() => handleIdeaClick(index)}
                   />
