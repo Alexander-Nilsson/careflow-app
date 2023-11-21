@@ -172,9 +172,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               {" "}
               {mouseIsOver && (
                 <button
-                  onClick={() => {
-                    console.log("Button clicked!");
-                    modalClose();
+                  onClick={(event) => {
+                    event.stopPropagation(); // Prevent the click event from reaching the Card
+                    console.log("Trash icon clicked!");
+                    // Handle trash icon click (e.g., delete the item)
                   }}
                   className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
                 >

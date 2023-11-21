@@ -91,10 +91,12 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
         <div>
           {mouseIsOver && (
             <button
-              onClick={() => {
-                //deleteTask(task.id);
+              onClick={(event) => {
+                event.stopPropagation(); // Prevent the click event from reaching the Card
+                console.log("Trash icon clicked!");
+                // Handle trash icon click (e.g., delete the item)
               }}
-              className="stroke-black absolute right-4 top-4 p-2 rounded opacity-60 hover:opacity-100 bg-columnBackgroundColor"
+              className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
             >
               <TrashIcon />
             </button>
