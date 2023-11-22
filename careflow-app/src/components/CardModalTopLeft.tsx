@@ -37,6 +37,41 @@ const buttonStyle = {
   marginTop: "20px",
 };
 
+const finishButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 10px",
+  width: "100%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "15px",
+};
+
+const newIdeaButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 0px",
+  width: "48.9%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
+  marginLeft: "5px",
+};
+
+const sameIdeaButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 0px",
+  width: "48.9%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
+  marginRight: "5px",
+};
+
 const iconStyle = {
   width: "15px",
   height: "15px",
@@ -208,7 +243,12 @@ function CardModalTopLeft({
   return (
     <>
       <div style={{ width: "63%" }}>
-        <div style={{ display: "flex", marginBottom: "20px" }}>
+        <div
+          style={{
+            display: active_tab !== 5 ? "flex" : "block",
+            marginBottom: "20px",
+          }}
+        >
           <div style={{ width: "60%" }}>
             <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
             <div style={tagStyle}>
@@ -307,25 +347,42 @@ function CardModalTopLeft({
               </Button>
             </div>
           ) : active_tab === 5 ? ( //If active tab is act, show three different buttons
-            <div
-              style={{
-                width: "40%",
-                display: "flex",
-                justifyContent: "right",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "40px",
-              }}
-            >
-              <div style={{ width: 120, height: 120 }}></div>
+            <div>
               <Button
-                style={buttonStyle}
+                style={finishButtonStyle}
                 disabled={
                   phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
+                onClick={() => handlePhaseUpdate(phase)}
               >
-                Markera fas som klar
+                Avsluta förbättringsarbete
+              </Button>
+              <Button
+                style={sameIdeaButtonStyle}
+                disabled={
+                  phase !== active_tab ||
+                  ideas.every((idea) => idea.checked === false)
+                }
+                onClick={() => handlePhaseUpdate(6)}
+              >
+                Påbörja ny iteration
+                <span style={{ fontSize: "10px", display: "block" }}>
+                  {"(med samma idé)"}
+                </span>
+              </Button>
+              <Button
+                style={newIdeaButtonStyle}
+                disabled={
+                  phase !== active_tab ||
+                  ideas.every((idea) => idea.checked === false)
+                }
+                onClick={() => handlePhaseUpdate(7)}
+              >
+                Påbörja ny iteration
+                <span style={{ fontSize: "10px", display: "block" }}>
+                  {"(med annan idé)"}
+                </span>
               </Button>
             </div>
           ) : (
