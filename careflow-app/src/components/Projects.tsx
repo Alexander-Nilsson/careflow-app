@@ -15,6 +15,8 @@ import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
 import { UserInfoType, getUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
+import CardDeleteModal from "./CardDeleteModal";
+
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -121,6 +123,7 @@ function Projects() {
         Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
           Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
         ></TitleBox>
+
         <div
           style={{
             width: "30%",
@@ -132,6 +135,7 @@ function Projects() {
             justifyContent: "flex-end",
           }}
         >
+
           <CreateNewProject />
         </div>
       </div>

@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import TrashIcon from "../icons/Trashicon";
 import { ImprovementWork, deleteProject } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
+import CardDeleteModal from "./CardDeleteModal";
 
 const TagStyle = {
   marginTop: "5px",
@@ -41,6 +42,21 @@ function CardButton({
   improvementWork,
   isAdmin,
 }: CardButtonProps) {
+
+  const [showModal, setShowModal] = useState(false); // State variable to control modal visibility
+
+  const handleButtonClick = (event: { stopPropagation: () => void; }) => {
+    event.stopPropagation(); // Prevent the click event from reaching the Card
+    setShowModal(true); // Show the modal when the button is clicked
+    console.log("Trash icon clicked!", isAdmin);
+    
+    //deleteProject(improvementWork.id.toString()); // delete the item
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Close the modal when needed
+  };
+
   const formattedDate = date_created.toDate().toLocaleString().slice(0, 10); //Format the date into a string only first 10 char
 
   const [mouseIsOver, setMouseIsOver] = useState(false);
@@ -101,19 +117,25 @@ function CardButton({
         </div>
 
         <div>
-          {mouseIsOver && isAdmin && (
-            <button
-              onClick={(event) => {
-                event.stopPropagation(); // Prevent the click event from reaching the Card
-                console.log("Trash icon clicked!", isAdmin);
-                //deleteProject(improvementWork.id.toString()); // delete the item
-              }}
-              className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
-            >
-              <TrashIcon />
-            </button>
+      {mouseIsOver && isAdmin && (
+        <div>
+          <button
+            onClick={handleButtonClick}
+            className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+          >
+            <TrashIcon />
+          </button>
+          {/* Render CardDeleteModal conditionally */}
+          {showModal && (
+            <CardDeleteModal
+              show={showModal}
+              onHide={handleCloseModal}
+              impWorkId={improvementWork.id.toString()}
+            />
           )}
         </div>
+      )}
+    </div>
       </Card>
     </a>
   );
