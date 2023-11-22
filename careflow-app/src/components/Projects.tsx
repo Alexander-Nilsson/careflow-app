@@ -112,7 +112,7 @@ function Projects() {
       const places = findPlaceOptions(allImprovementWorks)
       setPlaceOptions(places);
       if (userInfo) {
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
         setImprovementWorkList(filteredImprovementWorks)
       }
     }
@@ -120,7 +120,7 @@ function Projects() {
 
   useEffect(() => {
     if (userInfo) {
-      const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+      const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
       setImprovementWorkList(filteredImprovementWorks)
     }
         

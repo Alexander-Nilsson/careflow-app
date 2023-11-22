@@ -40,7 +40,7 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
     useEffect(() => {
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(improvementWorks, filterState, userInfo)
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(improvementWorks, filterState, userInfo, "date_created")
         setDisplayedImprovementWorks(filteredImprovementWorks)
     }, [filterState]);
 
@@ -48,7 +48,7 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
     // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
     // så att det funkar som vi sa.
     useEffect(() => {
-        const improvementWorks = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
+        const improvementWorks = filterImprovementWorks(allImprovementWorks, filterState, userInfo, "date_created")
         const tags = findTagOptions(improvementWorks)
         setImprovementWorks(improvementWorks)
         setTagOptions(tags);

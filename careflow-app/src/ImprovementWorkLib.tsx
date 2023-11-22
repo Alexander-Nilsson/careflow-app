@@ -352,14 +352,24 @@ export function findPlaceOptions(orgImprovementWorks: ImprovementWork[]) {
 
 // denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
 // filtreras bort genom att anropa include
-export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState, userInfo: UserInfoType) {
+export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState, userInfo: UserInfoType, sort: string) {
   let filteredImprovementWorks: ImprovementWork[] = []
   orgImprovementWorks.forEach((improvementWork) => {
     if (include(improvementWork, filter, userInfo)) {
       filteredImprovementWorks.push(improvementWork)
     }
   })
-  return sortByDateCreated(filteredImprovementWorks)
+  if (sort === "oldest_date") {
+    return sortByOldestDate(filteredImprovementWorks)
+  } else if (sort === "date_created") {
+    return sortByDateCreated(filteredImprovementWorks)
+  } else if (sort === "ascending") {
+    return sortByTitleAscending(filteredImprovementWorks)
+  } else if (sort === "descending") {
+    return sortByTitleDescending(filteredImprovementWorks)
+  } else {
+    return sortByDateCreated(filteredImprovementWorks)
+  }
 }
 
 function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
