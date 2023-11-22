@@ -2,7 +2,14 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getAllProjects, Project, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
+import {
+  getAllProjects,
+  Project,
+  sortByDateCreated,
+  sortByOldestDate,
+  sortByTitleAscending,
+  sortByTitleDescending,
+} from "../ImprovementWorkLib";
 import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
@@ -15,6 +22,7 @@ export interface ProjectContextType {
   setImprovementWorkList: React.Dispatch<
     React.SetStateAction<ImprovementWork[]>
   >;
+  isAdmin: boolean;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -22,17 +30,21 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 function Projects() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth0();
-  const [sortBy, setSortBy] = useState<"date_created" | "oldest_date" | "ascending" | "descending">(
-    "date_created"
-  );
+  const [sortBy, setSortBy] = useState<
+    "date_created" | "oldest_date" | "ascending" | "descending"
+  >("date_created");
 
-    // const [projectList, setProjectList] = useState<Project[]>([])
+  // const [projectList, setProjectList] = useState<Project[]>([])
 
   // for admin func
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedSortOption = event.target.value as "date_created" | "oldest_date" | "ascending" | "descending";
+    const selectedSortOption = event.target.value as
+      | "date_created"
+      | "oldest_date"
+      | "ascending"
+      | "descending";
     setSortBy(selectedSortOption);
 
     if (selectedSortOption === "oldest_date") {
@@ -44,7 +56,7 @@ function Projects() {
     } else if (selectedSortOption === "ascending") {
       const sortedProjects = sortByTitleAscending(improvementWorkList);
       setImprovementWorkList(sortedProjects);
-    } else if (selectedSortOption === "descending"){
+    } else if (selectedSortOption === "descending") {
       const sortedProjects = sortByTitleDescending(improvementWorkList);
       setImprovementWorkList(sortedProjects);
     }
@@ -76,6 +88,7 @@ function Projects() {
 
     // Fetch user info to check if admin
     if (user?.name) {
+      //console.log(user);
       getUser(user.name, user, setUserInfo);
       console.log("User info:", userInfo);
     }
@@ -99,7 +112,7 @@ function Projects() {
           justifyContent: "space-between",
           //alignItems: "baseline",
           //marginTop: "20px",
-          whiteSpace: "pre-line"
+          whiteSpace: "pre-line",
         }}
       >
         <TitleBox
@@ -115,7 +128,7 @@ function Projects() {
             margin: "0px",
             marginRight: " 4vw",
             marginTop: "2vh",
-           display: "flex",
+            display: "flex",
             justifyContent: "flex-end",
           }}
         >
@@ -125,38 +138,33 @@ function Projects() {
       {/* TEMP  Display "Admin user" text if the user is an admin */}
       {userInfo?.admin && <p>Admin user</p>}
 
-  
-          <div className="ml-2 mt-2 d-flex align-items-center">
-          <label htmlFor="sortDropdown" className="form-label me-2">
-            Sortera: 
-          </label>
-          <select
-            id="sortDropdown"
-            value={sortBy}
-            className="form-select"
-            aria-label="Filtrera"
-            onChange={handleSortChange}
-            style={{ width: "8.5rem" }} // Adjust the width as needed
-          >
-            <option selected value="date_created">
-              Visa senaste
-            </option>
-            <option value="oldest_date">Visa äldsta</option>
-            <option value="ascending">
-              Visa a-ö
-            </option>
-            <option value="descending">Visa ö-a</option>
-          </select>
-        </div>
-        
-      
-    
-      
+      <div className="ml-2 mt-2 d-flex align-items-center">
+        <label htmlFor="sortDropdown" className="form-label me-2">
+          Sortera:
+        </label>
+        <select
+          id="sortDropdown"
+          value={sortBy}
+          className="form-select"
+          aria-label="Filtrera"
+          onChange={handleSortChange}
+          style={{ width: "8.5rem" }} // Adjust the width as needed
+        >
+          <option selected value="date_created">
+            Visa senaste
+          </option>
+          <option value="oldest_date">Visa äldsta</option>
+          <option value="ascending">Visa a-ö</option>
+          <option value="descending">Visa ö-a</option>
+        </select>
+      </div>
+
       {/* <ProjectContext.Provider value={{ projectList, setProjectList }}> */}
       <ProjectContext.Provider
         value={{
           improvementWorkList,
           setImprovementWorkList,
+          isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
         }}
       >
         <KanbanBoard />

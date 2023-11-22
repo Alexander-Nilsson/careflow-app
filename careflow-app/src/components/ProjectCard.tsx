@@ -104,7 +104,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Hej");
+        //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 

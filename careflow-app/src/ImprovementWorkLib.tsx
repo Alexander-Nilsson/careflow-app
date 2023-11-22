@@ -453,12 +453,6 @@ export async function getMemberName(hsaId: string) {
     console.error("Error fetching data:", error);
     return null;
   }
-
-  //if (docSnap.exists()) {
-  //  return docSnap.data().first_name;
-  //} else {
-  //  console.log("No such document!");
-  //}
 }
 
 export async function deleteProject(id: string) {

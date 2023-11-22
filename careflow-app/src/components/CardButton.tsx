@@ -5,9 +5,10 @@ import PaperClipComponent from "./Paperclip";
 import CommentIconComponent from "./CommentIcon";
 import ListIconComponent from "./ListIcon";
 import { Timestamp } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TrashIcon from "../icons/Trashicon";
 import { ImprovementWork, deleteProject } from "../ImprovementWorkLib";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const TagStyle = {
   marginTop: "5px",
@@ -29,6 +30,7 @@ interface CardButtonProps {
   date_created: Timestamp;
   onClick: () => void;
   improvementWork: ImprovementWork;
+  isAdmin: boolean;
 }
 
 function CardButton({
@@ -37,6 +39,7 @@ function CardButton({
   date_created,
   onClick,
   improvementWork,
+  isAdmin,
 }: CardButtonProps) {
   const formattedDate = date_created.toDate().toLocaleString().slice(0, 10); //Format the date into a string only first 10 char
 
@@ -50,6 +53,7 @@ function CardButton({
     setMouseIsOver(false);
     //console.log(`Left card`);
   };
+
   return (
     <a
       href="#"
@@ -97,12 +101,12 @@ function CardButton({
         </div>
 
         <div>
-          {mouseIsOver && (
+          {mouseIsOver && isAdmin && (
             <button
               onClick={(event) => {
                 event.stopPropagation(); // Prevent the click event from reaching the Card
-                //console.log("Trash icon clicked!", { title });
-                deleteProject(improvementWork.id.toString()); // delete the item
+                console.log("Trash icon clicked!", isAdmin);
+                //deleteProject(improvementWork.id.toString()); // delete the item
               }}
               className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
             >

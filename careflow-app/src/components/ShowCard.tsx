@@ -12,9 +12,10 @@ import TrashIcon from "../icons/Trashicon";
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
+  isAdmin: boolean;
 }
 
-function ShowCard({ improvementWork }: ShowCardProps) {
+function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
   // State to track whether the mouse is over the task card
 
   const [show, setShow] = useState(false);
@@ -32,7 +33,7 @@ function ShowCard({ improvementWork }: ShowCardProps) {
       }
 
       try {
-        console.log("Hej");
+        //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
@@ -102,6 +103,7 @@ function ShowCard({ improvementWork }: ShowCardProps) {
           date_created={improvementWork.date_created}
           onClick={modalShow}
           improvementWork={improvementWork}
+          isAdmin={isAdmin}
         />
 
         {
