@@ -4,7 +4,7 @@ import {
   BarChart,
   Lightbulb,
   Bullseye,
-  EnvelopePaper,
+  CheckCircle,
 } from "react-bootstrap-icons";
 import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
@@ -247,7 +247,7 @@ function CreateProjectModal({
               file_descriptions: [],
             },
             notes: "",
-            
+
             results: "",
           },
           study: {
@@ -329,9 +329,9 @@ function CreateProjectModal({
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
-                <EnvelopePaper
+                <Bullseye
                   style={{
-                    color: "black",
+                    color: "#C71307",
                     width: "20px",
                     height: "20px",
                   }}
@@ -368,9 +368,9 @@ function CreateProjectModal({
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
-                <Bullseye
+                <CheckCircle
                   style={{
-                    color: "#FD0B0B",
+                    color: "#008000",
                     width: "20px",
                     height: "20px",
                   }}
@@ -415,7 +415,7 @@ function CreateProjectModal({
               <div style={IconCircleStyle}>
                 <BarChart
                   style={{
-                    color: "#495BFF",
+                    color: "#32308D",
                     width: "20px",
                     height: "20px",
                   }}
@@ -460,7 +460,7 @@ function CreateProjectModal({
               <div style={IconCircleStyle}>
                 <Lightbulb
                   style={{
-                    color: "#FFE500",
+                    color: "#D9C515",
                     width: "20px",
                     height: "20px",
                   }}
@@ -502,7 +502,7 @@ function CreateProjectModal({
               </div>
             </div>
           </div>
-          <Dropdown>
+          <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
             <Dropdown.Toggle
               style={{
                 width: "100%",

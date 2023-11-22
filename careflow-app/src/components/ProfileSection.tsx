@@ -74,11 +74,11 @@ function ProfileSection() {
     backgroundSize: "cover",
   };
 
-  async function getUser2(username: string) {
+  async function getUser2(username: string) { //This function stores data in a variavle called docSnap. docSnap includes all attributes of a user.
     const docRef = doc(db, "users", username);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
+    if (docSnap.exists()) { 
       //  console.log("Document data:", docSnap.data());
       setName(docSnap.data().first_name)
       setDepartment(docSnap.data().clinic)
