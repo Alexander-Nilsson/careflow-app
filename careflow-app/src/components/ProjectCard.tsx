@@ -110,7 +110,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div>
-      <Card onClick={modalShow}>
+      <Card onClick={modalShow} style={{ cursor: "pointer" }}>
         <Card.Body style={cardBodyStyle}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div>
