@@ -2,12 +2,13 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { filterImprovementWorks, FilterState, findTagOptions, getAllProjects, Project, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
+import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions, getAllProjects, Project, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
 import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
 import { UserInfoType, getUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
+import { sort } from "semver";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -34,8 +35,8 @@ function Projects() {
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
   const [allImprovementWorks, setAllImprovementWorks] = useState<ImprovementWork[]>([]);
   const [tagOptions, setTagOptions] = useState<string[]>([]);
-  const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: false, tagFilter: "all_tags", closed: false });
-
+  const [placeOptions, setPlaceOptions] = useState<string[]>([]);
+  const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: false, tagFilter: "all_tags", placeFilter: "all_places", closed: false });
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedSortOption = event.target.value as "date_created" | "oldest_date" | "ascending" | "descending";
@@ -74,11 +75,16 @@ function Projects() {
     } else if (event.target.value == "clinic") {
       setFilterState(prev => ({ ...prev, includeClinic: true }));
     }
+    
   };
 
   // denna uppdaterar vilken tag som ska filtreras på.
   const handleTags = (event: any) => {
     setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
+  }
+
+  const handlePlace = (event: any) => {
+    setFilterState(prev => ({ ...prev, placeFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
   }
 
   useEffect(() => {
@@ -103,6 +109,8 @@ function Projects() {
     if (allImprovementWorks) {
       const tags = findTagOptions(allImprovementWorks)
       setTagOptions(tags);
+      const places = findPlaceOptions(allImprovementWorks)
+      setPlaceOptions(places);
       if (userInfo) {
         const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
         setImprovementWorkList(filteredImprovementWorks)
@@ -115,7 +123,9 @@ function Projects() {
       const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo)
       setImprovementWorkList(filteredImprovementWorks)
     }
+        
   }, [filterState])
+
 
   return (
     <>
@@ -192,6 +202,18 @@ function Projects() {
           </select>
         </div>
         <div className="ml-2 align-self-end">
+          <select className="form-select" aria-label="Filtrera" onChange={handlePlace}>
+            <option selected value="all_places">Visa alla platser</option>
+            {
+              placeOptions.map((place) => (
+                <option key={place} value={place}> {place}</option>
+              ))
+            }
+
+          </select>
+        </div>
+
+        <div className="ml-2 align-self-end">
           <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
             <option selected value="all_tags">Visa alla taggar</option>
             {
@@ -201,6 +223,8 @@ function Projects() {
             }
 
           </select>
+         
+          
         </div>
       </div>
 

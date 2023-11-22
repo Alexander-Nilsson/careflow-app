@@ -10,6 +10,7 @@ export interface FilterState {
   includeClinic: boolean;
   tagFilter: string;
   closed: boolean;
+  placeFilter: string;
 }
 
 export interface Project {
@@ -93,9 +94,7 @@ export interface Iteration {
 
 export interface ImprovementWork {
   id: Id;
-  all_iterations: {
-    iteration1: Iteration;
-  };
+  all_iterations: Array<Iteration>;
   centrum: string;
   clinic: string;
   closed: boolean;
@@ -340,6 +339,17 @@ export function findTagOptions(orgImprovementWorks: ImprovementWork[]) {
   return tagOptions
 }
 
+export function findPlaceOptions(orgImprovementWorks: ImprovementWork[]) {
+  let placeOptions: string[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (!placeOptions.includes(improvementWork.place)) {
+        placeOptions.push(improvementWork.place);
+      }
+    })
+  
+  return placeOptions
+}
+
 // denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
 // filtreras bort genom att anropa include
 export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState, userInfo: UserInfoType) {
@@ -349,7 +359,7 @@ export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], f
       filteredImprovementWorks.push(improvementWork)
     }
   })
-  return sortByOldestDate(filteredImprovementWorks)
+  return sortByDateCreated(filteredImprovementWorks)
 }
 
 function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
@@ -370,6 +380,10 @@ function include(improvementWork: ImprovementWork, filter: FilterState, userInfo
 
   if (filter.includeClinic && improvementWork.clinic != userInfo.clinic) {
     return false
+  }
+
+  if (filter.placeFilter !== "all_places" && improvementWork.place !== filter.placeFilter) {
+    return false;
   }
 
   // if we are filtering on specific tags, if filtering on specific tags, check if
