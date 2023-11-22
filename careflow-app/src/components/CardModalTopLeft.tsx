@@ -116,6 +116,7 @@ const tagContainerStyle = {
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  cursor: "pointer",
 };
 
 const addTagContainerStyle = {
@@ -124,6 +125,7 @@ const addTagContainerStyle = {
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  cursor: "pointer",
 };
 
 const saveTagButtonStyle = {
