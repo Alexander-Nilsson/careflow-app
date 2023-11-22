@@ -19,7 +19,7 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
-import { ImprovementWork } from "../ImprovementWorkLib";
+import { ImprovementWork, Iteration } from "../ImprovementWorkLib";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
@@ -719,107 +719,6 @@ function CardModal({
     checked: ideas_done[index],
   }));
 
-  //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
-  const [ideas, setIdeas] = useState(initialIdeasState);
-
-  //Handles what happens when an idea is clicked, if an idea already has been chosen and another one is clicked - the confirmation modal will show
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState<number | null>(
-    null
-  );
-
-  const handleIdeaClick = (index: number) => {
-    // Checks if any other idea is already checked
-    const isOtherIdeaChecked = ideas.some(
-      (idea, i) => idea.checked && i !== index
-    );
-
-    if (isOtherIdeaChecked) {
-      setShowConfirmationModal(true);
-      setSelectedIdeaIndex(index); // Save the index of the clicked idea
-    } else {
-      const updatedIdeas = [...ideas];
-      updatedIdeas[index].checked = true;
-      setIdeas(updatedIdeas);
-    }
-  };
-
-  const handleConfirmation = (confirmed: boolean) => {
-    setShowConfirmationModal(false);
-    if (confirmed && selectedIdeaIndex !== null) {
-      // Reset all ideas to unchecked
-      const updatedIdeas = ideas.map((idea, i) => ({
-        ...idea,
-        checked: false,
-      }));
-      // Set the clicked idea to checked
-      updatedIdeas[selectedIdeaIndex].checked = true;
-      setIdeas(updatedIdeas);
-
-      //Set the active phase back to plan and clear everything
-      setUpdatedProjectPhase(2);
-      setChecklistItems([]);
-      setChecklistDone([]);
-      setChecklistMembers([]);
-      setUpdatedNotesPlan("");
-      setUpdatedNotesDo("");
-      setUpdatedNotesStudy("");
-      setUpdatedNotesAct("");
-      setUpdatedResultAnalysis("");
-      setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
-
-      //Update the database with the cleared fields
-      clearDb();
-
-      //Här måste vi också byta vald idé i databasen!
-    }
-  };
-
-  //Makes sure that the next phase tab is displayed when the user marks a phase as done
-  const [updatedProjectPhase, setUpdatedProjectPhase] =
-    useState<number>(currentPhase);
-  const [selectedTab, setSelectedTab] = useState<string>(
-    currentPhase.toString()
-  );
-
-  useEffect(() => {
-    setSelectedTab(updatedProjectPhase.toString());
-  }, [updatedProjectPhase]);
-
-  //Called whenever mark phase as done is called
-  const handlePhaseUpdate = (phase: number) => {
-    if (phase === 5) {
-      //If "Avsluta arbete" is clicked in the act phase
-      onHide();
-      setIsClosed(true);
-    } else if (phase === 6) {
-      //If "Påbörja ny iteration med samma idé" is clicked
-      setUpdatedProjectPhase(2); //Sets the phase to plan and clear all state-variables related to the iteration
-      setChecklistItems([]);
-      setChecklistDone([]);
-      setChecklistMembers([]);
-      setUpdatedNotesPlan("");
-      setUpdatedNotesDo("");
-      setUpdatedNotesStudy("");
-      setUpdatedNotesAct("");
-      setUpdatedResultAnalysis("");
-      setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
-      addNewIteration(); //Creates an new iteration in the db
-      setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the iteration
-    } else {
-      setUpdatedProjectPhase(phase + 1);
-      //Spara till databasen också!
-    }
-  };
-
   //State variable that is updated when the number of iterations is updated, which makes sure that the right Iteration's info is displayed
   const [updatedTotalIterations, setUpdatedTotalIterations] =
     useState(total_iterations);
@@ -861,16 +760,142 @@ function CardModal({
     checklist_plan.checklist_members
   );
 
+  //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
+  const [ideas, setIdeas] = useState(initialIdeasState);
+
+  //Handles what happens when an idea is clicked, if an idea already has been chosen and another one is clicked - the confirmation modal will show
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState<number | null>(
+    null
+  );
+
+  const handleIdeaClick = (index: number) => {
+    const isOtherIdeaChecked = ideas.some(
+      (idea, i) => idea.checked && i !== index
+    );
+    // Checks if any other idea is already checked
+    if (isOtherIdeaChecked) {
+      setShowConfirmationModal(true);
+      setSelectedIdeaIndex(index); // Save the index of the clicked idea
+    } else {
+      const updatedIdeas = [...ideas];
+      updatedIdeas[index].checked = true;
+      setIdeas(updatedIdeas);
+    }
+  };
+
+  const handleConfirmation = (confirmed: boolean) => {
+    setShowConfirmationModal(false);
+    if (confirmed && selectedIdeaIndex !== null) {
+      // Reset all ideas to unchecked
+      const updatedIdeas = ideas.map((idea, i) => ({
+        ...idea,
+        checked: false,
+      }));
+      // Set the clicked idea to checked
+      updatedIdeas[selectedIdeaIndex].checked = true;
+      setIdeas(updatedIdeas);
+
+      //Set the active phase and tab back to plan and clear all iteration-related fields
+      setUpdatedProjectPhase(2);
+      setSelectedTab("2");
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+
+      //Update the database with the cleared fields
+      clearDb(updatedIdeas.map((idea) => idea.checked));
+    }
+  };
+
+  //Makes sure that the next phase tab is displayed when the user marks a phase as done
+  const [updatedProjectPhase, setUpdatedProjectPhase] =
+    useState<number>(currentPhase);
+  const [selectedTab, setSelectedTab] = useState<string>(
+    currentPhase.toString()
+  );
+
+  useEffect(() => {
+    setSelectedTab(updatedProjectPhase.toString());
+  }, [updatedProjectPhase]);
+
+  //Called whenever mark phase as done is called
+  const handlePhaseUpdate = (phase: number) => {
+    if (phase === 5) {
+      //If "Avsluta arbete" is clicked in the act phase
+      onHide();
+      setIsClosed(true);
+    } else if (phase === 6) {
+      //If "Påbörja ny iteration med samma idé" (phase === 6) or "Påbörja ny iteration med annan idé" (phase === 7) is clicked in the act phase
+      //Sets the phase to plan and clear all state-variables related to the iteration
+      setUpdatedProjectPhase(2);
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
+      setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
+    } else if (phase === 7) {
+      console.log("Ny ide");
+      setUpdatedProjectPhase(2);
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      addNewIterationInDb(); //Creates an new iteration in the db, where chosen idea will be set to none
+      setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
+
+      //Also updated the state variable ideas so that all ideas will be set to false
+      const uncheckedIdeas = ideas.map((idea) => ({
+        ...idea,
+        checked: false,
+      }));
+
+      setIdeas(uncheckedIdeas);
+    } else {
+      //If "Markera fas som klar" is clicked in the plan, do or study phase
+      setUpdatedProjectPhase(phase + 1);
+      updateDb(phase + 1);
+    }
+  };
+
   //This is run when the user clicks "finish improvement work" in the act-stage, so that the db is updated with closed = true
   useEffect(() => {
     if (isClosed) {
-      console.log("Updating db with closed = true");
-      updateDb();
+      updateDb(updatedProjectPhase);
     }
   }, [isClosed]);
 
-  //Updates the database with the changes made when the save button is clicked
-  async function updateDb() {
+  //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked
+  async function updateDb(newPhase: number) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       const projectDoc = await getDoc(projectDocRef);
@@ -879,65 +904,78 @@ function CardModal({
         const data = projectDoc.data();
         const updatedData = {
           closed: isClosed,
-          phase: updatedProjectPhase,
+          phase: newPhase,
           tags: updatedTags,
           ideas_done: ideas.map((idea) => idea.checked),
-          all_iterations: [
-            {
-              ...data.all_iterations?.[updatedTotalIterations - 1],
-              plan: {
-                ...data.all_iterations?.[updatedTotalIterations - 1]?.plan,
-                checklist: {
-                  checklist_done: checklistDone,
-                  checklist_items: checklistItems,
-                  checklist_members: checklistMembers,
-                },
-                files: {
-                  file_names: updatedFilesPlan.file_names,
-                  file_descriptions: updatedFilesPlan.file_descriptions,
-                },
-                notes: updatedNotesPlan,
-              },
-              do: {
-                ...data.all_iterations?.[updatedTotalIterations - 1]?.do,
-                results: updatedResultMeasurements,
-                files: {
-                  file_names: updatedFilesDo.file_names,
-                  file_descriptions: updatedFilesDo.file_descriptions,
-                },
-                notes: updatedNotesDo,
-              },
-              study: {
-                ...data.all_iterations?.[updatedTotalIterations - 1]?.study,
-                analysis: updatedResultAnalysis,
-                files: {
-                  file_names: updatedFilesStudy.file_names,
-                  file_descriptions: updatedFilesStudy.file_descriptions,
-                },
-                notes: updatedNotesStudy,
-              },
-              act: {
-                ...data.all_iterations?.[updatedTotalIterations - 1]?.act,
-                files: {
-                  file_names: updatedFilesAct.file_names,
-                  file_descriptions: updatedFilesAct.file_descriptions,
-                },
-                notes: updatedNotesAct,
-              },
-            },
-          ],
+          all_iterations: data.all_iterations?.map(
+            (iteration: Iteration, index: number) => {
+              if (index === updatedTotalIterations - 1) {
+                // Update the last iteration
+                return {
+                  ...iteration,
+                  plan: {
+                    ...iteration.plan,
+                    checklist: {
+                      checklist_done: checklistDone,
+                      checklist_items: checklistItems,
+                      checklist_members: checklistMembers,
+                    },
+                    files: {
+                      file_names: updatedFilesPlan.file_names,
+                      file_descriptions: updatedFilesPlan.file_descriptions,
+                    },
+                    notes: updatedNotesPlan,
+                  },
+                  do: {
+                    ...iteration.do,
+                    results: updatedResultMeasurements,
+                    files: {
+                      file_names: updatedFilesDo.file_names,
+                      file_descriptions: updatedFilesDo.file_descriptions,
+                    },
+                    notes: updatedNotesDo,
+                  },
+                  study: {
+                    ...iteration.study,
+                    analysis: updatedResultAnalysis,
+                    files: {
+                      file_names: updatedFilesStudy.file_names,
+                      file_descriptions: updatedFilesStudy.file_descriptions,
+                    },
+                    notes: updatedNotesStudy,
+                  },
+                  act: {
+                    ...iteration.act,
+                    files: {
+                      file_names: updatedFilesAct.file_names,
+                      file_descriptions: updatedFilesAct.file_descriptions,
+                    },
+                    notes: updatedNotesAct,
+                  },
+                };
+              }
+              // Keep other iterations unchanged
+              return iteration; //Behövs denna???
+            }
+          ),
         };
 
         await updateDoc(projectDocRef, updatedData);
-        console.log("Improvement work updated successfully");
+        console.log(
+          "Improvement work updated successfully! Phase updated to: " +
+            newPhase +
+            " and closed set to: " +
+            isClosed
+        );
       }
     } catch (e) {
       console.error("Error updating improvement work: ", e);
     }
   }
 
-  //Clears the Iteration-related fields in the database
-  async function clearDb() {
+  //This function is called when a new idea is chosen, and what it does is that it updates the database
+  //with the new idea, clears all Iteration-related fields and sets the phase of the improvement work to "plan"
+  async function clearDb(updatedIdeasChecked: Array<boolean>) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       const projectDoc = await getDoc(projectDocRef);
@@ -945,7 +983,9 @@ function CardModal({
         const data = projectDoc.data();
         const updatedData = {
           phase: 2, // Updates the phase to plan
+          ideas_done: updatedIdeasChecked, //Updates the chosen idea
           all_iterations: [
+            //Clear all fields of the current iteration
             {
               ...data.all_iterations?.[updatedTotalIterations - 1],
               plan: {
@@ -992,14 +1032,16 @@ function CardModal({
         };
 
         await updateDoc(projectDocRef, updatedData);
-        console.log("Iteration fields cleared successfully");
+        console.log(
+          "Iteration fields cleared, phase set to plan and the new idea successfully updated in db"
+        );
       }
     } catch (e) {
       console.error("Error updating improvement work: ", e);
     }
   }
 
-  async function addNewIteration() {
+  async function addNewIterationInDb(ideasDone?: Array<boolean>) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       const projectDoc = await getDoc(projectDocRef);
@@ -1047,14 +1089,20 @@ function CardModal({
           },
         };
 
+        const updatedIdeasDone =
+          ideasDone || Array(data.ideas.length).fill(false);
+
         const updatedData = {
           phase: 2, // Updates the phase to plan
-          total_iterations: updatedTotalIterations + 1,
-          all_iterations: [...allIterations, newIteration],
+          total_iterations: updatedTotalIterations + 1, //Increases the total_iterations field with 1
+          ideas_done: updatedIdeasDone,
+          all_iterations: [...allIterations, newIteration], //Adds the new iteration to all_iterations
         };
 
         await updateDoc(projectDocRef, updatedData);
-        console.log("New iteration added successfully");
+        console.log(
+          "New iteration added successfully! Ideas set to: " + updatedIdeasDone
+        );
       }
     } catch (e) {
       console.error("Error updating improvement work: ", e);
@@ -1262,7 +1310,7 @@ function CardModal({
             <Button
               onClick={() => {
                 onHide();
-                updateDb();
+                updateDb(updatedProjectPhase);
               }}
               style={buttonStyle}
             >
