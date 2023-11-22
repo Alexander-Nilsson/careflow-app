@@ -781,6 +781,8 @@ function CardModal({
       const updatedIdeas = [...ideas];
       updatedIdeas[index].checked = true;
       setIdeas(updatedIdeas);
+      console.log(updatedProjectPhase);
+      updateDb(updatedProjectPhase);
     }
   };
 
@@ -855,7 +857,7 @@ function CardModal({
       addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
     } else if (phase === 7) {
-      console.log("Ny ide");
+      console.log("Fortsätt med ny ide");
       setUpdatedProjectPhase(2);
       setChecklistItems([]);
       setChecklistDone([]);
@@ -1112,6 +1114,14 @@ function CardModal({
   return (
     <>
       <Modal show={show} onHide={onHide} size="lg">
+        <Modal.Header
+          style={{
+            borderColor: "#FFFFFF",
+            height: "0px",
+            paddingTop: "20px",
+          }}
+          closeButton
+        ></Modal.Header>
         <div style={{ position: "relative" }}>
           <Modal.Body
             style={{
