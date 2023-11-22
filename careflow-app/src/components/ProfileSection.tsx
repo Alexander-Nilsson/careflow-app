@@ -6,6 +6,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useEffect } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
+import ContinueButton from "./ContinueButton";
 
 
 
@@ -16,31 +17,52 @@ function ProfileSection() {
   const [role, setRole] = useState<String>("Roll ej funnen");
   const { isAuthenticated, isLoading, user } = useAuth0();
 
+  const entireSectionStyle = {
+    width: "100%",
+    height: "150px",
+    display: 'flex',
+    justifyContent: 'space-between', // Aligns children at opposite ends
+    alignItems: 'center', // Aligns children vertically in the middle
+    marginBottom: "20px",
+  }
+
+
   const profileSectionStyle = {
     background: 'rgba(255, 255, 255, 0.70)',
     width: "500px",
-    height: "250px",
+    height: "140px",
     borderRadius: "10px",
-    margin: "20px",
+    margin: "0px",
     display: "flex",
     boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     fontFamily: "Avenir",
   };
 
+ 
+  const buttonSectionStyle = {
+    width: "30%",
+    height: "140px",
+    margin: "0px",
+    display: "flex",
+    justifyContent: "flex-end",
+  }
 
   const leftDivStyle = {
-    flex: "40%",
+    flex: "20%",
     padding: "10px",
   };
 
   const rightDivStyle = {
+    marginTop: "2%",
     flex: "60%",
     padding: "10px",
-  };
+    lineHeight: "0.5", 
+    marginBottom: "0.1em", 
+  };  
 
   const circleStyle = {
-    width: "150px",
-    height: "150px",
+    width: "120px",
+    height: "120px",
     backgroundColor: "white",
     borderRadius: "50%", // Create a circular shape
     display: "flex",
@@ -94,18 +116,22 @@ function ProfileSection() {
 
 
   return (
-    <div style={profileSectionStyle}>
-      <div style={leftDivStyle}>
-        <div style={circleStyle}></div>
+    <div style = {entireSectionStyle}>
+      <div style={profileSectionStyle}>
+        <div style={leftDivStyle}>
+          <div style={circleStyle}></div>
+        </div>
+        <div style={rightDivStyle}>
+          <h3>{name}</h3>
+          <p>{role}</p>
+          <p>{department}</p>
+        </div>
       </div>
-      <div style={rightDivStyle}>
-        <h1>Min Profil</h1>
-        <h3>{name}</h3>
-        <h3>{role}</h3>
-        <h3>{department}</h3>
-        <CreateNewProject />
+      <div style= {buttonSectionStyle}>
+         <CreateNewProject />
       </div>
     </div>
+    
   );
 }
 

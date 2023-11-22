@@ -6,50 +6,22 @@ import {
   DocumentData,
   doc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import {
-  Modal,
-  Button,
-  Form,
-  Tabs,
-  Tab,
-  Dropdown,
-  Popover,
-  OverlayTrigger,
-} from "react-bootstrap";
-import { CircularProgressbar } from "react-circular-progressbar";
+import { useState, useEffect, ChangeEvent } from "react";
+import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
+import CardModalNotes from "./CardModalNotes";
+import CardModalChecklist from "./CardModalChecklist";
+import CardModalSimilarProjects from "./CardModalSimilarProjects";
+import CardModalResultMeasurements from "./CardModalResultMeasurements";
+import CardModalResultAnalysis from "./CardModalResultAnalysis";
+import CardModalFiles from "./CardModalFiles";
+import CardModalTopLeft from "./CardModalTopLeft";
+import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
-import {
-  Calendar,
-  Folder2Open,
-  GeoAltFill,
-  Circle,
-  CheckCircle,
-  PlusLg,
-  BarChart,
-  Lightbulb,
-  Bullseye,
-} from "react-bootstrap-icons";
-
-const IconCircleStyle = {
-  borderRadius: "50%",
-  width: "25px",
-  height: "25px",
-  border: "0.5px solid #AEAEAE",
-  marginRight: "10px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "#FFFFFF",
-};
-
-const FlexAndCenter = {
-  display: "flex",
-  alignItems: "center",
-};
+import { Circle, CheckCircle } from "react-bootstrap-icons";
 
 const buttonStyle = {
   backgroundColor: "#051F6F",
@@ -59,23 +31,6 @@ const buttonStyle = {
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
-};
-
-const saveChecklistButtonStyle = {
-  backgroundColor: "#051F6F",
-  fontSize: "16px",
-  padding: "10px 20px",
-  border: "none",
-  cursor: "pointer",
-  marginTop: "20px",
-  width: "100%",
-};
-
-const iconStyle = {
-  width: "15px",
-  height: "15px",
-  marginRight: "7px",
-  marginTop: "0px",
 };
 
 const flexAndCenter = {
@@ -90,87 +45,46 @@ const formGroupStyle = {
   borderRadius: "10px",
 };
 
-const descriptionStyle = {
-  backgroundColor: "#F4F4F4",
-  padding: "20px",
-  marginBottom: "20px",
-  borderRadius: "10px",
-};
-
-const whiteContainerStyle = {
-  backgroundColor: "#FFFFFF",
-  border: "1px solid #E8E7E7",
-  paddingTop: "10px",
-  paddingBottom: "10px",
-  paddingLeft: "15px",
-  borderRadius: "10px",
-};
-
-const whiteDescriptionContainerStyle = {
-  backgroundColor: "#FFFFFF",
-  border: "1px solid #E8E7E7",
-  borderTop: "none",
-  paddingTop: "20px",
-  paddingBottom: "10px",
-  paddingLeft: "15px",
-  borderBottomLeftRadius: "10px",
-  borderBottomRightRadius: "10px",
-};
-
-const tagStyle = {
-  marginTop: "5px",
-  marginBottom: "10px",
-  color: "#FFFFFF",
-  fontSize: "14px",
-};
-
-const tagContainerStyle = {
-  backgroundColor: "#051F6E",
-  padding: "2px 10px",
-  marginRight: "5px",
-  borderRadius: "10px",
-};
-
-const projectMembersContainer = {
-  width: "34%",
-  marginTop: "30px",
-  marginBottom: "20px",
-  marginLeft: "3%",
-  background: "#F4F4F4",
-  padding: "20px",
-  borderRadius: "10px",
-};
-
 interface cardModalProps {
   show: boolean;
   onHide: () => void;
+  id: Id;
   title: string;
   phase: Id;
-  content: string;
   place: string;
   centrum: string;
   tags: Array<string>;
   date_created: Timestamp;
-  project_leader: DocumentReference<DocumentData>;
+  goals: Array<string>;
+  ideas_array: Array<string>;
+  measure: Array<string>;
+  result_measurements: string;
+  result_analysis: string;
+  notes_plan: string;
+  notes_do: string;
+  notes_study: string;
+  notes_act: string;
+  files_plan: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
+  files_do: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
+  files_study: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
+  files_act: {
+    file_descriptions: Array<string>;
+    file_names: Array<string>;
+  };
+  project_leader: string;
   project_members: Array<string>;
   checklist_plan: {
-    checklist_item: Array<string>;
     checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_do: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_study: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
-    checklist_members: Array<string>;
-  };
-  checklist_act: {
-    checklist_item: Array<string>;
-    checklist_done: Array<boolean>;
+    checklist_items: Array<string>;
     checklist_members: Array<string>;
   };
 }
@@ -178,69 +92,148 @@ interface cardModalProps {
 interface modalContentPlanProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
+  goals: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  measure: Array<string>;
   place: string;
   centrum: string;
-  content: string;
   checklist: {
-    checklist_item: Array<string>;
+    checklist_items: Array<string>;
     checklist_done: Array<boolean>;
     checklist_members: Array<string>;
   };
+  setChecklistItems: React.Dispatch<React.SetStateAction<string[]>>;
+  setChecklistDone: React.Dispatch<React.SetStateAction<boolean[]>>;
+  setChecklistMembers: React.Dispatch<React.SetStateAction<string[]>>;
   project_leader: string;
   project_members: Array<string>;
-  ideas: {
-    text: string;
-    checked: boolean;
-  }[];
   handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
+  setUpdatedNotesPlan: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesPlan: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
-interface modalContentDoStudyActProps {
+interface modalContentDoProps {
   title: string;
   phase: number;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  place: string;
-  centrum: string;
-  content: string;
-  project_leader: string;
-  project_members: Array<string>;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
   }[];
+  measure: Array<string>;
+  place: string;
+  centrum: string;
+  project_leader: string;
+  project_members: Array<string>;
+  result_measurements: string;
+  setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
+  setUpdatedNotesDo: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesDo: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
-interface topLeftProps {
+interface modalContentStudyProps {
   title: string;
   phase: number;
-  content: string;
-  place: string;
-  centrum: string;
-  tags: Array<string>;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
   date_created: Timestamp;
-  active_tab: number;
-  percentage: number;
+  goals: Array<string>;
   ideas: {
     text: string;
     checked: boolean;
   }[];
-  handleIdeaClick: (index: number) => void;
-}
-
-interface topRightProps {
+  measure: Array<string>;
+  place: string;
+  centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  result_analysis: string;
+  setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
+  handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
+  setUpdatedNotesStudy: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesStudy: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
-interface phasePercentageProps {
-  percentage: number;
+interface modalContentActProps {
+  title: string;
+  phase: number;
+  updatedTags: Array<string>;
+  setUpdatedTags: React.Dispatch<React.SetStateAction<string[]>>;
+  date_created: Timestamp;
+  goals: Array<string>;
+  ideas: {
+    text: string;
+    checked: boolean;
+  }[];
+  measure: Array<string>;
+  place: string;
+  centrum: string;
+  project_leader: string;
+  project_members: Array<string>;
+  handleIdeaClick: (index: number) => void;
+  id: string;
+  handlePhaseUpdate: (phase: number) => void;
+  notes: string;
+  setUpdatedNotesAct: React.Dispatch<React.SetStateAction<string>>;
+  files: {
+    file_descriptions: string[];
+    file_names: string[];
+  };
+  setUpdatedFilesAct: React.Dispatch<
+    React.SetStateAction<{
+      file_descriptions: string[];
+      file_names: string[];
+    }>
+  >;
 }
 
-//Function that checks if the task's checkbox should be checked or not
+//Function that checks if the icon next to the phase (in the tabs at the top) should be checked or not
 function getPhaseIcon(
   activePhase: number,
   projectPhase: number,
@@ -259,36 +252,8 @@ function getPhaseIcon(
   );
 }
 
-//Function that returns the circular progress bar
-function PhasePercentage({ percentage }: phasePercentageProps) {
-  return (
-    <>
-      <div style={{ width: 120, height: 120 }}>
-        <CircularProgressbar
-          value={percentage}
-          text={`${percentage}%`}
-          styles={{
-            path: {
-              //Color of the progress circle
-              stroke: `rgba(5, 31, 110)`,
-            },
-            trail: {
-              //Color of the circle in the background
-              stroke: "#AEAEAE",
-            },
-            text: {
-              fill: "#AEAEAE",
-              fontSize: "25px",
-            },
-          }}
-        />
-      </div>
-    </>
-  );
-}
-
-// Asynchronous function that fetches the project leader's name from the database (should probably move this to Projects.tsx)
-async function getProjectLeader(
+// Asynchronous function that fetches the project leader's name from the database
+/*async function getProjectLeader(
   project_leader: DocumentReference<DocumentData>
 ) {
   interface User {
@@ -313,126 +278,96 @@ async function getProjectLeader(
   }
 
   return null;
-}
+}*/
 
-// The content of the modal (Title, tags, description, members, checklist etc)
+//Asynchronous function that fetches the names of the project members
+/*async function getProjectMembers(project_members: Array<string>) {
+  interface User {
+    first_name: string;
+    sur_name: string;
+  }
+
+  const names: string[] = [];
+
+  for (const memberId of project_members) {
+    if (memberId) {
+      const userReference = doc(db, "users", memberId);
+
+      try {
+        const userDoc = await getDoc(userReference);
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as User;
+          names.push(userData.first_name + " " + userData.sur_name);
+        } else {
+          console.error("User document not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching user document:", error);
+      }
+    }
+  }
+
+  return names;
+}*/
+
 function ModalContentPlan({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
+  goals,
+  ideas,
+  measure,
   place,
   centrum,
-  content,
   checklist,
+  setChecklistItems,
+  setChecklistDone,
+  setChecklistMembers,
   project_leader,
   project_members,
-  ideas,
   handleIdeaClick,
+  id,
+  handlePhaseUpdate,
+  notes,
+  setUpdatedNotesPlan,
+  files,
+  setUpdatedFilesPlan,
 }: modalContentPlanProps) {
-  // Handles changes of the checkboxes in the checklist
-  const [checklistDone, setChecklistDone] = useState(checklist.checklist_done);
-
-  const handleCheckboxChange = (index: number) => {
-    setChecklistDone((prevChecklistDone) => {
-      const newChecklistDone = [...prevChecklistDone]; //Create a copy of the boolean's previous state
-      newChecklistDone[index] = !newChecklistDone[index]; //Change the state of the copy
-      return newChecklistDone; //Return the new state
-    });
-
-    //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA BOOLEAN-VÄRDET
-  };
-
   //Calculates the phase's progress based on the number of checked tasks in the checklist
   function calculatePercentage() {
-    const totalItems = checklistDone.length; //Total number of tasks in the checklist
-    const trueCount = checklistDone.filter((value) => value).length; //Number of "true" in the the checklist_done array
+    const totalItems = checklist.checklist_done.length; //Total number of tasks in the checklist
+
+    if (totalItems === 0) {
+      return 0;
+    }
+    const trueCount = checklist.checklist_done.filter((value) => value).length; //Number of "true" in the the checklist_done array
     const percentageFinished = (trueCount / totalItems) * 100; //Calculates the percentage
     return Math.round(percentageFinished);
   }
 
-  //Handles the modal that opens up when you create a new checklist task
-  const [showTaskModal, setShowTaskModal] = useState(false);
-
-  const handleShowTaskModal = () => {
-    setShowTaskModal(true);
-  };
-
-  const handleCloseTaskModal = () => {
-    setShowTaskModal(false);
-  };
-
-  //State variables related to the checkbox
-  const [selectedMembers, setSelectedMembers] = useState([""]);
-  const [newTask, setNewTask] = useState("");
-  const [checklistItem, setChecklistItem] = useState(checklist.checklist_item);
-  const [checklistMembers, setChecklistMembers] = useState(
-    checklist.checklist_members
-  );
-
-  //Adds members to a checklist task when their name is clicked
-  const handleAlternativeClick = (chosenMember: string) => {
-    //If the selected member already has been chosen, remove from the array
-    if (selectedMembers.includes(chosenMember)) {
-      const updatedChosenMembers = selectedMembers.filter(
-        (member) => member !== chosenMember
-      );
-      setSelectedMembers(updatedChosenMembers);
-
-      //If the selected member has not already been chosen, add the member to the array
-    } else {
-      const updatedChosenMembers = [...selectedMembers, chosenMember];
-      setSelectedMembers(updatedChosenMembers);
-    }
-  };
-
-  //Adds the new task to the checklist array when the "lägg till aktivitet" button is clicked
-  const handleSaveTaskModal = (newTask: string) => {
-    //Makes sure that the "aktivitet" field is filled before the task can be added
-    if (newTask.trim() !== "") {
-      setShowTaskModal(false);
-      const updatedChecklistItem = [...checklistItem, newTask];
-      const updatedChecklistDone = [...checklistDone, false];
-
-      //If members have been chosen, convert the selectedMembers array to a string on the (Member 1, Member 2) format. If no one has been chosen, set selectedMembers to "none".
-      const selectedMembersString =
-        selectedMembers.length > 1
-          ? selectedMembers.filter((member) => member !== "").join(", ")
-          : "none";
-
-      const updateChecklistMembers = [
-        ...checklistMembers,
-        selectedMembersString,
-      ];
-
-      setChecklistItem(updatedChecklistItem);
-      setChecklistDone(updatedChecklistDone);
-      setChecklistMembers(updateChecklistMembers);
-
-      setNewTask("");
-      setSelectedMembers([""]);
-    }
-
-    //HÄR SKA DET OCKSÅ LÄGGAS TILL KOD FÖR ATT UPPDATERA DATABASEN MED NYA CHECKLISTAN
-  };
-
   return (
     <>
       <div style={{ display: "flex" }}>
-        <TopLeftContent
+        <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goals={goals}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={2}
           percentage={calculatePercentage()}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
-        <TopRightContent
+        <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
         />
@@ -440,151 +375,38 @@ function ModalContentPlan({
 
       {/* The content specific for the Plan phase */}
 
-      {/*Checks if any idea has been chosen, and only shows the content below if that is true */}
+      {/* Checks if any idea has been chosen, and only shows the content below if that is true */}
       {ideas.some((idea) => idea.checked) ? (
         <div>
           <Form>
-            <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Aktiviteter för att genomföra idén</b>
-              </Form.Label>
-              <div style={whiteContainerStyle}>
-                {checklistItem.map((item, index) => (
-                  <Form.Check
-                    key={index}
-                    type="checkbox"
-                    label={
-                      // Print the task followed by the names of the project members assigned to that task (if no one is assigned, only print the task text)
-                      checklistMembers[index] === "none" ? (
-                        item
-                      ) : (
-                        <span>
-                          {item}
-                          <span
-                            style={{
-                              color: "#AEAEAE",
-                              fontSize: "14px",
-                              marginLeft: "7px",
-                            }}
-                          >
-                            ({checklistMembers[index]})
-                          </span>
-                        </span>
-                      )
-                    }
-                    checked={checklistDone[index]} //Checks if the checkbox should be filled or not based on the state-array "checklistDone"
-                    onChange={() => handleCheckboxChange(index)} //Handles checkbox changes
-                  />
-                ))}
-
-                <Button
-                  style={{
-                    backgroundColor: "#FFFFFF",
-                    color: "#000000",
-                    fontSize: "15.5px",
-                    padding: "0px",
-                    border: "none",
-                    cursor: "pointer",
-                    marginTop: "17px",
-                  }}
-                  onClick={handleShowTaskModal}
-                >
-                  <div style={flexAndCenter}>
-                    <PlusLg style={{ marginRight: "9px" }} />
-                    <div>Lägg till ny aktivitet</div>
-                  </div>
-                </Button>
-              </div>
-            </Form.Group>
-
-            <Modal
-              show={showTaskModal}
-              onHide={handleCloseTaskModal}
-              style={{ top: "25%", fontFamily: "Avenir" }}
-            >
-              <Modal.Header closeButton></Modal.Header>
-              <Modal.Body className="d-flex justify-content-center align-items-center">
-                <Form style={{ width: "90%" }}>
-                  <div className="mb-3 text-center">
-                    <label>Aktivitet</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newTask}
-                      onChange={(e) => setNewTask(e.target.value)}
-                    ></input>
-                  </div>
-                  {/*<div className="mb-3 text-center">
-                <label>Viktning</label>
-                <input
-                  type="range"
-                  className="form-range"
-                  min="1"
-                  max="10"
-                ></input>
-            </div>*/}
-                  <div className="mb-3 text-center">
-                    <Dropdown>
-                      <Dropdown.Toggle
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#FFFFFF",
-                          color: "#000000",
-                          border: "1px solid #DDDDDD",
-                        }}
-                      >
-                        Lägg till kollegor
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu style={{ width: "100%" }}>
-                        <Dropdown.Item
-                          style={{
-                            fontWeight: selectedMembers.includes(project_leader)
-                              ? "bold"
-                              : "normal",
-                          }}
-                          onClick={() => handleAlternativeClick(project_leader)}
-                        >
-                          {project_leader}
-                        </Dropdown.Item>
-                        {project_members.map((member) => (
-                          <Dropdown.Item
-                            style={{
-                              fontWeight: selectedMembers.includes(member)
-                                ? "bold"
-                                : "normal",
-                            }}
-                            onClick={() => handleAlternativeClick(member)}
-                          >
-                            {member}
-                          </Dropdown.Item>
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
-                  <div className="mb-3 text-center">
-                    <Button
-                      style={saveChecklistButtonStyle}
-                      onClick={() => handleSaveTaskModal(newTask)}
-                    >
-                      Lägg till ny aktivitet
-                    </Button>
-                  </div>
-                </Form>
-              </Modal.Body>
-            </Modal>
+            <CardModalChecklist
+              project_leader={project_leader}
+              project_members={project_members}
+              checklist={{
+                checklist_items: checklist.checklist_items,
+                checklist_done: checklist.checklist_done,
+                checklist_members: checklist.checklist_members,
+              }}
+              setChecklistItems={setChecklistItems}
+              setChecklistDone={setChecklistDone}
+              setChecklistMembers={setChecklistMembers}
+            />
 
             <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Övriga anteckningar</b>
-              </Form.Label>
-              <textarea className="form-control" rows={3}></textarea>
+              <CardModalNotes
+                notes={notes}
+                setUpdatedNotes={setUpdatedNotesPlan}
+              />
             </Form.Group>
-            <FileSection />
+            <CardModalFiles
+              files={files}
+              setUpdatedFiles={setUpdatedFilesPlan}
+            />
           </Form>
 
           {/* --------------------------------------------------- */}
 
-          <SimilarImprovementProjectsSection />
+          <CardModalSimilarProjects tags={updatedTags} />
         </div>
       ) : null}
     </>
@@ -594,33 +416,47 @@ function ModalContentPlan({
 function ModalContentDo({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
+  goals,
+  ideas,
+  measure,
   place,
   centrum,
-  content,
   project_leader,
   project_members,
-  ideas,
+  result_measurements,
+  setUpdatedResultMeasurements,
   handleIdeaClick,
-}: modalContentDoStudyActProps) {
+  id,
+  handlePhaseUpdate,
+  notes,
+  setUpdatedNotesDo,
+  files,
+  setUpdatedFilesDo,
+}: modalContentDoProps) {
   return (
     <>
       <div style={{ display: "flex" }}>
-        <TopLeftContent
+        <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goals={goals}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={3}
           percentage={0}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
-        <TopRightContent
+        <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
         />
@@ -633,23 +469,24 @@ function ModalContentDo({
         <div>
           <Form>
             <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Uppmätt resultat</b>
-              </Form.Label>
-              <textarea className="form-control" rows={5}></textarea>
+              <CardModalResultMeasurements
+                updatedResultMeasurements={result_measurements}
+                setUpdatedResultMeasurements={setUpdatedResultMeasurements}
+                projectId={id}
+              />
             </Form.Group>
             <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Övriga anteckningar</b>
-              </Form.Label>
-              <textarea className="form-control" rows={3}></textarea>
+              <CardModalNotes
+                notes={notes}
+                setUpdatedNotes={setUpdatedNotesDo}
+              />
             </Form.Group>
-            <FileSection />
+            <CardModalFiles files={files} setUpdatedFiles={setUpdatedFilesDo} />
           </Form>
 
           {/* ---------------------------------------- */}
 
-          <SimilarImprovementProjectsSection />
+          <CardModalSimilarProjects tags={updatedTags} />
         </div>
       ) : null}
     </>
@@ -659,33 +496,47 @@ function ModalContentDo({
 function ModalContentStudy({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
+  goals,
+  ideas,
+  measure,
   place,
   centrum,
-  content,
   project_leader,
   project_members,
-  ideas,
+  result_analysis,
+  setUpdatedResultAnalysis,
   handleIdeaClick,
-}: modalContentDoStudyActProps) {
+  id,
+  handlePhaseUpdate,
+  notes,
+  setUpdatedNotesStudy,
+  files,
+  setUpdatedFilesStudy,
+}: modalContentStudyProps) {
   return (
     <>
       <div style={{ display: "flex" }}>
-        <TopLeftContent
+        <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goals={goals}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={4}
           percentage={0}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
-        <TopRightContent
+        <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
         />
@@ -697,24 +548,26 @@ function ModalContentStudy({
       {ideas.some((idea) => idea.checked) ? (
         <div>
           <Form>
+            <CardModalResultAnalysis
+              updatedResultAnalysis={result_analysis}
+              setUpdatedResultAnalysis={setUpdatedResultAnalysis}
+              projectId={id}
+            />
             <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Analys av resultat</b>
-              </Form.Label>
-              <textarea className="form-control" rows={5}></textarea>
+              <CardModalNotes
+                notes={notes}
+                setUpdatedNotes={setUpdatedNotesStudy}
+              />
             </Form.Group>
-            <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Övriga anteckningar</b>
-              </Form.Label>
-              <textarea className="form-control" rows={3}></textarea>
-            </Form.Group>
-            <FileSection />
+            <CardModalFiles
+              files={files}
+              setUpdatedFiles={setUpdatedFilesStudy}
+            />
           </Form>
 
           {/* ----------------------------------------- */}
 
-          <SimilarImprovementProjectsSection />
+          <CardModalSimilarProjects tags={updatedTags} />
         </div>
       ) : null}
     </>
@@ -724,33 +577,45 @@ function ModalContentStudy({
 function ModalContentAct({
   title,
   phase,
-  tags,
+  updatedTags,
+  setUpdatedTags,
   date_created,
+  goals,
+  ideas,
+  measure,
   place,
   centrum,
-  content,
   project_leader,
   project_members,
-  ideas,
   handleIdeaClick,
-}: modalContentDoStudyActProps) {
+  id,
+  handlePhaseUpdate,
+  notes,
+  setUpdatedNotesAct,
+  files,
+  setUpdatedFilesAct,
+}: modalContentActProps) {
   return (
     <>
       <div style={{ display: "flex" }}>
-        <TopLeftContent
+        <CardModalTopLeft
           title={title}
           phase={phase}
-          tags={tags}
+          updatedTags={updatedTags}
+          setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          goals={goals}
+          ideas={ideas}
+          measure={measure}
           place={place}
           centrum={centrum}
-          content={content}
           active_tab={5}
           percentage={0}
-          ideas={ideas}
           handleIdeaClick={handleIdeaClick}
+          id={id}
+          handlePhaseUpdate={handlePhaseUpdate}
         />
-        <TopRightContent
+        <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
         />
@@ -763,380 +628,22 @@ function ModalContentAct({
         <div>
           <Form>
             <Form.Group style={formGroupStyle}>
-              <Form.Label>
-                <b>Övriga anteckningar</b>
-              </Form.Label>
-              <textarea className="form-control" rows={3}></textarea>
+              <CardModalNotes
+                notes={notes}
+                setUpdatedNotes={setUpdatedNotesAct}
+              />
             </Form.Group>
-            <FileSection />
+            <CardModalFiles
+              files={files}
+              setUpdatedFiles={setUpdatedFilesAct}
+            />
           </Form>
 
           {/* --------------------------------------------*/}
 
-          <SimilarImprovementProjectsSection />
+          <CardModalSimilarProjects tags={updatedTags} />
         </div>
       ) : null}
-    </>
-  );
-}
-
-//Title, tags, centrum, tabs for syfte, mål, mäta and idéer, "markera fas som klar" button
-function TopLeftContent({
-  title,
-  phase,
-  content,
-  place,
-  centrum,
-  tags,
-  date_created,
-  active_tab,
-  percentage,
-  ideas,
-  handleIdeaClick,
-}: topLeftProps) {
-  const formattedDate = date_created.toDate().toLocaleString();
-
-  return (
-    <>
-      <div style={{ width: "63%" }}>
-        <div style={{ display: "flex", marginBottom: "20px" }}>
-          <div style={{ width: "60%" }}>
-            <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
-            <div style={tagStyle}>
-              {tags.map((tag, index) => (
-                <React.Fragment key={index}>
-                  <span style={tagContainerStyle}>{tag}</span>
-                </React.Fragment>
-              ))}
-            </div>
-            <div>
-              <div style={flexAndCenter}>
-                <Calendar style={iconStyle} />
-                <div>
-                  <label>{formattedDate}</label>
-                </div>
-              </div>
-              <div style={flexAndCenter}>
-                <Folder2Open style={iconStyle} />
-                <div>
-                  <label>{centrum}</label>
-                </div>
-              </div>
-              <div style={flexAndCenter}>
-                <GeoAltFill style={iconStyle} />
-                <div>
-                  <label>{place}</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* If the active tab is Planera the donut is shown, if not only the "Markera fas som klar" button is shown */}
-          {active_tab === 2 ? ( //If active_tab is plan, show the donut
-            <div
-              style={{
-                width: "40%",
-                display: "flex",
-                justifyContent: "right",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "40px",
-              }}
-            >
-              <PhasePercentage percentage={percentage} />
-              <Button style={buttonStyle} disabled={phase > active_tab}>
-                Markera fas som klar
-              </Button>
-            </div>
-          ) : active_tab === 5 ? ( //If active tab is act, show three different buttons
-            <div
-              style={{
-                width: "40%",
-                display: "flex",
-                justifyContent: "right",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "40px",
-              }}
-            >
-              <div style={{ width: 120, height: 120 }}></div>
-              <Button style={buttonStyle} disabled={phase > active_tab}>
-                Markera fas som klar
-              </Button>
-            </div>
-          ) : (
-            //If active tab is do or study, show only "Markera fas som klar"
-
-            <div
-              style={{
-                width: "40%",
-                display: "flex",
-                justifyContent: "right",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "40px",
-              }}
-            >
-              <div style={{ width: 120, height: 120 }}></div>
-              <Button style={buttonStyle} disabled={phase > active_tab}>
-                Markera fas som klar
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <Form.Group style={descriptionStyle}>
-          <Tabs defaultActiveKey="idéer" justify>
-            <Tab
-              eventKey="syfte"
-              title={
-                <span style={flexAndCenter}>
-                  <div style={IconCircleStyle}>
-                    <Bullseye
-                      style={{
-                        color: "#C71307",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </div>
-                  Syfte
-                </span>
-              }
-            >
-              <div style={whiteDescriptionContainerStyle}>{content}</div>
-            </Tab>
-            <Tab
-              eventKey="mål"
-              title={
-                <span style={flexAndCenter}>
-                  <div style={IconCircleStyle}>
-                    <CheckCircle
-                      style={{
-                        color: "#008000",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </div>
-                  Mål
-                </span>
-              }
-            >
-              <div style={whiteDescriptionContainerStyle}>
-                Här ska målen beskrivas
-              </div>
-            </Tab>
-            <Tab
-              eventKey="mäta"
-              title={
-                <span style={flexAndCenter}>
-                  <div style={IconCircleStyle}>
-                    <BarChart
-                      style={{
-                        color: "#32308D",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </div>
-                  Mäta
-                </span>
-              }
-            >
-              <div style={whiteDescriptionContainerStyle}>
-                Här ska mätningarna beskrivas
-              </div>
-            </Tab>
-            <Tab
-              eventKey="idéer"
-              title={
-                <span style={flexAndCenter}>
-                  <div style={IconCircleStyle}>
-                    <Lightbulb
-                      style={{
-                        color: "#D9C515",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </div>
-                  Idéer
-                </span>
-              }
-            >
-              <div style={whiteDescriptionContainerStyle}>
-                {ideas.map((idea, index) => (
-                  <Form.Check
-                    key={index}
-                    type="checkbox"
-                    label={idea.text}
-                    checked={idea.checked}
-                    disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
-                    onChange={() => handleIdeaClick(index)}
-                  />
-                ))}
-
-                {ideas.every((idea) => !idea.checked) ? (
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      color: "#C71307",
-                      marginTop: "15px",
-                    }}
-                  >
-                    Innan förbättringsarbetet kan påbörjas måste det
-                    specificeras vilken idé som kommer arbetas med under denna
-                    iteration.
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      color: "#008000",
-                      marginTop: "15px",
-                    }}
-                  >
-                    Nu kan du börja arbeta med förbättringarbetet!
-                  </div>
-                )}
-              </div>
-            </Tab>
-          </Tabs>
-        </Form.Group>
-      </div>
-    </>
-  );
-}
-
-//Project leader and project members
-function TopRightContent({ project_leader, project_members }: topRightProps) {
-  return (
-    <>
-      <div style={projectMembersContainer}>
-        <Form.Group>
-          <Form.Label>
-            <div>
-              <b>Förbättringsledare</b>
-              <div style={{ marginTop: "10px", marginBottom: "20px" }}>
-                {project_leader}
-              </div>
-              <b>Förbättringsmedlemmar</b>
-              {project_members.map((member, index) => (
-                <div style={{ marginTop: "10px" }}>{member}</div>
-              ))}
-            </div>
-          </Form.Label>
-        </Form.Group>
-      </div>
-    </>
-  );
-}
-
-//Section for uploading files
-function FileSection({}) {
-  const [showFileModal, setShowFileModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const handleShowFileModal = () => {
-    setShowFileModal(true);
-  };
-  const handleCloseFileModal = () => {
-    setShowFileModal(false);
-  };
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    }
-  };
-
-  const handleFormSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    if (selectedFile) {
-      // You can handle the file upload here
-      console.log("Selected file:", selectedFile);
-    }
-  };
-
-  return (
-    <>
-      <Form.Group style={formGroupStyle}>
-        <Form.Label>
-          <b>Bilagor</b>
-        </Form.Label>
-        <div style={whiteContainerStyle}>
-          <Button
-            style={{
-              backgroundColor: "#FFFFFF",
-              color: "#000000",
-              fontSize: "15.5px",
-              padding: "0px",
-              border: "none",
-              cursor: "pointer",
-              marginTop: "17px",
-            }}
-            onClick={handleShowFileModal}
-          >
-            <div style={flexAndCenter}>
-              <PlusLg style={{ marginRight: "9px" }} />
-              <div>Ladda upp bilaga</div>
-            </div>
-          </Button>
-        </div>
-      </Form.Group>
-
-      <Modal
-        show={showFileModal}
-        onHide={handleCloseFileModal}
-        style={{ top: "25%", fontFamily: "Avenir" }}
-      >
-        <Modal.Header closeButton></Modal.Header>
-        <Modal.Body className="d-flex justify-content-center align-items-center">
-          <Form style={{ width: "90%" }}>
-            <div className="mb-3 text-center">
-              <input
-                type="file"
-                className="form-control"
-                id="fileInput"
-                name="file"
-                onChange={handleFileChange}
-              />
-            </div>
-            <div className="mb-3 text-center">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Lägg till en beskrivande mening..."
-                style={{ fontStyle: "italic" }}
-              ></input>
-            </div>
-            <div className="mb-3 text-center">
-              <Button
-                style={saveChecklistButtonStyle}
-                onClick={handleCloseFileModal}
-              >
-                Ladda upp bilaga
-              </Button>
-            </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
-    </>
-  );
-}
-
-//Section for displaying similar projects
-function SimilarImprovementProjectsSection() {
-  return (
-    <>
-      <Form.Group style={formGroupStyle}>
-        <Form.Label>
-          <b>Liknande förbättringsarbeten</b>
-        </Form.Label>
-        <div style={whiteContainerStyle}>
-          Här ska det finnas förslag på liknande förbättringsarbeten
-        </div>
-      </Form.Group>
     </>
   );
 }
@@ -1145,168 +652,414 @@ function SimilarImprovementProjectsSection() {
 function CardModal({
   show,
   onHide,
+  id,
   title,
   phase,
-  content,
   place,
   centrum,
   tags,
   date_created,
+  goals,
+  ideas_array,
+  measure,
+  result_measurements,
+  result_analysis,
+  notes_plan,
+  notes_do,
+  notes_study,
+  notes_act,
+  files_plan,
+  files_do,
+  files_study,
+  files_act,
   project_leader,
   project_members,
   checklist_plan,
-  checklist_do,
-  checklist_study,
-  checklist_act,
 }: cardModalProps) {
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
-  const [projectLeaderName, setProjectLeaderName] = useState<string>("");
-
-  useEffect(() => {
-    const fetchProjectLeader = async () => {
-      const name = await getProjectLeader(project_leader);
-      if (name !== null) {
-        setProjectLeaderName(name);
-      }
-    };
-
-    fetchProjectLeader();
-  }, [project_leader]);
+  const projectId = typeof id === "string" ? id : id.toString();
+  const initialIdeasState = ideas_array.map((idea) => ({
+    text: idea,
+    checked: false,
+  }));
 
   //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
-  const [ideas, setIdeas] = useState([
-    { text: "Här kommer det finnas en idé", checked: false },
-    { text: "Här kommer det finnas en annan", checked: false },
-    { text: "Och här kanske en tredje", checked: false },
-  ]);
+  const [ideas, setIdeas] = useState(initialIdeasState);
+
+  //Handles what happens when an idea is clicked, if an idea already has been chosen and another one is clicked - the confirmation modal will show
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState<number | null>(
+    null
+  );
 
   const handleIdeaClick = (index: number) => {
-    const updatedIdeas = [...ideas];
-    updatedIdeas[index].checked = true;
-    setIdeas(updatedIdeas);
+    // Checks if any other idea is already checked
+    const isOtherIdeaChecked = ideas.some(
+      (idea, i) => idea.checked && i !== index
+    );
+
+    if (isOtherIdeaChecked) {
+      setShowConfirmationModal(true);
+      setSelectedIdeaIndex(index); // Save the index of the clicked idea
+    } else {
+      const updatedIdeas = [...ideas];
+      updatedIdeas[index].checked = true;
+      setIdeas(updatedIdeas);
+    }
   };
 
+  const handleConfirmation = (confirmed: boolean) => {
+    setShowConfirmationModal(false);
+    if (confirmed && selectedIdeaIndex !== null) {
+      // Reset all ideas to unchecked
+      const updatedIdeas = ideas.map((idea, i) => ({
+        ...idea,
+        checked: false,
+      }));
+      // Set the clicked idea to checked
+      updatedIdeas[selectedIdeaIndex].checked = true;
+      setIdeas(updatedIdeas);
+
+      //Set the active phase back to plan and clear everything
+      handlePhaseUpdate(1);
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+
+      //Update the database with the cleared field
+      updateDb();
+
+      //Här måste vi också byta vald idé i databasen!
+    }
+  };
+
+  //Makes sure that the next phase tab is displayed when the user marks a phase as done
+  const [updatedProjectPhase, setUpdatedProjectPhase] =
+    useState<number>(currentPhase);
+  const [selectedTab, setSelectedTab] = useState<string>(
+    currentPhase.toString()
+  );
+
+  useEffect(() => {
+    setSelectedTab(updatedProjectPhase.toString());
+  }, [updatedProjectPhase]);
+
+  const handlePhaseUpdate = (phase: number) => {
+    setUpdatedProjectPhase(phase + 1);
+  };
+
+  //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
+  const [updatedTags, setUpdatedTags] = useState(tags);
+
+  //State variable that contains the updated content of the text field "Analys av resultat"
+  const [updatedResultAnalysis, setUpdatedResultAnalysis] =
+    useState(result_analysis);
+
+  //State variable that contains the updated content of the text field "Uppmätt resultat"
+  const [updatedResultMeasurements, setUpdatedResultMeasurements] =
+    useState(result_measurements);
+
+  //State variables that contains the updated content of the text fiels "Övriga anteckningar" of each phase
+  const [updatedNotesPlan, setUpdatedNotesPlan] = useState(notes_plan);
+  const [updatedNotesDo, setUpdatedNotesDo] = useState(notes_do);
+  const [updatedNotesStudy, setUpdatedNotesStudy] = useState(notes_study);
+  const [updatedNotesAct, setUpdatedNotesAct] = useState(notes_act);
+
+  //State variables that contains the updated file arrays of each phase
+  const [updatedFilesPlan, setUpdatedFilesPlan] = useState(files_plan);
+  const [updatedFilesDo, setUpdatedFilesDo] = useState(files_do);
+  const [updatedFilesStudy, setUpdatedFilesStudy] = useState(files_study);
+  const [updatedFilesAct, setUpdatedFilesAct] = useState(files_act);
+
+  //State variables that contains the updated version of the checklist of the plan phase
+  const [checklistItems, setChecklistItems] = useState(
+    checklist_plan.checklist_items
+  );
+  const [checklistDone, setChecklistDone] = useState(
+    checklist_plan.checklist_done
+  );
+  const [checklistMembers, setChecklistMembers] = useState(
+    checklist_plan.checklist_members
+  );
+
+  //Updates the database with the changes made when the save button is clicked
+  async function updateDb() {
+    try {
+      const projectDocRef = doc(db, "improvementWorks", projectId);
+      const projectDoc = await getDoc(projectDocRef);
+
+      if (projectDoc.exists()) {
+        const data = projectDoc.data();
+        const updatedData = {
+          phase: updatedProjectPhase, // Updates the phase
+          tags: updatedTags, // Updates the tags
+          all_iterations: {
+            ...data.all_iterations,
+            iteration1: {
+              ...data.all_iterations?.iteration1,
+              plan: {
+                ...data.all_iterations?.iteration1?.plan,
+                checklist: {
+                  checklist_done: checklistDone,
+                  checklist_items: checklistItems,
+                  checklist_members: checklistMembers,
+                },
+                files: {
+                  file_names: updatedFilesPlan.file_names,
+                  file_descriptions: updatedFilesPlan.file_descriptions,
+                },
+                notes: updatedNotesPlan, // Updates "Övriga anteckningar" in the plan phase
+              },
+              do: {
+                ...data.all_iterations?.iteration1?.do,
+                results: updatedResultMeasurements, // Updates "Uppmätt resultat"
+                files: {
+                  file_names: updatedFilesDo.file_names,
+                  file_descriptions: updatedFilesDo.file_descriptions,
+                },
+                notes: updatedNotesDo, // Updates "Övriga anteckningar" in the do phase
+              },
+              study: {
+                ...data.all_iterations?.iteration1?.study,
+                analysis: updatedResultAnalysis, // Updates "Analys av resultat"
+                files: {
+                  file_names: updatedFilesStudy.file_names,
+                  file_descriptions: updatedFilesStudy.file_descriptions,
+                },
+                notes: updatedNotesStudy, // Updates "Övriga anteckningar" in the study phase
+              },
+              act: {
+                ...data.all_iterations?.iteration1?.act,
+                files: {
+                  file_names: updatedFilesAct.file_names,
+                  file_descriptions: updatedFilesAct.file_descriptions,
+                },
+                notes: updatedNotesAct, // Updates "Övriga anteckningar" in the act phase
+              },
+            },
+          },
+        };
+
+        await updateDoc(projectDocRef, updatedData);
+        console.log("Improvement work updated successfully");
+      }
+    } catch (e) {
+      console.error("Error updating improvement work: ", e);
+    }
+  }
+
   return (
-    <Modal show={show} onHide={onHide} size="lg">
-      <Modal.Body
-        style={{
-          paddingLeft: "30px",
-          paddingRight: "30px",
-          fontFamily: "Avenir",
-        }}
+    <>
+      <Modal show={show} onHide={onHide} size="lg">
+        <Modal.Body
+          style={{
+            paddingLeft: "30px",
+            paddingRight: "30px",
+            fontFamily: "Avenir",
+          }}
+        >
+          <Tabs
+            activeKey={selectedTab}
+            onSelect={(key) => key !== null && setSelectedTab(key)}
+            justify
+          >
+            {/*------ PLANERA ------*/}
+            <Tab
+              eventKey="2"
+              title={
+                <span style={flexAndCenter}>
+                  {getPhaseIcon(2, updatedProjectPhase, 35)}
+                  Planera
+                </span>
+              }
+            >
+              <ModalContentPlan
+                title={title}
+                phase={updatedProjectPhase}
+                updatedTags={updatedTags}
+                setUpdatedTags={setUpdatedTags}
+                date_created={date_created}
+                goals={goals}
+                ideas={ideas}
+                measure={measure}
+                place={place}
+                centrum={centrum}
+                checklist={{
+                  checklist_items: checklistItems,
+                  checklist_done: checklistDone,
+                  checklist_members: checklistMembers,
+                }}
+                setChecklistItems={setChecklistItems}
+                setChecklistDone={setChecklistDone}
+                setChecklistMembers={setChecklistMembers}
+                project_leader={""}
+                project_members={project_members}
+                handleIdeaClick={handleIdeaClick}
+                id={projectId}
+                handlePhaseUpdate={handlePhaseUpdate}
+                notes={updatedNotesPlan}
+                setUpdatedNotesPlan={setUpdatedNotesPlan}
+                files={updatedFilesPlan}
+                setUpdatedFilesPlan={setUpdatedFilesPlan}
+              />
+            </Tab>
+
+            {/*------ GÖRA ------*/}
+
+            <Tab
+              eventKey="3"
+              title={
+                <span style={flexAndCenter}>
+                  {getPhaseIcon(3, updatedProjectPhase, 40)}
+                  Göra
+                </span>
+              }
+            >
+              <ModalContentDo
+                title={title}
+                phase={updatedProjectPhase}
+                updatedTags={updatedTags}
+                setUpdatedTags={setUpdatedTags}
+                date_created={date_created}
+                goals={goals}
+                ideas={ideas}
+                measure={measure}
+                place={place}
+                centrum={centrum}
+                project_leader={""}
+                project_members={project_members}
+                result_measurements={updatedResultMeasurements}
+                setUpdatedResultMeasurements={setUpdatedResultMeasurements}
+                handleIdeaClick={handleIdeaClick}
+                id={projectId}
+                handlePhaseUpdate={handlePhaseUpdate}
+                notes={updatedNotesDo}
+                setUpdatedNotesDo={setUpdatedNotesDo}
+                files={updatedFilesDo}
+                setUpdatedFilesDo={setUpdatedFilesDo}
+              />
+            </Tab>
+
+            {/*------STUDERA ------*/}
+
+            <Tab
+              eventKey="4"
+              title={
+                <span style={flexAndCenter}>
+                  {getPhaseIcon(4, updatedProjectPhase, 30)}
+                  Studera
+                </span>
+              }
+            >
+              <ModalContentStudy
+                title={title}
+                phase={updatedProjectPhase}
+                updatedTags={updatedTags}
+                setUpdatedTags={setUpdatedTags}
+                date_created={date_created}
+                goals={goals}
+                ideas={ideas}
+                measure={measure}
+                place={place}
+                centrum={centrum}
+                project_leader={""}
+                project_members={project_members}
+                result_analysis={updatedResultAnalysis}
+                setUpdatedResultAnalysis={setUpdatedResultAnalysis}
+                handleIdeaClick={handleIdeaClick}
+                id={projectId}
+                handlePhaseUpdate={handlePhaseUpdate}
+                notes={updatedNotesStudy}
+                setUpdatedNotesStudy={setUpdatedNotesStudy}
+                files={updatedFilesStudy}
+                setUpdatedFilesStudy={setUpdatedFilesStudy}
+              />
+            </Tab>
+
+            {/*------- AGERA ------*/}
+
+            <Tab
+              eventKey="5"
+              title={
+                <span style={flexAndCenter}>
+                  {getPhaseIcon(5, updatedProjectPhase, 40)}
+                  Agera
+                </span>
+              }
+            >
+              <ModalContentAct
+                title={title}
+                phase={updatedProjectPhase}
+                updatedTags={updatedTags}
+                setUpdatedTags={setUpdatedTags}
+                date_created={date_created}
+                goals={goals}
+                ideas={ideas}
+                measure={measure}
+                place={place}
+                centrum={centrum}
+                project_leader={""}
+                project_members={project_members}
+                handleIdeaClick={handleIdeaClick}
+                id={projectId}
+                handlePhaseUpdate={handlePhaseUpdate}
+                notes={updatedNotesAct}
+                setUpdatedNotesAct={setUpdatedNotesAct}
+                files={updatedFilesAct}
+                setUpdatedFilesAct={setUpdatedFilesAct}
+              />
+            </Tab>
+          </Tabs>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => {
+              onHide();
+              updateDb();
+            }}
+            style={buttonStyle}
+          >
+            Spara
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showConfirmationModal}
+        onHide={() => handleConfirmation(false)}
+        style={{ top: "20%", fontFamily: "Avenir" }}
       >
-        <Tabs defaultActiveKey={"phase" + phase} justify>
-          {/*------ PLANERA ------*/}
-          <Tab
-            eventKey="phase2"
-            title={
-              <span style={flexAndCenter}>
-                {getPhaseIcon(2, currentPhase, 35)}
-                Planera
-              </span>
-            }
-          >
-            <ModalContentPlan
-              title={title}
-              phase={currentPhase}
-              tags={tags}
-              date_created={date_created}
-              place={place}
-              centrum={centrum}
-              content={content}
-              checklist={checklist_plan}
-              project_leader={projectLeaderName}
-              project_members={project_members}
-              ideas={ideas}
-              handleIdeaClick={handleIdeaClick}
-            />
-          </Tab>
-
-          {/*------ GÖRA ------*/}
-
-          <Tab
-            eventKey="phase3"
-            title={
-              <span style={flexAndCenter}>
-                {getPhaseIcon(3, currentPhase, 40)}
-                Göra
-              </span>
-            }
-          >
-            <ModalContentDo
-              title={title}
-              phase={currentPhase}
-              tags={tags}
-              date_created={date_created}
-              place={place}
-              centrum={centrum}
-              content={content}
-              project_leader={projectLeaderName}
-              project_members={project_members}
-              ideas={ideas}
-              handleIdeaClick={handleIdeaClick}
-            />
-          </Tab>
-
-          {/*------STUDERA ------*/}
-
-          <Tab
-            eventKey="phase4"
-            title={
-              <span style={flexAndCenter}>
-                {getPhaseIcon(4, currentPhase, 30)}
-                Studera
-              </span>
-            }
-          >
-            <ModalContentStudy
-              title={title}
-              phase={currentPhase}
-              tags={tags}
-              date_created={date_created}
-              place={place}
-              centrum={centrum}
-              content={content}
-              project_leader={projectLeaderName}
-              project_members={project_members}
-              ideas={ideas}
-              handleIdeaClick={handleIdeaClick}
-            />
-          </Tab>
-
-          {/*------- AGERA ------*/}
-
-          <Tab
-            eventKey="phase5"
-            title={
-              <span style={flexAndCenter}>
-                {getPhaseIcon(5, currentPhase, 40)}
-                Agera
-              </span>
-            }
-          >
-            <ModalContentAct
-              title={title}
-              phase={currentPhase}
-              tags={tags}
-              date_created={date_created}
-              place={place}
-              centrum={centrum}
-              content={content}
-              project_leader={projectLeaderName}
-              project_members={project_members}
-              ideas={ideas}
-              handleIdeaClick={handleIdeaClick}
-            />
-          </Tab>
-        </Tabs>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={onHide} style={buttonStyle}>
-          Spara
-        </Button>
-      </Modal.Footer>
-    </Modal>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body className="d-flex justify-content-center align-items-center">
+          <Form style={{ width: "90%" }}>
+            <div className="mb-3 text-center">
+              Att byta idé innebär att allt arbete som utförts hittills för den
+              nuvarande idén raderas. Om du önskar spara arbetet innan du byter,
+              vänligen gå till agera-fasen och välj "Påbörja ny iteration med
+              annan idé".
+            </div>
+            <div className="mb-3 text-center">
+              <Button
+                onClick={() => handleConfirmation(true)}
+                style={buttonStyle}
+              >
+                Jag vill byta idé utan att spara
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 }
 

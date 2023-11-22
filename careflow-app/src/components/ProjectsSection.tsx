@@ -2,63 +2,72 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { ProjectCardProps } from "./ProjectCard";
-import {db} from "../firebase";
-import {collection, getDocs, query, where} from "firebase/firestore";
 import { useAuth0 } from '@auth0/auth0-react';
+import {
+    ImprovementWork,
+    getUserImprovementWorks,
+    filterImprovementWorks,
+    findUserImprovementWorks
+} from "../ImprovementWorkLib";
+import { UserInfoType } from "./Start";
 
-function ProjectsSection() {
-    
-    const [projects, setProjects] = useState<ProjectCardProps[]>([]);
-    const { user } = useAuth0();
-   
-    const fetchData = async () => {
-        const projectsCollectionRef = collection(db, "projects");
-        if (user?.name){
-        const q = query(projectsCollectionRef, where("project_members", "array-contains", user.name));
-        
+type ProjectsSectionProps = {
+    userInfo: UserInfoType;
+    improvementWorks: ImprovementWork[] | null;
+};
 
-        try {
-            const querySnapshot = await getDocs(q);
-           
-            const projectsData: ProjectCardProps[] = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                // console.log(doc.data());
-                if (!data.closed) {
-                    const project: ProjectCardProps = {
-                        title: data.title,
-                        date_created: data.date_created,
-                        place: data.place,
-                        tags: data.tags,
-                        phase: data.phase,
-                    }; 
-                    
-                    projectsData.push(project);
-                }                
-            
-            });
-            setProjects(projectsData);
-        } catch (error) {
-            console.error("Error fetching data:", error);
+// type ImprovementWorksProps = {
+//     improvementWorks: ImprovementWork[] | null;
+// };
+
+function ProjectsSection({ userInfo, improvementWorks }: ProjectsSectionProps) {
+
+    // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
+    const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
+
+    // const fetchData = async () => {
+    //     const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
+    //     if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+
+    // };
+
+    const handleFilter = async (event: any) => {
+        if (event.target.value == "user") {
+            // const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, false)
+            // if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
         }
-    }
+        else if (event.target.value == "clinic") {
+            // const filteredImprovementWorks: ImprovementWork[] | null = await filterImprovementWorks(event.target.value, userInfo.clinic, false)
+            // setImprovementWorks(filteredImprovementWorks)
+        }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []); 
+    const handleTags = (event:any) => {
+        return
+    }
 
-   
+
+    useEffect(() => {
+        // console.log("får in:")
+        // console.log(improvementWorks)
+        // console.log(userInfo)
+        const userImprovementWorks: ImprovementWork[] | null = findUserImprovementWorks(userInfo.hsaID, improvementWorks, false)
+
+        setDisplayedImprovementWorks(userImprovementWorks)
+
+    }, []);
+
+
 
     const projectsSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
-        width: "97%",
+        width: "100%",
         height: "20rem",
         borderRadius: "10px",
-        margin: "20px",
+        margin: "0px",
+        marginBottom: "20px", // Added this line
         padding: "10px",
-        overflowX: "auto" as "auto", 
+        overflowX: "auto" as "auto",
         boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     };
 
@@ -82,7 +91,7 @@ function ProjectsSection() {
         display: "flex" as "flex",
         flexDirection: "row" as "row",
         maxWidth: "100%", // Set a maximum width to prevent overflowing
-        overflowX: "auto" as "auto", 
+        overflowX: "auto" as "auto",
         paddingBottom: "1rem"
     };
 
@@ -92,36 +101,49 @@ function ProjectsSection() {
         marginTop: "10px",
         marginBottom: "1.5rem",
         fontSize: "2rem",
-    }; 
-       
+    };
 
-     return (
+
+    return (
         <div style={projectsSectionStyle}>
             <style>{scrollBarStyles}</style>
-            <h1 style={titleStyle}>Pågående förbättringsarbeten
-            <div style={{ display: 'inline-block', marginLeft: '10px' }}>
-            <HelpPopover content = "Här kommer det vara en informationsruta som hjälper användaren att navigera bland pågående projekt"/>
+            <div className="d-flex">
+                <h1 className="mt-2 ml-2" style={titleStyle}>Pågående förbättringsarbeten</h1>
+                <div className="ml-2 mt-2">
+                    <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
+                        <option selected value="user">Visa mina</option>
+                        <option value="clinic">Visa klinikens</option>
+                    </select>
+                </div>
+                <div className="ml-2 mt-2">
+                    <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
+                        <option selected value="user">Visa mina</option>
+                        <option value="clinic">Visa klinikens</option>
+                    </select>
+                </div>
+                <div className="mt-3 ml-2">
+                    <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att navigera bland pågående projekt" />
+                </div>
             </div>
-            </h1>
-            
+
             <div style={projectsContainerStyle}>
-                {projects.map((project, index) => (
-                    <div className="col-md-6 col-lg-3" style={{marginRight: "1%"}} key={index}>
-                        <ProjectCard
-                            title={project.title}
-                            date_created={project.date_created}
-                            place={project.place}
-                            tags={project.tags}
-                            phase={project.phase}
-                            displayPhaseImage={true}
-                        />
-                    </div>
-                ))}
-           
+                {displayedImprovementWorks != null ? (
+                    displayedImprovementWorks.map((improvementWork, index) => (
+                        <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
+                            <ProjectCard
+                                title={improvementWork.title}
+                                date_created={improvementWork.date_created}
+                                place={improvementWork.place}
+                                tags={improvementWork.tags}
+                                phase={improvementWork.phase}
+                                displayPhaseImage={true}
+                            />
+                        </div>
+                    ))
+                ) : (
+                    null
+                )}
             </div>
-          
-           
-            
         </div>
     );
 }
