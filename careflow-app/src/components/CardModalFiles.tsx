@@ -59,6 +59,8 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
   const [showFileModal, setShowFileModal] = useState(false);
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newFileDescription, setNewFileDescription] = useState("");
+  const [fileUrl, setFileUrl] = useState("null");
+  const [progresspercent, setProgresspercent] = useState(0);
 
   const handleShowFileModal = () => {
     setShowFileModal(true);
@@ -89,16 +91,10 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
       setUpdatedFiles({
         file_names: updatedFileNames,
         file_descriptions: updatedFileDescriptions,
-
-
-
-
         
       });
-  
-//CLOUD STORAGE UPLOADING
-      const [fileUrl, setFileUrl] = useState(null);
-      const [progresspercent, setProgresspercent] = useState(0);
+
+      //Uploading file to cloud storage
 
       const storageRef = ref(fileStorage, `files/${newFile.name}`);
       const uploadTask = uploadBytesResumable(storageRef, newFile);
@@ -114,11 +110,12 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            //setFileUrl(downloadURL)
+            setFileUrl(downloadURL);
+            console.log("File-url: " + fileUrl);
           });
         }
       );
-
+      console.log(fileUrl);
       // Clear new file and description field
       setNewFile(null);
       setNewFileDescription("");
