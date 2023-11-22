@@ -5,6 +5,7 @@ import {
   where,
   doc,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
@@ -457,4 +458,11 @@ export async function getMemberName(hsaId: string) {
   //} else {
   //  console.log("No such document!");
   //}
+}
+
+export async function deleteProject(id: string) {
+  const Doc = doc(db, "improvementWorks", id);
+
+  await deleteDoc(Doc);
+  //console.log("deleting");
 }

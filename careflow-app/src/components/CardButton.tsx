@@ -7,6 +7,7 @@ import ListIconComponent from "./ListIcon";
 import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import TrashIcon from "../icons/Trashicon";
+import { ImprovementWork, deleteProject } from "../ImprovementWorkLib";
 
 const TagStyle = {
   marginTop: "5px",
@@ -27,9 +28,16 @@ interface CardButtonProps {
   tags: Array<string>;
   date_created: Timestamp;
   onClick: () => void;
+  improvementWork: ImprovementWork;
 }
 
-function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
+function CardButton({
+  title,
+  tags,
+  date_created,
+  onClick,
+  improvementWork,
+}: CardButtonProps) {
   const formattedDate = date_created.toDate().toLocaleString().slice(0, 10); //Format the date into a string only first 10 char
 
   const [mouseIsOver, setMouseIsOver] = useState(false);
@@ -93,8 +101,8 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
             <button
               onClick={(event) => {
                 event.stopPropagation(); // Prevent the click event from reaching the Card
-                console.log("Trash icon clicked!");
-                // Handle trash icon click (e.g., delete the item)
+                //console.log("Trash icon clicked!", { title });
+                deleteProject(improvementWork.id.toString()); // delete the item
               }}
               className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
             >

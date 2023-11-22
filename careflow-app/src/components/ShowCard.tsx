@@ -101,6 +101,7 @@ function ShowCard({ improvementWork }: ShowCardProps) {
           tags={improvementWork.tags}
           date_created={improvementWork.date_created}
           onClick={modalShow}
+          improvementWork={improvementWork}
         />
 
         {

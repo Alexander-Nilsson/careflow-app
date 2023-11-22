@@ -7,7 +7,12 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
-import { Id, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import {
+  Id,
+  ImprovementWork,
+  deleteProject,
+  getMemberName,
+} from "../ImprovementWorkLib";
 import CardModal from "./CardModal";
 import TrashIcon from "../icons/Trashicon";
 
@@ -174,8 +179,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 <button
                   onClick={(event) => {
                     event.stopPropagation(); // Prevent the click event from reaching the Card
-                    console.log("Trash icon clicked!");
-                    // Handle trash icon click (e.g., delete the item)
+                    //console.log("Trash icon clicked!", { title });
+                    deleteProject(improvementWork.id.toString()); // delete the item
                   }}
                   className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
                 >
