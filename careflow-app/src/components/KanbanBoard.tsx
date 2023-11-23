@@ -61,7 +61,7 @@ function KanbanBoard() {
     );
   }
 
-  const { improvementWorkList, setImprovementWorkList } = context;
+  const { improvementWorkList, setImprovementWorkList, isAdmin } = context;
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
 
@@ -96,6 +96,7 @@ function KanbanBoard() {
                   (ImprovementWork) =>
                     ImprovementWork.phase === col.id && !ImprovementWork.closed //only display non- closed cards in kanban
                 )}
+                isAdmin={isAdmin}
               />
             ))}
           </div>
@@ -103,7 +104,10 @@ function KanbanBoard() {
           {createPortal(
             <DragOverlay>
               {activeImprovementWork && (
-                <ShowCard improvementWork={activeImprovementWork} />
+                <ShowCard
+                  improvementWork={activeImprovementWork}
+                  isAdmin={isAdmin}
+                />
               )}
             </DragOverlay>,
             document.body

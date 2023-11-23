@@ -3,26 +3,36 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
-// import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { Project, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
+  isAdmin: boolean;
 }
 
-function ShowCard({ improvementWork }: ShowCardProps) {
+function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
   // State to track whether the mouse is over the task card
-  const [mouseIsOver, setMouseIsOver] = useState(false);
+
   const [show, setShow] = useState(false);
-  const modalClose = () => setShow(false);
-  const modalShow = () => setShow(true);
+  const modalClose = () => {
+    setShow(false);
+    console.log("modalClosed in showcard", show);
+  };
+  const modalShow = () => {
+    setShow(true);
+    console.log("setShow in showcard", show);
+  };
 
   const { isLoading } = useAuth0();
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
+
+  const modalToggle = () => {
+    setShow((prevShow) => !prevShow); // Toggle the modal state
+    console.log("setShow in showcard", show);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +41,7 @@ function ShowCard({ improvementWork }: ShowCardProps) {
       }
 
       try {
+        //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
@@ -51,26 +62,17 @@ function ShowCard({ improvementWork }: ShowCardProps) {
     fetchData();
   }, []);
 
-  // State to toggle edit mode for the task content
-  //const [editMode, setEditMode] = useState(true);
-
   // UseSortable hook for drag-and-drop functionality
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: improvementWork.id,
-    data: {
-      type: "ImprovementWork",
-      improvementWork,
-    },
+  const { setNodeRef, attributes, listeners, transition, isDragging } =
+    useSortable({
+      id: improvementWork.id,
+      data: {
+        type: "ImprovementWork",
+        improvementWork,
+      },
 
-    //disabled: editMode,
-  });
+      //disabled: editMode,
+    });
 
   // Define the style based on drag-and-drop transition
   const style = {
@@ -92,65 +94,18 @@ function ShowCard({ improvementWork }: ShowCardProps) {
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      onMouseEnter={() => {
-        setMouseIsOver(true);
-      }}
-      onMouseLeave={() => {
-        setMouseIsOver(false);
-      }}
-    >
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <div>
         <CardButton
           title={improvementWork.title}
           tags={improvementWork.tags}
           date_created={improvementWork.date_created}
-          onClick={modalShow}
+          improvementWork={improvementWork}
+          isAdmin={isAdmin}
+          modalToggle={modalToggle} // send toggle function to cardButton
         />
 
         {
-          /*
-          <CardModal
-            show={show}
-            onHide={modalClose}
-             id={improvementWork.id}
-            title={improvementWork.title}
-            phase={improvementWork.phase}
-            place={improvementWork.place}
-            centrum={improvementWork.centrum}
-            tags={improvementWork.tags}
-            date_created={improvementWork.date_created}
-            purpose={improvementWork.purpose}
-            goals={improvementWork.goals}
-            ideas_array={improvementWork.ideas}
-            measure={improvementWork.measure}
-            total_iterations={improvementWork.total_iterations}
-            result_measurements={
-              improvementWork.all_iterations[improvementWork.total_iterations-1].do.results
-            }
-            result_analysis={
-              improvementWork.all_iterations[improvementWork.total_iterations-1].study.analysis
-            }
-            notes_plan={improvementWork.all_iterations[improvementWork.total_iterations-1].plan.notes}
-            notes_do={improvementWork.all_iterations[improvementWork.total_iterations-1].do.notes}
-            notes_study={improvementWork.all_iterations[improvementWork.total_iterations-1].study.notes}
-            notes_act={improvementWork.all_iterations[improvementWork.total_iterations-1].act.notes}
-            files_plan={improvementWork.all_iterations[improvementWork.total_iterations-1].plan.files}
-            files_do={improvementWork.all_iterations[improvementWork.total_iterations-1].do.files}
-            files_study={improvementWork.all_iterations[improvementWork.total_iterations-1].study.files}
-            files_act={improvementWork.all_iterations[improvementWork.total_iterations-1].act.files}
-            project_leader={leaderName?.toString() || ""}
-            project_members={memberNames}
-            checklist_plan={
-              improvementWork.all_iterations[improvementWork.total_iterations-1].plan.checklist
-            }
-            closed={improvementWork.closed}
-          />
-        */
           <CardModal
             show={show}
             onHide={modalClose}
