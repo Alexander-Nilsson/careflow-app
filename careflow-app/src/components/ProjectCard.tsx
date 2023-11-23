@@ -147,7 +147,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div>
-      <Card onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <Card
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{ cursor: "pointer" }}
+      >
         <Card.Body style={cardBodyStyle}>
           <div
             style={{ display: "flex", justifyContent: "space-between" }}

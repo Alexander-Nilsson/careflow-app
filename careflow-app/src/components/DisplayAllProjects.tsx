@@ -59,9 +59,10 @@ function DisplayAllProjects() {
         {currentProjects.map((project, index) => (
           <div
             className="col-md-6 col-lg-3"
-            style={{ marginRight: "0%", marginBottom: "1%" }}
+            style={{marginRight: "0%",  }}
             key={index}
           >
+            <div style={{margin: "1%"}}>
             <ProjectCard
               title={project.title}
               date_created={project.date_created}
@@ -72,13 +73,14 @@ function DisplayAllProjects() {
               improvementWork={project}
               isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
             />
+            </div>
           </div>
         ))}
       </div>
 
       {/* Pagination */}
       <div className="pagination-container">
-        <div style={{ marginLeft: "10px", marginBottom: "5px" }}>
+        <div style={{ marginLeft: "1px", marginBottom: "5px" }}>
           Antal: <strong>{totalProjects}</strong>
         </div>
         <div className="pagination-buttons">

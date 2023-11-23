@@ -37,6 +37,41 @@ const buttonStyle = {
   marginTop: "20px",
 };
 
+const finishButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 10px",
+  width: "100%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "15px",
+};
+
+const newIdeaButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 0px",
+  width: "48.9%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
+  marginLeft: "5px",
+};
+
+const sameIdeaButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 0px",
+  width: "48.9%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
+  marginRight: "5px",
+};
+
 const iconStyle = {
   width: "15px",
   height: "15px",
@@ -81,6 +116,7 @@ const tagContainerStyle = {
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  cursor: "pointer",
 };
 
 const addTagContainerStyle = {
@@ -89,6 +125,7 @@ const addTagContainerStyle = {
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  cursor: "pointer",
 };
 
 const saveTagButtonStyle = {
@@ -175,7 +212,6 @@ function CardModalTopLeft({
   handlePhaseUpdate,
 }: cardModalTopLeftProps) {
   const formattedDate = date_created.toDate().toLocaleString();
-  //const [updatedTags, setUpdatedTags] = useState(tags);
   const [showTagModal, setShowTagModal] = useState(false);
   const [newTag, setNewTag] = useState("");
 
@@ -208,7 +244,12 @@ function CardModalTopLeft({
   return (
     <>
       <div style={{ width: "63%" }}>
-        <div style={{ display: "flex", marginBottom: "20px" }}>
+        <div
+          style={{
+            display: active_tab !== 5 ? "flex" : "block",
+            marginBottom: "20px",
+          }}
+        >
           <div style={{ width: "60%" }}>
             <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
             <div style={tagStyle}>
@@ -307,25 +348,43 @@ function CardModalTopLeft({
               </Button>
             </div>
           ) : active_tab === 5 ? ( //If active tab is act, show three different buttons
-            <div
-              style={{
-                width: "40%",
-                display: "flex",
-                justifyContent: "right",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "40px",
-              }}
-            >
-              <div style={{ width: 120, height: 120 }}></div>
+            <div>
               <Button
-                style={buttonStyle}
+                style={finishButtonStyle}
                 disabled={
                   phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
+                onClick={() => handlePhaseUpdate(phase)}
               >
-                Markera fas som klar
+                Avsluta förbättringsarbete
+              </Button>
+              <Button
+                style={sameIdeaButtonStyle}
+                disabled={
+                  phase !== active_tab ||
+                  ideas.every((idea) => idea.checked === false)
+                }
+                onClick={() => handlePhaseUpdate(6)}
+              >
+                Påbörja ny iteration
+                <span style={{ fontSize: "10px", display: "block" }}>
+                  {"(med samma idé)"}
+                </span>
+              </Button>
+              <Button
+                style={newIdeaButtonStyle}
+                disabled={
+                  ideas.length === 1 ||
+                  phase !== active_tab ||
+                  ideas.every((idea) => idea.checked === false)
+                }
+                onClick={() => handlePhaseUpdate(7)}
+              >
+                Påbörja ny iteration
+                <span style={{ fontSize: "10px", display: "block" }}>
+                  {"(med annan idé)"}
+                </span>
               </Button>
             </div>
           ) : (
@@ -465,8 +524,14 @@ function CardModalTopLeft({
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
-                    style={{ color: idea.checked ? "#000000" : "#AEAEAE" }}
-                    //disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
+                    style={{
+                      color: ideas.some((idea) => idea.checked)
+                        ? idea.checked
+                          ? "#000000"
+                          : "#AEAEAE"
+                        : "#000000",
+                    }} //If no idea is chosen they are all displayed in black, and when an idea has been chosen the chosen one is black while the rest are set tho gray
+                    disabled={phase !== 2} //Disable the idea checkboxes if the improvement work's phase is not plan
                     onChange={() => handleIdeaClick(index)}
                   />
                 ))}
