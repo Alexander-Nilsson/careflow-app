@@ -30,21 +30,13 @@ export class userIDname {
 }
 
 async function fetchUsers() {
-  const q = query(collection(db, "users"));
-  // const querySnapshot = await getDocs(q);
-  const querySnapshot = await getUsers(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
 
-  ids.map(async (id) => {
-    const usersReference = doc(db, "users", id).withConverter(
-      memberConverter
-    );
-    const snapshot = await getUser(usersReference);
-    const userData = snapshot.data() as User;
-
+  const userSnapshot = await getDocs(collection(db, "users"));
+  userSnapshot.forEach((doc) => {
+    const userData = doc.data() as User;
     if (!users.includes(userData.sur_name)) {
       users.push(userData.sur_name);
-      usersClassArray.push(new userIDname(id, userData.sur_name));
+      usersClassArray.push(new userIDname(doc.data().id, userData.sur_name));
     }
   });
 }
