@@ -51,7 +51,7 @@ function Start() {
 
   async function fetchData() {
     if (user?.name) {
-      getUser(user.name, user, setUserInfo);
+      fetchUser(user.name, user, setUserInfo);
 
       const improvementWorks: ImprovementWork[] | null =
         await getAllImprovementWorks();
@@ -83,7 +83,7 @@ function Start() {
       />
       {isAuthenticated && userInfo && improvementWorks ? (
         <div style={contentStyle}>
-          <ProfileSection />
+          <ProfileSection userInfo={userInfo}/>
           {/* <CreateNewProject /> */}
           <ProjectsSection userInfo={userInfo} allImprovementWorks={improvementWorks}/>
           <div className="d-flex mr-2 w-100">
@@ -102,7 +102,7 @@ function Start() {
 export default Start;
 
 //fetches the user data from database, based on the hsa-ID
-export async function getUser(hsaId: string, user: any, setUserInfo: any) {
+export async function fetchUser(hsaId: string, user: any, setUserInfo: any) {
   const docRef = doc(db, "users", hsaId);
   const docSnap = await getUser2(docRef);
 

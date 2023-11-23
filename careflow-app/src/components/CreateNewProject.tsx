@@ -4,18 +4,7 @@ import CreateProjectButton from "./CreateProjectButton";
 import CreateProjectModal from "./CreateProjectModal";
 import ContinueButton from "./ContinueButton";
 import { Id } from "../types";
-import {
-  doc,
-  setDoc,
-  getDocs,
-  getDoc,
-  collection,
-  Timestamp,
-  query,
-  addDoc,
-} from "firebase/firestore";
-import { db } from "../firebase";
-import { getTag, getTags, getUser, getUsers } from "../ImprovementWorkLib";
+import { getTags, getUsers } from "../ImprovementWorkLib";
 
 var users: any[] = [];
 var usersClassArray: any[] = [];
@@ -31,7 +20,7 @@ export class userIDname {
 
 async function fetchUsers() {
 
-  const userSnapshot = await getDocs(collection(db, "users"));
+  const userSnapshot = await getUsers();
   userSnapshot.forEach((doc) => {
     const userData = doc.data() as User;
     if (!users.includes(userData.sur_name)) {
@@ -137,39 +126,13 @@ const tagConverter = {
 var tags: any[] = [];
 
 async function fetchTags() {
-  // console.log("hämtar taggar")
-  const tagsRef = collection(db, "tags");
-  const tagsQuery = query(tagsRef);
-  try {
-    return Promise.all([getDocs(tagsQuery)]).then(([snapshot]) => {
-      const fetchedTags = [...snapshot.docs];
-      // console.log()
-      fetchedTags.forEach((doc) => {
-        let tag = doc.data().description;
-        tags.push(tag);
-        // }
-      });
-    });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-
-  // const q = query(collection(db, "tags"));
-  // const querySnapshot = await getTags(q);
-  // const ids = querySnapshot.docs.map((doc) => doc.id);
-
-  // ids.map(async (id) => {
-  //   const tagReference = doc(db, "tags", id).withConverter(tagConverter);
-  //   const snapshot = await getTag(tagReference);
-  //   const tagData = snapshot.data() as Tag;
-
-  //   if (!tags.includes(tagData.description)) {
-  //     tags.push(tagData.description);
-  //   }
-  // });
-
-  // tags.length = 0;
-  // return tags;
+  const querySnapshot = await getTags();
+  querySnapshot.forEach((doc) => {
+    if (!tags.includes(doc.data().description)) {
+      let tag = doc.data().description;
+      tags.push(tag);
+    }
+  });
 }
 
 function CreateNewProject() {

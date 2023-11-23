@@ -302,7 +302,8 @@ export async function getImprovementWork(ref: DocumentReference) {
   return doc
 }
 
-export async function getUsers(q: Query) {
+export async function getUsers() {
+  const q = query(collection(db, "users"));
   const doc = await getDocs(q);
   console.log("hämtat: " + doc.docs)
   return doc
@@ -315,12 +316,13 @@ export async function getUser(ref: DocumentReference<User>) {
 }
 
 export async function getUser2(ref: DocumentReference) {
-  const doc = await getDoc(ref);
-  console.log("hämtat: " + doc.data())
-  return doc
+  const user = await getDoc(ref);
+  console.log("hämtat: " + user.data())
+  return user
 }
 
-export async function getTags(q: Query) {
+export async function getTags() {
+  const q = query(collection(db, "tags"));
   const doc = await getDocs(q);
   console.log("hämtat: " + doc)
   return doc

@@ -3,13 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
 import { ProjectCardProps } from "./ProjectCard";
-import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
 import "../font/font.css";
 import { ImprovementWork, getAllImprovementWorks } from "../ImprovementWorkLib";
-import { UserInfoType, getUser } from "./Start";
+import { UserInfoType, fetchUser } from "./Start";
 
 function DisplayAllProjects() {
   const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>(
@@ -36,7 +35,7 @@ function DisplayAllProjects() {
     // Fetch user info to check if admin
     if (user?.name) {
       //console.log(user);
-      getUser(user.name, user, setUserInfo);
+      fetchUser(user.name, user, setUserInfo);
       console.log("User info:", userInfo);
     }
   }, []);

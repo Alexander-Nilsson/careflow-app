@@ -1,22 +1,14 @@
-import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
 import nurseImage from "../Images/genderNeutralWorker.png";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase";
-import { useEffect } from "react";
-import { useAuth0 } from '@auth0/auth0-react';
-import ContinueButton from "./ContinueButton";
-import { getUser2 } from "../ImprovementWorkLib";
+import { UserInfoType } from "./Start";
+
+type ProfileSectionProps = {
+  userInfo: UserInfoType;
+};
 
 
-
-function ProfileSection() {
-
-  const [name, setName] = useState<String>("Namn ej funnet");
-  const [department, setDepartment] = useState<String>("Avdelning ej funnen");
-  const [role, setRole] = useState<String>("Roll ej funnen");
-  const { isAuthenticated, isLoading, user } = useAuth0();
+function ProfileSection({userInfo}: ProfileSectionProps) {
 
   const entireSectionStyle = {
     width: "100%",
@@ -75,47 +67,6 @@ function ProfileSection() {
     backgroundSize: "cover",
   };
 
-  async function getUser(username: string) { //This function stores data in a variavle called docSnap. docSnap includes all attributes of a user.
-    const docRef = doc(db, "users", username);
-    const docSnap = await getUser2(docRef);
-
-    if (docSnap.exists()) { 
-      //  console.log("Document data:", docSnap.data());
-      setName(docSnap.data().first_name)
-      setDepartment(docSnap.data().clinic)
-      setRole(docSnap.data().profession)
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
-    }
-    return docSnap.data();
-  }
-
-  async function setItems() {
-
-
-
-    if (user?.name) {
-
-
-      getUser(user.name)
-
-
-    }
-  }
-
-  useEffect(() => {
-    async function fetchData() {
-      await setItems(); //async function ensures that goal has been fetched before fetching projects
-
-    }
-
-    if (user) {
-      fetchData();
-    }
-  }, [user]);
-
-
   return (
     <div style = {entireSectionStyle}>
       <div style={profileSectionStyle}>
@@ -123,9 +74,9 @@ function ProfileSection() {
           <div style={circleStyle}></div>
         </div>
         <div style={rightDivStyle}>
-          <h3>{name}</h3>
-          <p>{role}</p>
-          <p>{department}</p>
+          <h3>{userInfo.first_name}</h3>
+          <p>{userInfo.profession}</p>
+          <p>{userInfo.clinic}</p>
         </div>
       </div>
       <div style= {buttonSectionStyle}>

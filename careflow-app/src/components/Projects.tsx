@@ -13,7 +13,7 @@ import {
 import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
-import { UserInfoType, getUser } from "./Start";
+import { UserInfoType, fetchUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import CardDeleteModal from "./CardDeleteModal";
 
@@ -90,7 +90,7 @@ function Projects() {
     // Fetch user info to check if admin
     if (user?.name) {
       //console.log(user);
-      getUser(user.name, user, setUserInfo);
+      fetchUser(user.name, user, setUserInfo);
       console.log("User info:", userInfo);
     }
 
