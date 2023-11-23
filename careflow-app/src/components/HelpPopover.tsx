@@ -2,6 +2,7 @@ import React from "react";
 import Popover from "react-bootstrap/Popover";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { QuestionCircleFill } from "react-bootstrap-icons";
+import { NewLineKind } from "typescript";
 
 interface HelpPopoverProps {
   content: string;
@@ -24,7 +25,7 @@ const HelpPopover: React.FC<HelpPopoverProps> = ({
     <Popover
       id={`popover-positioned-${position}`}
       title={`Popover ${position}`}
-      style={{ padding: "10px" }}
+      style={{ padding: "10px" , whiteSpace: "pre-line"}}
     >
       {content}
     </Popover>

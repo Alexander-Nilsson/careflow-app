@@ -7,26 +7,38 @@ import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
-import '../font/font.css';
-import {ImprovementWork, getAllImprovementWorks } from "../ImprovementWorkLib";
-
+import "../font/font.css";
+import { ImprovementWork, getAllImprovementWorks } from "../ImprovementWorkLib";
+import { UserInfoType, getUser } from "./Start";
 
 function DisplayAllProjects() {
-
-  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
+  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>(
+    []
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 12; // Adjust this based on your layout
   const { user } = useAuth0();
 
   const fetchData = async () => {
     if (user?.name) {
-      const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
+      const fetchedImprovementWorks: ImprovementWork[] | null =
+        await getAllImprovementWorks();
       if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks);
     }
   };
 
+  // for admin func
+  const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
+
   useEffect(() => {
     fetchData();
+
+    // Fetch user info to check if admin
+    if (user?.name) {
+      //console.log(user);
+      getUser(user.name, user, setUserInfo);
+      console.log("User info:", userInfo);
+    }
   }, []);
 
   const handlePageChange = (newPage: number) => {
@@ -36,17 +48,21 @@ function DisplayAllProjects() {
   const totalProjects = improvementWorks.length;
   const lastProjectIndex = currentPage * projectsPerPage;
   const firstProjectIndex = lastProjectIndex - projectsPerPage;
-  const currentProjects = improvementWorks.slice(firstProjectIndex, lastProjectIndex);
+  const currentProjects = improvementWorks.slice(
+    firstProjectIndex,
+    lastProjectIndex
+  );
 
   return (
-    <div className= "projects-section">
-      <div className= "projects-container">
+    <div className="projects-section">
+      <div className="projects-container">
         {currentProjects.map((project, index) => (
           <div
             className="col-md-6 col-lg-3"
-            style={{ marginRight: "0%", marginBottom: "1%"}}
+            style={{marginRight: "0%",  }}
             key={index}
           >
+            <div style={{margin: "1%"}}>
             <ProjectCard
               title={project.title}
               date_created={project.date_created}
@@ -54,47 +70,55 @@ function DisplayAllProjects() {
               tags={project.tags}
               phase={project.phase}
               displayPhaseImage={true}
+              improvementWork={project}
+              isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
             />
+            </div>
           </div>
         ))}
       </div>
-  
+
       {/* Pagination */}
-    <div className="pagination-container">
-      <div style={{ marginLeft: "10px", marginBottom: "5px" }}>Antal: <strong>{totalProjects}</strong></div>
-      <div className="pagination-buttons">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          className= "pagination-arrow"
-          disabled={currentPage === 1}
-        >
-          {"<"} {/* Left arrow */}
-        </button>
-        {Array.from({ length: Math.ceil(totalProjects / projectsPerPage) }).map(
-          (page, index) => (
+      <div className="pagination-container">
+        <div style={{ marginLeft: "1px", marginBottom: "5px" }}>
+          Antal: <strong>{totalProjects}</strong>
+        </div>
+        <div className="pagination-buttons">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className="pagination-arrow"
+            disabled={currentPage === 1}
+          >
+            {"<"} {/* Left arrow */}
+          </button>
+          {Array.from({
+            length: Math.ceil(totalProjects / projectsPerPage),
+          }).map((page, index) => (
             <button
               key={index}
               onClick={() => handlePageChange(index + 1)}
-              className= "pagination-number"
+              className="pagination-number"
               style={{
-                backgroundColor: currentPage === index + 1 ? "#051F6E" : "white",
+                backgroundColor:
+                  currentPage === index + 1 ? "#051F6E" : "white",
                 color: currentPage === index + 1 ? "white" : "#051F6E",
               }}
             >
               {index + 1}
             </button>
-          )
-        )}
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          className= "pagination-arrow"
-          disabled={currentPage === Math.ceil(totalProjects / projectsPerPage)}
-        >
-          {">"} {/* Right arrow */}
-        </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className="pagination-arrow"
+            disabled={
+              currentPage === Math.ceil(totalProjects / projectsPerPage)
+            }
+          >
+            {">"} {/* Right arrow */}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 

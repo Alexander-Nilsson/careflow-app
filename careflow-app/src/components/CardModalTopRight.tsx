@@ -1,4 +1,7 @@
 import { Form } from "react-bootstrap";
+import { getMemberName } from "../ImprovementWorkLib";
+import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const projectMembersContainer = {
   width: "34%",
