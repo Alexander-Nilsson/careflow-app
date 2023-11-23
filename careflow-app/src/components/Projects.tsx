@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
-  getAllProjects,
+  // getAllProjects,
   Project,
   sortByDateCreated,
   sortByOldestDate,

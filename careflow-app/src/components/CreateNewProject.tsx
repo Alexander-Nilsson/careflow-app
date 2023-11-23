@@ -15,6 +15,7 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { getTag, getTags, getUser, getUsers } from "../ImprovementWorkLib";
 
 var users: any[] = [];
 var usersClassArray: any[] = [];
@@ -30,14 +31,15 @@ export class userIDname {
 
 async function fetchUsers() {
   const q = query(collection(db, "users"));
-  const querySnapshot = await getDocs(q);
+  // const querySnapshot = await getDocs(q);
+  const querySnapshot = await getUsers(q);
   const ids = querySnapshot.docs.map((doc) => doc.id);
 
   ids.map(async (id) => {
-    const projectReference = doc(db, "users", id).withConverter(
+    const usersReference = doc(db, "users", id).withConverter(
       memberConverter
     );
-    const snapshot = await getDoc(projectReference);
+    const snapshot = await getUser(usersReference);
     const userData = snapshot.data() as User;
 
     if (!users.includes(userData.sur_name)) {
@@ -47,7 +49,7 @@ async function fetchUsers() {
   });
 }
 
-class User {
+export class User {
   id: Id;
   admin: boolean;
   centrum: string;
@@ -87,7 +89,7 @@ class User {
   }
 }
 
-class Tag {
+export class Tag {
   id: Id;
   description: string;
   constructor(id: Id, description: string) {
@@ -143,22 +145,39 @@ const tagConverter = {
 var tags: any[] = [];
 
 async function fetchTags() {
-  const q = query(collection(db, "tags"));
-  const querySnapshot = await getDocs(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
+  // console.log("hämtar taggar")
+  const tagsRef = collection(db, "tags");
+  const tagsQuery = query(tagsRef);
+  try {
+    return Promise.all([getDocs(tagsQuery)]).then(([snapshot]) => {
+      const fetchedTags = [...snapshot.docs];
+      // console.log()
+      fetchedTags.forEach((doc) => {
+        let tag = doc.data().description;
+        tags.push(tag);
+        // }
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 
-  ids.map(async (id) => {
-    const tagReference = doc(db, "tags", id).withConverter(tagConverter);
-    const snapshot = await getDoc(tagReference);
-    const tagData = snapshot.data() as Tag;
+  // const q = query(collection(db, "tags"));
+  // const querySnapshot = await getTags(q);
+  // const ids = querySnapshot.docs.map((doc) => doc.id);
 
-    if (!tags.includes(tagData.description)) {
-      tags.push(tagData.description);
-    }
-  });
+  // ids.map(async (id) => {
+  //   const tagReference = doc(db, "tags", id).withConverter(tagConverter);
+  //   const snapshot = await getTag(tagReference);
+  //   const tagData = snapshot.data() as Tag;
 
-  //tags.length = 0;
-  //return tags;
+  //   if (!tags.includes(tagData.description)) {
+  //     tags.push(tagData.description);
+  //   }
+  // });
+
+  // tags.length = 0;
+  // return tags;
 }
 
 function CreateNewProject() {

@@ -7,6 +7,7 @@ import { db } from "../firebase";
 import { useEffect } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import ContinueButton from "./ContinueButton";
+import { getUser2 } from "../ImprovementWorkLib";
 
 
 
@@ -74,9 +75,9 @@ function ProfileSection() {
     backgroundSize: "cover",
   };
 
-  async function getUser2(username: string) { //This function stores data in a variavle called docSnap. docSnap includes all attributes of a user.
+  async function getUser(username: string) { //This function stores data in a variavle called docSnap. docSnap includes all attributes of a user.
     const docRef = doc(db, "users", username);
-    const docSnap = await getDoc(docRef);
+    const docSnap = await getUser2(docRef);
 
     if (docSnap.exists()) { 
       //  console.log("Document data:", docSnap.data());
@@ -97,7 +98,7 @@ function ProfileSection() {
     if (user?.name) {
 
 
-      getUser2(user.name)
+      getUser(user.name)
 
 
     }

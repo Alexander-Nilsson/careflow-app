@@ -12,6 +12,7 @@ import ProgressSection from "./ProgressSection";
 import {
   ImprovementWork,
   getAllImprovementWorks,
+  getUser2,
   getUserImprovementWorks,
 } from "../ImprovementWorkLib";
 
@@ -103,7 +104,7 @@ export default Start;
 //fetches the user data from database, based on the hsa-ID
 export async function getUser(hsaId: string, user: any, setUserInfo: any) {
   const docRef = doc(db, "users", hsaId);
-  const docSnap = await getDoc(docRef);
+  const docSnap = await getUser2(docRef);
 
   if (docSnap.exists()) {
     if (user?.name) {
