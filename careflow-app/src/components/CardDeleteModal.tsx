@@ -18,15 +18,17 @@ function CardDeleteModal({ show, onHide, impWorkId }: CardDeleteModalProps) {
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Modal heading</Modal.Title>
+        <Modal.Title>Radera förbättringsarbetet</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+      <Modal.Body>
+        Är du säker att du vill radera förbättringsarbetet?
+      </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleDeleteClick}>
-          Delete
+          Radera
         </Button>
         <Button variant="primary" onClick={onHide}>
-          Cancel
+          Avbryt
         </Button>
       </Modal.Footer>
     </Modal>
