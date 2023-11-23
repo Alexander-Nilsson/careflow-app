@@ -781,8 +781,7 @@ function CardModal({
       const updatedIdeas = [...ideas];
       updatedIdeas[index].checked = true;
       setIdeas(updatedIdeas);
-      console.log(updatedProjectPhase);
-      updateDb(updatedProjectPhase);
+      updateDb(updatedProjectPhase, false);
     }
   };
 
@@ -837,6 +836,7 @@ function CardModal({
       //If "Avsluta arbete" is clicked in the act phase
       onHide();
       setIsClosed(true);
+      updateDb(phase, true);
     } else if (phase === 6) {
       //If "Påbörja ny iteration med samma idé" (phase === 6) or "Påbörja ny iteration med annan idé" (phase === 7) is clicked in the act phase
       //Sets the phase to plan and clear all state-variables related to the iteration
@@ -885,19 +885,12 @@ function CardModal({
     } else {
       //If "Markera fas som klar" is clicked in the plan, do or study phase
       setUpdatedProjectPhase(phase + 1);
-      updateDb(phase + 1);
+      updateDb(phase + 1, false);
     }
   };
 
-  //This is run when the user clicks "finish improvement work" in the act-stage, so that the db is updated with closed = true
-  useEffect(() => {
-    if (isClosed) {
-      updateDb(updatedProjectPhase);
-    }
-  }, [isClosed]);
-
-  //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked
-  async function updateDb(newPhase: number) {
+  //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
+  async function updateDb(newPhase: number, isClosed: boolean) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       const projectDoc = await getDoc(projectDocRef);
@@ -964,10 +957,14 @@ function CardModal({
 
         await updateDoc(projectDocRef, updatedData);
         console.log(
-          "Improvement work updated successfully! Phase updated to: " +
+          "Improvement work " +
+            improvementWork.title +
+            " updated successfully! Phase updated to: " +
             newPhase +
-            " and closed set to: " +
-            isClosed
+            " , closed set to: " +
+            isClosed +
+            " and the ideas array have the following idea checked: " +
+            ideas.map((idea) => idea.checked)
         );
       }
     } catch (e) {
@@ -1320,7 +1317,7 @@ function CardModal({
             <Button
               onClick={() => {
                 onHide();
-                updateDb(updatedProjectPhase);
+                updateDb(updatedProjectPhase, false);
               }}
               style={buttonStyle}
             >

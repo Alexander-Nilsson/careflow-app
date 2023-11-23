@@ -212,7 +212,6 @@ function CardModalTopLeft({
   handlePhaseUpdate,
 }: cardModalTopLeftProps) {
   const formattedDate = date_created.toDate().toLocaleString();
-  //const [updatedTags, setUpdatedTags] = useState(tags);
   const [showTagModal, setShowTagModal] = useState(false);
   const [newTag, setNewTag] = useState("");
 
@@ -376,6 +375,7 @@ function CardModalTopLeft({
               <Button
                 style={newIdeaButtonStyle}
                 disabled={
+                  ideas.length === 1 ||
                   phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
@@ -524,8 +524,14 @@ function CardModalTopLeft({
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
-                    style={{ color: idea.checked ? "#000000" : "#AEAEAE" }}
-                    //disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
+                    style={{
+                      color: ideas.some((idea) => idea.checked)
+                        ? idea.checked
+                          ? "#000000"
+                          : "#AEAEAE"
+                        : "#000000",
+                    }} //If no idea is chosen they are all displayed in black, and when an idea has been chosen the chosen one is black while the rest are set tho gray
+                    disabled={phase !== 2} //Disable the idea checkboxes if the improvement work's phase is not plan
                     onChange={() => handleIdeaClick(index)}
                   />
                 ))}
