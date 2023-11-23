@@ -6,10 +6,12 @@ import {
   doc,
   getDoc,
   deleteDoc,
+  Query,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
 import { UserInfoType } from "./components/Start";
+import { Tag, User } from "./components/CreateNewProject";
 
 export type Id = string | number;
 
@@ -189,70 +191,8 @@ function setImprovementWork(id: string, data: DocumentData) {
   return improvementWork;
 }
 
-//fetch the users projects based on hsa-id and if closed or open projects should be fetched.
-export async function getUserProjects(hsaID: string, closed: boolean) {
-  const projectsCollectionRef = collection(db, "projects");
-  const memberQuery = query(
-    projectsCollectionRef,
-    where("project_members", "array-contains", hsaID)
-  );
-  const leaderQuery = query(
-    projectsCollectionRef,
-    where("project_leader", "==", hsaID)
-  );
-
-  try {
-    return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)]).then(
-      ([memberSnapshot, leaderSnapshot]) => {
-        const userProjects = [...memberSnapshot.docs, ...leaderSnapshot.docs];
-        let projectsData: Project[] = [];
-        userProjects.forEach((doc) => {
-          let data = doc.data();
-          if ((closed && data.closed) || (!closed && !data.closed)) {
-            let project: Project = setProject(doc.id, data);
-            projectsData.push(project);
-          }
-        });
-        return sortByDateCreated(projectsData);
-      }
-    );
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
-
-export async function getAllProjects(closed: boolean) {
-  const projectsCollectionRef = collection(db, "projects");
-
-  // const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", hsaID));
-  // const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", hsaID));
-
-  const projectQuery = query(projectsCollectionRef);
-
-  try {
-    return Promise.all([getDocs(projectQuery)]).then(([memberSnapshot]) => {
-      const projects = [...memberSnapshot.docs];
-      let projectsData: Project[] = [];
-      projects.forEach((doc) => {
-        let data = doc.data();
-        let project: Project = setProject(doc.id, data);
-        projectsData.push(project);
-        // }
-      });
-      return sortByDateCreated(projectsData);
-    });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
-
 export async function getAllImprovementWorks() {
   const improvementWorksCollectionRef = collection(db, "improvementWorks");
-
-  // const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", hsaID));
-  // const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", hsaID));
 
   const improvementWorksQuery = query(improvementWorksCollectionRef);
   let improvementWorksData: ImprovementWork[] = [];
@@ -274,65 +214,24 @@ export async function getAllImprovementWorks() {
   }
 }
 
-export async function getUserImprovementWorks(hsaID: string) {
-  const improvementWorksCollectionRef = collection(db, "improvementWorks");
-  const memberQuery = query(
-    improvementWorksCollectionRef,
-    where("project_members", "array-contains", hsaID)
-  );
-  const leaderQuery = query(
-    improvementWorksCollectionRef,
-    where("project_leader", "==", hsaID)
-  );
+export async function getAllTags() {
+  const tagsRef = collection(db, "tags");
+  const tagsQuery = query(tagsRef);
 
+  var tags: string[] = [];
   try {
-    return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)]).then(
-      ([memberSnapshot, leaderSnapshot]) => {
-        const userImprovementWorks = [
-          ...memberSnapshot.docs,
-          ...leaderSnapshot.docs,
-        ];
-        let improvementWorksData: ImprovementWork[] = [];
-        userImprovementWorks.forEach((doc) => {
-          let data = doc.data();
-          let improvementWork: ImprovementWork = setImprovementWork(
-            doc.id,
-            data
-          );
-          improvementWorksData.push(improvementWork);
-        });
-        return sortByDateCreated(improvementWorksData);
-      }
-    );
+    return Promise.all([getDocs(tagsQuery)]).then(([snapshot]) => {
+      const fetchedTags = [...snapshot.docs];
+      fetchedTags.forEach((doc) => {
+        let tag = doc.data().description;
+        tags.push(tag);
+        // }
+      });
+    });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return null;
   }
-}
-
-export function findUserImprovementWorks(
-  hsa: string,
-  orgImprovementWorks: ImprovementWork[] | null,
-  closed: boolean
-) {
-  let newImprovementWorks: ImprovementWork[] = [];
-  if (orgImprovementWorks) {
-    orgImprovementWorks.forEach((improvementWork) => {
-      if (
-        (improvementWork.closed && closed) ||
-        (!improvementWork.closed && !closed)
-      ) {
-        if (improvementWork.project_leader === hsa) {
-          newImprovementWorks.push(improvementWork);
-        } else if (improvementWork.project_members.includes(hsa)) {
-          newImprovementWorks.push(improvementWork);
-        }
-      }
-    });
-    return sortByDateCreated(newImprovementWorks);
-  } else {
-    return sortByDateCreated(newImprovementWorks);
-  }
+  return tags
 }
 
 export function sortByDateCreated<T extends { date_created: Timestamp }>(
@@ -437,7 +336,7 @@ function include(
 
 export async function getMemberName(hsaId: string) {
   const docRef = doc(db, "users", hsaId);
-
+  // console.log("hämtar namn: " && hsaId)
   try {
     return Promise.all([getDoc(docRef)]).then(([userSnapshot]) => {
       if (userSnapshot && userSnapshot.exists()) {
@@ -460,4 +359,49 @@ export async function deleteProject(id: string) {
 
   await deleteDoc(Doc);
   //console.log("deleting");
+}
+
+
+export async function getImprovementWork(ref: DocumentReference) {
+  const doc = await getDoc(ref);
+  // console.log("hämtat: " + doc.data())
+  return doc
+}
+
+export async function getUsers() {
+  const q = query(collection(db, "users"));
+  const doc = await getDocs(q);
+  // console.log("hämtat: " + doc.docs)
+  return doc
+}
+
+export async function getUser(ref: DocumentReference<User>) {
+  const doc = await getDoc(ref);
+  // console.log("hämtat: " + doc.data())
+  return doc
+}
+
+export async function getUser2(ref: DocumentReference) {
+  const user = await getDoc(ref);
+  // console.log("hämtat: " + user.data())
+  return user
+}
+
+export async function getTags() {
+  const q = query(collection(db, "tags"));
+  const doc = await getDocs(q);
+  // console.log("hämtat: " + doc)
+  return doc
+}
+
+export async function getTag(ref: DocumentReference<Tag>) {
+  const doc = await getDoc(ref);
+  // console.log("hämtat: " + doc.data())
+  return doc
+}
+
+export async function getGoals(q: Query) {
+  const doc = await getDocs(q);
+  // console.log("hämtat: " + doc)
+  return doc
 }

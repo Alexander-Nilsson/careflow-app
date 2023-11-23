@@ -5,8 +5,6 @@ import ProjectCard from "./ProjectCard";
 import {
   ImprovementWork,
   filterImprovementWorks,
-  findUserImprovementWorks,
-  getUserImprovementWorks,
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
@@ -41,9 +39,9 @@ function FinishedProjectsSection({
 
   useEffect(() => {
     // fetchData();
-    const userImprovementWorks: ImprovementWork[] | null =
-      findUserImprovementWorks(userInfo.hsaID, improvementWorks, true);
-    setDisplayedImprovementWorks(userImprovementWorks);
+    // const userImprovementWorks: ImprovementWork[] | null =
+    //   findUserImprovementWorks(userInfo.hsaID, improvementWorks, true);
+    // setDisplayedImprovementWorks(userImprovementWorks);
   }, []);
 
   const projectsSectionStyle = {

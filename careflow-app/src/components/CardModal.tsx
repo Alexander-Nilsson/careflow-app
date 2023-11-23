@@ -19,7 +19,7 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
-import { ImprovementWork, Iteration } from "../ImprovementWorkLib";
+import { ImprovementWork, Iteration, getImprovementWork } from "../ImprovementWorkLib";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
@@ -857,7 +857,8 @@ function CardModal({
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      const projectDoc = await getDoc(projectDocRef);
+      // const projectDoc = await getDoc(projectDocRef);
+      const projectDoc = await getImprovementWork(projectDocRef)
 
       if (projectDoc.exists()) {
         const data = projectDoc.data();
@@ -941,7 +942,7 @@ function CardModal({
   async function clearDb(updatedIdeasChecked: Array<boolean>) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      const projectDoc = await getDoc(projectDocRef);
+      const projectDoc = await getImprovementWork(projectDocRef);
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const updatedData = {
@@ -1007,7 +1008,7 @@ function CardModal({
   async function addNewIterationInDb(ideasDone?: Array<boolean>) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      const projectDoc = await getDoc(projectDocRef);
+      const projectDoc = await getImprovementWork(projectDocRef);
 
       if (projectDoc.exists()) {
         const data = projectDoc.data();
