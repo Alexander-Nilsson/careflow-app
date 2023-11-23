@@ -5,7 +5,6 @@ import { doc, getDoc } from "firebase/firestore";
 import ProfileSection from "./ProfileSection";
 import ProjectsSection from "./ProjectsSection";
 // import IdeasAndProgressSection from "./IdeasAndProgressSection";
-import FinishedProjectsSection from "./FinishedProjectsSection";
 import { db } from "../firebase";
 import IdeasSection from "./IdeasSection";
 import ProgressSection from "./ProgressSection";
@@ -13,7 +12,6 @@ import {
   ImprovementWork,
   getAllImprovementWorks,
   getUser2,
-  getUserImprovementWorks,
 } from "../ImprovementWorkLib";
 
 export type UserInfoType = {
