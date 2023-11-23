@@ -11,7 +11,7 @@ import ContinueButton from "./ContinueButton";
 
 
 function ProfileSection() {
-
+//erikskommentar
   const [name, setName] = useState<String>("Namn ej funnet");
   const [department, setDepartment] = useState<String>("Avdelning ej funnen");
   const [role, setRole] = useState<String>("Roll ej funnen");
