@@ -3,12 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
-// import { Project } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { Project, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
-import TrashIcon from "../icons/Trashicon";
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
@@ -19,12 +16,23 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
   // State to track whether the mouse is over the task card
 
   const [show, setShow] = useState(false);
-  const modalClose = () => setShow(false);
-  const modalShow = () => setShow(true);
+  const modalClose = () => {
+    setShow(false);
+    console.log("modalClosed in showcard", show);
+  };
+  const modalShow = () => {
+    setShow(true);
+    console.log("setShow in showcard", show);
+  };
 
   const { isLoading } = useAuth0();
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
+
+  const modalToggle = () => {
+    setShow((prevShow) => !prevShow); // Toggle the modal state
+    console.log("setShow in showcard", show);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,26 +62,17 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
     fetchData();
   }, []);
 
-  // State to toggle edit mode for the task content
-  //const [editMode, setEditMode] = useState(true);
-
   // UseSortable hook for drag-and-drop functionality
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: improvementWork.id,
-    data: {
-      type: "ImprovementWork",
-      improvementWork,
-    },
+  const { setNodeRef, attributes, listeners, transition, isDragging } =
+    useSortable({
+      id: improvementWork.id,
+      data: {
+        type: "ImprovementWork",
+        improvementWork,
+      },
 
-    //disabled: editMode,
-  });
+      //disabled: editMode,
+    });
 
   // Define the style based on drag-and-drop transition
   const style = {
@@ -101,9 +100,9 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
           title={improvementWork.title}
           tags={improvementWork.tags}
           date_created={improvementWork.date_created}
-          onClick={modalShow}
           improvementWork={improvementWork}
           isAdmin={isAdmin}
+          modalToggle={modalToggle} // send toggle function to cardButton
         />
 
         {
