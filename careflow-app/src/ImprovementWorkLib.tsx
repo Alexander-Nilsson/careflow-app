@@ -1,4 +1,11 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
 import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
 import { UserInfoType } from "./components/Start";
@@ -54,6 +61,7 @@ export interface Project {
 }
 
 export interface Iteration {
+  selected_idea: string;
   act: {
     choice: string;
     files: {
@@ -103,7 +111,9 @@ export interface ImprovementWork {
   date_last_updated: Timestamp;
   goals: Array<string>;
   ideas: Array<string>;
+  ideas_done: Array<boolean>;
   measure: Array<string>;
+  purpose: string;
   phase: Id;
   place: string;
   project_leader: string;
@@ -166,11 +176,13 @@ function setImprovementWork(id: string, data: DocumentData) {
     date_last_updated: data.date_last_updated,
     goals: data.goals,
     ideas: data.ideas,
+    ideas_done: data.ideas_done,
     measure: data.measure,
     phase: data.phase,
     place: data.place,
     project_leader: data.project_leader,
     project_members: data.project_members,
+    purpose: data.purpose,
     tags: data.tags,
     title: data.title,
     total_iterations: data.total_iterations,
@@ -247,18 +259,17 @@ export async function getAllImprovementWorks() {
   const improvementWorksQuery = query(improvementWorksCollectionRef);
   let improvementWorksData: ImprovementWork[] = [];
   try {
-    return Promise.all([getDocs(improvementWorksQuery)])
-      .then(([snapshot]) => {
-        const improvementWorks = [...snapshot.docs]
+    return Promise.all([getDocs(improvementWorksQuery)]).then(([snapshot]) => {
+      const improvementWorks = [...snapshot.docs];
 
-        improvementWorks.forEach((doc) => {
-          let data = doc.data();
-          let improvementWork: ImprovementWork = setImprovementWork(doc.id, data)
-          improvementWorksData.push(improvementWork)
-          // }
-        });
-        return sortByDateCreated(improvementWorksData);;
-      })
+      improvementWorks.forEach((doc) => {
+        let data = doc.data();
+        let improvementWork: ImprovementWork = setImprovementWork(doc.id, data);
+        improvementWorksData.push(improvementWork);
+        // }
+      });
+      return sortByDateCreated(improvementWorksData);
+    });
   } catch (error) {
     console.error("Error fetching data:", error);
     return improvementWorksData;
@@ -405,14 +416,6 @@ function include(improvementWork: ImprovementWork, filter: FilterState, userInfo
   }
 
   if (filter.includeClinic && improvementWork.clinic != userInfo.clinic) {
-    return false
-  }
-
-  if (filter.placeFilter !== "all_places" && improvementWork.place !== filter.placeFilter) {
-    return false;
-  }
-
-  if (filter.includeCentrum && improvementWork.centrum !== userInfo.centrum) {
     return false;
   }
 
@@ -420,9 +423,35 @@ function include(improvementWork: ImprovementWork, filter: FilterState, userInfo
   // focal ImpWork has the tag. If not, don't include it.
   if (filter.tagFilter !== "all_tags") {
     if (!improvementWork.tags.includes(filter.tagFilter)) {
-      return false
+      return false;
     }
   }
 
   return true;
+}
+
+export async function getMemberName(hsaId: string) {
+  const docRef = doc(db, "users", hsaId);
+
+  try {
+    return Promise.all([getDoc(docRef)]).then(([userSnapshot]) => {
+      if (userSnapshot && userSnapshot.exists()) {
+        let userData: string =
+          userSnapshot.data().first_name + " " + userSnapshot.data().sur_name;
+        return userData;
+      } else {
+        console.error("Document not found");
+        return null;
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+
+  //if (docSnap.exists()) {
+  //  return docSnap.data().first_name;
+  //} else {
+  //  console.log("No such document!");
+  //}
 }

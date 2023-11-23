@@ -5,58 +5,56 @@ import { FilterState, ImprovementWork, filterImprovementWorks, findUserImproveme
 import { UserInfoType } from "./Start";
 
 type FinishedProjectsSectionProps = {
-    userInfo: UserInfoType;
-    allImprovementWorks: ImprovementWork[];
+  userInfo: UserInfoType;
+  allImprovementWorks: ImprovementWork[];
 };
 
 function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProjectsSectionProps) {
-    // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
-    const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
-    const [filterState, setFilterState] = useState<FilterState>({ 
-        includeUser: true, 
-        includeClinic: true, 
-        includeCentrum: true,
-        tagFilter: "all_tags", 
-        placeFilter: "all_places", 
-        closed: true });
+  // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
+  const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
+  const [filterState, setFilterState] = useState<FilterState>({
+    includeUser: true,
+    includeClinic: true,
+    includeCentrum: true,
+    tagFilter: "all_tags",
+    placeFilter: "all_places",
+    closed: true
+  });
 
-    const fetchData = async () => {
-        // const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
-        // if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+  const fetchData = async () => {
+    // const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
+    // if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+  };
 
-    };
+  const handleFilter = async (event: any) => {
+    if (event.target.value == "user") {
+      // const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
+      // if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
+    } else if (event.target.value == "clinic") {
+      // const filteredImprovementWorks: ImprovementWork[] = await filterImprovementWorks(event.target.value, userInfo.clinic, true)
+      // setImprovementWorks(filteredImprovementWorks)
+    }
+  };
 
-    const handleFilter = async (event: any) => {
-        if (event.target.value == "user") {
-            // const filteredImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
-            // if (filteredImprovementWorks) setImprovementWorks(filteredImprovementWorks)
-        }
-        else if (event.target.value == "clinic") {
-            // const filteredImprovementWorks: ImprovementWork[] = await filterImprovementWorks(event.target.value, userInfo.clinic, true)
-            // setImprovementWorks(filteredImprovementWorks)
-        }
-    };
+  useEffect(() => {
+    // fetchData();
+    const userImprovementWorks: ImprovementWork[] | null =
+      findUserImprovementWorks(userInfo.hsaID, allImprovementWorks, true);
+    setDisplayedImprovementWorks(userImprovementWorks);
+  }, []);
 
-    useEffect(() => {
-        // fetchData();
-        const userImprovementWorks: ImprovementWork[] | null = findUserImprovementWorks(userInfo.hsaID, allImprovementWorks, true)
-        setDisplayedImprovementWorks(userImprovementWorks)
-    }, []);
+  const projectsSectionStyle = {
+    background: "rgba(255, 255, 255, 0.70)",
+    width: "100%",
+    height: "20rem",
+    borderRadius: "10px",
+    // margin: "20px",
+    padding: "10px",
+    overflowX: "auto" as "auto",
+    boxShadow: "0px 0px 10px rgba(100, 100, 100, 0.2)",
+  };
 
-
-
-    const projectsSectionStyle = {
-        background: 'rgba(255, 255, 255, 0.70)',
-        width: "100%",
-        height: "20rem",
-        borderRadius: "10px",
-        // margin: "20px",
-        padding: "10px",
-        overflowX: "auto" as "auto",
-        boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
-    };
-
-    const scrollBarStyles = `
+  const scrollBarStyles = `
     ::-webkit-scrollbar {
         width: 8px;
     }
@@ -72,61 +70,69 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
     }
 `;
 
-    const projectsContainerStyle = {
-        display: "flex" as "flex",
-        flexDirection: "row" as "row",
-        maxWidth: "100%", // Set a maximum width to prevent overflowing
-        overflowX: "auto" as "auto",
-        paddingBottom: "1rem"
-    };
+  const projectsContainerStyle = {
+    display: "flex" as "flex",
+    flexDirection: "row" as "row",
+    maxWidth: "100%", // Set a maximum width to prevent overflowing
+    overflowX: "auto" as "auto",
+    paddingBottom: "1rem",
+  };
 
-    const titleStyle = {
-        fontFamily: "Avenir",
-        marginLeft: "10px",
-        marginTop: "10px",
-        marginBottom: "1.5rem",
-        fontSize: "2rem",
-    };
+  const titleStyle = {
+    fontFamily: "Avenir",
+    marginLeft: "10px",
+    marginTop: "10px",
+    marginBottom: "1.5rem",
+    fontSize: "2rem",
+  };
 
-
-    return (
-        <div style={projectsSectionStyle}>
-            <style>{scrollBarStyles}</style>
-            <div className="d-flex">
-                <h1 className="mt-2 ml-2" style={titleStyle}>Avslutade förbättringsarbeten</h1>
-                <div className="ml-2 mt-2">
-                    <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
-                        <option selected value="user">Visa mina</option>
-                        <option value="clinic">Visa klinikens</option>
-                    </select>
-                </div>
-                <div className="mt-3 ml-2">
-                    <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att navigera bland avslutade projekt" />
-                </div>
-            </div>
-
-            <div style={projectsContainerStyle}>
-                {displayedImprovementWorks !== null ? (
-                    displayedImprovementWorks.map((improvementWork, index) => (
-                        <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
-                            <ProjectCard
-                                title={improvementWork.title}
-                                date_created={improvementWork.date_created}
-                                place={improvementWork.place}
-                                tags={improvementWork.tags}
-                                phase={improvementWork.phase}
-                                displayPhaseImage={true}
-                            />
-                        </div>
-                    ))
-                ) : (
-                    null
-                )}
-
-            </div>
-
+  return (
+    <div style={projectsSectionStyle}>
+      <style>{scrollBarStyles}</style>
+      <div className="d-flex">
+        <h1 className="mt-2 ml-2" style={titleStyle}>
+          Avslutade förbättringsarbeten
+        </h1>
+        <div className="ml-2 mt-2">
+          <select
+            className="form-select"
+            aria-label="Filtrera"
+            onChange={handleFilter}
+          >
+            <option selected value="user">
+              Visa mina
+            </option>
+            <option value="clinic">Visa klinikens</option>
+          </select>
         </div>
-    );
+        <div className="mt-3 ml-2">
+          <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att navigera bland avslutade projekt" />
+        </div>
+      </div>
+
+      <div style={projectsContainerStyle}>
+        {displayedImprovementWorks !== null
+          ? displayedImprovementWorks.map((improvementWork, index) => (
+            <div
+              className="col-md-6 col-lg-3"
+              style={{ marginRight: "1%" }}
+              key={index}
+            >
+              <ProjectCard
+                title={improvementWork.title}
+                date_created={improvementWork.date_created}
+                place={improvementWork.place}
+                tags={improvementWork.tags}
+                phase={improvementWork.phase}
+                displayPhaseImage={true}
+                improvementWork={improvementWork}
+              />
+            </div>
+          ))
+          : null}
+      </div>
+    </div>
+  );
 }
 
 export default FinishedProjectsSection;

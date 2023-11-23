@@ -4,7 +4,7 @@ import {
   BarChart,
   Lightbulb,
   Bullseye,
-  EnvelopePaper,
+  CheckCircle,
 } from "react-bootstrap-icons";
 import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
@@ -113,7 +113,8 @@ function CreateProjectModal({
   const [newTag, setTags] = useState("");
 
   // Check if both title and ideas are filled in
-  const isFormFilled = title.trim() !== "" && ideas.trim() !== "";
+  const isFormFilled =
+    title.trim() !== "" && ideas.replace("+ ", "").trim() !== "";
 
   //User specific data
   const [name, setName] = useState<String>("Namn ej funnet");
@@ -213,61 +214,63 @@ function CreateProjectModal({
       place: place,
       clinic: department,
       closed: false,
-      phase: 2, // planning phase is phase 2?
+      phase: 2, // planning phase is phase 2
       date_created: Timestamp.fromDate(new Date()),
       date_last_updated: Timestamp.fromDate(new Date()),
       project_leader: userID,
-      project_members: findUserIds(selectedMembers, usersClassArray),
+      project_members: project_members,
       purpose: purpose,
       goals: transformBulletPoints(goals),
       ideas: transformBulletPoints(ideas),
+      ideas_done: Array(transformBulletPoints(ideas).length).fill(false),
       measure: transformBulletPoints(measure),
       tags: selectedTags,
       total_iterations: 1,
-      all_iterations: {
-        iteration1: {
+      all_iterations: [
+        {
+          selected_idea: "",
           plan: {
             checklist: {
-              checklist_items: ["En sak som ska göras"],
-              checklist_done: [false],
-              checklist_members: ["none"],
+              checklist_items: [],
+              checklist_done: [],
+              checklist_members: [],
             },
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            notes: "Planerings nteckningar",
+            notes: "",
           },
           do: {
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            notes: "Göra anteckningar",
-            idea: "vald ide?", // is this supposed to be here?
-            results: "Resulterat resultat",
+            notes: "",
+
+            results: "",
           },
           study: {
-            analysis: "analys av resultatet",
+            analysis: "",
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            notes: "Studerings anteckningar",
+            notes: "",
           },
           act: {
-            notes: "Agerande anteckningar",
+            notes: "",
             files: {
-              file_names: ["protokoll.txt"],
-              file_descriptions: ["ett protokoll"],
+              file_names: [],
+              file_descriptions: [],
             },
-            choice: "Selected choice",
+            choice: "",
           },
         },
-      },
+      ],
     };
 
-    // Check if necessary is entered by user
+    // Check if necessary fields is entered by user
     if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
       setIdeaError(true);
@@ -283,6 +286,7 @@ function CreateProjectModal({
       setTitleError(false); // Hide error message
       setIdeaError(false);
       // Clear textfields
+      setTitle("");
       setPurpose("");
       setIdeas("");
       setMeasure("");
@@ -325,9 +329,9 @@ function CreateProjectModal({
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
-                <EnvelopePaper
+                <Bullseye
                   style={{
-                    color: "black",
+                    color: "#C71307",
                     width: "20px",
                     height: "20px",
                   }}
@@ -364,9 +368,9 @@ function CreateProjectModal({
           <div className="mb-3">
             <div style={FlexAndCenter}>
               <div style={IconCircleStyle}>
-                <Bullseye
+                <CheckCircle
                   style={{
-                    color: "#FD0B0B",
+                    color: "#008000",
                     width: "20px",
                     height: "20px",
                   }}
@@ -411,7 +415,7 @@ function CreateProjectModal({
               <div style={IconCircleStyle}>
                 <BarChart
                   style={{
-                    color: "#495BFF",
+                    color: "#32308D",
                     width: "20px",
                     height: "20px",
                   }}
@@ -456,7 +460,7 @@ function CreateProjectModal({
               <div style={IconCircleStyle}>
                 <Lightbulb
                   style={{
-                    color: "#FFE500",
+                    color: "#D9C515",
                     width: "20px",
                     height: "20px",
                   }}
@@ -498,7 +502,7 @@ function CreateProjectModal({
               </div>
             </div>
           </div>
-          <Dropdown>
+          <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
             <Dropdown.Toggle
               style={{
                 width: "100%",

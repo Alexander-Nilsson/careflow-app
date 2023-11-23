@@ -89,7 +89,7 @@ function Start() {
             allImprovementWorks={improvementWorks}
             showClosed={false}
              />
-          <div className="d-flex mr-2">
+          <div className="d-flex mr-2 w-100">
             <IdeasSection userInfo={userInfo} />
             <ProgressSection improvementWorks={improvementWorks} />
           </div>

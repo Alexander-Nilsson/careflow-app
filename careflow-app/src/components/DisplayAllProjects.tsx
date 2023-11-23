@@ -22,7 +22,7 @@ function DisplayAllProjects() {
 
   const fetchData = async () => {
     if (user?.name) {
-      const fetchedImprovementWorks: ImprovementWork[] = await getAllImprovementWorks();
+      const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
       setImprovementWorks(fetchedImprovementWorks);
       setFilteredImprovementWorks(fetchedImprovementWorks)
       const tags = findTagOptions(fetchedImprovementWorks);
@@ -78,24 +78,29 @@ function DisplayAllProjects() {
         {currentProjects.map((project, index) => (
           <div
             className="col-md-6 col-lg-3"
-            style={{ marginRight: "0%", marginBottom: "1%" }}
+            style={{ marginRight: "0%", }}
             key={index}
           >
-            <ProjectCard
-              title={project.title}
-              date_created={project.date_created}
-              place={project.place}
-              tags={project.tags}
-              phase={project.phase}
-              displayPhaseImage={true}
-            />
+            <div style={{ margin: "1%" }}>
+              <ProjectCard
+                title={project.title}
+                date_created={project.date_created}
+                place={project.place}
+                tags={project.tags}
+                phase={project.phase}
+                displayPhaseImage={true}
+                improvementWork={project}
+              />
+            </div>
           </div>
         ))}
       </div>
 
       {/* Pagination */}
       <div className="pagination-container">
-        <div style={{ marginLeft: "10px", marginBottom: "5px" }}>Antal: <strong>{totalProjects}</strong></div>
+        <div style={{ marginLeft: "1px", marginBottom: "5px" }}>
+          Antal: <strong>{totalProjects}</strong>
+        </div>
         <div className="pagination-buttons">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -104,31 +109,34 @@ function DisplayAllProjects() {
           >
             {"<"} {/* Left arrow */}
           </button>
-          {Array.from({ length: Math.ceil(totalProjects / projectsPerPage) }).map(
-            (page, index) => (
-              <button
-                key={index}
-                onClick={() => handlePageChange(index + 1)}
-                className="pagination-number"
-                style={{
-                  backgroundColor: currentPage === index + 1 ? "#051F6E" : "white",
-                  color: currentPage === index + 1 ? "white" : "#051F6E",
-                }}
-              >
-                {index + 1}
-              </button>
-            )
-          )}
+          {Array.from({
+            length: Math.ceil(totalProjects / projectsPerPage),
+          }).map((page, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className="pagination-number"
+              style={{
+                backgroundColor:
+                  currentPage === index + 1 ? "#051F6E" : "white",
+                color: currentPage === index + 1 ? "white" : "#051F6E",
+              }}
+            >
+              {index + 1}
+            </button>
+          ))}
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             className="pagination-arrow"
-            disabled={currentPage === Math.ceil(totalProjects / projectsPerPage)}
+            disabled={
+              currentPage === Math.ceil(totalProjects / projectsPerPage)
+            }
           >
             {">"} {/* Right arrow */}
           </button>
-        </div>
-      </div>
-    </div>
+        </div >
+      </div >
+    </div >
   );
 }
 

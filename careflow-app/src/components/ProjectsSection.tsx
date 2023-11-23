@@ -6,7 +6,7 @@ import {
     FilterState,
     ImprovementWork,
     filterImprovementWorks,
-    findTagOptions
+    findTagOptions,
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
@@ -23,13 +23,14 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
-    const [filterState, setFilterState] = useState<FilterState>({ 
-        includeUser: true, 
-        includeClinic: true, 
+    const [filterState, setFilterState] = useState<FilterState>({
+        includeUser: true,
+        includeClinic: true,
         includeCentrum: false,
-        tagFilter: "all_tags", 
-        placeFilter: "all_places", 
-        closed: showClosed });
+        tagFilter: "all_tags",
+        placeFilter: "all_places",
+        closed: showClosed
+    });
 
     // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {
@@ -45,10 +46,11 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
         setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
     }
 
+
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
     useEffect(() => {
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(improvementWorks, filterState, userInfo, "date_created")
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, "date_created")
         setDisplayedImprovementWorks(filteredImprovementWorks)
     }, [filterState]);
 
@@ -64,7 +66,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     }, []);
 
     const projectsSectionStyle = {
-        background: 'rgba(255, 255, 255, 0.70)',
+        background: "rgba(255, 255, 255, 0.70)",
         width: "100%",
         height: "20rem",
         borderRadius: "10px",
@@ -72,7 +74,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
         marginBottom: "20px", // Added this line
         padding: "10px",
         overflowX: "auto" as "auto",
-        boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
+        boxShadow: "0px 0px 10px rgba(100, 100, 100, 0.2)",
     };
 
     const scrollBarStyles = `
@@ -96,7 +98,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
         flexDirection: "row" as "row",
         maxWidth: "100%", // Set a maximum width to prevent overflowing
         overflowX: "auto" as "auto",
-        paddingBottom: "1rem"
+        paddingBottom: "1rem",
     };
 
     const titleStyle = {
@@ -121,13 +123,13 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                 </div>
                 <div className="ml-2 mt-2">
                     <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-                    <option selected value="all_tags">Visa alla taggar</option>
+                        <option selected value="all_tags">Visa alla taggar</option>
                         {
                             tagOptions.map((tag) => (
-                                <option key ={tag} value={tag}> {tag}</option>
+                                <option key={tag} value={tag}> {tag}</option>
                             ))
                         }
-                       
+
                     </select>
                 </div>
                 <div className="mt-3 ml-2">
@@ -146,6 +148,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                                 tags={improvementWork.tags}
                                 phase={improvementWork.phase}
                                 displayPhaseImage={true}
+                                improvementWork={improvementWork}
                             />
                         </div>
                     ))
@@ -154,7 +157,6 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                 )}
             </div>
         </div>
-    );
+    )
 }
-
 export default ProjectsSection;

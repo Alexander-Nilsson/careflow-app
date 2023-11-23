@@ -7,6 +7,8 @@ import Projects from './components/Projects';
 import Archive from './components/Archive';
 import { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import Notification from './components/Notification'; 
+
 
 function App() {
 
@@ -80,6 +82,7 @@ function App() {
           <Route path="/start" element={<Start />} />
           <Route path="/forandringsarbeten" element={<Projects />} />
           <Route path="/arkiv" element={<Archive />} />
+          <Route path="/notification" element={<Notification />} />
         </Routes>
       </div>
     </>
