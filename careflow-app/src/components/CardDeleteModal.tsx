@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import { ImprovementWork, deleteProject } from '../ImprovementWorkLib';
+import { useState } from "react";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { ImprovementWork, deleteProject } from "../ImprovementWorkLib";
 
 interface CardDeleteModalProps {
   show: boolean;
@@ -13,6 +13,7 @@ function CardDeleteModal({ show, onHide, impWorkId }: CardDeleteModalProps) {
   const handleDeleteClick = () => {
     //deleteProject(impWorkId);
     onHide(); // Close the modal after deleting
+    console.log("pressed delete in modal");
   };
 
   return (
@@ -23,10 +24,10 @@ function CardDeleteModal({ show, onHide, impWorkId }: CardDeleteModalProps) {
       <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleDeleteClick}>
-          Close
+          Delete
         </Button>
         <Button variant="primary" onClick={onHide}>
-          Save Changes
+          Cancel
         </Button>
       </Modal.Footer>
     </Modal>

@@ -17,7 +17,6 @@ import { UserInfoType, getUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import CardDeleteModal from "./CardDeleteModal";
 
-
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
   improvementWorkList: ImprovementWork[];
@@ -135,12 +134,9 @@ function Projects() {
             justifyContent: "flex-end",
           }}
         >
-
           <CreateNewProject />
         </div>
       </div>
-      {/* TEMP  Display "Admin user" text if the user is an admin */}
-      {userInfo?.admin && <p>Admin user</p>}
 
       <div className="ml-2 mt-2 d-flex align-items-center">
         <label htmlFor="sortDropdown" className="form-label me-2">
