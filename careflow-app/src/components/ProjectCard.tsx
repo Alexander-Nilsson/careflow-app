@@ -66,13 +66,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   const getPhaseImage = (phase: Id) => {
     switch (phase) {
-      case 1:
-        return <img src={pImage} />;
       case 2:
-        return <img src={pgImage} />;
+        return <img src={pImage} />;
       case 3:
-        return <img src={pgsImage} />;
+        return <img src={pgImage} />;
       case 4:
+        return <img src={pgsImage} />;
+      case 5:
         return <img src={pgsaImage} />;
     }
   };
