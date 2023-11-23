@@ -31,7 +31,7 @@ const buttonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "14px",
-  padding: "10px 20px",
+  padding: "10px 40px",
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
@@ -104,7 +104,7 @@ const whiteDescriptionContainerStyle = {
 
 const tagStyle: React.CSSProperties = {
   marginTop: "5px",
-  color: "#FFFFFF",
+
   fontSize: "14px",
   display: "flex",
   flexWrap: "wrap",
@@ -112,6 +112,7 @@ const tagStyle: React.CSSProperties = {
 
 const tagContainerStyle = {
   backgroundColor: "#051F6E",
+  color: "#FFFFFF",
   padding: "2px 10px",
   marginRight: "5px",
   marginBottom: "8px",
@@ -120,7 +121,8 @@ const tagContainerStyle = {
 };
 
 const addTagContainerStyle = {
-  backgroundColor: "#AEAEAE",
+  backgroundColor: "#A2BCEF",
+  color: "#FFFFFF",
   padding: "2px 10px",
   marginRight: "5px",
   marginBottom: "8px",
@@ -168,7 +170,7 @@ interface phasePercentageProps {
 function PhasePercentage({ percentage }: phasePercentageProps) {
   return (
     <>
-      <div style={{ width: 120, height: 120 }}>
+      <div style={{ width: 130, height: 130 }}>
         <CircularProgressbar
           value={percentage}
           text={`${percentage}%`}
@@ -211,7 +213,7 @@ function CardModalTopLeft({
   id,
   handlePhaseUpdate,
 }: cardModalTopLeftProps) {
-  const formattedDate = date_created.toDate().toLocaleString();
+  const formattedDate = date_created.toDate().toLocaleDateString();
   const [showTagModal, setShowTagModal] = useState(false);
   const [newTag, setNewTag] = useState("");
 
@@ -274,7 +276,10 @@ function CardModalTopLeft({
               <div style={flexAndCenter}>
                 <Calendar style={iconStyle} />
                 <div>
-                  <label>{formattedDate}</label>
+                  <label>
+                    {"Skapad "}
+                    {formattedDate}
+                  </label>
                 </div>
               </div>
               <div style={flexAndCenter}>
@@ -323,7 +328,7 @@ function CardModalTopLeft({
             </Modal.Body>
           </Modal>
 
-          {/* If the active tab is Planera the donut is shown, if not only the "Markera fas som klar" button is shown */}
+          {/* If the active tab is Planera the donut is shown, if not only the "Gå till nästa fas" button is shown */}
           {active_tab === 2 ? ( //If active_tab is plan, show the donut
             <div
               style={{
@@ -344,11 +349,11 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Markera fas som klar
+                Gå till nästa fas
               </Button>
             </div>
           ) : active_tab === 5 ? ( //If active tab is act, show three different buttons
-            <div>
+            <div style={{ marginTop: "20px" }}>
               <Button
                 style={finishButtonStyle}
                 disabled={
@@ -400,7 +405,7 @@ function CardModalTopLeft({
                 marginTop: "40px",
               }}
             >
-              <div style={{ width: 120, height: 120 }}></div>
+              <div style={{ width: 130, height: 130 }}></div>
               <Button
                 style={buttonStyle}
                 disabled={
@@ -409,7 +414,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Markera fas som klar
+                Gå till nästa fas
               </Button>
             </div>
           )}
@@ -556,7 +561,7 @@ function CardModalTopLeft({
                       marginTop: "15px",
                     }}
                   >
-                    Nu kan du börja arbeta med förbättringarbetet!
+                    Nu kan förbättringsarbetet påbörjas!
                   </div>
                 )}
               </div>
