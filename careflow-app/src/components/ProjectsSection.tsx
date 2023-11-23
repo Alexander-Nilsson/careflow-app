@@ -11,23 +11,31 @@ import {
 import { UserInfoType } from "./Start";
 
 type ProjectsSectionProps = {
+    title: string;
     userInfo: UserInfoType;
     allImprovementWorks: ImprovementWork[];
+    showClosed: boolean
 };
 
 
-function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps) {
+function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: ProjectsSectionProps) {
 
     const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
-    const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: true, tagFilter: "all_tags", placeFilter: "all_places", closed: false });
+    const [filterState, setFilterState] = useState<FilterState>({ 
+        includeUser: true, 
+        includeClinic: true, 
+        includeCentrum: false,
+        tagFilter: "all_tags", 
+        placeFilter: "all_places", 
+        closed: showClosed });
 
     // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {
-        if (event.target.value == "user") {
+        if (event.target.value === "user") {
             setFilterState(prev => ({ ...prev, includeUser: true }));
-        } else if (event.target.value == "clinic") {
+        } else if (event.target.value === "clinic") {
             setFilterState(prev => ({ ...prev, includeClinic: true }));
         }
     };
@@ -104,7 +112,7 @@ function ProjectsSection({ userInfo, allImprovementWorks }: ProjectsSectionProps
         <div style={projectsSectionStyle}>
             <style>{scrollBarStyles}</style>
             <div className="d-flex">
-                <h1 className="mt-2 ml-2" style={titleStyle}>Pågående förbättringsarbeten</h1>
+                <h1 className="mt-2 ml-2" style={titleStyle}>{title}</h1>
                 <div className="ml-2 mt-2">
                     <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
                         <option selected value="user">Visa mina</option>

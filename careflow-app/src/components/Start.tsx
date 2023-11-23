@@ -12,7 +12,6 @@ import ProgressSection from "./ProgressSection";
 import {
   ImprovementWork,
   getAllImprovementWorks,
-  getUserImprovementWorks,
 } from "../ImprovementWorkLib";
 
 export type UserInfoType = {
@@ -84,7 +83,12 @@ function Start() {
         <div style={contentStyle}>
           <ProfileSection />
           {/* <CreateNewProject /> */}
-          <ProjectsSection userInfo={userInfo} allImprovementWorks={improvementWorks}/>
+          <ProjectsSection
+            title={"Pågående förbättringsarbeten"}
+            userInfo={userInfo}
+            allImprovementWorks={improvementWorks}
+            showClosed={false}
+             />
           <div className="d-flex mr-2">
             <IdeasSection userInfo={userInfo} />
             <ProgressSection improvementWorks={improvementWorks} />

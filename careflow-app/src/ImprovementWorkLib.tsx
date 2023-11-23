@@ -8,6 +8,7 @@ export type Id = string | number;
 export interface FilterState {
   includeUser: boolean;
   includeClinic: boolean;
+  includeCentrum: boolean;
   tagFilter: string;
   closed: boolean;
   placeFilter: string;
@@ -178,66 +179,67 @@ function setImprovementWork(id: string, data: DocumentData) {
 }
 
 //fetch the users projects based on hsa-id and if closed or open projects should be fetched.
-export async function getUserProjects(hsaID: string, closed: boolean) {
-  const projectsCollectionRef = collection(db, "projects");
-  const memberQuery = query(
-    projectsCollectionRef,
-    where("project_members", "array-contains", hsaID)
-  );
-  const leaderQuery = query(
-    projectsCollectionRef,
-    where("project_leader", "==", hsaID)
-  );
+// export async function getUserProjects(hsaID: string, closed: boolean) {
+//   const projectsCollectionRef = collection(db, "projects");
+//   const memberQuery = query(
+//     projectsCollectionRef,
+//     where("project_members", "array-contains", hsaID)
+//   );
+//   const leaderQuery = query(
+//     projectsCollectionRef,
+//     where("project_leader", "==", hsaID)
+//   );
 
-  try {
-    return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
-      .then(([memberSnapshot, leaderSnapshot]) => {
-        const userProjects = [...memberSnapshot.docs, ...leaderSnapshot.docs]
-        let projectsData: Project[] = [];
-        userProjects.forEach((doc) => {
-          let data = doc.data();
-          if ((closed && data.closed) || (!closed && !data.closed)) {
-            let project: Project = setProject(doc.id, data)
-            projectsData.push(project)
-          }
-        });
-        return sortByDateCreated(projectsData);;
-      })
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
+//   try {
+//     return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
+//       .then(([memberSnapshot, leaderSnapshot]) => {
+//         const userProjects = [...memberSnapshot.docs, ...leaderSnapshot.docs]
+//         let projectsData: Project[] = [];
+//         userProjects.forEach((doc) => {
+//           let data = doc.data();
+//           if ((closed && data.closed) || (!closed && !data.closed)) {
+//             let project: Project = setProject(doc.id, data)
+//             projectsData.push(project)
+//           }
+//         });
+//         return sortByDateCreated(projectsData);;
+//       })
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     return null;
+//   }
+// }
 
-export async function getAllProjects(closed: boolean) {
-  const projectsCollectionRef = collection(db, "projects");
+// export async function getAllProjects(closed: boolean) {
+//   const projectsCollectionRef = collection(db, "projects");
 
-  // const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", hsaID));
-  // const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", hsaID));
+//   // const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", hsaID));
+//   // const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", hsaID));
 
-  const projectQuery = query(projectsCollectionRef);
+//   const projectQuery = query(projectsCollectionRef);
 
-  try {
-    return Promise.all([getDocs(projectQuery)])
-      .then(([memberSnapshot]) => {
-        const projects = [...memberSnapshot.docs]
-        let projectsData: Project[] = [];
-        projects.forEach((doc) => {
-          let data = doc.data();
-          let project: Project = setProject(doc.id, data)
-          projectsData.push(project)
-          // }
-        });
-        return sortByDateCreated(projectsData);;
-      })
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
+//   try {
+//     return Promise.all([getDocs(projectQuery)])
+//       .then(([memberSnapshot]) => {
+//         const projects = [...memberSnapshot.docs]
+//         let projectsData: Project[] = [];
+//         projects.forEach((doc) => {
+//           let data = doc.data();
+//           let project: Project = setProject(doc.id, data)
+//           projectsData.push(project)
+//           // }
+//         });
+//         return sortByDateCreated(projectsData);;
+//       })
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     return null;
+//   }
+// }
 
 export async function getAllImprovementWorks() {
   const improvementWorksCollectionRef = collection(db, "improvementWorks");
+  console.log("hämtar alla ImprovementWorks...")
 
   // const memberQuery = query(projectsCollectionRef, where("project_members", "array-contains", hsaID));
   // const leaderQuery = query(projectsCollectionRef, where("project_leader", "==", hsaID));
@@ -263,34 +265,34 @@ export async function getAllImprovementWorks() {
   }
 }
 
-export async function getUserImprovementWorks(hsaID: string) {
-  const improvementWorksCollectionRef = collection(db, "improvementWorks");
-  const memberQuery = query(
-    improvementWorksCollectionRef,
-    where("project_members", "array-contains", hsaID)
-  );
-  const leaderQuery = query(
-    improvementWorksCollectionRef,
-    where("project_leader", "==", hsaID)
-  );
+// export async function getUserImprovementWorks(hsaID: string) {
+//   const improvementWorksCollectionRef = collection(db, "improvementWorks");
+//   const memberQuery = query(
+//     improvementWorksCollectionRef,
+//     where("project_members", "array-contains", hsaID)
+//   );
+//   const leaderQuery = query(
+//     improvementWorksCollectionRef,
+//     where("project_leader", "==", hsaID)
+//   );
 
-  try {
-    return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
-      .then(([memberSnapshot, leaderSnapshot]) => {
-        const userImprovementWorks = [...memberSnapshot.docs, ...leaderSnapshot.docs]
-        let improvementWorksData: ImprovementWork[] = [];
-        userImprovementWorks.forEach((doc) => {
-          let data = doc.data();
-          let improvementWork: ImprovementWork = setImprovementWork(doc.id, data)
-          improvementWorksData.push(improvementWork)
-        });
-        return sortByDateCreated(improvementWorksData);
-      })
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
+//   try {
+//     return Promise.all([getDocs(memberQuery), getDocs(leaderQuery)])
+//       .then(([memberSnapshot, leaderSnapshot]) => {
+//         const userImprovementWorks = [...memberSnapshot.docs, ...leaderSnapshot.docs]
+//         let improvementWorksData: ImprovementWork[] = [];
+//         userImprovementWorks.forEach((doc) => {
+//           let data = doc.data();
+//           let improvementWork: ImprovementWork = setImprovementWork(doc.id, data)
+//           improvementWorksData.push(improvementWork)
+//         });
+//         return sortByDateCreated(improvementWorksData);
+//       })
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     return null;
+//   }
+// }
 
 export function findUserImprovementWorks(hsa: string, orgImprovementWorks: ImprovementWork[] | null, closed: boolean) {
   let newImprovementWorks: ImprovementWork[] = []
@@ -343,10 +345,10 @@ export function findPlaceOptions(orgImprovementWorks: ImprovementWork[]) {
   let placeOptions: string[] = []
   orgImprovementWorks.forEach((improvementWork) => {
     if (!placeOptions.includes(improvementWork.place)) {
-        placeOptions.push(improvementWork.place);
-      }
-    })
-  
+      placeOptions.push(improvementWork.place);
+    }
+  })
+
   return placeOptions
 }
 
@@ -372,6 +374,20 @@ export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], f
   }
 }
 
+export function filterOnTags(orgImprovementWorks: ImprovementWork[], tag: string, sort: string) {
+  if (tag !== "all_tags") {
+    let filteredImprovementWorks: ImprovementWork[] = []
+    orgImprovementWorks.forEach((improvementWork) => {
+      if (improvementWork.tags.includes(tag)) {
+        filteredImprovementWorks.push(improvementWork)
+      }
+    })
+    return filteredImprovementWorks
+  } else {
+    return orgImprovementWorks
+  }
+}
+
 function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
   // if we are searching for closed ImpWorks and the focal ImpWork is open
   // OR if we are searching for open ImpWorks and the focal ImpWork is closed,
@@ -393,6 +409,10 @@ function include(improvementWork: ImprovementWork, filter: FilterState, userInfo
   }
 
   if (filter.placeFilter !== "all_places" && improvementWork.place !== filter.placeFilter) {
+    return false;
+  }
+
+  if (filter.includeCentrum && improvementWork.centrum !== userInfo.centrum) {
     return false;
   }
 

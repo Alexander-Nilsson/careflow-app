@@ -2,13 +2,13 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions, getAllProjects, Project, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
+import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
 import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
 import { UserInfoType, getUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
-import { sort } from "semver";
+import ProjectsSection from "./ProjectsSection";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -36,7 +36,13 @@ function Projects() {
   const [allImprovementWorks, setAllImprovementWorks] = useState<ImprovementWork[]>([]);
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [placeOptions, setPlaceOptions] = useState<string[]>([]);
-  const [filterState, setFilterState] = useState<FilterState>({ includeUser: true, includeClinic: false, tagFilter: "all_tags", placeFilter: "all_places", closed: false });
+  const [filterState, setFilterState] = useState<FilterState>({ 
+    includeUser: true, 
+    includeClinic: false,
+    includeCentrum: false, 
+    tagFilter: "all_tags", 
+    placeFilter: "all_places", 
+    closed: false });
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedSortOption = event.target.value as "date_created" | "oldest_date" | "ascending" | "descending";
@@ -61,8 +67,7 @@ function Projects() {
 
   async function fetchProjects() {
     if (user?.name) {
-      const fetchedImprovementWorks: ImprovementWork[] | null =
-        await getAllImprovementWorks();
+      const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
       // console.log(fetchedImprovementWorks);
       if (fetchedImprovementWorks)
         setAllImprovementWorks(fetchedImprovementWorks);
@@ -70,12 +75,14 @@ function Projects() {
   }
 
   const handleFilter = async (event: any) => {
-    if (event.target.value == "user") {
+    if (event.target.value === "user") {
       setFilterState(prev => ({ ...prev, includeUser: true }));
-    } else if (event.target.value == "clinic") {
+    } else if (event.target.value === "clinic") {
       setFilterState(prev => ({ ...prev, includeClinic: true }));
+    } else if (event.target.value === "centrum") {
+      setFilterState(prev => ({ ...prev, includeCentrum: true }));
     }
-    
+
   };
 
   // denna uppdaterar vilken tag som ska filtreras på.
@@ -123,7 +130,7 @@ function Projects() {
       const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
       setImprovementWorkList(filteredImprovementWorks)
     }
-        
+
   }, [filterState])
 
 
@@ -180,7 +187,7 @@ function Projects() {
             className="form-select"
             aria-label="Filtrera"
             onChange={handleSortChange}
-            // style={{ width: "8.5rem" }} // Adjust the width as needed
+          // style={{ width: "8.5rem" }} // Adjust the width as needed
           >
             <option selected value="date_created">
               Visa senaste
@@ -199,6 +206,7 @@ function Projects() {
           <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
             <option selected value="user">Visa mina</option>
             <option value="clinic">Visa klinikens</option>
+            <option value="centrum">Visa centrets</option>
           </select>
         </div>
         <div className="ml-2 align-self-end">
@@ -223,8 +231,8 @@ function Projects() {
             }
 
           </select>
-         
-          
+
+
         </div>
       </div>
 
@@ -239,9 +247,11 @@ function Projects() {
       </ProjectContext.Provider>
 
       {isAuthenticated && userInfo ? (
-        <FinishedProjectsSection
+        <ProjectsSection
+          title={"Avslutade förbättringsarbeten"}
           userInfo={userInfo}
-          improvementWorks={improvementWorkList}
+          allImprovementWorks={allImprovementWorks}
+          showClosed={true}
         />
       ) : (
         <p>Loading...</p> // Show a loading indicator

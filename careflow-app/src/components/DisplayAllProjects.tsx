@@ -1,29 +1,45 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { ProjectCardProps } from "./ProjectCard";
-import { db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
 import '../font/font.css';
-import {ImprovementWork, getAllImprovementWorks } from "../ImprovementWorkLib";
+import { ImprovementWork, filterOnTags, findTagOptions, getAllImprovementWorks } from "../ImprovementWorkLib";
 
 
 function DisplayAllProjects() {
 
   const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
+  const [filteredImprovementWorks, setFilteredImprovementWorks] = useState<ImprovementWork[]>([]);
+  const [currentProjects, setCurrentProjects] = useState<ImprovementWork[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 12; // Adjust this based on your layout
   const { user } = useAuth0();
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
+  const [tagFilter, setTagFilter] = useState<string>("all_tags")
+  const [totalProjects, setTotalProjects] = useState<number>(0)
+
 
   const fetchData = async () => {
     if (user?.name) {
-      const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
-      if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks);
+      const fetchedImprovementWorks: ImprovementWork[] = await getAllImprovementWorks();
+      setImprovementWorks(fetchedImprovementWorks);
+      setFilteredImprovementWorks(fetchedImprovementWorks)
+      const tags = findTagOptions(fetchedImprovementWorks);
+      setTagOptions(tags);
     }
   };
+  useEffect(() => {
+    if (filteredImprovementWorks) {
+      setTotalProjects(filteredImprovementWorks.length)
+      const lastProjectIndex = currentPage * projectsPerPage;
+      const firstProjectIndex = lastProjectIndex - projectsPerPage;
+      setCurrentProjects(filteredImprovementWorks.slice(firstProjectIndex, lastProjectIndex))
+    }
+  }, [filteredImprovementWorks]);
+
+  useEffect(() => {
+  }, [totalProjects, currentProjects]);
 
   useEffect(() => {
     fetchData();
@@ -33,18 +49,36 @@ function DisplayAllProjects() {
     setCurrentPage(newPage);
   };
 
-  const totalProjects = improvementWorks.length;
-  const lastProjectIndex = currentPage * projectsPerPage;
-  const firstProjectIndex = lastProjectIndex - projectsPerPage;
-  const currentProjects = improvementWorks.slice(firstProjectIndex, lastProjectIndex);
+  // denna uppdaterar vilken tag som ska filtreras på.
+  const handleTags = (event: any) => {
+    setTagFilter(event.target.value)
+  }
+
+  useEffect(() => {
+    const works: ImprovementWork[] = filterOnTags(improvementWorks, tagFilter, "date_created")
+    setFilteredImprovementWorks(works)
+  }, [tagFilter])
 
   return (
-    <div className= "projects-section">
-      <div className= "projects-container">
+    <div className="projects-section">
+      <div className="d-flex">
+        <div className="ml-2 mt-2">
+          <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
+            <option selected value="all_tags">Visa alla taggar</option>
+            {
+              tagOptions.map((tag) => (
+                <option key={tag} value={tag}> {tag}</option>
+              ))
+            }
+
+          </select>
+        </div>
+      </div>
+      <div className="projects-container">
         {currentProjects.map((project, index) => (
           <div
             className="col-md-6 col-lg-3"
-            style={{ marginRight: "0%", marginBottom: "1%"}}
+            style={{ marginRight: "0%", marginBottom: "1%" }}
             key={index}
           >
             <ProjectCard
@@ -58,43 +92,43 @@ function DisplayAllProjects() {
           </div>
         ))}
       </div>
-  
+
       {/* Pagination */}
-    <div className="pagination-container">
-      <div style={{ marginLeft: "10px", marginBottom: "5px" }}>Antal: <strong>{totalProjects}</strong></div>
-      <div className="pagination-buttons">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          className= "pagination-arrow"
-          disabled={currentPage === 1}
-        >
-          {"<"} {/* Left arrow */}
-        </button>
-        {Array.from({ length: Math.ceil(totalProjects / projectsPerPage) }).map(
-          (page, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className= "pagination-number"
-              style={{
-                backgroundColor: currentPage === index + 1 ? "#051F6E" : "white",
-                color: currentPage === index + 1 ? "white" : "#051F6E",
-              }}
-            >
-              {index + 1}
-            </button>
-          )
-        )}
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          className= "pagination-arrow"
-          disabled={currentPage === Math.ceil(totalProjects / projectsPerPage)}
-        >
-          {">"} {/* Right arrow */}
-        </button>
+      <div className="pagination-container">
+        <div style={{ marginLeft: "10px", marginBottom: "5px" }}>Antal: <strong>{totalProjects}</strong></div>
+        <div className="pagination-buttons">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className="pagination-arrow"
+            disabled={currentPage === 1}
+          >
+            {"<"} {/* Left arrow */}
+          </button>
+          {Array.from({ length: Math.ceil(totalProjects / projectsPerPage) }).map(
+            (page, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(index + 1)}
+                className="pagination-number"
+                style={{
+                  backgroundColor: currentPage === index + 1 ? "#051F6E" : "white",
+                  color: currentPage === index + 1 ? "white" : "#051F6E",
+                }}
+              >
+                {index + 1}
+              </button>
+            )
+          )}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className="pagination-arrow"
+            disabled={currentPage === Math.ceil(totalProjects / projectsPerPage)}
+          >
+            {">"} {/* Right arrow */}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 
