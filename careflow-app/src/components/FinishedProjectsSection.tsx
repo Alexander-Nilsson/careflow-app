@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import {
-  ImprovementWork,
-  filterImprovementWorks,
-} from "../ImprovementWorkLib";
+import { ImprovementWork, filterImprovementWorks } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type FinishedProjectsSectionProps = {
@@ -99,6 +96,7 @@ function FinishedProjectsSection({
             className="form-select"
             aria-label="Filtrera"
             onChange={handleFilter}
+            style={{ cursor: "pointer" }}
           >
             <option selected value="user">
               Visa mina

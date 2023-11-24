@@ -101,9 +101,19 @@ function Projects() {
   return (
     <>
       {isLoading ? (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <p>Du håller på att laddas in på hemsidan just nu, vänta gärna ett litet tag</p>
-      </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+          }}
+        >
+          <p>
+            Du håller på att laddas in på hemsidan just nu, vänta gärna ett
+            litet tag
+          </p>
+        </div>
       ) : (
         <></>
       )}
@@ -150,7 +160,7 @@ function Projects() {
           className="form-select"
           aria-label="Filtrera"
           onChange={handleSortChange}
-          style={{ width: "8.5rem" }} // Adjust the width as needed
+          style={{ width: "8.5rem", cursor: "pointer" }} // Adjust the width as needed
         >
           <option selected value="date_created">
             Visa senaste
@@ -178,8 +188,18 @@ function Projects() {
           improvementWorks={improvementWorkList}
         />
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <p>Du håller på att laddas in på hemsidan just nu, vänta gärna ett litet tag</p>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+          }}
+        >
+          <p>
+            Du håller på att laddas in på hemsidan just nu, vänta gärna ett
+            litet tag
+          </p>
         </div>
       )}
     </>

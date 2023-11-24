@@ -134,6 +134,7 @@ function ProjectsSection({
             className="form-select"
             aria-label="Filtrera"
             onChange={handleFilter}
+            style={{ cursor: "pointer" }}
           >
             <option selected value="user">
               Visa mina
@@ -146,6 +147,7 @@ function ProjectsSection({
             className="form-select"
             aria-label="Filtrera"
             onChange={handleTags}
+            style={{ cursor: "pointer" }}
           >
             <option selected value="all_tags">
               Visa alla taggar
