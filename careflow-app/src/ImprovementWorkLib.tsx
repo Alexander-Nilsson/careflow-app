@@ -65,6 +65,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     notes: string;
   };
@@ -72,6 +73,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     idea: string;
     notes: string;
@@ -86,6 +88,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     notes: string;
   };
@@ -94,6 +97,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     notes: string;
   };

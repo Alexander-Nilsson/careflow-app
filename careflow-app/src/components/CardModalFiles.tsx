@@ -4,6 +4,7 @@ import { PlusLg, Paperclip } from "react-bootstrap-icons";
 import { db, fileStorage } from "../firebase";
 import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { Link } from "react-router-dom";
 
 
 const saveFileButtonStyle = {
@@ -41,25 +42,24 @@ interface cardModalFilesProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFiles: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
 
-interface fileURL {
-
-}
 
 //The section of the modal where the user uploads files
 function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
   const [showFileModal, setShowFileModal] = useState(false);
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newFileDescription, setNewFileDescription] = useState("");
-  const [fileUrl, setFileUrl] = useState("null");
+  const [fileUrl, setFileUrl] = useState("");
   const [progresspercent, setProgresspercent] = useState(0);
 
   const handleShowFileModal = () => {
@@ -80,6 +80,10 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
     setNewFileDescription(event.target.value);
   };
 
+  const handleUrlChange = () => {
+    setFileUrl(fileUrl);
+  }
+
   const handleUploadFile = () => {
     if (newFile) {
       const updatedFileNames = [...files.file_names, newFile.name];
@@ -88,11 +92,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
         newFileDescription,
       ];
 
-      setUpdatedFiles({
-        file_names: updatedFileNames,
-        file_descriptions: updatedFileDescriptions,
-        
-      });
+      console.log("zzz: Vi kommer hit?");
 
       //Uploading file to cloud storage
 
@@ -111,11 +111,27 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setFileUrl(downloadURL);
-            console.log("File-url: " + fileUrl);
+            console.log("File-url: " + downloadURL);
           });
         }
       );
+      const updatedFileUrls = [
+        ...files.file_urls,
+        fileUrl,
+      ];
+
+      setUpdatedFiles({
+        file_names: updatedFileNames,
+        file_descriptions: updatedFileDescriptions,
+        file_urls : updatedFileUrls
+      });
+
       console.log(fileUrl);
+      // setUpdatedFiles({
+      //   file_names: updatedFileNames,
+      //   file_descriptions: updatedFileDescriptions,
+      //   file_urls : updatedFileUrls
+      // });
       // Clear new file and description field
       setNewFile(null);
       setNewFileDescription("");
@@ -143,7 +159,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
               />
               {/* Print the file name followed by the decription (if there is no description, only print the file name) */}
               {files.file_descriptions[index] === "" ? (
-                <span>{item}</span>
+                <span><Link to={""}>{item}</Link></span>
               ) : (
                 <span>
                   {item}

@@ -131,11 +131,13 @@ interface modalContentPlanProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesPlan: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -167,11 +169,13 @@ interface modalContentDoProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesDo: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -203,11 +207,13 @@ interface modalContentStudyProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesStudy: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -237,11 +243,13 @@ interface modalContentActProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesAct: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -810,10 +818,10 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: [] });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
 
       //Update the database with the cleared fields
       clearDb(updatedIdeas.map((idea) => idea.checked));
@@ -850,10 +858,10 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
       addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
     } else if (phase === 7) {
@@ -868,10 +876,10 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
       addNewIterationInDb(); //Creates an new iteration in the db, where chosen idea will be set to none
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
 
@@ -925,6 +933,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesPlan.file_names,
                       file_descriptions: updatedFilesPlan.file_descriptions,
+                      file_urls : updatedFilesPlan.file_urls
                     },
                     notes: updatedNotesPlan,
                   },
@@ -1000,6 +1009,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -1009,6 +1019,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -1018,6 +1029,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -1026,6 +1038,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -1063,6 +1076,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: []
             },
             notes: [],
           },
@@ -1071,6 +1085,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: []
             },
             notes: [],
           },
@@ -1079,6 +1094,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: []
             },
             notes: [],
           },
@@ -1086,6 +1102,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: []
             },
             notes: [],
           },
