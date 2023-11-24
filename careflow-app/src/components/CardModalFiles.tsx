@@ -127,11 +127,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
       });
 
       console.log(fileUrl);
-      // setUpdatedFiles({
-      //   file_names: updatedFileNames,
-      //   file_descriptions: updatedFileDescriptions,
-      //   file_urls : updatedFileUrls
-      // });
+  
       // Clear new file and description field
       setNewFile(null);
       setNewFileDescription("");
