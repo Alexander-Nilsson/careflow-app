@@ -58,14 +58,10 @@ function CardButton({ title, tags, date_created, onClick }: CardButtonProps) {
           <div className="title"> {"   " + title}</div>
           <div className="bottomContainer">
             <div className="dateAndIcons">
+              <div className="icons ">
+              </div>
               <div className="date">
                 <label>{formattedDate}</label>
-              </div>
-              <div className="icons ">
-                {" "}
-                <ListIconComponent />
-                <PaperClipComponent />
-                <CommentIconComponent />
               </div>
             </div>
             <div className="profilCard">
