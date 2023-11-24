@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProjectCard from "./ProjectCard";
-import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
 import '../font/font.css';
 import { ImprovementWork, filterOnTags, findTagOptions, getAllImprovementWorks } from "../ImprovementWorkLib";
 
+import { ProjectCardProps } from "./ProjectCard";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useAuth0 } from "@auth0/auth0-react";
+import "../styles/DisplayAllProjects.css";
+import "../font/font.css";
+import { UserInfoType, fetchUser } from "./Start";
 
 function DisplayAllProjects() {
 
@@ -41,8 +46,18 @@ function DisplayAllProjects() {
   useEffect(() => {
   }, [totalProjects, currentProjects]);
 
+  // for admin func
+  const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
+
   useEffect(() => {
     fetchData();
+
+    // Fetch user info to check if admin
+    if (user?.name) {
+      //console.log(user);
+      fetchUser(user.name, user, setUserInfo);
+      console.log("User info:", userInfo);
+    }
   }, []);
 
   const handlePageChange = (newPage: number) => {
@@ -81,16 +96,17 @@ function DisplayAllProjects() {
             style={{ marginRight: "0%", }}
             key={index}
           >
-            <div style={{ margin: "1%" }}>
-              <ProjectCard
-                title={project.title}
-                date_created={project.date_created}
-                place={project.place}
-                tags={project.tags}
-                phase={project.phase}
-                displayPhaseImage={true}
-                improvementWork={project}
-              />
+            <div style={{margin: "1%"}}>
+            <ProjectCard
+              title={project.title}
+              date_created={project.date_created}
+              place={project.place}
+              tags={project.tags}
+              phase={project.phase}
+              displayPhaseImage={true}
+              improvementWork={project}
+              isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
+            />
             </div>
           </div>
         ))}

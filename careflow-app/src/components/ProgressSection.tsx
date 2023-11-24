@@ -5,7 +5,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { useEffect } from "react";
-import { ImprovementWork } from "../ImprovementWorkLib";
+import { ImprovementWork, getGoals } from "../ImprovementWorkLib";
 
 type ProgressSectionProps = {
   // userInfo: UserInfoType;
@@ -52,8 +52,8 @@ function ProgressSection({ improvementWorks }: ProgressSectionProps) {
 
   // Function to fetch data on goal for current year
   async function getGoal() {
-    const a = query(collection(db, "goals"));
-    const querySnapshot = await getDocs(a);
+    const q = query(collection(db, "goals"));
+    const querySnapshot = await getGoals(q);
     let activeGoals: number = 0;
 
     querySnapshot.forEach((doc) => {

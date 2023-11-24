@@ -1,5 +1,4 @@
-import { db } from "../firebase";
-import { doc, updateDoc } from "firebase/firestore";
+
 import { useState, ChangeEvent } from "react";
 import { Button, Form } from "react-bootstrap";
 

@@ -19,7 +19,7 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
-import { ImprovementWork, Iteration } from "../ImprovementWorkLib";
+import { ImprovementWork, Iteration, getImprovementWork } from "../ImprovementWorkLib";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
@@ -33,6 +33,16 @@ const buttonStyle = {
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
+};
+
+const saveButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 50px",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
 };
 
 const flexAndCenter = {
@@ -264,64 +274,6 @@ function getPhaseIcon(
     <Circle style={iconStyle} />
   );
 }
-
-// Asynchronous function that fetches the project leader's name from the database
-/*async function getProjectLeader(
-  project_leader: DocumentReference<DocumentData>
-) {
-  interface User {
-    first_name: string;
-    sur_name: string;
-  }
-
-  if (project_leader && project_leader.id) {
-    const userReference = doc(db, "users", project_leader.id);
-
-    try {
-      const userDoc = await getDoc(userReference);
-      if (userDoc.exists()) {
-        const userData = userDoc.data() as User;
-        return userData.first_name + " " + userData.sur_name;
-      } else {
-        console.error("User document not found.");
-      }
-    } catch (error) {
-      console.error("Error fetching user document:", error);
-    }
-  }
-
-  return null;
-}*/
-
-//Asynchronous function that fetches the names of the project members
-/*async function getProjectMembers(project_members: Array<string>) {
-  interface User {
-    first_name: string;
-    sur_name: string;
-  }
-
-  const names: string[] = [];
-
-  for (const memberId of project_members) {
-    if (memberId) {
-      const userReference = doc(db, "users", memberId);
-
-      try {
-        const userDoc = await getDoc(userReference);
-        if (userDoc.exists()) {
-          const userData = userDoc.data() as User;
-          names.push(userData.first_name + " " + userData.sur_name);
-        } else {
-          console.error("User document not found.");
-        }
-      } catch (error) {
-        console.error("Error fetching user document:", error);
-      }
-    }
-  }
-
-  return names;
-}*/
 
 function ModalContentPlan({
   title,
@@ -769,6 +721,18 @@ function CardModal({
     null
   );
 
+  //State variable that handles if the "Sparat!" text will show or not
+  const [showSavedMessage, setShowSavedMessage] = useState(false);
+
+  const showSaveMessage = () => {
+    setShowSavedMessage(true);
+
+    //Hide the "Saved" message after 3 seconds
+    setTimeout(() => {
+      setShowSavedMessage(false);
+    }, 2000);
+  };
+
   const handleIdeaClick = (index: number) => {
     const isOtherIdeaChecked = ideas.some(
       (idea, i) => idea.checked && i !== index
@@ -893,7 +857,8 @@ function CardModal({
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      const projectDoc = await getDoc(projectDocRef);
+      // const projectDoc = await getDoc(projectDocRef);
+      const projectDoc = await getImprovementWork(projectDocRef)
 
       if (projectDoc.exists()) {
         const data = projectDoc.data();
@@ -977,7 +942,7 @@ function CardModal({
   async function clearDb(updatedIdeasChecked: Array<boolean>) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      const projectDoc = await getDoc(projectDocRef);
+      const projectDoc = await getImprovementWork(projectDocRef);
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const updatedData = {
@@ -1043,7 +1008,7 @@ function CardModal({
   async function addNewIterationInDb(ideasDone?: Array<boolean>) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      const projectDoc = await getDoc(projectDocRef);
+      const projectDoc = await getImprovementWork(projectDocRef);
 
       if (projectDoc.exists()) {
         const data = projectDoc.data();
@@ -1314,15 +1279,41 @@ function CardModal({
           </div>
 
           <Modal.Footer>
-            <Button
-              onClick={() => {
-                onHide();
-                updateDb(updatedProjectPhase, false);
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              style={buttonStyle}
             >
-              Spara
-            </Button>
+              {showSavedMessage ? (
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: "14px",
+                    fontStyle: "Avenir",
+                    marginBottom: "0px",
+                    color: "#008000",
+                  }}
+                >
+                  Arbete sparat!
+                </div>
+              ) : (
+                <div style={{ height: "21px" }}></div>
+              )}
+              <div>
+                <Button
+                  onClick={() => {
+                    showSaveMessage();
+                    updateDb(updatedProjectPhase, false);
+                  }}
+                  style={saveButtonStyle}
+                >
+                  Spara
+                </Button>
+              </div>
+            </div>
           </Modal.Footer>
         </div>
       </Modal>

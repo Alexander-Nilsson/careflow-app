@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover"; import ProjectCard from "./ProjectCard";
-import { FilterState, ImprovementWork, filterImprovementWorks, findUserImprovementWorks } from "../ImprovementWorkLib";
+import { FilterState, ImprovementWork, filterImprovementWorks } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type FinishedProjectsSectionProps = {
@@ -38,9 +38,9 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
 
   useEffect(() => {
     // fetchData();
-    const userImprovementWorks: ImprovementWork[] | null =
-      findUserImprovementWorks(userInfo.hsaID, allImprovementWorks, true);
-    setDisplayedImprovementWorks(userImprovementWorks);
+    // const userImprovementWorks: ImprovementWork[] | null =
+    //   findUserImprovementWorks(userInfo.hsaID, improvementWorks, true);
+    // setDisplayedImprovementWorks(userImprovementWorks);
   }, []);
 
   const projectsSectionStyle = {
@@ -113,22 +113,23 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
       <div style={projectsContainerStyle}>
         {displayedImprovementWorks !== null
           ? displayedImprovementWorks.map((improvementWork, index) => (
-            <div
-              className="col-md-6 col-lg-3"
-              style={{ marginRight: "1%" }}
-              key={index}
-            >
-              <ProjectCard
-                title={improvementWork.title}
-                date_created={improvementWork.date_created}
-                place={improvementWork.place}
-                tags={improvementWork.tags}
-                phase={improvementWork.phase}
-                displayPhaseImage={true}
-                improvementWork={improvementWork}
-              />
-            </div>
-          ))
+              <div
+                className="col-md-6 col-lg-3"
+                style={{ marginRight: "1%" }}
+                key={index}
+              >
+                <ProjectCard
+                  title={improvementWork.title}
+                  date_created={improvementWork.date_created}
+                  place={improvementWork.place}
+                  tags={improvementWork.tags}
+                  phase={improvementWork.phase}
+                  displayPhaseImage={true}
+                  improvementWork={improvementWork}
+                  isAdmin={userInfo.admin}
+                />
+              </div>
+            ))
           : null}
       </div>
     </div>

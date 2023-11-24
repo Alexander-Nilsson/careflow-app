@@ -2,13 +2,22 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
+import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions } from "../ImprovementWorkLib";
+import {
+  // getAllProjects,
+  Project,
+  sortByDateCreated,
+  sortByOldestDate,
+  sortByTitleAscending,
+  sortByTitleDescending,
+} from "../ImprovementWorkLib";
 import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
-import { UserInfoType, getUser } from "./Start";
+import { UserInfoType, fetchUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import ProjectsSection from "./ProjectsSection";
+import CardDeleteModal from "./CardDeleteModal";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -16,6 +25,7 @@ export interface ProjectContextType {
   setImprovementWorkList: React.Dispatch<
     React.SetStateAction<ImprovementWork[]>
   >;
+  isAdmin: boolean;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -23,9 +33,9 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 function Projects() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth0();
-  const [sortBy, setSortBy] = useState<"date_created" | "oldest_date" | "ascending" | "descending">(
-    "date_created"
-  );
+  const [sortBy, setSortBy] = useState<
+    "date_created" | "oldest_date" | "ascending" | "descending"
+  >("date_created");
 
   // const [projectList, setProjectList] = useState<Project[]>([])
   const [improvementWorkList, setImprovementWorkList] = useState<ImprovementWork[]>([]);
@@ -45,7 +55,11 @@ function Projects() {
     closed: false });
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedSortOption = event.target.value as "date_created" | "oldest_date" | "ascending" | "descending";
+    const selectedSortOption = event.target.value as
+      | "date_created"
+      | "oldest_date"
+      | "ascending"
+      | "descending";
     setSortBy(selectedSortOption);
 
     if (selectedSortOption === "oldest_date") {
@@ -105,7 +119,9 @@ function Projects() {
 
     // Fetch user info to check if admin
     if (user?.name) {
-      getUser(user.name, user, setUserInfo);
+      //console.log(user);
+      fetchUser(user.name, user, setUserInfo);
+      console.log("User info:", userInfo);
     }
 
     // Fetch projects only if the user is authenticated and data is not loading.
@@ -149,7 +165,7 @@ function Projects() {
           justifyContent: "space-between",
           //alignItems: "baseline",
           //marginTop: "20px",
-          whiteSpace: "pre-line"
+          whiteSpace: "pre-line",
         }}
       >
         <TitleBox
@@ -158,6 +174,7 @@ function Projects() {
         Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
           Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
         ></TitleBox>
+
         <div
           style={{
             width: "30%",
@@ -172,8 +189,6 @@ function Projects() {
           <CreateNewProject />
         </div>
       </div>
-      {/* TEMP  Display "Admin user" text if the user is an admin */}
-      {userInfo?.admin && <p>Admin user</p>}
 
 
       <div className="d-flex">
@@ -241,6 +256,7 @@ function Projects() {
         value={{
           improvementWorkList,
           setImprovementWorkList,
+          isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
         }}
       >
         <KanbanBoard />
