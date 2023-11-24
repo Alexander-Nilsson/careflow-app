@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ProjectCard from "./ProjectCard";
 import "../styles/DisplayAllProjects.css";
 import '../font/font.css';
-import { ImprovementWork, filterOnTags, findTagOptions, getAllImprovementWorks } from "../ImprovementWorkLib";
+import { ArchiveFilterState, ImprovementWork, filterAll, filterOnTags, findCentrumOptions, findClinicOptions, findPlaceOptions, findTagOptions, getAllImprovementWorks, sortByDateCreated, sortByOldestDate, sortByTitleAscending, sortByTitleDescending } from "../ImprovementWorkLib";
 
 import { ProjectCardProps } from "./ProjectCard";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -14,25 +14,46 @@ import { UserInfoType, fetchUser } from "./Start";
 
 function DisplayAllProjects() {
 
-  const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
+  const [allImprovementWorks, setAllImprovementWorks] = useState<ImprovementWork[]>([]);
   const [filteredImprovementWorks, setFilteredImprovementWorks] = useState<ImprovementWork[]>([]);
   const [currentProjects, setCurrentProjects] = useState<ImprovementWork[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 12; // Adjust this based on your layout
   const { user } = useAuth0();
-  const [tagOptions, setTagOptions] = useState<string[]>([]);
-  const [tagFilter, setTagFilter] = useState<string>("all_tags")
   const [totalProjects, setTotalProjects] = useState<number>(0)
 
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
+  const [placeOptions, setPlaceOptions] = useState<string[]>([]);
+  const [clinicOptions, setClinicOptions] = useState<string[]>([]);
+  const [centrumOptions, setCentrumOptions] = useState<string[]>([]);
+
+  // const closedOptions:string[] = ["all", "open", "closed"]
+
+  const [sortBy, setSortBy] = useState<
+    "date_created" | "oldest_date" | "ascending" | "descending">("date_created");
+
+  const [filterState, setFilterState] = useState<ArchiveFilterState>({
+    clinic: "all_clinics",
+    centrum: "all_centrums",
+    tag: "all_tags",
+    place: "all_places",
+    closed: "all"
+  });
 
   const fetchData = async () => {
-    if (user?.name) {
-      const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
-      setImprovementWorks(fetchedImprovementWorks);
-      setFilteredImprovementWorks(fetchedImprovementWorks)
-      const tags = findTagOptions(fetchedImprovementWorks);
-      setTagOptions(tags);
-    }
+    // if (user?.name) {
+    const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
+    setAllImprovementWorks(fetchedImprovementWorks);
+    setFilteredImprovementWorks(fetchedImprovementWorks)
+    const tags = findTagOptions(fetchedImprovementWorks)
+    setTagOptions(tags);
+    const places = findPlaceOptions(fetchedImprovementWorks)
+    setPlaceOptions(places);
+    const clinic = findClinicOptions(fetchedImprovementWorks)
+    setClinicOptions(clinic);
+    const centrum = findCentrumOptions(fetchedImprovementWorks)
+    setCentrumOptions(centrum);
+    // }
   };
   useEffect(() => {
     if (filteredImprovementWorks) {
@@ -54,9 +75,7 @@ function DisplayAllProjects() {
 
     // Fetch user info to check if admin
     if (user?.name) {
-      //console.log(user);
       fetchUser(user.name, user, setUserInfo);
-      console.log("User info:", userInfo);
     }
   }, []);
 
@@ -66,17 +85,87 @@ function DisplayAllProjects() {
 
   // denna uppdaterar vilken tag som ska filtreras på.
   const handleTags = (event: any) => {
-    setTagFilter(event.target.value)
+    setFilterState(prev => ({ ...prev, tag: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
   }
 
+  const handlePlace = (event: any) => {
+    setFilterState(prev => ({ ...prev, place: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
+  }
+
+  const handleClinic = (event: any) => {
+    setFilterState(prev => ({ ...prev, clinic: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
+  }
+
+  const handleCentrum = (event: any) => {
+    setFilterState(prev => ({ ...prev, centrum: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
+  }
+
+  const handleClosed = (event: any) => {
+    setFilterState(prev => ({ ...prev, closed: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
+  }
+
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("sortera!")
+    const selectedSortOption = event.target.value as
+      | "date_created"
+      | "oldest_date"
+      | "ascending"
+      | "descending";
+    setSortBy(selectedSortOption);
+
+    console.log(selectedSortOption)
+    if (selectedSortOption === "oldest_date") {
+      const sortedProjects = sortByOldestDate(allImprovementWorks);
+      setFilteredImprovementWorks(sortedProjects);
+    } else if (selectedSortOption === "date_created") {
+      const sortedProjects = sortByDateCreated(allImprovementWorks);
+      setFilteredImprovementWorks(sortedProjects);
+    } else if (selectedSortOption === "ascending") {
+      const sortedProjects = sortByTitleAscending(allImprovementWorks);
+      setFilteredImprovementWorks(sortedProjects);
+    } else if (selectedSortOption === "descending") {
+      const sortedProjects = sortByTitleDescending(allImprovementWorks);
+      setFilteredImprovementWorks(sortedProjects);
+    }
+  };
+
   useEffect(() => {
-    const works: ImprovementWork[] = filterOnTags(improvementWorks, tagFilter, "date_created")
+    const works: ImprovementWork[] = filterAll(allImprovementWorks, filterState, "date_created")
     setFilteredImprovementWorks(works)
-  }, [tagFilter])
+  }, [filterState])
 
   return (
     <div className="projects-section">
-      <div className="d-flex">
+      <div className="d-flex flex-wrap justify-content-end">
+        <div className="ml-2 mt-2">
+          {/* <label htmlFor="sortDropdown" className="form-label me-2">
+            Sortera:
+          </label> */}
+          <select
+            id="sortDropdown"
+            value={sortBy}
+            className="form-select"
+            aria-label="Filtrera"
+            onChange={handleSortChange}
+          // style={{ width: "8.5rem" }} // Adjust the width as needed
+          >
+            <option selected value="date_created">
+              Visa senaste
+            </option>
+            <option value="oldest_date">Visa äldsta</option>
+            <option value="ascending">
+              Visa a-ö
+            </option>
+            <option value="descending">Visa ö-a</option>
+          </select>
+        </div>
+        <div className="ml-2 mt-2">
+          <select className="form-select" aria-label="Filtrera" onChange={handleClosed}>
+            <option selected value="all">Öppna och stängda</option>
+            <option value="open">Visa öppna</option>
+            <option value="closed">Visa stängda</option>
+          </select>
+        </div>
         <div className="ml-2 mt-2">
           <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
             <option selected value="all_tags">Visa alla taggar</option>
@@ -85,7 +174,38 @@ function DisplayAllProjects() {
                 <option key={tag} value={tag}> {tag}</option>
               ))
             }
+          </select>
+        </div>
+        <div className="ml-2 mt-2">
+          <select className="form-select" aria-label="Filtrera" onChange={handlePlace}>
+            <option selected value="all_places">Visa alla platser</option>
+            {
+              placeOptions.map((place) => (
+                <option key={place} value={place}> {place}</option>
+              ))
+            }
 
+          </select>
+        </div>
+        <div className="ml-2 mt-2">
+          <select className="form-select" aria-label="Filtrera" onChange={handleClinic}>
+            <option selected value="all_clinics">Visa alla kliniker</option>
+            {
+              clinicOptions.map((clinic) => (
+                <option key={clinic} value={clinic}> {clinic}</option>
+              ))
+            }
+
+          </select>
+        </div>
+        <div className="ml-2 mt-2">
+          <select className="form-select" aria-label="Filtrera" onChange={handleCentrum}>
+            <option selected value="all_centrums">Visa alla centrum</option>
+            {
+              centrumOptions.map((centrum) => (
+                <option key={centrum} value={centrum}> {centrum}</option>
+              ))
+            }
           </select>
         </div>
       </div>
@@ -96,17 +216,17 @@ function DisplayAllProjects() {
             style={{ marginRight: "0%", }}
             key={index}
           >
-            <div style={{margin: "1%"}}>
-            <ProjectCard
-              title={project.title}
-              date_created={project.date_created}
-              place={project.place}
-              tags={project.tags}
-              phase={project.phase}
-              displayPhaseImage={true}
-              improvementWork={project}
-              isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
-            />
+            <div style={{ margin: "1%" }}>
+              <ProjectCard
+                title={project.title}
+                date_created={project.date_created}
+                place={project.place}
+                tags={project.tags}
+                phase={project.phase}
+                displayPhaseImage={true}
+                improvementWork={project}
+                isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
+              />
             </div>
           </div>
         ))}
