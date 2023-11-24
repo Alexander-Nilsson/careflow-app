@@ -16,6 +16,7 @@ import CreateNewProject from "./CreateNewProject";
 import { UserInfoType, fetchUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import CardDeleteModal from "./CardDeleteModal";
+import "../styles/LoadingSpinner.css";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -24,6 +25,14 @@ export interface ProjectContextType {
     React.SetStateAction<ImprovementWork[]>
   >;
   isAdmin: boolean;
+}
+
+function Spinner() {
+  return (
+    <div className="spinner-overlay">
+      <div className="spinner"></div>
+    </div>
+  );
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -109,10 +118,7 @@ function Projects() {
             height: "100vh",
           }}
         >
-          <p>
-            Du håller på att laddas in på hemsidan just nu, vänta gärna ett
-            litet tag
-          </p>
+        <Spinner />
         </div>
       ) : (
         <></>
@@ -196,10 +202,7 @@ function Projects() {
             height: "100vh",
           }}
         >
-          <p>
-            Du håller på att laddas in på hemsidan just nu, vänta gärna ett
-            litet tag
-          </p>
+        <Spinner />
         </div>
       )}
     </>

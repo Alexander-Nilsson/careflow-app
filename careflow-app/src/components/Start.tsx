@@ -13,6 +13,7 @@ import {
   getAllImprovementWorks,
   getUser2,
 } from "../ImprovementWorkLib";
+import "../styles/LoadingSpinner.css";
 
 export type UserInfoType = {
   hsaID: string;
@@ -61,6 +62,14 @@ function Start() {
     }
   }
 
+  function Spinner() {
+    return (
+      <div className="spinner-overlay">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   useEffect(() => {
     // if (isLoading) {
     //   return;
@@ -92,7 +101,7 @@ function Start() {
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <p>Du håller på att laddas in på hemsidan just nu, vänta gärna ett litet tag</p>
+        <Spinner />
         </div>
       )}
     </div>
