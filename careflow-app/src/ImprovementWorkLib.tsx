@@ -15,13 +15,21 @@ import { Tag, User } from "./components/CreateNewProject";
 
 export type Id = string | number;
 
-export interface FilterState {
+export interface UserFilterState {
   includeUser: boolean;
   includeClinic: boolean;
   includeCentrum: boolean;
   tagFilter: string;
   closed: boolean;
   placeFilter: string;
+}
+
+export interface ArchiveFilterState {
+  clinic: string;
+  centrum: string;
+  tag: string;
+  closed: string;
+  place: string;
 }
 
 export interface Project {
@@ -272,16 +280,56 @@ export function findPlaceOptions(orgImprovementWorks: ImprovementWork[]) {
       placeOptions.push(improvementWork.place);
     }
   })
-
   return placeOptions
+}
+
+export function findClinicOptions(orgImprovementWorks: ImprovementWork[]) {
+  let clinicOptions: string[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (!clinicOptions.includes(improvementWork.clinic)) {
+      clinicOptions.push(improvementWork.clinic);
+    }
+  })
+  return clinicOptions
+}
+
+export function findCentrumOptions(orgImprovementWorks: ImprovementWork[]) {
+  let centrumOptions: string[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (!centrumOptions.includes(improvementWork.centrum)) {
+      centrumOptions.push(improvementWork.centrum);
+    }
+  })
+  return centrumOptions
 }
 
 // denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
 // filtreras bort genom att anropa include
-export function filterImprovementWorks(orgImprovementWorks: ImprovementWork[], filter: FilterState, userInfo: UserInfoType, sort: string) {
+export function filterForUser(orgImprovementWorks: ImprovementWork[], filter: UserFilterState, userInfo: UserInfoType, sort: string) {
   let filteredImprovementWorks: ImprovementWork[] = []
   orgImprovementWorks.forEach((improvementWork) => {
-    if (include(improvementWork, filter, userInfo)) {
+    if (includeForUser(improvementWork, filter, userInfo)) {
+      filteredImprovementWorks.push(improvementWork)
+    }
+  })
+  if (sort === "oldest_date") {
+    return sortByOldestDate(filteredImprovementWorks)
+  } else if (sort === "date_created") {
+    return sortByDateCreated(filteredImprovementWorks)
+  } else if (sort === "ascending") {
+    return sortByTitleAscending(filteredImprovementWorks)
+  } else if (sort === "descending") {
+    return sortByTitleDescending(filteredImprovementWorks)
+  } else {
+    return sortByDateCreated(filteredImprovementWorks)
+  }
+}
+
+// filtreras bort genom att anropa include
+export function filterAll(orgImprovementWorks: ImprovementWork[], filter: ArchiveFilterState, sort: string) {
+  let filteredImprovementWorks: ImprovementWork[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (includeArchive(improvementWork, filter)) {
       filteredImprovementWorks.push(improvementWork)
     }
   })
@@ -312,7 +360,46 @@ export function filterOnTags(orgImprovementWorks: ImprovementWork[], tag: string
   }
 }
 
-function include(improvementWork: ImprovementWork, filter: FilterState, userInfo: UserInfoType) {
+function includeArchive(improvementWork: ImprovementWork, filter: ArchiveFilterState) {
+
+  if (filter.closed !== "all") {
+    if ((filter.closed === "closed" && !improvementWork.closed) || (filter.closed === "open" && improvementWork.closed)) {
+      return false;
+    }
+  }
+
+  // console.log(filter.tag)
+  // console.log(improvementWork.tags)
+  if (filter.tag !== "all_tags") {
+    if (!improvementWork.tags.includes(filter.tag)) {
+      return false;
+    }
+  }
+
+  // console.log(filter.place)
+  // console.log(improvementWork.place)
+  if (filter.place !== "all_places") {
+    if (filter.place !== improvementWork.place) {
+      return false;
+    }
+  }
+
+  if (filter.clinic !== "all_clinics") {
+    if (filter.clinic !== improvementWork.clinic) {
+      return false;
+    }
+  }
+
+  if (filter.centrum !== "all_centrums") {
+    if (filter.centrum !== improvementWork.centrum) {
+      return false;
+    }
+  }
+
+  return true
+}
+
+function includeForUser(improvementWork: ImprovementWork, filter: UserFilterState, userInfo: UserInfoType) {
   // if we are searching for closed ImpWorks and the focal ImpWork is open
   // OR if we are searching for open ImpWorks and the focal ImpWork is closed,
   // don't include it.

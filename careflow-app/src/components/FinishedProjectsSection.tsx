@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover"; import ProjectCard from "./ProjectCard";
-import { FilterState, ImprovementWork, filterImprovementWorks } from "../ImprovementWorkLib";
+import { UserFilterState, ImprovementWork,  } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type FinishedProjectsSectionProps = {
@@ -12,7 +12,7 @@ type FinishedProjectsSectionProps = {
 function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProjectsSectionProps) {
   // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
   const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
-  const [filterState, setFilterState] = useState<FilterState>({
+  const [filterState, setFilterState] = useState<UserFilterState>({
     includeUser: true,
     includeClinic: true,
     includeCentrum: true,

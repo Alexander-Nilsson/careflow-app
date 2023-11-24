@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
 import {
-    FilterState,
+    UserFilterState,
     ImprovementWork,
-    filterImprovementWorks,
+    filterForUser,
     findTagOptions,
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
@@ -23,7 +23,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
-    const [filterState, setFilterState] = useState<FilterState>({
+    const [filterState, setFilterState] = useState<UserFilterState>({
         includeUser: true,
         includeClinic: true,
         includeCentrum: false,
@@ -50,7 +50,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
     useEffect(() => {
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, "date_created")
+        const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
         setDisplayedImprovementWorks(filteredImprovementWorks)
     }, [filterState]);
 
@@ -58,7 +58,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
     // så att det funkar som vi sa.
     useEffect(() => {
-        const improvementWorks = filterImprovementWorks(allImprovementWorks, filterState, userInfo, "date_created")
+        const improvementWorks = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
         const tags = findTagOptions(improvementWorks)
         setImprovementWorks(improvementWorks)
         setTagOptions(tags);

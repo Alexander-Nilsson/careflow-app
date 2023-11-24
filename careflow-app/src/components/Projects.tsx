@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions } from "../ImprovementWorkLib";
+import { filterForUser, UserFilterState, findPlaceOptions, findTagOptions } from "../ImprovementWorkLib";
 import {
   // getAllProjects,
   Project,
@@ -45,8 +45,7 @@ function Projects() {
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
   const [allImprovementWorks, setAllImprovementWorks] = useState<ImprovementWork[]>([]);
   const [tagOptions, setTagOptions] = useState<string[]>([]);
-  const [placeOptions, setPlaceOptions] = useState<string[]>([]);
-  const [filterState, setFilterState] = useState<FilterState>({ 
+  const [filterState, setFilterState] = useState<UserFilterState>({ 
     includeUser: true, 
     includeClinic: false,
     includeCentrum: false, 
@@ -104,10 +103,6 @@ function Projects() {
     setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
   }
 
-  const handlePlace = (event: any) => {
-    setFilterState(prev => ({ ...prev, placeFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
-  }
-
   useEffect(() => {
     if (isLoading) {
       return;
@@ -132,10 +127,10 @@ function Projects() {
     if (allImprovementWorks) {
       const tags = findTagOptions(allImprovementWorks)
       setTagOptions(tags);
-      const places = findPlaceOptions(allImprovementWorks)
-      setPlaceOptions(places);
+      // const places = findPlaceOptions(allImprovementWorks)
+      // setPlaceOptions(places);
       if (userInfo) {
-        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
+        const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
         setImprovementWorkList(filteredImprovementWorks)
       }
     }
@@ -143,7 +138,7 @@ function Projects() {
 
   useEffect(() => {
     if (userInfo) {
-      const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
+      const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
       setImprovementWorkList(filteredImprovementWorks)
     }
 
@@ -224,17 +219,6 @@ function Projects() {
             <option value="centrum">Visa centrets</option>
           </select>
         </div>
-        <div className="ml-2 align-self-end">
-          <select className="form-select" aria-label="Filtrera" onChange={handlePlace}>
-            <option selected value="all_places">Visa alla platser</option>
-            {
-              placeOptions.map((place) => (
-                <option key={place} value={place}> {place}</option>
-              ))
-            }
-
-          </select>
-        </div>
 
         <div className="ml-2 align-self-end">
           <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
@@ -244,10 +228,7 @@ function Projects() {
                 <option key={tag} value={tag}> {tag}</option>
               ))
             }
-
           </select>
-
-
         </div>
       </div>
 
