@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions } from "../ImprovementWorkLib";
+import { filterImprovementWorks, FilterState, findPlaceOptions, findTagOptions, searchImprovementWorks } from "../ImprovementWorkLib";
 import {
   // getAllProjects,
   Project,
@@ -18,6 +18,7 @@ import { UserInfoType, fetchUser } from "./Start";
 import FinishedProjectsSection from "./FinishedProjectsSection";
 import ProjectsSection from "./ProjectsSection";
 import CardDeleteModal from "./CardDeleteModal";
+import { IoSearchOutline } from "react-icons/io5";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -39,7 +40,7 @@ function Projects() {
 
   // const [projectList, setProjectList] = useState<Project[]>([])
   const [improvementWorkList, setImprovementWorkList] = useState<ImprovementWork[]>([]);
-
+  const [searchTitle, setSearchTitle] = useState<string>('');
 
   // for admin func
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
@@ -77,6 +78,9 @@ function Projects() {
     }
   };
 
+  const handleTitleSearch = (searchValue: string) => {
+    setSearchTitle(searchValue);
+  };
 
 
   async function fetchProjects() {
@@ -90,11 +94,11 @@ function Projects() {
 
   const handleFilter = async (event: any) => {
     if (event.target.value === "user") {
-      setFilterState(prev => ({ ...prev, includeUser: true }));
+      setFilterState(prev => ({ ...prev, includeUser: true, includeCentrum: false, includeClinic: false }));
     } else if (event.target.value === "clinic") {
-      setFilterState(prev => ({ ...prev, includeClinic: true }));
+      setFilterState(prev => ({ ...prev, includeClinic: true, includeCentrum: false, includeUser: false }));
     } else if (event.target.value === "centrum") {
-      setFilterState(prev => ({ ...prev, includeCentrum: true }));
+      setFilterState(prev => ({ ...prev, includeCentrum: true, includeClinic: false, includeUser: false }));
     }
 
   };
@@ -109,6 +113,7 @@ function Projects() {
   }
 
   useEffect(() => {
+    console.log("start")
     if (isLoading) {
       return;
     }
@@ -129,25 +134,45 @@ function Projects() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (allImprovementWorks) {
+    if (allImprovementWorks.length > 0) {
       const tags = findTagOptions(allImprovementWorks)
       setTagOptions(tags);
       const places = findPlaceOptions(allImprovementWorks)
       setPlaceOptions(places);
       if (userInfo) {
         const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
+        console.log("all improvementwork")
         setImprovementWorkList(filteredImprovementWorks)
       }
     }
   }, [allImprovementWorks])
 
   useEffect(() => {
+    console.log("2")
     if (userInfo) {
       const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
+      console.log("filter state")
       setImprovementWorkList(filteredImprovementWorks)
+      
     }
 
   }, [filterState])
+
+  useEffect(()=>{
+    console.log("3")
+    if (searchTitle) {
+      const searchedImprovementWorks: ImprovementWork[] = searchImprovementWorks(allImprovementWorks, searchTitle, sortBy)
+      setImprovementWorkList(searchedImprovementWorks)
+    } else {
+      if(userInfo){
+        const filteredImprovementWorks: ImprovementWork[] = filterImprovementWorks(allImprovementWorks, filterState, userInfo, sortBy)
+        console.log("search filter")
+        setImprovementWorkList(filteredImprovementWorks)
+      }
+    }
+
+    
+  }, [searchTitle])
 
 
   return (
@@ -191,8 +216,8 @@ function Projects() {
       </div>
 
 
-      <div className="d-flex">
-        <div className="ml-2">
+      <div className="d-flex pl-7 pr-14">
+        <div className="">
           <label htmlFor="sortDropdown" className="form-label me-2">
             Sortera:
           </label>
@@ -246,8 +271,25 @@ function Projects() {
             }
 
           </select>
+        </div>
 
 
+        <div className="ml-auto align-self-end">
+        <div className="input-group rounded">
+          <input 
+          type="search" 
+          className="form-control rounded" 
+          placeholder="Sök" 
+          aria-label="Search" 
+          aria-describedby="search-addon" 
+          style={{ width: "20rem" }}
+          value={searchTitle}
+          onChange={(e) => handleTitleSearch(e.target.value)}          
+          />
+          <IoSearchOutline
+                  style={{ fontSize: "1.5rem", marginLeft: "0.5rem", marginTop:"0.4rem" }}
+           />
+        </div>
         </div>
       </div>
 
