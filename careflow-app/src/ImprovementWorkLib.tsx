@@ -134,48 +134,6 @@ export interface ImprovementWork {
   total_iterations: number;
 }
 
-function setProject(id: string, data: DocumentData) {
-  let project: Project = {
-    id: id,
-    title: data.title,
-    description: data.description,
-    phase: data.phase,
-    place: data.place,
-    centrum: data.centrum,
-    tags: data.tags,
-    date_created: data.date_created,
-    result_measurements: data.result_measurements,
-    result_analysis: data.result_analysis,
-    notes_plan: data.notes_plan,
-    notes_do: data.notes_do,
-    notes_study: data.notes_study,
-    notes_act: data.notes_act,
-    project_leader: data.project_leader,
-    project_members: data.project_members,
-    checklist_plan: {
-      checklist_item: data.checklist_plan.checklist_item,
-      checklist_done: data.checklist_plan.checklist_done,
-      checklist_members: data.checklist_plan.checklist_members,
-    },
-    checklist_do: {
-      checklist_item: data.checklist_do.checklist_item,
-      checklist_done: data.checklist_do.checklist_done,
-      checklist_members: data.checklist_do.checklist_members,
-    },
-    checklist_study: {
-      checklist_item: data.checklist_study.checklist_item,
-      checklist_done: data.checklist_study.checklist_done,
-      checklist_members: data.checklist_study.checklist_members,
-    },
-    checklist_act: {
-      checklist_item: data.checklist_act.checklist_item,
-      checklist_done: data.checklist_act.checklist_done,
-      checklist_members: data.checklist_act.checklist_members,
-    },
-  };
-  return project;
-}
-
 function setImprovementWork(id: string, data: DocumentData) {
   let improvementWork: ImprovementWork = {
     id: id,
@@ -344,6 +302,31 @@ export function filterAll(orgImprovementWorks: ImprovementWork[], filter: Archiv
   } else {
     return sortByDateCreated(filteredImprovementWorks)
   }
+}
+
+export function searchImprovementWorks(orgImprovementWorks: ImprovementWork[], search: string, sort: string) {
+  const searchedImprovementWorks = orgImprovementWorks.filter((improvementWork) =>
+    improvementWork.title.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.place.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.clinic.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.centrum.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.date_created.toDate().toString().toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.goals.some(goal => goal.toLowerCase().includes(search.toLowerCase())) ||
+    improvementWork.goals.some(idea => idea.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  if (sort === "oldest_date") {
+    return sortByOldestDate(searchedImprovementWorks)
+  } else if (sort === "date_created") {
+    return sortByDateCreated(searchedImprovementWorks)
+  } else if (sort === "ascending") {
+    return sortByTitleAscending(searchedImprovementWorks)
+  } else if (sort === "descending") {
+    return sortByTitleDescending(searchedImprovementWorks)
+  } else {
+    return sortByDateCreated(searchedImprovementWorks)
+  }
+  
 }
 
 export function filterOnTags(orgImprovementWorks: ImprovementWork[], tag: string, sort: string) {
