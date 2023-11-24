@@ -179,6 +179,7 @@ function ProjectsSection({
                   phase={improvementWork.phase}
                   displayPhaseImage={true}
                   improvementWork={improvementWork}
+                  isAdmin={userInfo.admin}
                 />
               </div>
             ))

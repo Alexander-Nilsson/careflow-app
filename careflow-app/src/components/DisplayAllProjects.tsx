@@ -3,12 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
 import { ProjectCardProps } from "./ProjectCard";
-import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
 import "../font/font.css";
 import { ImprovementWork, getAllImprovementWorks } from "../ImprovementWorkLib";
+import { UserInfoType, fetchUser } from "./Start";
 
 function DisplayAllProjects() {
   const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>(
@@ -26,8 +26,18 @@ function DisplayAllProjects() {
     }
   };
 
+  // for admin func
+  const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
+
   useEffect(() => {
     fetchData();
+
+    // Fetch user info to check if admin
+    if (user?.name) {
+      //console.log(user);
+      fetchUser(user.name, user, setUserInfo);
+      console.log("User info:", userInfo);
+    }
   }, []);
 
   const handlePageChange = (newPage: number) => {
@@ -60,6 +70,7 @@ function DisplayAllProjects() {
               phase={project.phase}
               displayPhaseImage={true}
               improvementWork={project}
+              isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
             />
             </div>
           </div>

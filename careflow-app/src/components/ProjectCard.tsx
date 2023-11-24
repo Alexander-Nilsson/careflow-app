@@ -7,8 +7,16 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
-import { Id, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import noImage from "../Images/none.png";
+import {
+  Id,
+  ImprovementWork,
+  deleteProject,
+  getMemberName,
+} from "../ImprovementWorkLib";
 import CardModal from "./CardModal";
+import TrashIcon from "../icons/Trashicon";
+import CardDeleteModal from "./CardDeleteModal";
 
 export interface ProjectCardProps {
   title: string;
@@ -18,6 +26,7 @@ export interface ProjectCardProps {
   phase: Id;
   displayPhaseImage?: boolean;
   improvementWork: ImprovementWork;
+  isAdmin: boolean;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -28,6 +37,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   phase,
   displayPhaseImage,
   improvementWork,
+  isAdmin,
 }) => {
   const cardBodyStyle = {
     height: "180px",
@@ -67,12 +77,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const getPhaseImage = (phase: Id) => {
     switch (phase) {
       case 1:
-        return <img src={pImage} />;
+        return <img src={noImage} />; //Förslag
       case 2:
-        return <img src={pgImage} />;
+        return <img src={pImage} />; //Planera
       case 3:
-        return <img src={pgsImage} />;
+        return <img src={pgImage} />;
       case 4:
+        return <img src={pgsImage} />;
+      case 5:
         return <img src={pgsaImage} />;
     }
   };
@@ -81,13 +93,41 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const modalClose = () => setShow(false);
   const modalShow = () => setShow(true);
 
+  const modalToggle = () => {
+    setShow((prevShow) => !prevShow); // Toggle the modal state
+    console.log("setShow in showcard", show);
+  };
+
+  const [mouseIsOver, setMouseIsOver] = useState(false);
+  const handleMouseEnter = () => {
+    setMouseIsOver(true);
+    //console.log(`Hovered over ${title} card`);
+  };
+
+  const handleMouseLeave = () => {
+    setMouseIsOver(false);
+    //console.log(`Left ${title} card`);
+  };
+
+  const [showModal, setShowModal] = useState(false); // State variable to control modal visibility
+
+  const handleButtonClick = () => {
+    setShowModal(true); // Show the modal when the button is clicked
+    console.log("Trash icon clicked!", isAdmin);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Close the modal when needed
+    console.log("modalClose");
+  };
+
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Hej");
+        //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
@@ -110,9 +150,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div>
-      <Card onClick={modalShow} style={{ cursor: "pointer" }}>
+      <Card
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{ cursor: "pointer" }}
+      >
         <Card.Body style={cardBodyStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div
+            style={{ display: "flex", justifyContent: "space-between" }}
+            onClick={modalToggle}
+          >
             <div>
               {tags ? (
                 tags.map((tag, index) => (
@@ -152,11 +199,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 {getPhaseImage(phase)}
               </div>
             )}
-            <div></div>
+          </div>
+          <div>
+            <div>
+              {mouseIsOver && isAdmin && (
+                <div>
+                  <button
+                    onClick={handleButtonClick}
+                    className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+                  >
+                    <TrashIcon />
+                  </button>
+                  {/* Render CardDeleteModal conditionally */}
+                  {showModal && (
+                    <CardDeleteModal
+                      show={showModal}
+                      onHide={handleCloseModal}
+                      impWorkId={improvementWork.id.toString()}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           <div></div>
         </Card.Body>
       </Card>
+
       {
         <CardModal
           show={show}
