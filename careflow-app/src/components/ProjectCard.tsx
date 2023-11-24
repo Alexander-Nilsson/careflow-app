@@ -7,6 +7,7 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
+import noImage from "../Images/none.png";
 import {
   Id,
   ImprovementWork,
@@ -76,12 +77,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const getPhaseImage = (phase: Id) => {
     switch (phase) {
       case 1:
-        return <img src={pImage} />;
+        return <img src={noImage} />; //Förslag
       case 2:
-        return <img src={pgImage} />;
+        return <img src={pImage} />; //Planera
       case 3:
-        return <img src={pgsImage} />;
+        return <img src={pgImage} />;
       case 4:
+        return <img src={pgsImage} />;
+      case 5:
         return <img src={pgsaImage} />;
     }
   };
