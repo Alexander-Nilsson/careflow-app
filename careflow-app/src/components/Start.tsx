@@ -91,7 +91,9 @@ function Start() {
           {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
       ) : (
-        <p>Loading...</p> // Show a loading indicator
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <p>Du håller på att laddas in på hemsidan just nu, vänta gärna ett litet tag</p>
+        </div>
       )}
     </div>
   );

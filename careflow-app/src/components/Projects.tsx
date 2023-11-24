@@ -101,7 +101,9 @@ function Projects() {
   return (
     <>
       {isLoading ? (
-        <p>Loading...</p> // Show a loading indicator
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <p>Du håller på att laddas in på hemsidan just nu, vänta gärna ett litet tag</p>
+      </div>
       ) : (
         <></>
       )}
@@ -176,7 +178,9 @@ function Projects() {
           improvementWorks={improvementWorkList}
         />
       ) : (
-        <p>Loading...</p> // Show a loading indicator
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <p>Du håller på att laddas in på hemsidan just nu, vänta gärna ett litet tag</p>
+        </div>
       )}
     </>
   );
