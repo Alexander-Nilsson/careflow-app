@@ -59,7 +59,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
   const [showFileModal, setShowFileModal] = useState(false);
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newFileDescription, setNewFileDescription] = useState("");
-  const [fileUrl, setFileUrl] = useState("");
+  const [newFileUrl, setNewFileUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
 
   const handleShowFileModal = () => {
@@ -80,9 +80,9 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
     setNewFileDescription(event.target.value);
   };
 
-  const handleUrlChange = () => {
-    setFileUrl(fileUrl);
-  }
+  // const handleUrlChange = () => {
+  //   setNewFileUrl(newFileUrl);
+  // }
 
   const handleUploadFile = () => {
     if (newFile) {
@@ -91,8 +91,6 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
         ...files.file_descriptions,
         newFileDescription,
       ];
-
-      console.log("zzz: Vi kommer hit?");
 
       //Uploading file to cloud storage
 
@@ -110,27 +108,34 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setFileUrl(downloadURL);
-            console.log("File-url: " + downloadURL);
+            setNewFileUrl(downloadURL);
+            console.log("File-url: " + newFileUrl);
+            const updatedFileUrls = [
+              ...files.file_urls,
+              downloadURL,
+            ];
+            setUpdatedFiles({
+              file_names: updatedFileNames,
+              file_descriptions: updatedFileDescriptions,
+              file_urls : updatedFileUrls
+            });
+            console.log(updatedFileNames);
+            console.log(updatedFileDescriptions);
+            console.log(updatedFileUrls);
           });
         }
       );
-      const updatedFileUrls = [
-        ...files.file_urls,
-        fileUrl,
-      ];
+      
+      
 
-      setUpdatedFiles({
-        file_names: updatedFileNames,
-        file_descriptions: updatedFileDescriptions,
-        file_urls : updatedFileUrls
-      });
+    
 
-      console.log(fileUrl);
+      
   
       // Clear new file and description field
       setNewFile(null);
       setNewFileDescription("");
+      setNewFileUrl("");
       handleCloseFileModal();
     }
   };
