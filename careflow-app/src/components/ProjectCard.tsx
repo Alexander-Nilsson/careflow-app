@@ -174,23 +174,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <Card.Text style={{ fontFamily: "Avenir", marginBottom: "1rem" }}>
                 {formatDate(date_created)}
               </Card.Text>
+           
               <Card.Text style={{ fontFamily: "Avenir", margin: "0rem" }}>
                 <span
                   role="img"
                   aria-label="Pin Emoji"
                   style={{ fontSize: "15px" }}
-                >
+                  >
                   📍
                 </span>
                 {place}
               </Card.Text>
-              <div style={iconContainerStyle}>
-                <GrTextAlignLeft
-                  style={{ marginLeft: "0.5rem", marginRight: "0.6rem" }}
-                />
-                <BiFileBlank style={{ marginRight: "0.6rem" }} />
-                <BiComment style={{ marginRight: "10rem" }} />
-              </div>
+          
             </div>
             {displayPhaseImage && (
               <div
