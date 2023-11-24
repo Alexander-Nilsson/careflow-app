@@ -153,7 +153,6 @@ function Projects() {
   }, [filterState])
 
   useEffect(()=>{
-    console.log("3")
     if (searchTitle) {
       const searchedImprovementWorks: ImprovementWork[] = searchImprovementWorks(allImprovementWorks, searchTitle, sortBy)
       setImprovementWorkList(searchedImprovementWorks)
