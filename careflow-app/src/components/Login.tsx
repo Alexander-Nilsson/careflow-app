@@ -18,14 +18,14 @@ function Login() {
   });
 
   return (
-    <>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       {isLoading ? (
-        <p>Loading...</p> // Show a loading indicator
+        <p>Du håller just nu på att laddas in på hemsidan, vänta gärna ett litet tag</p> // Show a loading indicator
       ) : (
         <LoginModal />
       )}
-    </>
-  )
+    </div>
+  );
 }
 
 export default Login;
