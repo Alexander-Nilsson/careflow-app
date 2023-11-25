@@ -43,26 +43,30 @@ function FinishedProjectsSection({
 
   const projectsSectionStyle = {
     background: "rgba(255, 255, 255, 0.70)",
-    width: "100%",
+    width: "94.5%",
     height: "20rem",
     borderRadius: "10px",
     // margin: "20px",
     padding: "10px",
     overflowX: "auto" as "auto",
     boxShadow: "0px 0px 10px rgba(100, 100, 100, 0.2)",
+    //Added to match kanban board
+    marginLeft: "2%",
+    marginRight: "2%",
   };
 
+  //Bug Fix Added .finished-projects-section className to only apply scroll behaviour on this compontent
   const scrollBarStyles = `
-    ::-webkit-scrollbar {
+    .finished-projects-section ::-webkit-scrollbar {
         width: 8px;
     }
 
-    ::-webkit-scrollbar-thumb {
+    .finished-projects-section ::-webkit-scrollbar-thumb {
         background: #A9A9A9;
         border-radius: 4px;  
     }
 
-    ::-webkit-scrollbar-track {
+    .finished-projects-section ::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 2px; 
     }
@@ -85,7 +89,8 @@ function FinishedProjectsSection({
   };
 
   return (
-    <div style={projectsSectionStyle}>
+    //Added className
+    <div className= "finished-projects-section" style={projectsSectionStyle}>
       <style>{scrollBarStyles}</style>
       <div className="d-flex">
         <h1 className="mt-2 ml-2" style={titleStyle}>
