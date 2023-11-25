@@ -153,10 +153,13 @@ function Projects() {
   }, [filterState])
 
   useEffect(()=>{
-    console.log("3")
     if (searchTitle) {
-      const searchedImprovementWorks: ImprovementWork[] = searchImprovementWorks(allImprovementWorks, searchTitle, sortBy)
-      setImprovementWorkList(searchedImprovementWorks)
+      if(userInfo) {
+        const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
+        const searchedImprovementWorks: ImprovementWork[] = searchImprovementWorks(filteredImprovementWorks, searchTitle, sortBy)
+        setImprovementWorkList(searchedImprovementWorks)
+      }
+      
     } else {
       if(userInfo){
         const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
