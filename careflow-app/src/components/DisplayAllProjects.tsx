@@ -150,6 +150,7 @@ function DisplayAllProjects() {
 
   useEffect(()=>{
     if (searchTitle) {
+      const filteredImprovementWorks: ImprovementWork[] = filterAll(allImprovementWorks, filterState, sortBy)
       const searchedImprovementWorks: ImprovementWork[] = searchImprovementWorks(filteredImprovementWorks, searchTitle, sortBy)
       setFilteredImprovementWorks(searchedImprovementWorks)
     } else {
