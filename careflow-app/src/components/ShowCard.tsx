@@ -44,7 +44,7 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
         //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
-
+        console.log("hämtar från showCard: ")
         const names = await Promise.all(
           improvementWork.project_members.map(
             async (member) => await getMemberName(member)
@@ -59,7 +59,7 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
       }
     };
 
-    fetchData();
+    // fetchData();
   }, []);
 
   // UseSortable hook for drag-and-drop functionality
@@ -110,8 +110,6 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
             show={show}
             onHide={modalClose}
             improvementWork={improvementWork}
-            project_leader={leaderName?.toString() || ""}
-            project_members={memberNames}
           />
         }
       </div>
