@@ -10,9 +10,17 @@ import { useAuth0 } from "@auth0/auth0-react";
 interface ShowCardProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
+  updateImprovementWorkPhase: (
+    improvementWork: ImprovementWork,
+    newPhase: number
+  ) => void;
 }
 
-function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
+function ShowCard({
+  improvementWork,
+  isAdmin,
+  updateImprovementWorkPhase,
+}: ShowCardProps) {
   // State to track whether the mouse is over the task card
 
   const [show, setShow] = useState(false);
@@ -44,7 +52,7 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
         //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
-        console.log("hämtar från showCard: ")
+        console.log("hämtar från showCard: ");
         const names = await Promise.all(
           improvementWork.project_members.map(
             async (member) => await getMemberName(member)
@@ -110,6 +118,7 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
             show={show}
             onHide={modalClose}
             improvementWork={improvementWork}
+            updateImprovementWorkPhase={updateImprovementWorkPhase}
           />
         }
       </div>

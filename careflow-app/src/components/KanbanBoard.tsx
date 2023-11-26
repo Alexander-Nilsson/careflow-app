@@ -96,6 +96,7 @@ function KanbanBoard() {
                   (ImprovementWork) =>
                     ImprovementWork.phase === col.id && !ImprovementWork.closed //only display non- closed cards in kanban
                 )}
+                updateImprovementWorkPhase={updateImprovementWorkPhase}
                 isAdmin={isAdmin}
               />
             ))}
@@ -107,6 +108,7 @@ function KanbanBoard() {
                 <ShowCard
                   improvementWork={activeImprovementWork}
                   isAdmin={isAdmin}
+                  updateImprovementWorkPhase={updateImprovementWorkPhase}
                 />
               )}
             </DragOverlay>,
@@ -230,6 +232,20 @@ function KanbanBoard() {
         );
       });
     }
+  }
+
+  //function to update phase in view (not db)
+  function updateImprovementWorkPhase(
+    improvementWork: ImprovementWork,
+    newPhase: number
+  ) {
+    const newImprovementWorks = improvementWorkList.map((work) => {
+      if (work.id !== improvementWork.id) return work;
+      return { ...work, phase: newPhase };
+    });
+
+    console.log("updateImprovementWorkPhase DONE");
+    setImprovementWorkList(newImprovementWorks);
   }
 }
 

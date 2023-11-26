@@ -13,9 +13,18 @@ interface Props {
   //projectList: Project[];
   improvementWorkList: ImprovementWork[];
   isAdmin: boolean;
+  updateImprovementWorkPhase: (
+    improvementWork: ImprovementWork,
+    newPhase: number
+  ) => void;
 }
 
-function ColumnContainer({ column, improvementWorkList, isAdmin }: Props) {
+function ColumnContainer({
+  column,
+  improvementWorkList,
+  isAdmin,
+  updateImprovementWorkPhase,
+}: Props) {
   // Memoize task IDs for use in SortableContext
   const tasksIds = useMemo(() => {
     return improvementWorkList.map((improvementWork) => improvementWork.id);
@@ -48,6 +57,7 @@ function ColumnContainer({ column, improvementWorkList, isAdmin }: Props) {
               key={improvementWork.id}
               improvementWork={improvementWork}
               isAdmin={isAdmin}
+              updateImprovementWorkPhase={updateImprovementWorkPhase}
             />
           ))}
         </SortableContext>

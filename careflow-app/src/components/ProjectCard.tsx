@@ -127,7 +127,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
@@ -137,7 +136,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             async (member) => await getMemberName(member)
           )
         );
-        
+
         const filteredNames = names.filter(
           (name) => name !== null
         ) as Array<string>;
@@ -176,18 +175,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <Card.Text style={{ fontFamily: "Avenir", marginBottom: "1rem" }}>
                 {formatDate(date_created)}
               </Card.Text>
-           
+
               <Card.Text style={{ fontFamily: "Avenir", margin: "0rem" }}>
                 <span
                   role="img"
                   aria-label="Pin Emoji"
                   style={{ fontSize: "15px" }}
-                  >
+                >
                   📍
                 </span>
                 {place}
               </Card.Text>
-          
             </div>
             {displayPhaseImage && (
               <div
