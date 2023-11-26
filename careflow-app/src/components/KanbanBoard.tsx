@@ -244,8 +244,8 @@ function KanbanBoard() {
       return { ...work, phase: newPhase };
     });
 
-    console.log("updateImprovementWorkPhase DONE");
     setImprovementWorkList(newImprovementWorks);
+    console.log("updateImprovementWorkPhase DONE");
   }
 }
 
