@@ -247,7 +247,7 @@ function CreateProjectModal({
               file_descriptions: [],
             },
             notes: "",
-            
+
             results: "",
           },
           study: {
@@ -300,7 +300,9 @@ function CreateProjectModal({
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <div>
-          <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
+          <HelpPopover
+            content={"Titel:\nSyfte:\nMål:\nMät och följa upp:\nSamla idéer"}
+          />
         </div>
         <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
