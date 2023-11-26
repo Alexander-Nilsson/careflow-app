@@ -239,6 +239,7 @@ function CreateProjectModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             notes: "",
           },
@@ -246,6 +247,7 @@ function CreateProjectModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             notes: "",
 
@@ -256,6 +258,7 @@ function CreateProjectModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             notes: "",
           },
@@ -264,6 +267,7 @@ function CreateProjectModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             choice: "",
           },
