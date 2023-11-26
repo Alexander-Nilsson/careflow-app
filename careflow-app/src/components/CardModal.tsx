@@ -19,7 +19,7 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
-import { ImprovementWork, Iteration, getImprovementWork } from "../ImprovementWorkLib";
+import { ImprovementWork, Iteration, getImprovementWork, getMemberName, getMemberNames } from "../ImprovementWorkLib";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
@@ -61,8 +61,6 @@ interface cardModalProps {
   show: boolean;
   onHide: () => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
-  project_leader: string;
-  project_members: Array<string>;
   /*
   id: Id;
   title: string;
@@ -634,8 +632,8 @@ function CardModal({
   show,
   onHide,
   improvementWork,
-  project_leader,
-  project_members,
+  // project_leader,
+  // project_members,
 }: cardModalProps) {
   // Now, you can directly use the destructured values
   const {
@@ -935,13 +933,13 @@ function CardModal({
         await updateDoc(projectDocRef, updatedData);
         console.log(
           "Improvement work " +
-            improvementWork.title +
-            " updated successfully! Phase updated to: " +
-            newPhase +
-            " , closed set to: " +
-            isClosed +
-            " and the ideas array have the following idea checked: " +
-            ideas.map((idea) => idea.checked)
+          improvementWork.title +
+          " updated successfully! Phase updated to: " +
+          newPhase +
+          " , closed set to: " +
+          isClosed +
+          " and the ideas array have the following idea checked: " +
+          ideas.map((idea) => idea.checked)
         );
       }
     } catch (e) {
@@ -1093,9 +1091,20 @@ function CardModal({
     }
   }
 
+  const [project_leader, setProjectLeader] = useState<string>("hej");
+  const [project_members, setProjectMembers] = useState<string[]>([]);
+
+  async function showModal() {
+    const leader = await getMemberName(improvementWork.project_leader)
+    setProjectLeader(leader)
+
+    const members = await getMemberNames(improvementWork.project_members)
+    setProjectMembers(members);
+  }
+
   return (
     <>
-      <Modal show={show} onHide={onHide} size="lg">
+      <Modal onShow={showModal} show={show} onHide={onHide} size="lg">
         <Modal.Header
           style={{
             borderColor: "#FFFFFF",

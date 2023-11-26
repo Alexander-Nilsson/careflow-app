@@ -127,15 +127,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        //console.log("Hej");
+        
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
+        console.log("hämtar från ProjectCard:");
         const names = await Promise.all(
           improvementWork.project_members.map(
             async (member) => await getMemberName(member)
           )
         );
+        
         const filteredNames = names.filter(
           (name) => name !== null
         ) as Array<string>;
@@ -145,7 +147,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }
     };
 
-    fetchData();
+    // fetchData();
   }, []);
 
   return (
@@ -226,8 +228,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           show={show}
           onHide={modalClose}
           improvementWork={improvementWork}
-          project_leader={leaderName?.toString() || ""}
-          project_members={memberNames}
         />
       }
     </div>

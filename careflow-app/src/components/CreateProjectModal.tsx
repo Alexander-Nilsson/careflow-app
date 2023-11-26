@@ -19,6 +19,7 @@ import {
   handleKeyPressBulletPointGoals,
   findUserIds,
 } from "./CreateProjectModalHelp";
+import { getUser2 } from "../ImprovementWorkLib";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -133,9 +134,9 @@ function CreateProjectModal({
   const { isAuthenticated, isLoading, user } = useAuth0();
 
   //Getting data from the active user
-  async function getUser2(username: string) {
+  async function getUser(username: string) {
     const docRef = doc(db, "users", username);
-    const docSnap = await getDoc(docRef);
+    const docSnap = await getUser2(docRef);
 
     if (docSnap.exists()) {
       //  console.log("Document data:", docSnap.data());
@@ -153,7 +154,7 @@ function CreateProjectModal({
   }
   async function setItems() {
     if (user?.name) {
-      getUser2(user.name);
+      getUser(user.name);
     }
   }
   useEffect(() => {
