@@ -135,7 +135,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
       // Clear new file and description field
       setNewFile(null);
       setNewFileDescription("");
-      setNewFileUrl("");
+      //setNewFileUrl("");
       handleCloseFileModal();
     }
   };

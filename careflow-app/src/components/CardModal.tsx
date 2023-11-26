@@ -899,7 +899,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesDo.file_names,
                       file_descriptions: updatedFilesDo.file_descriptions,
-                      file_urls : updatedFilesPlan.file_urls
+                      file_urls : updatedFilesDo.file_urls
                     },
                     notes: updatedNotesDo,
                   },
@@ -909,7 +909,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesStudy.file_names,
                       file_descriptions: updatedFilesStudy.file_descriptions,
-                      file_urls : updatedFilesPlan.file_urls
+                      file_urls : updatedFilesStudy.file_urls
                     },
                     notes: updatedNotesStudy,
                   },
@@ -918,7 +918,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesAct.file_names,
                       file_descriptions: updatedFilesAct.file_descriptions,
-                      file_urls : updatedFilesPlan.file_urls
+                      file_urls : updatedFilesAct.file_urls
                     },
                     notes: updatedNotesAct,
                   },
