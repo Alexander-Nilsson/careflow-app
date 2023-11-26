@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { PlusLg, Paperclip } from "react-bootstrap-icons";
+import { PlusLg, Paperclip, Download } from "react-bootstrap-icons";
 import { db, fileStorage } from "../firebase";
 import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
@@ -160,10 +160,10 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
               />
               {/* Print the file name followed by the decription (if there is no description, only print the file name) */}
               {files.file_descriptions[index] === "" ? (
-                <span><Link to={""}>{item}</Link></span>
+                <span>{item}</span>
               ) : (
                 <span>
-                  {item}
+                  <Link to={files.file_urls[index]}>{item}</Link>
                   <span
                     style={{
                       color: "#AEAEAE",
