@@ -829,9 +829,9 @@ cardModalProps) {
 
   //Called whenever mark phase as done is called
   const handlePhaseUpdate = (phase: number) => {
-    // TODO updt this HERE We want to call setImprovementWorkList
+    // TODO Modal now closes on DONE
     if (updateImprovementWorkPhase) {
-      updateImprovementWorkPhase(improvementWork, phase);
+      updateImprovementWorkPhase(improvementWork, phase + 1);
     } else {
       console.error("updateImprovementWorkPhase is undefined");
     }

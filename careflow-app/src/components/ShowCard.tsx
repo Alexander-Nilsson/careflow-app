@@ -6,6 +6,7 @@ import "./ShowCard.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
+import React from "react";
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
@@ -126,4 +127,4 @@ function ShowCard({
   );
 }
 
-export default ShowCard;
+export default React.memo(ShowCard);

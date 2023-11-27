@@ -6,6 +6,7 @@ import "../styles/Kanban.css";
 import ShowCard from "./ShowCard";
 import HelpPopover from "./HelpPopover";
 import { ImprovementWork } from "../ImprovementWorkLib";
+import React from "react";
 
 interface Props {
   column: Column;
@@ -75,4 +76,5 @@ function ColumnContainer({
   );
 }
 
-export default ColumnContainer;
+// Add this at the bottom of the ColumnContainer file
+export default React.memo(ColumnContainer);

@@ -243,9 +243,8 @@ function KanbanBoard() {
       if (work.id !== improvementWork.id) return work;
       return { ...work, phase: newPhase };
     });
-
     setImprovementWorkList(newImprovementWorks);
-    console.log("updateImprovementWorkPhase DONE");
+    console.log("Update improvementWork phase in UI");
   }
 }
 
