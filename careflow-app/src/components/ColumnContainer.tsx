@@ -35,39 +35,65 @@ function ColumnContainer({ column, improvementWorkList, isAdmin }: Props) {
 
   // Render the column
   return (
-    <div ref={setNodeRef} className="kanban-column">
-      <div className="kanban-columnTitle">
-        {column.title === "Förslag" ? ( //TODO placera utanför för hela columnen -> not dragable etc
-          // Render something specific for the title "förslag"
-          <span>Your Special Content for "förslag"</span>
-        ) : (
-          // Render the default content for other titles
-          <div className="flex gap-2">{column.title}</div>
-        )}
-
-        <HelpPopover content={column.columnDescription} position="top" />
-      </div>
-      <div className="kanban-tasksContainer">
-        <SortableContext items={tasksIds}>
-          {improvementWorkList.map((improvementWork) => (
-            <ShowCard
-              key={improvementWork.id}
-              improvementWork={improvementWork}
-              isAdmin={isAdmin}
-            />
-          ))}
-        </SortableContext>
-      </div>
-      <div className="kanban-footerButton">
-        Antal: {taskCount}
-        {/*} <div
+    <>
+      {" "}
+      {column.title === "Förslag" ? (
+        // Render something specific for the title "Förslag"
+        <div className="kanban-column">
+          <div className="kanban-columnTitle">
+            <div className="flex gap-2">{column.title}</div>
+            <HelpPopover content={column.columnDescription} position="top" />
+          </div>
+          <div className="kanban-tasksContainer">
+            <SortableContext items={tasksIds}>
+              {improvementWorkList.map((improvementWork) => (
+                <ShowCard
+                  key={improvementWork.id}
+                  improvementWork={improvementWork}
+                  isAdmin={isAdmin}
+                />
+              ))}
+            </SortableContext>
+          </div>
+          <div className="kanban-footerButton">
+            Antal: {taskCount}
+            {/*} <div
+        onClick={() => createProject(column.id)}
+        className="clickable-icon"
+      >
+        <PlusIcon />
+        </div>*/}
+          </div>
+        </div>
+      ) : (
+        <div ref={setNodeRef} className="kanban-column">
+          <div className="kanban-columnTitle">
+            <div className="flex gap-2">{column.title}</div>
+            <HelpPopover content={column.columnDescription} position="top" />
+          </div>
+          <div className="kanban-tasksContainer">
+            <SortableContext items={tasksIds}>
+              {improvementWorkList.map((improvementWork) => (
+                <ShowCard
+                  key={improvementWork.id}
+                  improvementWork={improvementWork}
+                  isAdmin={isAdmin}
+                />
+              ))}
+            </SortableContext>
+          </div>
+          <div className="kanban-footerButton">
+            Antal: {taskCount}
+            {/*} <div
           onClick={() => createProject(column.id)}
           className="clickable-icon"
         >
           <PlusIcon />
           </div>*/}
-      </div>
-    </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
