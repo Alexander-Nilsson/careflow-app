@@ -1,4 +1,4 @@
-import { Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { getMemberName } from "../ImprovementWorkLib";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -13,10 +13,38 @@ const projectMembersContainer = {
   borderRadius: "10px",
 };
 
+const buttonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 40px",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "20px",
+};
+
 interface CardModalTopRightProps {
   project_leader: string;
   project_members: Array<string>;
 }
+
+function AddNewMembers() {
+  const [inputFields, setInputFields] = useState([{ name: ''}]);
+
+  return (<><form>
+    {inputFields.map((input, index) => {
+      return (
+        <div key={index}>
+          <input
+            name='name'
+            placeholder='Name'
+          />
+        </div>
+      )
+    })}
+  </form></>);
+
+};
 
 //The top right part of the modal containing the project leader and project members
 function CardModalTopRight({
@@ -45,6 +73,14 @@ function CardModalTopRight({
                   {member}
                 </div>
               ))}
+              <div>
+              <Button
+                    style={buttonStyle}
+                    onClick={() => AddNewMembers}
+                  >
+                    Lägg till medlemmar
+                  </Button>
+              </div>
             </div>
           </Form.Label>
         </Form.Group>
