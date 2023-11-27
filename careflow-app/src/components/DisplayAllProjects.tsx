@@ -3,10 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ProjectCard from "./ProjectCard";
 import "../styles/DisplayAllProjects.css";
 import '../font/font.css';
-import { ArchiveFilterState, ImprovementWork, filterAll, filterOnTags, 
-  findCentrumOptions, findClinicOptions, findPlaceOptions, findTagOptions, 
-  getAllImprovementWorks, sortByDateCreated, sortByOldestDate, sortByTitleAscending, 
-  sortByTitleDescending, searchImprovementWorks } from "../ImprovementWorkLib";
+import {
+  ArchiveFilterState, ImprovementWork, filterAll, filterOnTags,
+  findCentrumOptions, findClinicOptions, findPlaceOptions, findTagOptions,
+  getAllImprovementWorks, sortByDateCreated, sortByOldestDate, sortByTitleAscending,
+  sortByTitleDescending, searchImprovementWorks
+} from "../ImprovementWorkLib";
 import { IoSearchOutline } from "react-icons/io5";
 import { ProjectCardProps } from "./ProjectCard";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -148,13 +150,13 @@ function DisplayAllProjects() {
     setFilteredImprovementWorks(works)
   }, [filterState])
 
-  useEffect(()=>{
+  useEffect(() => {
     if (searchTitle) {
       const filteredImprovementWorks: ImprovementWork[] = filterAll(allImprovementWorks, filterState, sortBy)
       const searchedImprovementWorks: ImprovementWork[] = searchImprovementWorks(filteredImprovementWorks, searchTitle, sortBy)
       setFilteredImprovementWorks(searchedImprovementWorks)
     } else {
-      if(userInfo){
+      if (userInfo) {
         const filteredImprovementWorks: ImprovementWork[] = filterAll(allImprovementWorks, filterState, sortBy)
         console.log("search filter")
         setFilteredImprovementWorks(filteredImprovementWorks)
@@ -164,8 +166,26 @@ function DisplayAllProjects() {
 
   return (
     <div className="projects-section">
-      
-        
+      <div className="d-flex justify-content-end">
+        <div className="ml-auto align-self-end">
+          <div className="input-group rounded">
+            <input
+              type="search"
+              className="form-control rounded"
+              placeholder="Sök"
+              aria-label="Search"
+              aria-describedby="search-addon"
+              style={{ width: "20rem" }}
+              value={searchTitle}
+              onChange={(e) => handleTitleSearch(e.target.value)}
+            />
+            <IoSearchOutline
+              style={{ fontSize: "1.5rem", marginLeft: "0.5rem", marginTop: "0.4rem" }}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="d-flex flex-wrap justify-content-end">
         <div className="ml-2 mt-2">
           {/* <label htmlFor="sortDropdown" className="form-label me-2">
@@ -237,25 +257,6 @@ function DisplayAllProjects() {
               ))
             }
           </select>
-        </div>
-
-
-        <div className="ml-auto align-self-end">
-        <div className="input-group rounded">
-          <input 
-          type="search" 
-          className="form-control rounded" 
-          placeholder="Sök" 
-          aria-label="Search" 
-          aria-describedby="search-addon" 
-          style={{ width: "20rem" }}
-          value={searchTitle}
-          onChange={(e) => handleTitleSearch(e.target.value)}          
-          />
-          <IoSearchOutline
-                  style={{ fontSize: "1.5rem", marginLeft: "0.5rem", marginTop:"0.4rem" }}
-           />
-        </div>
         </div>
       </div>
       <div className="projects-container">
