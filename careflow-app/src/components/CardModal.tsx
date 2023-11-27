@@ -12,7 +12,7 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import CardModalNotes from "./CardModalNotes";
 import CardModalChecklist from "./CardModalChecklist";
-import CardModalSimilarProjects from "./CardModalSimilarProjects";
+//import CardModalSimilarProjects from "./CardModalSimilarProjects";
 import CardModalResultMeasurements from "./CardModalResultMeasurements";
 import CardModalResultAnalysis from "./CardModalResultAnalysis";
 import CardModalFiles from "./CardModalFiles";
@@ -379,7 +379,7 @@ function ModalContentPlan({
 
           {/* --------------------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -461,7 +461,7 @@ function ModalContentDo({
 
           {/* ---------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+         {/* <CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -544,7 +544,7 @@ function ModalContentStudy({
 
           {/* ----------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -620,7 +620,7 @@ function ModalContentAct({
 
           {/* --------------------------------------------*/}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
