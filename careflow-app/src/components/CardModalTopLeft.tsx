@@ -15,6 +15,7 @@ import {
   Bullseye,
 } from "react-bootstrap-icons";
 import { tags } from "./CreateNewProject";
+import Dropdown from "react-bootstrap/Dropdown";
 console.log("taggar", tags);
 
 const iconCircleStyle = {
@@ -91,6 +92,7 @@ const addTagContainerStyle = {
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  fontSize: "14px",
 };
 
 const saveTagButtonStyle = {
@@ -227,9 +229,18 @@ function CardModalTopLeft({
                   </span>
                 </React.Fragment>
               ))}
-              <span style={addTagContainerStyle} onClick={handleShowTagModal}>
-                ny tagg +
-              </span>
+              <Dropdown key={tags.length}>
+                <Dropdown.Toggle style={addTagContainerStyle}>
+                  Lägg till
+                </Dropdown.Toggle>
+                <Dropdown.Menu style={{ width: "100%" }}>
+                  {tags.map((tag) => (
+                    <Dropdown.Item onClick={() => handleSaveTag(tag)}>
+                      {tag}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
             <div>
               <div style={flexAndCenter}>
@@ -261,8 +272,7 @@ function CardModalTopLeft({
           >
             <Modal.Header closeButton></Modal.Header>
             <Modal.Body className="d-flex justify-content-center align-items-center">
-              <Form style={{ width: "90%" }}>
-                <div className="mb-3 text-center">
+              {/* <div className="mb-3 text-center">
                   <input
                     type="text"
                     className="form-control"
@@ -279,8 +289,7 @@ function CardModalTopLeft({
                   >
                     Lägg till tagg
                   </Button>
-                </div>
-              </Form>
+                </div> */}
             </Modal.Body>
           </Modal>
 
