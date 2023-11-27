@@ -79,6 +79,7 @@ interface CreateProjectModalProps {
   users: any[];
   tags: any[];
   usersClassArray: any[];
+  onRefreshProjects: () => Promise<void>;
 }
 
 // Writes the formdata to database
@@ -94,12 +95,27 @@ async function sendToDataBase(projectData: object) {
   }
 }
 
+// async function sendToDataBase(projectData: object): Promise<void> {
+//   try {
+//     const docRef = await addDoc(
+//       collection(db, "improvementWorks"),
+//       projectData
+//     );
+//     console.log("Document written with ID: ", docRef.id);
+//   } catch (e) {
+//     console.error("Error adding document: ", e);
+//     throw e; // Throw an error to be caught in handleSubmit
+//   }
+// }
+
+
 function CreateProjectModal({
   show,
   onHide,
   users,
   tags,
   usersClassArray,
+   onRefreshProjects
 }: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
@@ -196,7 +212,7 @@ function CreateProjectModal({
   };
 
   // is executed when submit button is pressed
-  function handleSubmit(e: any) {
+    async function handleSubmit(e: any) {
     // Prevent the browser from reloading the page
     e.preventDefault();
 
@@ -275,6 +291,8 @@ function CreateProjectModal({
       ],
     };
 
+    
+
     // Check if necessary fields is entered by user
     if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
@@ -298,6 +316,16 @@ function CreateProjectModal({
       setGoals("");
       sendToDataBase(projectData);
       onHide(); // Only close the modal if the title is provided
+    }
+
+    try {
+      await sendToDataBase(projectData); // Wait for the project to be added
+      onRefreshProjects(); // Refresh the project list in the parent component
+      onHide(); // Close the modal
+      // Optionally, reset form state here if needed
+    } catch (error) {
+      console.error("Failed to add project: ", error);
+      // Handle any errors here, such as showing an error message to the user
     }
   }
 
@@ -571,6 +599,9 @@ function CreateProjectModal({
         </Form>
       </Modal.Body>
     </Modal>
+    
   );
+  
 }
+
 export default CreateProjectModal;

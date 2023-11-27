@@ -226,7 +226,7 @@ function Projects() {
             justifyContent: "flex-end",
           }}
         >
-          <CreateNewProject />
+          {/* <CreateNewProject /> */}
         </div>
       </div>
 

@@ -7,6 +7,7 @@ import {
     ImprovementWork,
     filterForUser,
     findTagOptions,
+    getAllImprovementWorks,
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
@@ -52,7 +53,6 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     const handleTags = (event: any) => {
         setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
     }
-
 
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
