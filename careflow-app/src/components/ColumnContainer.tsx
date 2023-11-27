@@ -37,7 +37,13 @@ function ColumnContainer({ column, improvementWorkList, isAdmin }: Props) {
   return (
     <div ref={setNodeRef} className="kanban-column">
       <div className="kanban-columnTitle">
-        <div className="flex gap-2">{column.title}</div>
+        {column.title === "Förslag" ? ( //TODO placera utanför för hela columnen -> not dragable etc
+          // Render something specific for the title "förslag"
+          <span>Your Special Content for "förslag"</span>
+        ) : (
+          // Render the default content for other titles
+          <div className="flex gap-2">{column.title}</div>
+        )}
 
         <HelpPopover content={column.columnDescription} position="top" />
       </div>
