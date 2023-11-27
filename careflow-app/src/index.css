@@ -1,0 +1,3 @@
+body{
+    overflow-x: hidden; /* fixes styling issue with scrolling in x-direction*/
+}
