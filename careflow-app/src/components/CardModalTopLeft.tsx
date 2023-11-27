@@ -87,11 +87,13 @@ const tagContainerStyle = {
 };
 
 const addTagContainerStyle = {
-  backgroundColor: "#AEAEAE",
+  backgroundColor: "#A2BCEF",
+  color: "#FFFFFF",
   padding: "2px 10px",
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  cursor: "pointer",
   fontSize: "14px",
 };
 
@@ -231,7 +233,7 @@ function CardModalTopLeft({
               ))}
               <Dropdown key={tags.length}>
                 <Dropdown.Toggle style={addTagContainerStyle}>
-                  Lägg till
+                  ny tagg
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{ width: "100%" }}>
                   {tags.map((tag) => (
