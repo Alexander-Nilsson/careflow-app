@@ -167,7 +167,7 @@ function CreateProjectModal({
   }, [user]);
 
   //console.log(newTag);
-  const handleAlternativeClick = (chosenMember: string) => {
+  const handleMemberClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedMembers.includes(chosenMember)) {
       const updatedChosenMembers = selectedMembers.filter(
@@ -181,7 +181,7 @@ function CreateProjectModal({
     }
   };
 
-  const handleAlternativeClick1 = (chosenMember: string) => {
+  const handleTagClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedTags.includes(chosenMember)) {
       const updatedChosenMembers = selectedTags.filter(
@@ -305,7 +305,9 @@ function CreateProjectModal({
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <div>
-          <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
+          <HelpPopover
+            content={"Titel:\nSyfte:\nMål:\nMät och följa upp:\nSamla idéer"}
+          />
         </div>
         <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
@@ -526,7 +528,7 @@ function CreateProjectModal({
                       ? "bold"
                       : "normal",
                   }}
-                  onClick={() => handleAlternativeClick(member)}
+                  onClick={() => handleMemberClick(member)}
                 >
                   {member}
                 </Dropdown.Item>
@@ -545,29 +547,12 @@ function CreateProjectModal({
               Lägg till beskrivande nyckelord
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
-              {/* <div style={{ display: "flex", alignItems: "center" }}>
-                <Form.Control
-                  type="text"
-                  placeholder="Lägg till egna nyckelord"
-                  value={textValue}
-                  onChange={handleTextChange}
-                  className="mr-sm-2"
-                  style={{ width: "80%" }}
-                />
-                <Button
-                  variant="primary"
-                  onClick={handleConfirm}
-                  style={{ marginRight: "0" }}
-                >
-                  Lägg till
-                </Button>
-              </div> */}
               {tags.map((tag) => (
                 <Dropdown.Item
                   style={{
                     fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
                   }}
-                  onClick={() => handleAlternativeClick1(tag)}
+                  onClick={() => handleTagClick(tag)}
                 >
                   {tag}
                 </Dropdown.Item>
