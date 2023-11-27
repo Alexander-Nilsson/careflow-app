@@ -87,7 +87,7 @@ class User {
   }
 }
 
-class Tag {
+export class Tag {
   id: Id;
   description: string;
   constructor(id: Id, description: string) {
@@ -140,9 +140,9 @@ const tagConverter = {
   },
 };
 
-var tags: any[] = [];
+export var tags: any[] = [];
 
-async function fetchTags() {
+export async function fetchTags() {
   const q = query(collection(db, "tags"));
   const querySnapshot = await getDocs(q);
   const ids = querySnapshot.docs.map((doc) => doc.id);

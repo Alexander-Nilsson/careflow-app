@@ -166,7 +166,7 @@ function CreateProjectModal({
   }, [user]);
 
   //console.log(newTag);
-  const handleAlternativeClick = (chosenMember: string) => {
+  const handleMemberClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedMembers.includes(chosenMember)) {
       const updatedChosenMembers = selectedMembers.filter(
@@ -180,7 +180,7 @@ function CreateProjectModal({
     }
   };
 
-  const handleAlternativeClick1 = (chosenMember: string) => {
+  const handleTagClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedTags.includes(chosenMember)) {
       const updatedChosenMembers = selectedTags.filter(
@@ -523,7 +523,7 @@ function CreateProjectModal({
                       ? "bold"
                       : "normal",
                   }}
-                  onClick={() => handleAlternativeClick(member)}
+                  onClick={() => handleMemberClick(member)}
                 >
                   {member}
                 </Dropdown.Item>
@@ -564,7 +564,7 @@ function CreateProjectModal({
                   style={{
                     fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
                   }}
-                  onClick={() => handleAlternativeClick1(tag)}
+                  onClick={() => handleTagClick(tag)}
                 >
                   {tag}
                 </Dropdown.Item>

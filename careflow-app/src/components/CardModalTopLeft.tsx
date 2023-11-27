@@ -14,6 +14,8 @@ import {
   Lightbulb,
   Bullseye,
 } from "react-bootstrap-icons";
+import { tags } from "./CreateNewProject";
+console.log("taggar", tags);
 
 const iconCircleStyle = {
   borderRadius: "50%",
