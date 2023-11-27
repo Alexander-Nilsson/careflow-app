@@ -44,7 +44,7 @@ function ColumnContainer({ column, improvementWorkList, isAdmin }: Props) {
             onClick={() => console.log("förslag pressed")}
             style={{ cursor: "pointer" }}
           >
-            <div className="flex gap-2">{column.title}</div>
+            <div className="flex gap-2">{"Lägg till förslag"}</div>
             <HelpPopover content={column.columnDescription} position="top" />
           </div>
           <div className="kanban-tasksContainer">
