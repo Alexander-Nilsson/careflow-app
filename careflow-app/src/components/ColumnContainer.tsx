@@ -37,10 +37,13 @@ function ColumnContainer({ column, improvementWorkList, isAdmin }: Props) {
   return (
     <>
       {" "}
-      {column.title === "Förslag" ? (
-        // Render something specific for the title "Förslag"
+      {column.title === "Förslag" ? ( // Render something specific for the title "Förslag"
         <div className="kanban-column">
-          <div className="kanban-columnTitle">
+          <div
+            className="kanban-columnTitle"
+            onClick={() => console.log("förslag pressed")}
+            style={{ cursor: "pointer" }}
+          >
             <div className="flex gap-2">{column.title}</div>
             <HelpPopover content={column.columnDescription} position="top" />
           </div>
