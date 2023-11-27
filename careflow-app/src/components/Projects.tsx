@@ -21,6 +21,8 @@ import ProjectsSection from "./ProjectsSection";
 import CardDeleteModal from "./CardDeleteModal";
 import { IoSearchOutline } from "react-icons/io5";
 import "../styles/LoadingSpinner.css";
+import HelpPopover from "./HelpPopover";
+import ButtonPopover from "./ButtonPopover";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -208,12 +210,32 @@ function Projects() {
           whiteSpace: "pre-line",
         }}
       >
-        <TitleBox
-          title={"Förändringsarbeten"}
-          description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
+<div className="outerContainer" style={{ display: "flex", flexDirection: "column" }}>
+  <div style={{ display: "flex", alignItems: "baseline" }}>
+    <TitleBox
+      title={"Mina förbättringsarbeten"}
+      description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
         Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
-          Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
-        ></TitleBox>
+        Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
+    />
+    {/*<div className="questionMark" style={{ marginLeft: "2vh" }}>
+      <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
+      </div> */}
+    <div className="buttonPopover" style={{ marginLeft: "2vh",  fontStyle: 'italic', fontSize: "80%", fontWeight: "bold"}}>
+      <ButtonPopover title={"Vad är förbättringsmodellen och hur hjälper den oss?"}content={" \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "} text={"Vad är förbättringsmodellen?"}></ButtonPopover>
+    </div>
+  </div>
+  <div className="description" style={{ marginLeft: "2vw" }}>
+    <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "70%", fontWeight: "normal" }}>
+      Här kan du jobba med dina förbättringsarbeten genom förbättringsmodellen och de fyra stegen av PGSA-cykeln.
+      <br />
+      Du kan även involvera dig i din kliniks och ditt centrums förbättringsarbeten.
+    </p>
+  </div>
+</div>
+        
+
+       
 
         <div
           style={{
@@ -226,10 +248,13 @@ function Projects() {
             justifyContent: "flex-end",
           }}
         >
+          
           <CreateNewProject />
+          
         </div>
+      
       </div>
-
+      
 
       <div className="d-flex pl-7 pr-14">
         <div className="">

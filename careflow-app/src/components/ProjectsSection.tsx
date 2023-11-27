@@ -139,9 +139,9 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
 
                     </select>
                 </div>
-                <div className="mt-3 ml-2">
+                {/*<div className="mt-3 ml-2">
                     <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att navigera bland pågående projekt" />
-                </div>
+                    </div> */}
             </div>
 
             <div style={projectsContainerStyle}>
