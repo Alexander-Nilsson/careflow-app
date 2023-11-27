@@ -253,13 +253,7 @@ function Projects() {
             justifyContent: "flex-end",
           }}
         >
-<<<<<<< HEAD
           <CreateNewProject onRefreshProjects={refreshImprovementWorks} />
-=======
-          
-          <CreateNewProject />
-          
->>>>>>> 68d48d0fea0b1c9cad0f70d098c52e8f6f46bd6e
         </div>
       
       </div>
