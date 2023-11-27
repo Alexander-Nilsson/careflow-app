@@ -32,7 +32,7 @@ function Archive() {
     }
 `;
 
-  return (
+return (
     <div>
       <img
         className="background-gradient"

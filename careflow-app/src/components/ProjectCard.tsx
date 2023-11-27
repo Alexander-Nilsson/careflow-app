@@ -7,6 +7,7 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
+import noImage from "../Images/none.png";
 import {
   Id,
   ImprovementWork,
@@ -75,8 +76,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   const getPhaseImage = (phase: Id) => {
     switch (phase) {
+      case 1:
+        return <img src={noImage} />; //Förslag
       case 2:
-        return <img src={pImage} />;
+        return <img src={pImage} />; //Planera
       case 3:
         return <img src={pgImage} />;
       case 4:
@@ -124,15 +127,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        //console.log("Hej");
+        
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
+        console.log("hämtar från ProjectCard:");
         const names = await Promise.all(
           improvementWork.project_members.map(
             async (member) => await getMemberName(member)
           )
         );
+        
         const filteredNames = names.filter(
           (name) => name !== null
         ) as Array<string>;
@@ -142,7 +147,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }
     };
 
-    fetchData();
+    // fetchData();
   }, []);
 
   return (
@@ -171,23 +176,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <Card.Text style={{ fontFamily: "Avenir", marginBottom: "1rem" }}>
                 {formatDate(date_created)}
               </Card.Text>
+           
               <Card.Text style={{ fontFamily: "Avenir", margin: "0rem" }}>
                 <span
                   role="img"
                   aria-label="Pin Emoji"
                   style={{ fontSize: "15px" }}
-                >
+                  >
                   📍
                 </span>
                 {place}
               </Card.Text>
-              <div style={iconContainerStyle}>
-                <GrTextAlignLeft
-                  style={{ marginLeft: "0.5rem", marginRight: "0.6rem" }}
-                />
-                <BiFileBlank style={{ marginRight: "0.6rem" }} />
-                <BiComment style={{ marginRight: "10rem" }} />
-              </div>
+          
             </div>
             {displayPhaseImage && (
               <div
@@ -228,8 +228,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           show={show}
           onHide={modalClose}
           improvementWork={improvementWork}
-          project_leader={leaderName?.toString() || ""}
-          project_members={memberNames}
         />
       }
     </div>

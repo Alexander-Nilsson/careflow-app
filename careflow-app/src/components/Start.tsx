@@ -13,6 +13,7 @@ import {
   getAllImprovementWorks,
   getUser2,
 } from "../ImprovementWorkLib";
+import "../styles/LoadingSpinner.css";
 
 export type UserInfoType = {
   hsaID: string;
@@ -61,6 +62,14 @@ function Start() {
     }
   }
 
+  function Spinner() {
+    return (
+      <div className="spinner-overlay">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   useEffect(() => {
     // if (isLoading) {
     //   return;
@@ -96,7 +105,9 @@ function Start() {
           {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
       ) : (
-        <p>Loading...</p> // Show a loading indicator
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <Spinner />
+        </div>
       )}
     </div>
   );

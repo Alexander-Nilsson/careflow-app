@@ -19,7 +19,6 @@ export class userIDname {
 }
 
 async function fetchUsers() {
-
   const userSnapshot = await getUsers();
   userSnapshot.forEach((doc) => {
     const userData = doc.data() as User;
@@ -123,7 +122,7 @@ const tagConverter = {
   },
 };
 
-var tags: any[] = [];
+export var tags: any[] = [];
 
 async function fetchTags() {
   const querySnapshot = await getTags();

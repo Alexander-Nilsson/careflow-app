@@ -12,7 +12,8 @@ const styles = {
     position: 'fixed',
     backgroundColor: '#fff',
     width: '100%',
-    height: '64rem',
+   // height: '64rem', Causing ROG-icon to be not visable
+   height: '100vh',
     overflow: 'hidden',
     textAlign: 'left',
     fontSize: '1.38rem',
@@ -31,7 +32,7 @@ const styles = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -250%)',
+    transform: 'translate(-50%, -150%)', //changed from -250% to 150%
     width: '30rem',
     height: '10rem',
     objectFit: 'cover',
@@ -48,7 +49,7 @@ const styles = {
     position: 'absolute',
     top: '50%',
     left: '50.5%',
-    transform: 'translate(-50%, -140%)',
+    transform: 'translate(-50%, -40%)', // changed from -140% to -40% so it is visable
     borderRadius: '21px',
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     border: '1px solid #d4d4d4',
@@ -100,6 +101,7 @@ function LoginModal() {
   return (
    
     <div style={styles.body && styles.logInContainer as React.CSSProperties} className="log-in">
+      
       <img style={styles.backgroundGradient as React.CSSProperties} alt="" src="./background-gradient.png" />
       <img style={styles.careflowIcon as React.CSSProperties} alt="" src="./CareFlow_Vit.png" />
       <img style={styles.rogIcon as React.CSSProperties} alt="" src="/ROG-login.png" />

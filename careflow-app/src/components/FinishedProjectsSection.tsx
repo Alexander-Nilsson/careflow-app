@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import HelpPopover from "./HelpPopover"; import ProjectCard from "./ProjectCard";
-import { UserFilterState, ImprovementWork,  } from "../ImprovementWorkLib";
+import HelpPopover from "./HelpPopover";
+import ProjectCard from "./ProjectCard";
+import { ImprovementWork, UserFilterState, getAllImprovementWorks } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type FinishedProjectsSectionProps = {
@@ -24,6 +25,12 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
   const fetchData = async () => {
     // const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
     // if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+
+    //Bug searching - getUserImprovementWorks(userInfo.hsaID, true) does not exist plus other functions in improvementWorkLib.tsx
+     // const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks()
+    // if (fetchedImprovementWorks) 
+    //console.log(fetchedImprovementWorks); 
+    //setDisplayedImprovementWorks(fetchedImprovementWorks)
   };
 
   const handleFilter = async (event: any) => {
@@ -37,7 +44,10 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
   };
 
   useEffect(() => {
-    // fetchData();
+//Bug searching, code below was already commented. findUserImprovementWorks removed/does not exist in ImprovementWorkLib.tsx?
+
+
+   // fetchData();
     // const userImprovementWorks: ImprovementWork[] | null =
     //   findUserImprovementWorks(userInfo.hsaID, improvementWorks, true);
     // setDisplayedImprovementWorks(userImprovementWorks);
@@ -45,26 +55,30 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
 
   const projectsSectionStyle = {
     background: "rgba(255, 255, 255, 0.70)",
-    width: "100%",
+    width: "94.5%",
     height: "20rem",
     borderRadius: "10px",
     // margin: "20px",
     padding: "10px",
     overflowX: "auto" as "auto",
     boxShadow: "0px 0px 10px rgba(100, 100, 100, 0.2)",
+    //Added to match kanban board
+    marginLeft: "2%",
+    marginRight: "2%",
   };
 
+  //Bug Fix Added .finished-projects-section className to only apply scroll behaviour on this compontent
   const scrollBarStyles = `
-    ::-webkit-scrollbar {
+    .finished-projects-section ::-webkit-scrollbar {
         width: 8px;
     }
 
-    ::-webkit-scrollbar-thumb {
+    .finished-projects-section ::-webkit-scrollbar-thumb {
         background: #A9A9A9;
         border-radius: 4px;  
     }
 
-    ::-webkit-scrollbar-track {
+    .finished-projects-section ::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 2px; 
     }
@@ -87,7 +101,8 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
   };
 
   return (
-    <div style={projectsSectionStyle}>
+    //Added className
+    <div className= "finished-projects-section" style={projectsSectionStyle}>
       <style>{scrollBarStyles}</style>
       <div className="d-flex">
         <h1 className="mt-2 ml-2" style={titleStyle}>
@@ -98,6 +113,7 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
             className="form-select"
             aria-label="Filtrera"
             onChange={handleFilter}
+            style={{ cursor: "pointer" }}
           >
             <option selected value="user">
               Visa mina

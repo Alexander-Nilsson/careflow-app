@@ -20,7 +20,7 @@ type ProjectsSectionProps = {
 
 function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: ProjectsSectionProps) {
 
-    const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
+    // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
     const [tagOptions, setTagOptions] = useState<string[]>([]);
     const [filterState, setFilterState] = useState<UserFilterState>({
@@ -35,9 +35,16 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     // denna uppdaterar värdet på filterState baserat på det användaren klickade på
     const handleFilter = async (event: any) => {
         if (event.target.value === "user") {
-            setFilterState(prev => ({ ...prev, includeUser: true }));
+            setFilterState(prev => ({
+                 ...prev, 
+                 includeUser: true,
+                 includeClinic: false}));
         } else if (event.target.value === "clinic") {
-            setFilterState(prev => ({ ...prev, includeClinic: true }));
+            setFilterState(prev => ({
+                 ...prev, 
+                 includeClinic: true,
+                 includeUser: false
+                 }));
         }
     };
 
@@ -60,7 +67,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     useEffect(() => {
         const improvementWorks = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
         const tags = findTagOptions(improvementWorks)
-        setImprovementWorks(improvementWorks)
+        // setImprovementWorks(improvementWorks)
         setTagOptions(tags);
         setFilterState(prev => ({ ...prev, includeClinic: false }));
     }, []);

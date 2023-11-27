@@ -20,6 +20,7 @@ import FinishedProjectsSection from "./FinishedProjectsSection";
 import ProjectsSection from "./ProjectsSection";
 import CardDeleteModal from "./CardDeleteModal";
 import { IoSearchOutline } from "react-icons/io5";
+import "../styles/LoadingSpinner.css";
 
 // Context to pass functions to KANBAN
 export interface ProjectContextType {
@@ -28,6 +29,14 @@ export interface ProjectContextType {
     React.SetStateAction<ImprovementWork[]>
   >;
   isAdmin: boolean;
+}
+
+function Spinner() {
+  return (
+    <div className="spinner-overlay">
+      <div className="spinner"></div>
+    </div>
+  );
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -175,7 +184,16 @@ function Projects() {
   return (
     <>
       {isLoading ? (
-        <p>Loading...</p> // Show a loading indicator
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+          }}
+        >
+        <Spinner />
+        </div>
       ) : (
         <></>
       )}
@@ -297,7 +315,16 @@ function Projects() {
           showClosed={true}
         />
       ) : (
-        <p>Loading...</p> // Show a loading indicator
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+          }}
+        >
+        <Spinner />
+        </div>
       )}
     </>
   );

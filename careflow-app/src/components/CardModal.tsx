@@ -19,7 +19,7 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
-import { ImprovementWork, Iteration, getImprovementWork } from "../ImprovementWorkLib";
+import { ImprovementWork, Iteration, getImprovementWork, getMemberName, getMemberNames } from "../ImprovementWorkLib";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
@@ -61,8 +61,6 @@ interface cardModalProps {
   show: boolean;
   onHide: () => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
-  project_leader: string;
-  project_members: Array<string>;
   /*
   id: Id;
   title: string;
@@ -141,11 +139,13 @@ interface modalContentPlanProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesPlan: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -177,11 +177,13 @@ interface modalContentDoProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesDo: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -213,11 +215,13 @@ interface modalContentStudyProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesStudy: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -247,11 +251,13 @@ interface modalContentActProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls : string[];
   };
   setUpdatedFilesAct: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls : string[];
     }>
   >;
 }
@@ -626,8 +632,8 @@ function CardModal({
   show,
   onHide,
   improvementWork,
-  project_leader,
-  project_members,
+  // project_leader,
+  // project_members,
 }: cardModalProps) {
   // Now, you can directly use the destructured values
   const {
@@ -773,10 +779,10 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: [] });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
 
       //Update the database with the cleared fields
       clearDb(updatedIdeas.map((idea) => idea.checked));
@@ -814,10 +820,10 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
       addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
     } else if (phase === 7) {
@@ -832,10 +838,10 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
+      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
       addNewIterationInDb(); //Creates an new iteration in the db, where chosen idea will be set to none
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
 
@@ -883,6 +889,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesPlan.file_names,
                       file_descriptions: updatedFilesPlan.file_descriptions,
+                      file_urls : updatedFilesPlan.file_urls
                     },
                     notes: updatedNotesPlan,
                   },
@@ -892,6 +899,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesDo.file_names,
                       file_descriptions: updatedFilesDo.file_descriptions,
+                      file_urls : updatedFilesDo.file_urls
                     },
                     notes: updatedNotesDo,
                   },
@@ -901,6 +909,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesStudy.file_names,
                       file_descriptions: updatedFilesStudy.file_descriptions,
+                      file_urls : updatedFilesStudy.file_urls
                     },
                     notes: updatedNotesStudy,
                   },
@@ -909,6 +918,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesAct.file_names,
                       file_descriptions: updatedFilesAct.file_descriptions,
+                      file_urls : updatedFilesAct.file_urls
                     },
                     notes: updatedNotesAct,
                   },
@@ -923,13 +933,13 @@ function CardModal({
         await updateDoc(projectDocRef, updatedData);
         console.log(
           "Improvement work " +
-            improvementWork.title +
-            " updated successfully! Phase updated to: " +
-            newPhase +
-            " , closed set to: " +
-            isClosed +
-            " and the ideas array have the following idea checked: " +
-            ideas.map((idea) => idea.checked)
+          improvementWork.title +
+          " updated successfully! Phase updated to: " +
+          newPhase +
+          " , closed set to: " +
+          isClosed +
+          " and the ideas array have the following idea checked: " +
+          ideas.map((idea) => idea.checked)
         );
       }
     } catch (e) {
@@ -962,6 +972,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -971,6 +982,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -980,6 +992,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -988,6 +1001,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
+                  file_urls: []
                 },
                 notes: [],
               },
@@ -1025,6 +1039,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             notes: [],
           },
@@ -1033,6 +1048,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             notes: [],
           },
@@ -1041,6 +1057,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             notes: [],
           },
@@ -1048,6 +1065,7 @@ function CardModal({
             files: {
               file_names: [],
               file_descriptions: [],
+              file_urls: [],
             },
             notes: [],
           },
@@ -1073,9 +1091,20 @@ function CardModal({
     }
   }
 
+  const [project_leader, setProjectLeader] = useState<string>("hej");
+  const [project_members, setProjectMembers] = useState<string[]>([]);
+
+  async function showModal() {
+    const leader = await getMemberName(improvementWork.project_leader)
+    setProjectLeader(leader)
+
+    const members = await getMemberNames(improvementWork.project_members)
+    setProjectMembers(members);
+  }
+
   return (
     <>
-      <Modal show={show} onHide={onHide} size="lg">
+      <Modal onShow={showModal} show={show} onHide={onHide} size="lg">
         <Modal.Header
           style={{
             borderColor: "#FFFFFF",

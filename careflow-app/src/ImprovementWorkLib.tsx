@@ -78,6 +78,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     notes: string;
   };
@@ -85,6 +86,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     idea: string;
     notes: string;
@@ -99,6 +101,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     notes: string;
   };
@@ -107,6 +110,7 @@ export interface Iteration {
     files: {
       file_descriptions: Array<string>;
       file_names: Array<string>;
+      file_urls : Array<string>;
     };
     notes: string;
   };
@@ -415,22 +419,45 @@ function includeForUser(improvementWork: ImprovementWork, filter: UserFilterStat
 
 export async function getMemberName(hsaId: string) {
   const docRef = doc(db, "users", hsaId);
-  // console.log("hämtar namn: " && hsaId)
+  console.log("hämtar namn")
   try {
     return Promise.all([getDoc(docRef)]).then(([userSnapshot]) => {
       if (userSnapshot && userSnapshot.exists()) {
         let userData: string =
           userSnapshot.data().first_name + " " + userSnapshot.data().sur_name;
+        // console.log(userData)
         return userData;
       } else {
         console.error("Document not found");
-        return null;
+        return "";
       }
     });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return null;
+    return "";
   }
+}
+
+export async function getMemberNames(hsaIds: string[]) {
+  const fetchedMembers: string[] = [];
+  console.log("hämtar namn")
+  // Use map to create an array of promises
+  const promises = hsaIds.map(async (hsaId) => {
+    const memberRef = doc(db, "users", hsaId);
+    const memberSnap = await getDoc(memberRef);
+
+    if (memberSnap.exists()) {
+      const member = memberSnap.data().first_name + " " + memberSnap.data().sur_name;
+      fetchedMembers.push(member);
+    } else {
+      console.log("No such document!");
+    }
+  });
+
+  // Use Promise.all to wait for all promises to resolve
+  await Promise.all(promises);
+
+  return fetchedMembers;
 }
 
 export async function deleteProject(id: string) {
