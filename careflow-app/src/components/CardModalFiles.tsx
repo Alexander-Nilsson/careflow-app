@@ -160,7 +160,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
               />
               {/* Print the file name followed by the decription (if there is no description, only print the file name) */}
               {files.file_descriptions[index] === "" ? (
-                <span>{item}</span>
+                <span><Link to={files.file_urls[index]}>{item}</Link></span>
               ) : (
                 <span>
                   <Link to={files.file_urls[index]}>{item}</Link>
