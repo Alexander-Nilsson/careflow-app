@@ -181,16 +181,16 @@ function CreateProjectModal({
     }
   };
 
-  const handleTagClick = (chosenMember: string) => {
+  const handleTagClick = (chosenTag: string) => {
     //If the selected member already has been chosen, remove from the array
-    if (selectedTags.includes(chosenMember)) {
+    if (selectedTags.includes(chosenTag)) {
       const updatedChosenMembers = selectedTags.filter(
-        (member) => member !== chosenMember
+        (member) => member !== chosenTag
       );
       setSelectedTags(updatedChosenMembers);
       //If the selected member has not already been chosen, add the member to the array
     } else {
-      const updatedChosenMembers = [...selectedTags, chosenMember];
+      const updatedChosenMembers = [...selectedTags, chosenTag];
       setSelectedTags(updatedChosenMembers);
     }
   };
