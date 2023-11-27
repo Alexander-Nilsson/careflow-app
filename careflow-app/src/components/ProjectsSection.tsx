@@ -7,6 +7,7 @@ import {
     ImprovementWork,
     filterForUser,
     findTagOptions,
+    getAllImprovementWorks,
 } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
@@ -53,13 +54,12 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
         setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
     }
 
-
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
     useEffect(() => {
         const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
         setDisplayedImprovementWorks(filteredImprovementWorks)
-    }, [filterState]);
+    }, [filterState, allImprovementWorks]);
 
     // denna useEffect ser till att man hämtar taggar endast en gång, eftersom den inte har en hook som den ovan har.
     // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
