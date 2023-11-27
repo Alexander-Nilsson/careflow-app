@@ -83,19 +83,7 @@ interface CreateProjectModalProps {
 }
 
 // Writes the formdata to database
-async function sendToDataBase(projectData: object) {
-  try {
-    const docRef = await addDoc(
-      collection(db, "improvementWorks"),
-      projectData
-    );
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-}
-
-// async function sendToDataBase(projectData: object): Promise<void> {
+// async function sendToDataBase(projectData: object) {
 //   try {
 //     const docRef = await addDoc(
 //       collection(db, "improvementWorks"),
@@ -104,9 +92,21 @@ async function sendToDataBase(projectData: object) {
 //     console.log("Document written with ID: ", docRef.id);
 //   } catch (e) {
 //     console.error("Error adding document: ", e);
-//     throw e; // Throw an error to be caught in handleSubmit
 //   }
 // }
+
+async function sendToDataBase(projectData: object): Promise<void> {
+  try {
+    const docRef = await addDoc(
+      collection(db, "improvementWorks"),
+      projectData
+    );
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    throw e; // Throw an error to be caught in handleSubmit
+  }
+}
 
 
 function CreateProjectModal({
@@ -314,8 +314,8 @@ function CreateProjectModal({
       setIdeas("");
       setMeasure("");
       setGoals("");
-      sendToDataBase(projectData);
-      onHide(); // Only close the modal if the title is provided
+      // sendToDataBase(projectData);
+      // onHide(); // Only close the modal if the title is provided
     }
 
     try {

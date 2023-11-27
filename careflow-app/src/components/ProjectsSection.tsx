@@ -59,7 +59,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     useEffect(() => {
         const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
         setDisplayedImprovementWorks(filteredImprovementWorks)
-    }, [filterState]);
+    }, [filterState, allImprovementWorks]);
 
     // denna useEffect ser till att man hämtar taggar endast en gång, eftersom den inte har en hook som den ovan har.
     // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras

@@ -137,6 +137,11 @@ function Projects() {
     // Fetch projects only if the user is authenticated and data is not loading.
     fetchProjects();
   }, [isAuthenticated]);
+  const refreshImprovementWorks = async () => {
+    const updatedImprovementWorks = await getAllImprovementWorks();
+    setAllImprovementWorks(updatedImprovementWorks);
+  };
+  
 
   useEffect(() => {
     if (allImprovementWorks.length > 0) {
@@ -226,7 +231,7 @@ function Projects() {
             justifyContent: "flex-end",
           }}
         >
-          {/* <CreateNewProject /> */}
+          <CreateNewProject onRefreshProjects={refreshImprovementWorks} />
         </div>
       </div>
 
