@@ -71,49 +71,6 @@ interface cardModalProps {
     improvementWork: ImprovementWork,
     newPhase: number
   ) => void;
-  /*
-  id: Id;
-  title: string;
-  phase: Id;
-  place: string;
-  centrum: string;
-  tags: Array<string>;
-  date_created: Timestamp;
-  goals: Array<string>;
-  ideas_array: Array<string>;
-  measure: Array<string>;
-  purpose: string;
-  result_measurements: string;
-  result_analysis: string;
-  notes_plan: string;
-  notes_do: string;
-  notes_study: string;
-  notes_act: string;
-  total_iterations: number;
-  files_plan: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_do: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_study: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_act: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  project_leader: string;
-  project_members: Array<string>;
-  checklist_plan: {
-    checklist_done: Array<boolean>;
-    checklist_items: Array<string>;
-    checklist_members: Array<string>;
-  };
-  */
 }
 
 interface modalContentPlanProps {
