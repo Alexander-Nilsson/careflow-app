@@ -574,7 +574,7 @@ function CreateProjectModal({
                 border: "1px solid #DDDDDD",
               }}
             >
-              Lägg till beskrivande nyckelord
+              Vilka nyckelord beskriver förbättringsarbetet?
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
               {tags.map((tag) => (

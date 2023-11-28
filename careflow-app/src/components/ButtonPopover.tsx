@@ -33,7 +33,7 @@ const ButtonPopover: React.FC<ButtonPopoverProps> = ({
       placement={position}
       overlay={popoverContent}
     >
-      <div style={{ marginRight: "10px", marginBottom: "3px" }}>{text}</div>
+      <div style={{ marginBottom: "3px" ,padding:"5px"}}>{text}</div>
     </OverlayTrigger>
   );
 };
