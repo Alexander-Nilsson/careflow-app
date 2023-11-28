@@ -15,14 +15,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 interface Props {
   column: Column;
-  //createProject: (columnId: Id) => void;
-  //projectList: Project[];
   improvementWorkList: ImprovementWork[];
   isAdmin: boolean;
-  updateImprovementWorkPhase: (
-    improvementWork: ImprovementWork,
-    newPhase: number
-  ) => void;
   fetchProjects: () => void;
 }
 
@@ -30,7 +24,6 @@ function ColumnContainer({
   column,
   improvementWorkList,
   isAdmin,
-  updateImprovementWorkPhase,
   fetchProjects,
 }: Props) {
   // Memoize task IDs for use in SortableContext
@@ -95,7 +88,6 @@ function ColumnContainer({
               key={improvementWork.id}
               improvementWork={improvementWork}
               isAdmin={isAdmin}
-              updateImprovementWorkPhase={updateImprovementWorkPhase}
               fetchProjects={fetchProjects}
             />
           ))}

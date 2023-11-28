@@ -4,26 +4,17 @@ import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
 import { useSortable } from "@dnd-kit/sortable";
-import { Id, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
-  updateImprovementWorkPhase: (
-    improvementWork: ImprovementWork,
-    newPhase: number
-  ) => void;
   fetchProjects: () => void;
 }
 
-function ShowCard({
-  improvementWork,
-  isAdmin,
-  updateImprovementWorkPhase,
-  fetchProjects,
-}: ShowCardProps) {
+function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
   // State to track whether the mouse is over the task card
 
   const [show, setShow] = useState(false);
@@ -74,8 +65,6 @@ function ShowCard({
         console.error("Error fetching member names:", error);
       }
     };
-
-    // fetchData();
   }, []);
 
   // UseSortable hook for drag-and-drop functionality
@@ -86,8 +75,6 @@ function ShowCard({
         type: "ImprovementWork",
         improvementWork,
       },
-
-      //disabled: editMode,
     });
 
   // Define the style based on drag-and-drop transition
@@ -126,7 +113,6 @@ function ShowCard({
             show={show}
             onHide={modalClose}
             improvementWork={improvementWork}
-            updateImprovementWorkPhase={updateImprovementWorkPhase}
           />
         }
       </div>

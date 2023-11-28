@@ -67,10 +67,6 @@ interface cardModalProps {
   show: boolean;
   onHide: (data?: any) => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
-  updateImprovementWorkPhase?: (
-    improvementWork: ImprovementWork,
-    newPhase: number
-  ) => void;
 }
 
 interface modalContentPlanProps {
@@ -428,7 +424,7 @@ function ModalContentDo({
 
           {/* ---------------------------------------- */}
 
-         {/* <CardModalSimilarProjects tags={updatedTags} /> */}
+          {/* <CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -599,7 +595,6 @@ function CardModal({
   show,
   onHide,
   improvementWork,
-  updateImprovementWorkPhase,
 }: // project_leader,
 // project_members,
 cardModalProps) {
@@ -791,14 +786,6 @@ cardModalProps) {
   const handlePhaseUpdate = (phase: number) => {
     // Set loadDataOnClose to TRUE
     setLoadDataOnClose(true);
-    /*
-    // TODO Modal now closes on DONE
-    if (updateImprovementWorkPhase) {
-      updateImprovementWorkPhase(improvementWork, phase + 1);
-    } else {
-      console.error("updateImprovementWorkPhase is undefined");
-    }
-    */
 
     if (phase === 5) {
       //If "Avsluta arbete" is clicked in the act phase

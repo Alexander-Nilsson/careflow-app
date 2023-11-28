@@ -101,7 +101,6 @@ function KanbanBoard() {
                   (ImprovementWork) =>
                     ImprovementWork.phase === col.id && !ImprovementWork.closed //only display non- closed cards in kanban
                 )}
-                updateImprovementWorkPhase={updateImprovementWorkPhase}
                 isAdmin={isAdmin}
                 fetchProjects={fetchProjects}
               />
@@ -242,6 +241,7 @@ function KanbanBoard() {
     }
   }
 
+  /*
   //function to update phase in view (not db)
   function updateImprovementWorkPhase(
     improvementWork: ImprovementWork,
@@ -254,6 +254,7 @@ function KanbanBoard() {
     setImprovementWorkList(newImprovementWorks);
     console.log("Update improvementWork phase in UI");
   }
+  */
 }
 
 export default KanbanBoard;
