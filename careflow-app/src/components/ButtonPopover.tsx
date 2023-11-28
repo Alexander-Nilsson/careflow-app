@@ -16,6 +16,7 @@ const ButtonPopover: React.FC<ButtonPopoverProps> = ({
   position = "right",
 }) => {
   const formattedDescription = content.replace(/\\n/g, "\n");
+  const formattedText = text.replace(/\\n/g, "\n");
   const popoverContent = (
     <Popover
       id={`popover-positioned-${position}`}
@@ -33,7 +34,7 @@ const ButtonPopover: React.FC<ButtonPopoverProps> = ({
       placement={position}
       overlay={popoverContent}
     >
-      <div style={{ marginRight: "10px", marginBottom: "3px" }}>{text}</div>
+      <div style={{ marginBottom: "3px" ,padding:"5px"}}>{formattedText}</div>
     </OverlayTrigger>
   );
 };

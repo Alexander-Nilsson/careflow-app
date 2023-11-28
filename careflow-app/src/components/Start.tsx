@@ -108,7 +108,7 @@ function Start() {
             showClosed={false}
              />
           <div className="d-flex mr-2 w-100">
-            <IdeasSection userInfo={userInfo} />
+            <IdeasSection userInfo={userInfo} width={"42%"} />
             <ProgressSection improvementWorks={improvementWorks} />
           </div>
           {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}

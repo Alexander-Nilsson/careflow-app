@@ -5,8 +5,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { filterForUser, UserFilterState } from "../ImprovementWorkLib";
 import { findPlaceOptions, findTagOptions, searchImprovementWorks } from "../ImprovementWorkLib";
 import {
-  // getAllProjects,
-  Project,
   sortByDateCreated,
   sortByOldestDate,
   sortByTitleAscending,
@@ -31,6 +29,7 @@ export interface ProjectContextType {
     React.SetStateAction<ImprovementWork[]>
   >;
   isAdmin: boolean;
+  fetchProjects: () => Promise<void>;
 }
 
 function Spinner() {
@@ -217,7 +216,7 @@ function Projects() {
         }}
       >
         <div className="outerContainer" style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", alignItems: "baseline" }}>
+          <div style={{ display: "flex" }}>
             <TitleBox
               title={"Mina förbättringsarbeten"}
               description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
@@ -227,8 +226,10 @@ function Projects() {
             {/*<div className="questionMark" style={{ marginLeft: "2vh" }}>
       <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
       </div> */}
-            <div className="buttonPopover" style={{ marginLeft: "2vh", fontStyle: 'italic', fontSize: "80%", fontWeight: "bold" }}>
+      <div className="buttonPopoverContainer" style={{  fontSize: "80%", borderRadius: "5px", height: "100%",paddingTop: "1vh" }}>
+            <div className="buttonPopover" style={{ marginLeft: "2vh",color: "white",fontStyle: 'italic', fontSize: "80%",backgroundColor: "#051F6F", borderRadius: "5px" }}>
               <ButtonPopover title={"Vad är förbättringsmodellen och hur hjälper den oss?"} content={" \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "} text={"Vad är förbättringsmodellen?"}></ButtonPopover>
+            </div>
             </div>
           </div>
           <div className="description" style={{ marginLeft: "2vw" }}>
@@ -331,6 +332,7 @@ function Projects() {
           improvementWorkList,
           setImprovementWorkList,
           isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
+          fetchProjects,
         }}
       >
         <KanbanBoard />
