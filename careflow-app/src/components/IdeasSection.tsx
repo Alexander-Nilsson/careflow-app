@@ -10,9 +10,10 @@ import rightArrow from "../Images/right-arrow.png";
 
 type IdeasSectionProps = {
     userInfo: UserInfoType;
+    width: string;
 };
 
-function IdeasSection({ userInfo }: IdeasSectionProps) {
+function IdeasSection({ userInfo,width }: IdeasSectionProps) {
     // You can define your project data here
     const ideasSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
@@ -21,7 +22,7 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
         // margin: "10px",
         // marginLeft: "20px",
         marginTop: "0px",
-        width: "42%",
+        width: width,
         boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
     };
 
