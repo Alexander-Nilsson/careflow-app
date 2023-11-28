@@ -61,7 +61,12 @@ function KanbanBoard() {
     );
   }
 
-  const { improvementWorkList, setImprovementWorkList, isAdmin } = context;
+  const {
+    improvementWorkList,
+    setImprovementWorkList,
+    isAdmin,
+    fetchProjects,
+  } = context;
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
 
@@ -97,21 +102,25 @@ function KanbanBoard() {
                     ImprovementWork.phase === col.id && !ImprovementWork.closed //only display non- closed cards in kanban
                 )}
                 isAdmin={isAdmin}
+                fetchProjects={fetchProjects}
               />
             ))}
           </div>
 
+          {/*
           {createPortal(
             <DragOverlay>
               {activeImprovementWork && (
                 <ShowCard
                   improvementWork={activeImprovementWork}
                   isAdmin={isAdmin}
+                  updateImprovementWorkPhase={updateImprovementWorkPhase}
                 />
               )}
             </DragOverlay>,
             document.body
           )}
+          */}
         </DndContext>
       </div>
     </div>
@@ -231,6 +240,21 @@ function KanbanBoard() {
       });
     }
   }
+
+  /*
+  //function to update phase in view (not db)
+  function updateImprovementWorkPhase(
+    improvementWork: ImprovementWork,
+    newPhase: number
+  ) {
+    const newImprovementWorks = improvementWorkList.map((work) => {
+      if (work.id !== improvementWork.id) return work;
+      return { ...work, phase: newPhase };
+    });
+    setImprovementWorkList(newImprovementWorks);
+    console.log("Update improvementWork phase in UI");
+  }
+  */
 }
 
 export default KanbanBoard;

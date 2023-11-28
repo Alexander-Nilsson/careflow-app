@@ -5,8 +5,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { filterForUser, UserFilterState } from "../ImprovementWorkLib";
 import { findPlaceOptions, findTagOptions, searchImprovementWorks } from "../ImprovementWorkLib";
 import {
-  // getAllProjects,
-  Project,
   sortByDateCreated,
   sortByOldestDate,
   sortByTitleAscending,
@@ -31,6 +29,7 @@ export interface ProjectContextType {
     React.SetStateAction<ImprovementWork[]>
   >;
   isAdmin: boolean;
+  fetchProjects: () => Promise<void>;
 }
 
 function Spinner() {
@@ -333,6 +332,7 @@ function Projects() {
           improvementWorkList,
           setImprovementWorkList,
           isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
+          fetchProjects,
         }}
       >
         <KanbanBoard />
