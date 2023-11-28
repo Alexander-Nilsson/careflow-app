@@ -18,6 +18,7 @@ import {
   handleFocusBulletPointGoals,
   handleKeyPressBulletPointGoals,
   findUserIds,
+  findUserInfo,
 } from "./CreateProjectModalHelp";
 import { getUser2 } from "../ImprovementWorkLib";
 
@@ -79,6 +80,7 @@ interface CreateProjectModalProps {
   users: any[];
   tags: any[];
   usersClassArray: any[];
+  usersInfoArray: any[];
 }
 
 // Writes the formdata to database
@@ -100,6 +102,7 @@ function CreateProjectModal({
   users,
   tags,
   usersClassArray,
+  usersInfoArray,
 }: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
@@ -184,14 +187,12 @@ function CreateProjectModal({
   const handleTagClick = (chosenTag: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedTags.includes(chosenTag)) {
-      const updatedChosenMembers = selectedTags.filter(
-        (member) => member !== chosenTag
-      );
-      setSelectedTags(updatedChosenMembers);
+      const updatedChosenTags = selectedTags.filter((tag) => tag !== chosenTag);
+      setSelectedTags(updatedChosenTags);
       //If the selected member has not already been chosen, add the member to the array
     } else {
-      const updatedChosenMembers = [...selectedTags, chosenTag];
-      setSelectedTags(updatedChosenMembers);
+      const updatedChosenTags = [...selectedTags, chosenTag];
+      setSelectedTags(updatedChosenTags);
     }
   };
 
@@ -206,6 +207,7 @@ function CreateProjectModal({
     const formJson = Object.fromEntries(formData.entries());
 
     let project_members = findUserIds(selectedMembers, usersClassArray);
+    let clinic = findUserInfo(selectedMembers, usersInfoArray);
     // Remove logged in user from members list
     project_members = project_members.filter((item) => item != userID);
 
@@ -213,7 +215,7 @@ function CreateProjectModal({
       title: formJson.title,
       centrum: centrum,
       place: place,
-      clinic: department,
+      clinic: clinic,
       closed: false,
       phase: 2, // planning phase is phase 2
       date_created: Timestamp.fromDate(new Date()),
