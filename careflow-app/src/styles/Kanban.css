@@ -90,3 +90,16 @@ body {
   box-sizing: border-box;
 
 }
+
+.custom-modal-width {
+  max-width: 100%;
+}
+
+
+.wide-ideas-section {
+  width: 100%;
+}
+
+.plus-icon-hover {
+  cursor: pointer;
+}
