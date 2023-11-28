@@ -19,7 +19,6 @@ export class userIDname {
 }
 
 async function fetchUsers() {
-
   const userSnapshot = await getUsers();
   userSnapshot.forEach((doc) => {
     const userData = doc.data() as User;
@@ -123,7 +122,7 @@ const tagConverter = {
   },
 };
 
-var tags: any[] = [];
+export var tags: any[] = [];
 
 async function fetchTags() {
   const querySnapshot = await getTags();
@@ -135,7 +134,12 @@ async function fetchTags() {
   });
 }
 
-function CreateNewProject() {
+interface CreateNewProjectProps {
+  onRefreshProjects: () => Promise<void>;
+  // Define other props here if there are any
+}
+
+function CreateNewProject({ onRefreshProjects }: CreateNewProjectProps) {
   const [show, setShow] = useState(false);
 
   const modalClose = () => setShow(false);
@@ -154,6 +158,7 @@ function CreateNewProject() {
         users={users}
         tags={tags}
         usersClassArray={usersClassArray}
+        onRefreshProjects={onRefreshProjects}
       />
     </div>
   );

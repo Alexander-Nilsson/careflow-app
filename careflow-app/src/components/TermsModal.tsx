@@ -18,9 +18,11 @@ function TermsModal() {
   
     return (
       <>
+        {/* temporarily inactive based on analyst feedback
         <a style = {styles.termsOfUse} onClick={handleShow}>
           Användarvillkor
         </a>
+    */}
         <Modal show={show} onHide={handleClose}>
           {/* Modal content for terms */}
           <Modal.Header closeButton>

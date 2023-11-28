@@ -15,11 +15,21 @@ import { Tag, User } from "./components/CreateNewProject";
 
 export type Id = string | number;
 
-export interface FilterState {
+export interface UserFilterState {
   includeUser: boolean;
   includeClinic: boolean;
+  includeCentrum: boolean;
   tagFilter: string;
   closed: boolean;
+  placeFilter: string;
+}
+
+export interface ArchiveFilterState {
+  clinic: string;
+  centrum: string;
+  tag: string;
+  closed: string;
+  place: string;
 }
 
 export interface Project {
@@ -128,48 +138,6 @@ export interface ImprovementWork {
   total_iterations: number;
 }
 
-function setProject(id: string, data: DocumentData) {
-  let project: Project = {
-    id: id,
-    title: data.title,
-    description: data.description,
-    phase: data.phase,
-    place: data.place,
-    centrum: data.centrum,
-    tags: data.tags,
-    date_created: data.date_created,
-    result_measurements: data.result_measurements,
-    result_analysis: data.result_analysis,
-    notes_plan: data.notes_plan,
-    notes_do: data.notes_do,
-    notes_study: data.notes_study,
-    notes_act: data.notes_act,
-    project_leader: data.project_leader,
-    project_members: data.project_members,
-    checklist_plan: {
-      checklist_item: data.checklist_plan.checklist_item,
-      checklist_done: data.checklist_plan.checklist_done,
-      checklist_members: data.checklist_plan.checklist_members,
-    },
-    checklist_do: {
-      checklist_item: data.checklist_do.checklist_item,
-      checklist_done: data.checklist_do.checklist_done,
-      checklist_members: data.checklist_do.checklist_members,
-    },
-    checklist_study: {
-      checklist_item: data.checklist_study.checklist_item,
-      checklist_done: data.checklist_study.checklist_done,
-      checklist_members: data.checklist_study.checklist_members,
-    },
-    checklist_act: {
-      checklist_item: data.checklist_act.checklist_item,
-      checklist_done: data.checklist_act.checklist_done,
-      checklist_members: data.checklist_act.checklist_members,
-    },
-  };
-  return project;
-}
-
 function setImprovementWork(id: string, data: DocumentData) {
   let improvementWork: ImprovementWork = {
     id: id,
@@ -197,6 +165,7 @@ function setImprovementWork(id: string, data: DocumentData) {
 
 export async function getAllImprovementWorks() {
   const improvementWorksCollectionRef = collection(db, "improvementWorks");
+  console.log("hämtar alla ImprovementWorks...")
 
   const improvementWorksQuery = query(improvementWorksCollectionRef);
   let improvementWorksData: ImprovementWork[] = [];
@@ -238,86 +207,196 @@ export async function getAllTags() {
   return tags
 }
 
-export function sortByDateCreated<T extends { date_created: Timestamp }>(
-  data: T[]
-): T[] {
+export function sortByDateCreated<T extends { date_created: Timestamp }>(data: T[]): T[] {
   return data.sort((a, b) => a.date_created.seconds - b.date_created.seconds);
 }
 
-export function sortByOldestDate<T extends { date_created: Timestamp }>(
-  data: T[]
-): T[] {
+export function sortByOldestDate<T extends { date_created: Timestamp }>(data: T[]): T[] {
   return data.sort((a, b) => b.date_created.seconds - a.date_created.seconds);
 }
 
-export function sortByTitleAscending<T extends { title: string }>(
-  data: T[]
-): T[] {
-  return data.sort((a, b) =>
-    a.title.localeCompare(b.title, "sv", { sensitivity: "base" })
-  );
+export function sortByTitleAscending<T extends { title: string }>(data: T[]): T[] {
+  return data.sort((a, b) => a.title.localeCompare(b.title, 'sv', { sensitivity: 'base' }));
 }
 
-export function sortByTitleDescending<T extends { title: string }>(
-  data: T[]
-): T[] {
-  return data.sort((a, b) =>
-    b.title.localeCompare(a.title, "sv", { sensitivity: "base" })
-  );
+export function sortByTitleDescending<T extends { title: string }>(data: T[]): T[] {
+  return data.sort((a, b) => b.title.localeCompare(a.title, 'sv', { sensitivity: 'base' }));
+
 }
 export function findTagOptions(orgImprovementWorks: ImprovementWork[]) {
-  let tagOptions: string[] = [];
+  let tagOptions: string[] = []
   orgImprovementWorks.forEach((improvementWork) => {
     improvementWork.tags.forEach((tags) => {
       if (!tagOptions.includes(tags)) {
         tagOptions.push(tags);
       }
-    });
-  });
-  return tagOptions;
+    })
+  })
+  return tagOptions
+}
+
+export function findPlaceOptions(orgImprovementWorks: ImprovementWork[]) {
+  let placeOptions: string[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (!placeOptions.includes(improvementWork.place)) {
+      placeOptions.push(improvementWork.place);
+    }
+  })
+  return placeOptions
+}
+
+export function findClinicOptions(orgImprovementWorks: ImprovementWork[]) {
+  let clinicOptions: string[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (!clinicOptions.includes(improvementWork.clinic)) {
+      clinicOptions.push(improvementWork.clinic);
+    }
+  })
+  return clinicOptions
+}
+
+export function findCentrumOptions(orgImprovementWorks: ImprovementWork[]) {
+  let centrumOptions: string[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (!centrumOptions.includes(improvementWork.centrum)) {
+      centrumOptions.push(improvementWork.centrum);
+    }
+  })
+  return centrumOptions
 }
 
 // denna sköter hela filtreringen. Man går igenom alla projekt och kollar vilka som ska
 // filtreras bort genom att anropa include
-export function filterImprovementWorks(
-  orgImprovementWorks: ImprovementWork[],
-  filter: FilterState,
-  userInfo: UserInfoType
-) {
-  let filteredImprovementWorks: ImprovementWork[] = [];
+export function filterForUser(orgImprovementWorks: ImprovementWork[], filter: UserFilterState, userInfo: UserInfoType, sort: string) {
+  let filteredImprovementWorks: ImprovementWork[] = []
   orgImprovementWorks.forEach((improvementWork) => {
-    // console.log(improvementWork)
-    if (include(improvementWork, filter, userInfo)) {
-      filteredImprovementWorks.push(improvementWork);
+    if (includeForUser(improvementWork, filter, userInfo)) {
+      filteredImprovementWorks.push(improvementWork)
     }
-  });
-  return sortByOldestDate(filteredImprovementWorks);
+  })
+  if (sort === "oldest_date") {
+    return sortByOldestDate(filteredImprovementWorks)
+  } else if (sort === "date_created") {
+    return sortByDateCreated(filteredImprovementWorks)
+  } else if (sort === "ascending") {
+    return sortByTitleAscending(filteredImprovementWorks)
+  } else if (sort === "descending") {
+    return sortByTitleDescending(filteredImprovementWorks)
+  } else {
+    return sortByDateCreated(filteredImprovementWorks)
+  }
 }
 
-function include(
-  improvementWork: ImprovementWork,
-  filter: FilterState,
-  userInfo: UserInfoType
-) {
+// filtreras bort genom att anropa include
+export function filterAll(orgImprovementWorks: ImprovementWork[], filter: ArchiveFilterState, sort: string) {
+  let filteredImprovementWorks: ImprovementWork[] = []
+  orgImprovementWorks.forEach((improvementWork) => {
+    if (includeArchive(improvementWork, filter)) {
+      filteredImprovementWorks.push(improvementWork)
+    }
+  })
+  if (sort === "oldest_date") {
+    return sortByOldestDate(filteredImprovementWorks)
+  } else if (sort === "date_created") {
+    return sortByDateCreated(filteredImprovementWorks)
+  } else if (sort === "ascending") {
+    return sortByTitleAscending(filteredImprovementWorks)
+  } else if (sort === "descending") {
+    return sortByTitleDescending(filteredImprovementWorks)
+  } else {
+    return sortByDateCreated(filteredImprovementWorks)
+  }
+}
+
+export function searchImprovementWorks(orgImprovementWorks: ImprovementWork[], search: string, sort: string) {
+  const searchedImprovementWorks = orgImprovementWorks.filter((improvementWork) =>
+    improvementWork.title.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.place.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.clinic.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.centrum.toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.date_created.toDate().toString().toLowerCase().includes(search.toLowerCase()) ||
+    improvementWork.goals.some(goal => goal.toLowerCase().includes(search.toLowerCase())) ||
+    improvementWork.goals.some(idea => idea.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  if (sort === "oldest_date") {
+    return sortByOldestDate(searchedImprovementWorks)
+  } else if (sort === "date_created") {
+    return sortByDateCreated(searchedImprovementWorks)
+  } else if (sort === "ascending") {
+    return sortByTitleAscending(searchedImprovementWorks)
+  } else if (sort === "descending") {
+    return sortByTitleDescending(searchedImprovementWorks)
+  } else {
+    return sortByDateCreated(searchedImprovementWorks)
+  }
+  
+}
+
+export function filterOnTags(orgImprovementWorks: ImprovementWork[], tag: string, sort: string) {
+  if (tag !== "all_tags") {
+    let filteredImprovementWorks: ImprovementWork[] = []
+    orgImprovementWorks.forEach((improvementWork) => {
+      if (improvementWork.tags.includes(tag)) {
+        filteredImprovementWorks.push(improvementWork)
+      }
+    })
+    return filteredImprovementWorks
+  } else {
+    return orgImprovementWorks
+  }
+}
+
+function includeArchive(improvementWork: ImprovementWork, filter: ArchiveFilterState) {
+
+  if (filter.closed !== "all") {
+    if ((filter.closed === "closed" && !improvementWork.closed) || (filter.closed === "open" && improvementWork.closed)) {
+      return false;
+    }
+  }
+
+  // console.log(filter.tag)
+  // console.log(improvementWork.tags)
+  if (filter.tag !== "all_tags") {
+    if (!improvementWork.tags.includes(filter.tag)) {
+      return false;
+    }
+  }
+
+  // console.log(filter.place)
+  // console.log(improvementWork.place)
+  if (filter.place !== "all_places") {
+    if (filter.place !== improvementWork.place) {
+      return false;
+    }
+  }
+
+  if (filter.clinic !== "all_clinics") {
+    if (filter.clinic !== improvementWork.clinic) {
+      return false;
+    }
+  }
+
+  if (filter.centrum !== "all_centrums") {
+    if (filter.centrum !== improvementWork.centrum) {
+      return false;
+    }
+  }
+
+  return true
+}
+
+function includeForUser(improvementWork: ImprovementWork, filter: UserFilterState, userInfo: UserInfoType) {
   // if we are searching for closed ImpWorks and the focal ImpWork is open
   // OR if we are searching for open ImpWorks and the focal ImpWork is closed,
   // don't include it.
-  if (
-    (filter.closed && !improvementWork.closed) ||
-    (!filter.closed && improvementWork.closed)
-  ) {
+  if ((filter.closed && !improvementWork.closed) || (!filter.closed && improvementWork.closed)) {
     return false;
   }
 
   // if we are filtering users ImpWorks and the user neither a member nor a leader,
   // don't include it
-  if (
-    filter.includeUser &&
-    !(
-      improvementWork.project_leader == userInfo.hsaID ||
-      improvementWork.project_members.includes(userInfo.hsaID)
-    )
-  ) {
+  if (filter.includeUser && !(improvementWork.project_leader == userInfo.hsaID || improvementWork.project_members.includes(userInfo.hsaID))) {
     return false;
     // if we are filtering on the user's clinic and the focal ImpWork is not in the user's clinic,
     // don't include it

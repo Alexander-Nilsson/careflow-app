@@ -128,6 +128,7 @@ function CardModalChecklist({
       <Form.Group style={formGroupStyle}>
         <Form.Label>
           <b>Aktiviteter för att genomföra idén</b>
+          <p style={{ fontSize: '75%', fontStyle: 'italic' }}>I planera-fasen dokumenterar vi aktiviteter för att genomföra idéen och vem eller vilka som ansvarar för aktiviteten. <br></br> Finns det processer vi kan använda? Behöver vi inhämta kunskap? Behöver vi kontakta någon? </p>
         </Form.Label>
         <div style={whiteContainerStyle}>
           {checklist.checklist_items.map((item, index) => (
@@ -188,7 +189,7 @@ function CardModalChecklist({
         <Modal.Body className="d-flex justify-content-center align-items-center">
           <Form style={{ width: "90%" }}>
             <div className="mb-3 text-center">
-              <label>Aktivitet</label>
+              <label>Namnge aktivitet</label>
               <input
                 type="text"
                 className="form-control"
@@ -206,7 +207,7 @@ function CardModalChecklist({
                     border: "1px solid #DDDDDD",
                   }}
                 >
-                  Lägg till kollegor
+                  Vem eller vilka ansvarar för aktiviteten?
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{ width: "100%" }}>
                   <Dropdown.Item

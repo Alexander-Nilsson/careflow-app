@@ -79,10 +79,23 @@ interface CreateProjectModalProps {
   users: any[];
   tags: any[];
   usersClassArray: any[];
+  onRefreshProjects: () => Promise<void>;
 }
 
 // Writes the formdata to database
-async function sendToDataBase(projectData: object) {
+// async function sendToDataBase(projectData: object) {
+//   try {
+//     const docRef = await addDoc(
+//       collection(db, "improvementWorks"),
+//       projectData
+//     );
+//     console.log("Document written with ID: ", docRef.id);
+//   } catch (e) {
+//     console.error("Error adding document: ", e);
+//   }
+// }
+
+async function sendToDataBase(projectData: object): Promise<void> {
   try {
     const docRef = await addDoc(
       collection(db, "improvementWorks"),
@@ -91,8 +104,10 @@ async function sendToDataBase(projectData: object) {
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.error("Error adding document: ", e);
+    throw e; // Throw an error to be caught in handleSubmit
   }
 }
+
 
 function CreateProjectModal({
   show,
@@ -100,6 +115,7 @@ function CreateProjectModal({
   users,
   tags,
   usersClassArray,
+   onRefreshProjects
 }: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
@@ -167,7 +183,7 @@ function CreateProjectModal({
   }, [user]);
 
   //console.log(newTag);
-  const handleAlternativeClick = (chosenMember: string) => {
+  const handleMemberClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedMembers.includes(chosenMember)) {
       const updatedChosenMembers = selectedMembers.filter(
@@ -181,7 +197,7 @@ function CreateProjectModal({
     }
   };
 
-  const handleAlternativeClick1 = (chosenMember: string) => {
+  const handleTagClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedTags.includes(chosenMember)) {
       const updatedChosenMembers = selectedTags.filter(
@@ -196,7 +212,7 @@ function CreateProjectModal({
   };
 
   // is executed when submit button is pressed
-  function handleSubmit(e: any) {
+    async function handleSubmit(e: any) {
     // Prevent the browser from reloading the page
     e.preventDefault();
 
@@ -275,6 +291,8 @@ function CreateProjectModal({
       ],
     };
 
+    
+
     // Check if necessary fields is entered by user
     if (!formJson.title && projectData.ideas.length == 0) {
       setTitleError(true); // Show error message
@@ -296,8 +314,18 @@ function CreateProjectModal({
       setIdeas("");
       setMeasure("");
       setGoals("");
-      sendToDataBase(projectData);
-      onHide(); // Only close the modal if the title is provided
+      // sendToDataBase(projectData);
+      // onHide(); // Only close the modal if the title is provided
+    }
+
+    try {
+      await sendToDataBase(projectData); // Wait for the project to be added
+      onRefreshProjects(); // Refresh the project list in the parent component
+      onHide(); // Close the modal
+      // Optionally, reset form state here if needed
+    } catch (error) {
+      console.error("Failed to add project: ", error);
+      // Handle any errors here, such as showing an error message to the user
     }
   }
 
@@ -305,9 +333,13 @@ function CreateProjectModal({
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <div>
-          <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
+          {/*<HelpPopover
+            content={"Titel:\nSyfte:\nMål:\nMät och följa upp:\nSamla idéer"}
+  /> */}
         </div>
-        <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
+     
+        <label style={{ ...TitleStyle, display: 'flex', alignItems: 'center',justifyContent: "center", marginLeft: "20%", marginRight:"20%"}}>Skapa ett förbättringsarbete</label>
+      
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
@@ -345,7 +377,7 @@ function CreateProjectModal({
               <div>
                 <label style={TitleStyle}>Syfte</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Vad är syftet med förändringen?
+                Varför behövs förbättringen?
                 </div>
               </div>
             </div>
@@ -429,7 +461,7 @@ function CreateProjectModal({
               <div>
                 <label style={TitleStyle}>Mäta och följa upp</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Hur mäter vi om förändringen gör skillnad?
+                  Hur mäter vi om förbättringen gör skillnad?
                 </div>
               </div>
             </div>
@@ -474,7 +506,7 @@ function CreateProjectModal({
               <div>
                 <label style={TitleStyle}>Samla idéer</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Brainstorma idéer för för nå målen
+                Skriv ner idéer på lösningar som en i taget kan testas för att nå målen. I nästa steg väljer ni vilken idé som först testas i en PGSA-cykel.
                 </div>
               </div>
             </div>
@@ -516,7 +548,7 @@ function CreateProjectModal({
                 border: "1px solid #DDDDDD",
               }}
             >
-              Lägg till kollegor
+              Vilka ska genomföra förbättringen?
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
               {users.map((member) => (
@@ -526,7 +558,7 @@ function CreateProjectModal({
                       ? "bold"
                       : "normal",
                   }}
-                  onClick={() => handleAlternativeClick(member)}
+                  onClick={() => handleMemberClick(member)}
                 >
                   {member}
                 </Dropdown.Item>
@@ -545,29 +577,12 @@ function CreateProjectModal({
               Lägg till beskrivande nyckelord
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
-              {/* <div style={{ display: "flex", alignItems: "center" }}>
-                <Form.Control
-                  type="text"
-                  placeholder="Lägg till egna nyckelord"
-                  value={textValue}
-                  onChange={handleTextChange}
-                  className="mr-sm-2"
-                  style={{ width: "80%" }}
-                />
-                <Button
-                  variant="primary"
-                  onClick={handleConfirm}
-                  style={{ marginRight: "0" }}
-                >
-                  Lägg till
-                </Button>
-              </div> */}
               {tags.map((tag) => (
                 <Dropdown.Item
                   style={{
                     fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
                   }}
-                  onClick={() => handleAlternativeClick1(tag)}
+                  onClick={() => handleTagClick(tag)}
                 >
                   {tag}
                 </Dropdown.Item>
@@ -580,12 +595,15 @@ function CreateProjectModal({
               id="SkapaFörbättringsarbete"
               style={!isFormFilled ? ButtonStyleGrey : ButtonStyle}
             >
-              Skicka in förbättringsarbete
+              Skapa förbättringsarbetet
             </Button>
           </div>
         </Form>
       </Modal.Body>
     </Modal>
+    
   );
+  
 }
+
 export default CreateProjectModal;

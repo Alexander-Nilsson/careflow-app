@@ -2,22 +2,25 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { ImprovementWork, filterImprovementWorks, getAllImprovementWorks } from "../ImprovementWorkLib";
+import { ImprovementWork, UserFilterState, getAllImprovementWorks } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type FinishedProjectsSectionProps = {
   userInfo: UserInfoType;
-  improvementWorks: ImprovementWork[] | null;
+  allImprovementWorks: ImprovementWork[];
 };
 
-function FinishedProjectsSection({
-  userInfo,
-  improvementWorks,
-}: FinishedProjectsSectionProps) {
+function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProjectsSectionProps) {
   // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
-  const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<
-    ImprovementWork[] | null
-  >([]);
+  const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
+  const [filterState, setFilterState] = useState<UserFilterState>({
+    includeUser: true,
+    includeClinic: true,
+    includeCentrum: true,
+    tagFilter: "all_tags",
+    placeFilter: "all_places",
+    closed: true
+  });
 
   const fetchData = async () => {
     // const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
