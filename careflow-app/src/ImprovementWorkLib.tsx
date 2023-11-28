@@ -208,11 +208,11 @@ export async function getAllTags() {
 }
 
 export function sortByDateCreated<T extends { date_created: Timestamp }>(data: T[]): T[] {
-  return data.sort((a, b) => a.date_created.seconds - b.date_created.seconds);
+  return data.sort((a, b) => b.date_created.seconds - a.date_created.seconds);
 }
 
 export function sortByOldestDate<T extends { date_created: Timestamp }>(data: T[]): T[] {
-  return data.sort((a, b) => b.date_created.seconds - a.date_created.seconds);
+  return data.sort((a, b) => a.date_created.seconds - b.date_created.seconds);
 }
 
 export function sortByTitleAscending<T extends { title: string }>(data: T[]): T[] {
