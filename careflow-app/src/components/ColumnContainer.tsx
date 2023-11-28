@@ -107,7 +107,7 @@ function ColumnContainer({ column, improvementWorkList, isAdmin}: Props) {
       
       <Modal show={showModal} onHide={handleClose} dialogClassName="custom-modal-width">
         <Modal.Header closeButton>
-          <Modal.Title>Nytt förslag</Modal.Title>
+          <Modal.Title></Modal.Title>
         </Modal.Header>
         <Modal.Body style={{width:"100%"}}>
           {userInfo && <IdeasSection userInfo={userInfo} width={"100%"} />}
