@@ -6,7 +6,12 @@ import "../styles/Kanban.css";
 import ShowCard from "./ShowCard";
 import HelpPopover from "./HelpPopover";
 import { ImprovementWork } from "../ImprovementWorkLib";
-import React from "react";
+import Modal from "react-bootstrap/Modal";
+import IdeasSection from "./IdeasSection";
+import React, { useState, useEffect } from "react";
+import { useContext } from "react";
+import { UserInfoType, fetchUser } from "./Start";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface Props {
   column: Column;
@@ -33,6 +38,18 @@ function ColumnContainer({
     return improvementWorkList.map((improvementWork) => improvementWork.id);
   }, [improvementWorkList]);
 
+  const [showModal, setShowModal] = useState(false);
+
+  const { user } = useAuth0();
+
+  const handlePlusClick = () => {
+    setShowModal(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
   // UseSortable hook for drag-and-drop functionality
   const { setNodeRef } = useSortable({
     id: column.id,
@@ -42,6 +59,17 @@ function ColumnContainer({
     },
   });
 
+  const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
+
+  useEffect(() => {
+    // Fetch user info to check if admin
+    if (user?.name) {
+      //console.log(user);
+      fetchUser(user.name, user, setUserInfo);
+      console.log("User info:", userInfo);
+    }
+  }, []);
+
   // Count the number of tasks in the  column
   const taskCount = improvementWorkList.length;
 
@@ -49,7 +77,14 @@ function ColumnContainer({
   return (
     <div ref={setNodeRef} className="kanban-column">
       <div className="kanban-columnTitle">
-        <div className="flex gap-2">{column.title}</div>
+        <div className="flex gap-2">
+          {column.title}
+          {column.id === 1 && (
+            <div onClick={handlePlusClick} className="plus-icon-hover">
+              <PlusIcon />
+            </div>
+          )}
+        </div>
 
         <HelpPopover content={column.columnDescription} position="top" />
       </div>
@@ -68,16 +103,28 @@ function ColumnContainer({
       </div>
       <div className="kanban-footerButton">
         Antal: {taskCount}
-        {/*} <div
-          onClick={() => createProject(column.id)}
+        {/* <div
+          // onClick={() => createProject(column.id)}
           className="clickable-icon"
         >
           <PlusIcon />
           </div>*/}
       </div>
+
+      <Modal
+        show={showModal}
+        onHide={handleClose}
+        dialogClassName="custom-modal-width"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title></Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ width: "100%" }}>
+          {userInfo && <IdeasSection userInfo={userInfo} width={"100%"} />}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
 
-// Add this at the bottom of the ColumnContainer file
-export default React.memo(ColumnContainer);
+export default ColumnContainer;

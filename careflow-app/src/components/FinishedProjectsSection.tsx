@@ -2,26 +2,35 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HelpPopover from "./HelpPopover";
 import ProjectCard from "./ProjectCard";
-import { ImprovementWork, filterImprovementWorks } from "../ImprovementWorkLib";
+import { ImprovementWork, UserFilterState, getAllImprovementWorks } from "../ImprovementWorkLib";
 import { UserInfoType } from "./Start";
 
 type FinishedProjectsSectionProps = {
   userInfo: UserInfoType;
-  improvementWorks: ImprovementWork[] | null;
+  allImprovementWorks: ImprovementWork[];
 };
 
-function FinishedProjectsSection({
-  userInfo,
-  improvementWorks,
-}: FinishedProjectsSectionProps) {
+function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProjectsSectionProps) {
   // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[] | null>([]);
-  const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<
-    ImprovementWork[] | null
-  >([]);
+  const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[] | null>([]);
+  const [filterState, setFilterState] = useState<UserFilterState>({
+    includeUser: true,
+    includeClinic: true,
+    includeCentrum: true,
+    tagFilter: "all_tags",
+    placeFilter: "all_places",
+    closed: true
+  });
 
   const fetchData = async () => {
     // const fetchedImprovementWorks: ImprovementWork[] | null = await getUserImprovementWorks(userInfo.hsaID, true)
     // if (fetchedImprovementWorks) setImprovementWorks(fetchedImprovementWorks)
+
+    //Bug searching - getUserImprovementWorks(userInfo.hsaID, true) does not exist plus other functions in improvementWorkLib.tsx
+     // const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks()
+    // if (fetchedImprovementWorks) 
+    //console.log(fetchedImprovementWorks); 
+    //setDisplayedImprovementWorks(fetchedImprovementWorks)
   };
 
   const handleFilter = async (event: any) => {
@@ -35,7 +44,10 @@ function FinishedProjectsSection({
   };
 
   useEffect(() => {
-    // fetchData();
+//Bug searching, code below was already commented. findUserImprovementWorks removed/does not exist in ImprovementWorkLib.tsx?
+
+
+   // fetchData();
     // const userImprovementWorks: ImprovementWork[] | null =
     //   findUserImprovementWorks(userInfo.hsaID, improvementWorks, true);
     // setDisplayedImprovementWorks(userImprovementWorks);

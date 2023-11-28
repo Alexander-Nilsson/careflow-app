@@ -26,12 +26,14 @@ function CardModalNotes({ notes, setUpdatedNotes }: cardModalNotesProps) {
     <>
       <Form.Label>
         <b>Övriga anteckningar</b>
+        <p style={{ fontSize: '75%', fontStyle: 'italic' }}>Vill du anteckna något ytterligare som kan vara bra att veta i denna fas? <br></br> Skriv dina anteckningar i fältet nedan </p>
       </Form.Label>
       <textarea
         className="form-control"
         rows={3}
         value={notes}
         onChange={handleNotesInputChange}
+        placeholder="Skriv anteckningar här"
       ></textarea>
     </>
   );
