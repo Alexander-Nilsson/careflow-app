@@ -134,7 +134,12 @@ async function fetchTags() {
   });
 }
 
-function CreateNewProject() {
+interface CreateNewProjectProps {
+  onRefreshProjects: () => Promise<void>;
+  // Define other props here if there are any
+}
+
+function CreateNewProject({ onRefreshProjects }: CreateNewProjectProps) {
   const [show, setShow] = useState(false);
 
   const modalClose = () => setShow(false);
@@ -153,6 +158,7 @@ function CreateNewProject() {
         users={users}
         tags={tags}
         usersClassArray={usersClassArray}
+        onRefreshProjects={onRefreshProjects}
       />
     </div>
   );

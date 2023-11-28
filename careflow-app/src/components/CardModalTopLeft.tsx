@@ -274,7 +274,7 @@ function CardModalTopLeft({
               ))}
               <Dropdown key={tags.length}>
                 <Dropdown.Toggle style={addTagContainerStyle}>
-                  ny tagg
+                Nytt nyckelord
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{ width: "100%" }}>
                   {tags.map((tag) => (
@@ -360,7 +360,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Gå till nästa fas
+                Gå vidare till nästa fas
               </Button>
             </div>
           ) : active_tab === 5 ? ( //If active tab is act, show three different buttons
@@ -373,7 +373,9 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Avsluta förbättringsarbete
+                Är du nöjd med resultatet? Avsluta förbättringsarbete                 <span style={{ fontSize: "70%", display: "block" }}>
+                  {"Du hittar den sparade informationen under alla förbättringsarbeten"}
+                </span>
               </Button>
               <Button
                 style={sameIdeaButtonStyle}
@@ -383,10 +385,11 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(6)}
               >
-                Påbörja ny iteration
-                <span style={{ fontSize: "10px", display: "block" }}>
-                  {"(med samma idé)"}
+                Påbörja ny iteration 
+                <span style={{ fontSize: "100%", display: "block" }}>
+                med <b>samma</b> idé
                 </span>
+                
               </Button>
               <Button
                 style={newIdeaButtonStyle}
@@ -398,8 +401,9 @@ function CardModalTopLeft({
                 onClick={() => handlePhaseUpdate(7)}
               >
                 Påbörja ny iteration
-                <span style={{ fontSize: "10px", display: "block" }}>
-                  {"(med annan idé)"}
+         
+                <span style={{ fontSize: "100%", display: "block" }}>
+                med <b>annan</b> idé
                 </span>
               </Button>
             </div>
@@ -425,7 +429,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Gå till nästa fas
+                Gå vidare till nästa fas
               </Button>
             </div>
           )}
@@ -560,9 +564,7 @@ function CardModalTopLeft({
                       marginTop: "15px",
                     }}
                   >
-                    Innan förbättringsarbetet kan påbörjas måste det
-                    specificeras vilken idé som kommer arbetas med under denna
-                    iteration.
+                 <strong>För att påbörja förbättringsarbetet</strong> måste du trycka i vilken idé som kommer testas under denna iteration.
                   </div>
                 ) : (
                   <div

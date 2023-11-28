@@ -16,9 +16,11 @@ function PrivacyModal() {
   
     return (
       <>
+         {/* temporarily inactive based on analyst feedback
         <a style = {styles.privacyPolicy as React.CSSProperties} onClick={handleShow}>
           Personuppgiftspolicy
         </a>
+    */}
         <Modal show={show} onHide={handleClose}>
           {/* Modal content for terms */}
           <Modal.Header closeButton>
