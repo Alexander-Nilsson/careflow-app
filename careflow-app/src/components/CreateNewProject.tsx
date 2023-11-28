@@ -23,10 +23,12 @@ export class userInfo {
   id: string;
   sur_name: string;
   centrum: string;
-  constructor(id: string, sur_name: string, centrum: string) {
+  clinic: string;
+  constructor(id: string, sur_name: string, centrum: string, clinic: string) {
     this.id = id;
     this.sur_name = sur_name;
     this.centrum = centrum;
+    this.clinic = clinic;
   }
 }
 
@@ -38,7 +40,12 @@ async function fetchUsers() {
       users.push(userData.sur_name);
       usersClassArray.push(new userIDname(doc.data().id, userData.sur_name));
       usersInfoArray.push(
-        new userInfo(doc.data().id, userData.sur_name, doc.data().centrum)
+        new userInfo(
+          doc.data().id,
+          userData.sur_name,
+          doc.data().centrum,
+          doc.data().clinic
+        )
       );
     }
   });

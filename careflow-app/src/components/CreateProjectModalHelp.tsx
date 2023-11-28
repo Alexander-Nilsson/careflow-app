@@ -12,16 +12,21 @@ export function findUserIds(members: string[], usersClassArray: userIDname[]) {
   return userIDs;
 }
 
-export function findUserInfo(members: string[], usersInfoArray: userInfo[]) {
-  let userInfos = [];
+export function findUserInfo(
+  members: string[],
+  usersInfoArray: userInfo[]
+): [string[], string[]] {
+  let userCentrums = [];
+  let userClinics = [];
   for (let i = 0; i < members.length; i++) {
     for (let j = 0; j < usersInfoArray.length; j++) {
       if (members[i] == usersInfoArray[j].sur_name) {
-        userInfos.push(usersInfoArray[j].centrum);
+        userCentrums.push(usersInfoArray[j].centrum);
+        userClinics.push(usersInfoArray[j].clinic);
       }
     }
   }
-  return userInfos;
+  return [userCentrums, userClinics];
 }
 
 export function handleKeyPressBulletPoint(
