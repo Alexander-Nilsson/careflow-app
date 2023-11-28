@@ -61,6 +61,13 @@ function Start() {
       }
     }
   }
+ //HÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄR
+  const refreshImprovementWorks = async () => {
+    // Assuming you have a method to fetch the latest improvement works
+    const updatedImprovementWorks = await getAllImprovementWorks();
+    setImprovementWorks(updatedImprovementWorks);
+  };
+
 
   function Spinner() {
     return (
@@ -90,9 +97,16 @@ function Start() {
       />
       {isAuthenticated && userInfo && improvementWorks ? (
         <div style={contentStyle}>
-          <ProfileSection userInfo={userInfo}/>
+          
+        <ProfileSection userInfo={userInfo} onRefresh={refreshImprovementWorks}/>
+
           {/* <CreateNewProject /> */}
-          <ProjectsSection userInfo={userInfo} allImprovementWorks={improvementWorks}/>
+          <ProjectsSection
+            title={"Pågående förbättringsarbeten"}
+            userInfo={userInfo}
+            allImprovementWorks={improvementWorks}
+            showClosed={false}
+             />
           <div className="d-flex mr-2 w-100">
             <IdeasSection userInfo={userInfo} />
             <ProgressSection improvementWorks={improvementWorks} />
@@ -107,6 +121,9 @@ function Start() {
     </div>
   );
 }
+
+
+
 
 export default Start;
 

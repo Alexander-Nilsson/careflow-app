@@ -107,7 +107,7 @@ function ProgressSection({ improvementWorks }: ProgressSectionProps) {
         <p>Loading data</p>
       ) : (
         <>
-          <h2>Framsteg Region Östergötland {goalNotFound ? <p> </p> : <>{year}</>} </h2>
+          <h2>Framsteg för Region Östergötland under {goalNotFound ? <p> </p> : <>{year}</>} </h2>
 
           <div style={innerProgressSectionStyle}>
 
