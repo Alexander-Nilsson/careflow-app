@@ -15,12 +15,14 @@ interface ShowCardProps {
     improvementWork: ImprovementWork,
     newPhase: number
   ) => void;
+  fetchProjects: () => void;
 }
 
 function ShowCard({
   improvementWork,
   isAdmin,
   updateImprovementWorkPhase,
+  fetchProjects,
 }: ShowCardProps) {
   // State to track whether the mouse is over the task card
 
@@ -29,6 +31,10 @@ function ShowCard({
     setShow(false);
     console.log("modalClosed in showcard", show);
     console.log("data from modalclose: ", data);
+    // If data is true, then fetch projects
+    if (data) {
+      fetchProjects();
+    }
   };
   const modalShow = () => {
     setShow(true);

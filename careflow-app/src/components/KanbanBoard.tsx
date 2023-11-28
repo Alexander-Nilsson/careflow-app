@@ -61,7 +61,12 @@ function KanbanBoard() {
     );
   }
 
-  const { improvementWorkList, setImprovementWorkList, isAdmin } = context;
+  const {
+    improvementWorkList,
+    setImprovementWorkList,
+    isAdmin,
+    fetchProjects,
+  } = context;
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
 
@@ -98,6 +103,7 @@ function KanbanBoard() {
                 )}
                 updateImprovementWorkPhase={updateImprovementWorkPhase}
                 isAdmin={isAdmin}
+                fetchProjects={fetchProjects}
               />
             ))}
           </div>

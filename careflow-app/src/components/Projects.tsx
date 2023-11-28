@@ -23,6 +23,7 @@ export interface ProjectContextType {
     React.SetStateAction<ImprovementWork[]>
   >;
   isAdmin: boolean;
+  fetchProjects: () => Promise<void>;
 }
 
 function Spinner() {
@@ -181,6 +182,7 @@ function Projects() {
           improvementWorkList,
           setImprovementWorkList,
           isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
+          fetchProjects,
         }}
       >
         <KanbanBoard />

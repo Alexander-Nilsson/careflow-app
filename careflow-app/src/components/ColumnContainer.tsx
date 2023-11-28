@@ -18,6 +18,7 @@ interface Props {
     improvementWork: ImprovementWork,
     newPhase: number
   ) => void;
+  fetchProjects: () => void;
 }
 
 function ColumnContainer({
@@ -25,6 +26,7 @@ function ColumnContainer({
   improvementWorkList,
   isAdmin,
   updateImprovementWorkPhase,
+  fetchProjects,
 }: Props) {
   // Memoize task IDs for use in SortableContext
   const tasksIds = useMemo(() => {
@@ -59,6 +61,7 @@ function ColumnContainer({
               improvementWork={improvementWork}
               isAdmin={isAdmin}
               updateImprovementWorkPhase={updateImprovementWorkPhase}
+              fetchProjects={fetchProjects}
             />
           ))}
         </SortableContext>

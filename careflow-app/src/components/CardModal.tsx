@@ -799,7 +799,6 @@ cardModalProps) {
       console.error("updateImprovementWorkPhase is undefined");
     }
     */
-    phase = 1;
 
     if (phase === 5) {
       //If "Avsluta arbete" is clicked in the act phase
