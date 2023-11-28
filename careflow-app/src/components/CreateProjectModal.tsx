@@ -85,7 +85,7 @@ interface CreateProjectModalProps {
 }
 
 // Writes the formdata to database
-async function sendToDataBase(projectData: object) {
+async function sendToDataBase(projectData: object): Promise<void> {
   try {
     const docRef = await addDoc(
       collection(db, "improvementWorks"),
@@ -199,7 +199,7 @@ function CreateProjectModal({
   };
 
   // is executed when submit button is pressed
-  function handleSubmit(e: any) {
+  async function handleSubmit(e: any) {
     // Prevent the browser from reloading the page
     e.preventDefault();
 
@@ -300,9 +300,19 @@ function CreateProjectModal({
       setIdeas("");
       setMeasure("");
       setGoals("");
-      sendToDataBase(projectData);
-      onHide(); // Only close the modal if the title is provided
+      // sendToDataBase(projectData);
+      // onHide(); // Only close the modal if the title is provided
     }
+    try {
+      await sendToDataBase(projectData); // Wait for the project to be added
+      onRefreshProjects(); // Refresh the project list in the parent component
+      onHide(); // Close the modal
+      // Optionally, reset form state here if needed
+    } catch (error) {
+      console.error("Failed to add project: ", error);
+      // Handle any errors here, such as showing an error message to the user
+    }
+
   }
 
   return (
