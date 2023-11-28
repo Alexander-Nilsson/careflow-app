@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {  findUserIds,
 } from "./CreateProjectModalHelp";
+import { users, usersClassArray } from "./CreateNewProject";
 
 const projectMembersContainer = {
   width: "34%",
@@ -15,21 +16,11 @@ const projectMembersContainer = {
   borderRadius: "10px",
 };
 
-const buttonStyle = {
-  backgroundColor: "#051F6F",
-  fontFamily: "Avenir",
-  fontSize: "14px",
-  padding: "10px 40px",
-  border: "none",
-  cursor: "pointer",
-  marginTop: "20px",
-};
-
 interface CardModalTopRightProps {
   project_leader: string;
   project_members: Array<string>;
-  users : any [];
-  usersClassArray: any[];
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 
@@ -38,15 +29,53 @@ function CardModalTopRight(
   {
   project_leader,
   project_members,
-  users,
-  usersClassArray,
+  updatedMembers,
+  setUpdatedMembers,
 }
 
 : CardModalTopRightProps) 
 {
+
   type MembersState = string[];
   const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
   const [userID, setUserID] = useState<string>("UserID");
+  const [showMemberModal, setShowMemberModal] = useState(false);
+  const [newMember, setNewMember] = useState("");
+
+ //Handles the deletion of tags
+ const handleRemoveMember = (indexToRemove: number) => {
+  const updatedMembersArray = updatedMembers.filter(
+    (_, index) => index !== indexToRemove
+  );
+  setUpdatedMembers(updatedMembersArray);
+  console.log(updatedMembers);
+};
+
+const handleShowTagModal = () => {
+  setShowMemberModal(true);
+};
+const handleCloseTagModal = () => {
+  setShowMemberModal(false);
+};
+
+//setSelectedMembers(project_members);
+
+//Adds the new tag to the tag array when the "lägg till kollegor" button is clicked
+const handleSaveMember = (newMember: string) => {
+  //Makes sure that the input field is filled before the tag can be added
+  if (newMember.trim() !== "") {
+    handleCloseTagModal();
+    const updatedMembersArray = [...updatedMembers, newMember];
+  
+    console.log(updatedMembersArray);
+    setUpdatedMembers(updatedMembersArray);
+    const updatedProjectMemberArray = [...project_members, ...updatedMembersArray];
+    
+    console.log(updatedProjectMemberArray);
+    
+    setNewMember("");
+  }
+};
 
   const selectNewMembers = (chosenMember: string) => {
   if (selectedMembers.includes(chosenMember)) {
@@ -62,6 +91,11 @@ function CardModalTopRight(
   let project_members = findUserIds(selectedMembers, usersClassArray);
   // Remove logged in user from members list
   project_members = project_members.filter((item) => item != userID);
+  const updatedMembersArray = [...updatedMembers, newMember];
+    setUpdatedMembers(updatedMembersArray);
+    setNewMember("");
+
+  console.log(updatedMembers);
 }
 
 
@@ -89,13 +123,11 @@ function CardModalTopRight(
                   {member}
                 </div>
               ))}
-              
-              <Button
-                    style={buttonStyle}
-                    onClick={() => selectNewMembers("member")}
-                  >
-                    Lägg till medlemmar
-                  </Button>
+              {updatedMembers.map((member, index) => (
+                <div style={{ marginTop: "10px", fontSize: "15px" }}>
+                  {member}
+                </div>
+              ))}
               
               <div>
               <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
@@ -113,11 +145,14 @@ function CardModalTopRight(
               {users.map((member) => (
                 <Dropdown.Item
                   style={{
-                    fontWeight: selectedMembers.includes(member)
+                    fontWeight: updatedMembers.includes(member)
                       ? "bold"
                       : "normal",
                   }}
-                  onClick={() => selectNewMembers(member)}
+                  onClick={() => 
+                    (updatedMembers.includes(member))
+                    ? handleRemoveMember(member)
+                    : handleSaveMember(member)}
                 >
                   {member}
                 </Dropdown.Item>

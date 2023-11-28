@@ -131,8 +131,8 @@ interface modalContentPlanProps {
   setChecklistMembers: React.Dispatch<React.SetStateAction<string[]>>;
   project_leader: string;
   project_members: Array<string>;
-  users: any[];
-  usersClassArray: any[];
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -169,8 +169,8 @@ interface modalContentDoProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
-  users: any[];
-  usersClassArray: any[];
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
   result_measurements: string;
   setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -209,8 +209,8 @@ interface modalContentStudyProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
-  users: any[];
-  usersClassArray: any[];
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
   result_analysis: string;
   setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -249,8 +249,8 @@ interface modalContentActProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
-  users: any[];
-  usersClassArray: any[];
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -307,8 +307,8 @@ function ModalContentPlan({
   setChecklistMembers,
   project_leader,
   project_members,
-  users,
-  usersClassArray,
+  updatedMembers,
+  setUpdatedMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -353,8 +353,8 @@ function ModalContentPlan({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
-          users = {users}
-          usersClassArray={usersClassArray}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
         />
       </div>
 
@@ -412,8 +412,8 @@ function ModalContentDo({
   centrum,
   project_leader,
   project_members,
-  users,
-  usersClassArray,
+  updatedMembers,
+  setUpdatedMembers,
   result_measurements,
   setUpdatedResultMeasurements,
   handleIdeaClick,
@@ -448,8 +448,8 @@ function ModalContentDo({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
-          users = {users}
-          usersClassArray={usersClassArray}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
         />
       </div>
 
@@ -498,8 +498,8 @@ function ModalContentStudy({
   centrum,
   project_leader,
   project_members,
-  users,
-  usersClassArray,
+  updatedMembers,
+  setUpdatedMembers,
   result_analysis,
   setUpdatedResultAnalysis,
   handleIdeaClick,
@@ -534,8 +534,8 @@ function ModalContentStudy({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
-          users = {users}
-          usersClassArray={usersClassArray}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
         />
       </div>
 
@@ -585,6 +585,8 @@ function ModalContentAct({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -592,8 +594,6 @@ function ModalContentAct({
   setUpdatedNotesAct,
   files,
   setUpdatedFilesAct,
-  users,
-  usersClassArray
 }: modalContentActProps) {
   return (
     <>
@@ -619,8 +619,8 @@ function ModalContentAct({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
-          users = {users}
-          usersClassArray={usersClassArray}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
         />
       </div>
 
@@ -679,6 +679,7 @@ function CardModal({
   } = improvementWork;
 
   // Accessing properties from the all_iterations object
+  
   const result_measurements =
     all_iterations[total_iterations - 1].do?.results || "";
   const result_analysis =
@@ -693,6 +694,7 @@ function CardModal({
   const files_act = all_iterations[total_iterations - 1].act?.files || {};
   const checklist_plan =
     all_iterations[total_iterations - 1].plan?.checklist || {};
+  
 
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
@@ -882,7 +884,7 @@ function CardModal({
       updateDb(phase + 1, false);
     }
   };
-
+  
   //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
@@ -897,6 +899,7 @@ function CardModal({
           phase: newPhase,
           tags: updatedTags,
           ideas_done: ideas.map((idea) => idea.checked),
+          //project_members: updatedMembers,
           all_iterations: data.all_iterations?.map(
             (iteration: Iteration, index: number) => {
               if (index === updatedTotalIterations - 1) {
@@ -1117,8 +1120,7 @@ function CardModal({
 
   const [project_leader, setProjectLeader] = useState<string>("hej");
   const [project_members, setProjectMembers] = useState<string[]>([]);
-  const [users, setUsers] = useState<string[]>([]);
-  const [usersClassArray, setUsersClassArray] = useState<string[]>([]);
+  const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
 
   async function showModal() {
     const leader = await getMemberName(improvementWork.project_leader)
@@ -1184,8 +1186,8 @@ function CardModal({
                   setChecklistMembers={setChecklistMembers}
                   project_leader={project_leader}
                   project_members={project_members}
-                  users = {users}
-                  usersClassArray={usersClassArray}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}
                   handlePhaseUpdate={handlePhaseUpdate}
@@ -1221,8 +1223,8 @@ function CardModal({
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
-                  users = {users}
-                  usersClassArray={usersClassArray}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
                   result_measurements={updatedResultMeasurements}
                   setUpdatedResultMeasurements={setUpdatedResultMeasurements}
                   handleIdeaClick={handleIdeaClick}
@@ -1260,8 +1262,8 @@ function CardModal({
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
-                  users = {users}
-                  usersClassArray={usersClassArray}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
                   result_analysis={updatedResultAnalysis}
                   setUpdatedResultAnalysis={setUpdatedResultAnalysis}
                   handleIdeaClick={handleIdeaClick}
@@ -1299,8 +1301,8 @@ function CardModal({
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
-                  users = {users}
-                  usersClassArray={usersClassArray}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}
                   handlePhaseUpdate={handlePhaseUpdate}
