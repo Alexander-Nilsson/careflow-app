@@ -19,11 +19,17 @@ import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
-import { ImprovementWork, Iteration, getImprovementWork, getMemberName, getMemberNames } from "../ImprovementWorkLib";
+import {
+  ImprovementWork,
+  Iteration,
+  getImprovementWork,
+  getMemberName,
+  getMemberNames,
+} from "../ImprovementWorkLib";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
-import { Circle, CheckCircle } from "react-bootstrap-icons";
+import { Circle, CheckCircle, ArrowUp, ArrowDown } from "react-bootstrap-icons";
 
 const buttonStyle = {
   backgroundColor: "#051F6F",
@@ -55,6 +61,13 @@ const formGroupStyle = {
   padding: "20px",
   marginBottom: "20px",
   borderRadius: "10px",
+};
+
+const iconStyle = {
+  width: "15px",
+  height: "15px",
+  margin: "auto", // Center the icon
+  display: "flex",
 };
 
 interface cardModalProps {
@@ -139,13 +152,13 @@ interface modalContentPlanProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
-    file_urls : string[];
+    file_urls: string[];
   };
   setUpdatedFilesPlan: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
-      file_urls : string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -177,13 +190,13 @@ interface modalContentDoProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
-    file_urls : string[];
+    file_urls: string[];
   };
   setUpdatedFilesDo: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
-      file_urls : string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -215,13 +228,13 @@ interface modalContentStudyProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
-    file_urls : string[];
+    file_urls: string[];
   };
   setUpdatedFilesStudy: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
-      file_urls : string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -251,13 +264,13 @@ interface modalContentActProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
-    file_urls : string[];
+    file_urls: string[];
   };
   setUpdatedFilesAct: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
-      file_urls : string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -632,9 +645,9 @@ function CardModal({
   show,
   onHide,
   improvementWork,
-  // project_leader,
-  // project_members,
-}: cardModalProps) {
+}: // project_leader,
+// project_members,
+cardModalProps) {
   // Now, you can directly use the destructured values
   const {
     id,
@@ -779,10 +792,26 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesPlan({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesDo({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesStudy({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesAct({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
 
       //Update the database with the cleared fields
       clearDb(updatedIdeas.map((idea) => idea.checked));
@@ -820,10 +849,26 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesPlan({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesDo({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesStudy({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesAct({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
       addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
     } else if (phase === 7) {
@@ -838,14 +883,30 @@ function CardModal({
       setUpdatedNotesAct("");
       setUpdatedResultAnalysis("");
       setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [], file_urls: []  });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [], file_urls: []  });
+      setUpdatedFilesPlan({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesDo({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesStudy({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesAct({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
       addNewIterationInDb(); //Creates an new iteration in the db, where chosen idea will be set to none
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
 
-      //Also updated the state variable ideas so that all ideas will be set to false
+      //Also updates the state variable ideas so that all ideas will be set to false
       const uncheckedIdeas = ideas.map((idea) => ({
         ...idea,
         checked: false,
@@ -859,12 +920,56 @@ function CardModal({
     }
   };
 
+  //Changes the displayed iteration when one of the arrrows next to the iteration is clicked
+  const handleIterationChange = (displayedIteration: number) => {
+    setUpdatedTotalIterations(displayedIteration + 1);
+    setChecklistItems(
+      all_iterations[displayedIteration].plan.checklist.checklist_items
+    );
+    setChecklistDone(
+      all_iterations[displayedIteration].plan.checklist.checklist_done
+    );
+    setChecklistMembers(
+      all_iterations[displayedIteration].plan.checklist.checklist_members
+    );
+    setUpdatedNotesPlan(all_iterations[displayedIteration].plan.notes);
+    setUpdatedNotesDo(all_iterations[displayedIteration].do.notes);
+    setUpdatedNotesStudy(all_iterations[displayedIteration].study.notes);
+    setUpdatedNotesAct(all_iterations[displayedIteration].act.notes);
+    setUpdatedResultAnalysis(all_iterations[displayedIteration].study.analysis);
+    setUpdatedResultMeasurements(all_iterations[displayedIteration].do.results);
+    setUpdatedFilesPlan({
+      file_names: all_iterations[displayedIteration].plan.files.file_names,
+      file_descriptions:
+        all_iterations[displayedIteration].plan.files.file_descriptions,
+      file_urls: all_iterations[displayedIteration].plan.files.file_urls,
+    });
+    setUpdatedFilesDo({
+      file_names: all_iterations[displayedIteration].do.files.file_names,
+      file_descriptions:
+        all_iterations[displayedIteration].do.files.file_descriptions,
+      file_urls: all_iterations[displayedIteration].do.files.file_urls,
+    });
+    setUpdatedFilesStudy({
+      file_names: all_iterations[displayedIteration].study.files.file_names,
+      file_descriptions:
+        all_iterations[displayedIteration].study.files.file_descriptions,
+      file_urls: all_iterations[displayedIteration].study.files.file_urls,
+    });
+    setUpdatedFilesAct({
+      file_names: all_iterations[displayedIteration].act.files.file_names,
+      file_descriptions:
+        all_iterations[displayedIteration].act.files.file_descriptions,
+      file_urls: all_iterations[displayedIteration].act.files.file_urls,
+    });
+  };
+
   //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       // const projectDoc = await getDoc(projectDocRef);
-      const projectDoc = await getImprovementWork(projectDocRef)
+      const projectDoc = await getImprovementWork(projectDocRef);
 
       if (projectDoc.exists()) {
         const data = projectDoc.data();
@@ -889,7 +994,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesPlan.file_names,
                       file_descriptions: updatedFilesPlan.file_descriptions,
-                      file_urls : updatedFilesPlan.file_urls
+                      file_urls: updatedFilesPlan.file_urls,
                     },
                     notes: updatedNotesPlan,
                   },
@@ -899,7 +1004,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesDo.file_names,
                       file_descriptions: updatedFilesDo.file_descriptions,
-                      file_urls : updatedFilesDo.file_urls
+                      file_urls: updatedFilesDo.file_urls,
                     },
                     notes: updatedNotesDo,
                   },
@@ -909,7 +1014,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesStudy.file_names,
                       file_descriptions: updatedFilesStudy.file_descriptions,
-                      file_urls : updatedFilesStudy.file_urls
+                      file_urls: updatedFilesStudy.file_urls,
                     },
                     notes: updatedNotesStudy,
                   },
@@ -918,7 +1023,7 @@ function CardModal({
                     files: {
                       file_names: updatedFilesAct.file_names,
                       file_descriptions: updatedFilesAct.file_descriptions,
-                      file_urls : updatedFilesAct.file_urls
+                      file_urls: updatedFilesAct.file_urls,
                     },
                     notes: updatedNotesAct,
                   },
@@ -933,13 +1038,13 @@ function CardModal({
         await updateDoc(projectDocRef, updatedData);
         console.log(
           "Improvement work " +
-          improvementWork.title +
-          " updated successfully! Phase updated to: " +
-          newPhase +
-          " , closed set to: " +
-          isClosed +
-          " and the ideas array have the following idea checked: " +
-          ideas.map((idea) => idea.checked)
+            improvementWork.title +
+            " updated successfully! Phase updated to: " +
+            newPhase +
+            " , closed set to: " +
+            isClosed +
+            " and the ideas array have the following idea checked: " +
+            ideas.map((idea) => idea.checked)
         );
       }
     } catch (e) {
@@ -972,7 +1077,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
-                  file_urls: []
+                  file_urls: [],
                 },
                 notes: [],
               },
@@ -982,7 +1087,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
-                  file_urls: []
+                  file_urls: [],
                 },
                 notes: [],
               },
@@ -992,7 +1097,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
-                  file_urls: []
+                  file_urls: [],
                 },
                 notes: [],
               },
@@ -1001,7 +1106,7 @@ function CardModal({
                 files: {
                   file_names: [],
                   file_descriptions: [],
-                  file_urls: []
+                  file_urls: [],
                 },
                 notes: [],
               },
@@ -1095,10 +1200,10 @@ function CardModal({
   const [project_members, setProjectMembers] = useState<string[]>([]);
 
   async function showModal() {
-    const leader = await getMemberName(improvementWork.project_leader)
-    setProjectLeader(leader)
+    const leader = await getMemberName(improvementWork.project_leader);
+    setProjectLeader(leader);
 
-    const members = await getMemberNames(improvementWork.project_members)
+    const members = await getMemberNames(improvementWork.project_members);
     setProjectMembers(members);
   }
 
@@ -1291,6 +1396,44 @@ function CardModal({
               fontSize: "20px",
             }}
           >
+            {updatedTotalIterations !== 1 ? (
+              <ArrowUp
+                style={{
+                  marginTop: "12px",
+                  marginRight: "-16px",
+                  zIndex: "1",
+                  width: "17px",
+                  height: "17px",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  updateDb(updatedProjectPhase, false);
+                  handleIterationChange(updatedTotalIterations - 2);
+                }}
+              />
+            ) : (
+              ""
+            )}
+            {/* Show downwards arrow if the currently viewed iteration is not the latest one */}
+            {updatedTotalIterations < all_iterations.length ? (
+              <ArrowDown
+                style={{
+                  marginTop: "151px",
+                  marginRight: "-31px",
+                  zIndex: "1",
+                  width: "17px",
+                  height: "17px",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  updateDb(updatedProjectPhase, false);
+                  handleIterationChange(updatedTotalIterations);
+                }}
+              />
+            ) : (
+              ""
+            )}
+
             <div
               style={{
                 writingMode: "vertical-lr",
@@ -1298,12 +1441,15 @@ function CardModal({
                 backgroundColor: "#FFFFFF",
                 width: "60px",
                 textAlign: "center",
-                padding: "15px",
+                padding: "10px",
                 borderRadius: "0 10px 10px 0",
+                zIndex: "0",
               }}
             >
-              {"Iteration "}
-              {updatedTotalIterations}
+              <span>
+                {"Iteration "}
+                {updatedTotalIterations}
+              </span>
             </div>
           </div>
 
