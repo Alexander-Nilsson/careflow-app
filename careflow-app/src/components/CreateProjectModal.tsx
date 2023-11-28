@@ -209,7 +209,7 @@ function CreateProjectModal({
     const formJson = Object.fromEntries(formData.entries());
 
     let project_members = findUserIds(selectedMembers, usersClassArray);
-    let clinic = findUserInfo(selectedMembers, usersInfoArray);
+    let centrum = findUserInfo(selectedMembers, usersInfoArray);
     // Remove logged in user from members list
     project_members = project_members.filter((item) => item != userID);
 
@@ -217,7 +217,7 @@ function CreateProjectModal({
       title: formJson.title,
       centrum: centrum,
       place: place,
-      clinic: clinic,
+      clinic: department,
       closed: false,
       phase: 2, // planning phase is phase 2
       date_created: Timestamp.fromDate(new Date()),
