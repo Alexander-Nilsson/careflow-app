@@ -20,6 +20,7 @@ import {
   findUserIds,
 } from "./CreateProjectModalHelp";
 import { getUser2 } from "../ImprovementWorkLib";
+import ButtonPopover from "./ButtonPopover";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -337,8 +338,12 @@ function CreateProjectModal({
             content={"Titel:\nSyfte:\nMål:\nMät och följa upp:\nSamla idéer"}
   /> */}
         </div>
-     
-        <label style={{ ...TitleStyle, display: 'flex', alignItems: 'center',justifyContent: "center", marginLeft: "20%", marginRight:"20%"}}>Skapa ett förbättringsarbete</label>
+        <div className="buttonPopoverContainer" style={{  fontSize: "80%", borderRadius: "5px", height: "100%",paddingTop: "1vh" }}>
+            <div className="buttonPopover" style={{marginLeft: "2.5vh",marginRight: "2vh",color: "white",fontStyle: 'italic', fontSize: "70%",backgroundColor: "#051F6F", borderRadius: "5px" }}>
+              <ButtonPopover title={"Vad är förbättringsmodellen och hur hjälper den oss?"} content={" \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "} text={"Vad är förbättringsmodellen?"}></ButtonPopover>
+            </div>
+            </div>
+        <label style={{ ...TitleStyle, display: 'flex', alignItems: 'center',justifyContent: "center"}}>Skapa ett förbättringsarbete</label>
       
       </Modal.Header>
 
