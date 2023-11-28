@@ -65,7 +65,7 @@ const formGroupStyle = {
 
 interface cardModalProps {
   show: boolean;
-  onHide: () => void;
+  onHide: (data?: any) => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
   updateImprovementWorkPhase?: (
     improvementWork: ImprovementWork,
@@ -784,18 +784,26 @@ cardModalProps) {
     setSelectedTab(updatedProjectPhase.toString());
   }, [updatedProjectPhase]);
 
+  // Variable to track if we want to load data when the modal is closed
+  const [loadDataOnClose, setLoadDataOnClose] = useState(false);
+
   //Called whenever mark phase as done is called
   const handlePhaseUpdate = (phase: number) => {
+    // Set loadDataOnClose to TRUE
+    setLoadDataOnClose(true);
+    /*
     // TODO Modal now closes on DONE
     if (updateImprovementWorkPhase) {
       updateImprovementWorkPhase(improvementWork, phase + 1);
     } else {
       console.error("updateImprovementWorkPhase is undefined");
     }
+    */
+    phase = 1;
 
     if (phase === 5) {
       //If "Avsluta arbete" is clicked in the act phase
-      onHide();
+      onHide(loadDataOnClose);
       setIsClosed(true);
       updateDb(phase, true);
     } else if (phase === 6) {
@@ -1127,7 +1135,12 @@ cardModalProps) {
 
   return (
     <>
-      <Modal onShow={showModal} show={show} onHide={onHide} size="lg">
+      <Modal
+        onShow={showModal}
+        show={show}
+        onHide={() => onHide(loadDataOnClose)}
+        size="lg"
+      >
         <Modal.Header
           style={{
             borderColor: "#FFFFFF",

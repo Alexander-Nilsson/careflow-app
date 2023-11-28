@@ -4,7 +4,7 @@ import CardButton from "./CardButton";
 import CardModal from "./CardModal";
 import "./ShowCard.css";
 import { useSortable } from "@dnd-kit/sortable";
-import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
+import { Id, ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 
@@ -25,9 +25,10 @@ function ShowCard({
   // State to track whether the mouse is over the task card
 
   const [show, setShow] = useState(false);
-  const modalClose = () => {
+  const modalClose = (data?: any) => {
     setShow(false);
     console.log("modalClosed in showcard", show);
+    console.log("data from modalclose: ", data);
   };
   const modalShow = () => {
     setShow(true);

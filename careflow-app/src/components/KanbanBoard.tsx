@@ -102,6 +102,7 @@ function KanbanBoard() {
             ))}
           </div>
 
+          {/*
           {createPortal(
             <DragOverlay>
               {activeImprovementWork && (
@@ -114,6 +115,7 @@ function KanbanBoard() {
             </DragOverlay>,
             document.body
           )}
+          */}
         </DndContext>
       </div>
     </div>

@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
-  // getAllProjects,
-  Project,
   sortByDateCreated,
   sortByOldestDate,
   sortByTitleAscending,
@@ -118,7 +116,7 @@ function Projects() {
             height: "100vh",
           }}
         >
-        <Spinner />
+          <Spinner />
         </div>
       ) : (
         <></>
@@ -202,7 +200,7 @@ function Projects() {
             height: "100vh",
           }}
         >
-        <Spinner />
+          <Spinner />
         </div>
       )}
     </>
