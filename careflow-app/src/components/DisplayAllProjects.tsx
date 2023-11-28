@@ -16,6 +16,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
 import "../font/font.css";
 import { UserInfoType, fetchUser } from "./Start";
+import TitleBox from "./TitleBox";
 
 function DisplayAllProjects() {
 
@@ -164,11 +165,36 @@ function DisplayAllProjects() {
     }
   }, [searchTitle])
 
+  const contentStyle = {
+    marginTop: '20px',
+    width: "90%",
+    height: "60%",
+    marginLeft: "5%", // 5% margin on the left
+    marginRight: "5%", // 5% margin on the right
+  }
+
   return (
-    <div className="projects-section">
-      <div className="d-flex justify-content-end">
-        <div className="ml-auto align-self-end">
-          <div className="input-group rounded">
+    <div style={contentStyle}>
+      <div className="d-flex">
+        <div>
+          <TitleBox
+            title={"Alla förbättringsarbeten"}
+            description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
+        Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
+        Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
+          />
+          <div className="description" style={{ marginLeft: "2vw" }}>
+            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "70%", fontWeight: "normal" }}>
+              Här kan du se alla pågående och avslutade förbättringsarbeten inom regionen.
+              <br />
+              Använd sök- och filterfunktionerna för att leta efter förbättringsarbeten som du är intresserad av.
+            </p>
+          </div>
+        </div>
+
+
+        <div className="d-inline-flex ml-auto mr-2">
+          <div className="input-group rounded align-self-end">
             <input
               type="search"
               className="form-control rounded"
@@ -186,143 +212,146 @@ function DisplayAllProjects() {
         </div>
       </div>
 
-      <div className="d-flex flex-wrap justify-content-end">
-        <div className="ml-2 mt-2">
-          {/* <label htmlFor="sortDropdown" className="form-label me-2">
+      <div className="projects-section">
+
+        <div className="d-flex flex-wrap">
+          <div className="ml-2 mt-2">
+            {/* <label htmlFor="sortDropdown" className="form-label me-2">
             Sortera:
           </label> */}
-          <select
-            id="sortDropdown"
-            value={sortBy}
-            className="form-select"
-            aria-label="Filtrera"
-            onChange={handleSortChange}
-          // style={{ width: "8.5rem" }} // Adjust the width as needed
-          >
-            <option selected value="date_created">
-              Visa senaste
-            </option>
-            <option value="oldest_date">Visa äldsta</option>
-            <option value="ascending">
-              Visa a-ö
-            </option>
-            <option value="descending">Visa ö-a</option>
-          </select>
-        </div>
-        <div className="ml-2 mt-2">
-          <select className="form-select" aria-label="Filtrera" onChange={handleClosed}>
-            <option selected value="all">Öppna och stängda</option>
-            <option value="open">Visa öppna</option>
-            <option value="closed">Visa stängda</option>
-          </select>
-        </div>
-        <div className="ml-2 mt-2">
-          <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-            <option selected value="all_tags">Visa alla taggar</option>
-            {
-              tagOptions.map((tag) => (
-                <option key={tag} value={tag}> {tag}</option>
-              ))
-            }
-          </select>
-        </div>
-        <div className="ml-2 mt-2">
-          <select className="form-select" aria-label="Filtrera" onChange={handlePlace}>
-            <option selected value="all_places">Visa alla platser</option>
-            {
-              placeOptions.map((place) => (
-                <option key={place} value={place}> {place}</option>
-              ))
-            }
-
-          </select>
-        </div>
-        <div className="ml-2 mt-2">
-          <select className="form-select" aria-label="Filtrera" onChange={handleClinic}>
-            <option selected value="all_clinics">Visa alla kliniker</option>
-            {
-              clinicOptions.map((clinic) => (
-                <option key={clinic} value={clinic}> {clinic}</option>
-              ))
-            }
-
-          </select>
-        </div>
-        <div className="ml-2 mt-2">
-          <select className="form-select" aria-label="Filtrera" onChange={handleCentrum}>
-            <option selected value="all_centrums">Visa alla centrum</option>
-            {
-              centrumOptions.map((centrum) => (
-                <option key={centrum} value={centrum}> {centrum}</option>
-              ))
-            }
-          </select>
-        </div>
-      </div>
-      <div className="projects-container">
-        {currentProjects.map((project, index) => (
-          <div
-            className="col-md-6 col-lg-3"
-            style={{ marginRight: "0%", }}
-            key={index}
-          >
-            <div style={{ margin: "1%" }}>
-              <ProjectCard
-                title={project.title}
-                date_created={project.date_created}
-                place={project.place}
-                tags={project.tags}
-                phase={project.phase}
-                displayPhaseImage={true}
-                improvementWork={project}
-                isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Pagination */}
-      <div className="pagination-container">
-        <div style={{ marginLeft: "1px", marginBottom: "5px" }}>
-          Antal: <strong>{totalProjects}</strong>
-        </div>
-        <div className="pagination-buttons">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            className="pagination-arrow"
-            disabled={currentPage === 1}
-          >
-            {"<"} {/* Left arrow */}
-          </button>
-          {Array.from({
-            length: Math.ceil(totalProjects / projectsPerPage),
-          }).map((page, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className="pagination-number"
-              style={{
-                backgroundColor:
-                  currentPage === index + 1 ? "#051F6E" : "white",
-                color: currentPage === index + 1 ? "white" : "#051F6E",
-              }}
+            <select
+              id="sortDropdown"
+              value={sortBy}
+              className="form-select"
+              aria-label="Filtrera"
+              onChange={handleSortChange}
+            // style={{ width: "8.5rem" }} // Adjust the width as needed
             >
-              {index + 1}
-            </button>
+              <option selected value="date_created">
+                Visa senaste
+              </option>
+              <option value="oldest_date">Visa äldsta</option>
+              <option value="ascending">
+                Visa a-ö
+              </option>
+              <option value="descending">Visa ö-a</option>
+            </select>
+          </div>
+          <div className="ml-2 mt-2">
+            <select className="form-select" aria-label="Filtrera" onChange={handleClosed}>
+              <option selected value="all">Öppna och stängda</option>
+              <option value="open">Visa öppna</option>
+              <option value="closed">Visa stängda</option>
+            </select>
+          </div>
+          <div className="ml-2 mt-2">
+            <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
+              <option selected value="all_tags">Visa alla taggar</option>
+              {
+                tagOptions.map((tag) => (
+                  <option key={tag} value={tag}> {tag}</option>
+                ))
+              }
+            </select>
+          </div>
+          <div className="ml-2 mt-2">
+            <select className="form-select" aria-label="Filtrera" onChange={handlePlace}>
+              <option selected value="all_places">Visa alla platser</option>
+              {
+                placeOptions.map((place) => (
+                  <option key={place} value={place}> {place}</option>
+                ))
+              }
+
+            </select>
+          </div>
+          <div className="ml-2 mt-2">
+            <select className="form-select" aria-label="Filtrera" onChange={handleClinic}>
+              <option selected value="all_clinics">Visa alla kliniker</option>
+              {
+                clinicOptions.map((clinic) => (
+                  <option key={clinic} value={clinic}> {clinic}</option>
+                ))
+              }
+
+            </select>
+          </div>
+          <div className="ml-2 mt-2">
+            <select className="form-select" aria-label="Filtrera" onChange={handleCentrum}>
+              <option selected value="all_centrums">Visa alla centrum</option>
+              {
+                centrumOptions.map((centrum) => (
+                  <option key={centrum} value={centrum}> {centrum}</option>
+                ))
+              }
+            </select>
+          </div>
+        </div>
+        <div className="projects-container">
+          {currentProjects.map((project, index) => (
+            <div
+              className="col-md-6 col-lg-3"
+              style={{ marginRight: "0%", }}
+              key={index}
+            >
+              <div style={{ margin: "1%" }}>
+                <ProjectCard
+                  title={project.title}
+                  date_created={project.date_created}
+                  place={project.place}
+                  tags={project.tags}
+                  phase={project.phase}
+                  displayPhaseImage={true}
+                  improvementWork={project}
+                  isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
+                />
+              </div>
+            </div>
           ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            className="pagination-arrow"
-            disabled={
-              currentPage === Math.ceil(totalProjects / projectsPerPage)
-            }
-          >
-            {">"} {/* Right arrow */}
-          </button>
+        </div>
+
+        {/* Pagination */}
+        <div className="pagination-container">
+          <div style={{ marginLeft: "1px", marginBottom: "5px" }}>
+            Antal: <strong>{totalProjects}</strong>
+          </div>
+          <div className="pagination-buttons">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="pagination-arrow"
+              disabled={currentPage === 1}
+            >
+              {"<"} {/* Left arrow */}
+            </button>
+            {Array.from({
+              length: Math.ceil(totalProjects / projectsPerPage),
+            }).map((page, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(index + 1)}
+                className="pagination-number"
+                style={{
+                  backgroundColor:
+                    currentPage === index + 1 ? "#051F6E" : "white",
+                  color: currentPage === index + 1 ? "white" : "#051F6E",
+                }}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="pagination-arrow"
+              disabled={
+                currentPage === Math.ceil(totalProjects / projectsPerPage)
+              }
+            >
+              {">"} {/* Right arrow */}
+            </button>
+          </div >
         </div >
       </div >
-    </div >
+    </div>
   );
 }
 
