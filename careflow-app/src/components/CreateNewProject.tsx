@@ -93,50 +93,6 @@ export class Tag {
   }
 }
 
-const memberConverter = {
-  toFirestore: (memberData: any) => ({
-    id: memberData.id,
-    admin: memberData.admin,
-    centrum: memberData.centrum,
-    clinic: memberData.clinic,
-    email: memberData.email,
-    first_name: memberData.first_name,
-    sur_name: memberData.sur_name,
-    phone_number: memberData.phone_number,
-    place: memberData.place,
-    profession: memberData.profession,
-    projects: memberData.projects,
-  }),
-  fromFirestore: (snapshot: any, options: any) => {
-    const data = snapshot.data(options);
-
-    return new User(
-      snapshot.id,
-      data.admin,
-      data.centrum,
-      data.clinic,
-      data.email,
-      data.first_name,
-      data.sur_name,
-      data.phone_number,
-      data.place,
-      data.profession,
-      data.projects
-    );
-  },
-};
-
-const tagConverter = {
-  toFirestore: (tagData: any) => ({
-    description: tagData.description,
-  }),
-  fromFirestore: (snapshot: any, options: any) => {
-    const data = snapshot.data(options);
-
-    return new Tag(snapshot.id, data.description);
-  },
-};
-
 export var tags: any[] = [];
 
 async function fetchTags() {
