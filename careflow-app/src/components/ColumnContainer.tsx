@@ -68,7 +68,7 @@ function ColumnContainer({
 
   // Render the column
   return (
-    <div ref={setNodeRef} className="kanban-column">
+    <div ref={column.id === 1 ? null : setNodeRef} className="kanban-column">
       <div className="kanban-columnTitle">
         <div className="flex gap-2">
           {column.title}
@@ -93,15 +93,7 @@ function ColumnContainer({
           ))}
         </SortableContext>
       </div>
-      <div className="kanban-footerButton">
-        Antal: {taskCount}
-        {/* <div
-          // onClick={() => createProject(column.id)}
-          className="clickable-icon"
-        >
-          <PlusIcon />
-          </div>*/}
-      </div>
+      <div className="kanban-footerButton">Antal: {taskCount}</div>
 
       <Modal
         show={showModal}
