@@ -107,20 +107,18 @@ function KanbanBoard() {
             ))}
           </div>
 
-          {/*
           {createPortal(
             <DragOverlay>
               {activeImprovementWork && (
                 <ShowCard
                   improvementWork={activeImprovementWork}
                   isAdmin={isAdmin}
-                  updateImprovementWorkPhase={updateImprovementWorkPhase}
+                  fetchProjects={fetchProjects}
                 />
               )}
             </DragOverlay>,
             document.body
           )}
-          */}
         </DndContext>
       </div>
     </div>

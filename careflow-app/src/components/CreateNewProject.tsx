@@ -8,6 +8,7 @@ import { getTags, getUsers } from "../ImprovementWorkLib";
 
 export var users: any[] = [];
 export var usersClassArray: any[] = [];
+var usersInfoArray: any[] = [];
 
 export class userIDname {
   id: string;
@@ -18,6 +19,17 @@ export class userIDname {
   }
 }
 
+export class userInfo {
+  id: string;
+  sur_name: string;
+  centrum: string;
+  constructor(id: string, sur_name: string, centrum: string) {
+    this.id = id;
+    this.sur_name = sur_name;
+    this.centrum = centrum;
+  }
+}
+
 async function fetchUsers() {
   const userSnapshot = await getUsers();
   userSnapshot.forEach((doc) => {
@@ -25,6 +37,9 @@ async function fetchUsers() {
     if (!users.includes(userData.sur_name)) {
       users.push(userData.sur_name);
       usersClassArray.push(new userIDname(doc.data().id, userData.sur_name));
+      usersInfoArray.push(
+        new userInfo(doc.data().id, userData.sur_name, doc.data().centrum)
+      );
     }
   });
 }
@@ -158,6 +173,7 @@ function CreateNewProject({ onRefreshProjects }: CreateNewProjectProps) {
         users={users}
         tags={tags}
         usersClassArray={usersClassArray}
+        usersInfoArray={usersInfoArray}
         onRefreshProjects={onRefreshProjects}
       />
     </div>
