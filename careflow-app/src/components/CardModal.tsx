@@ -96,6 +96,7 @@ interface modalContentPlanProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -134,6 +135,7 @@ interface modalContentDoProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
   result_measurements: string;
   setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -174,6 +176,8 @@ interface modalContentStudyProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
+
   result_analysis: string;
   setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -214,6 +218,7 @@ interface modalContentActProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -272,6 +277,7 @@ function ModalContentPlan({
   project_members,
   updatedMembers,
   setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -318,6 +324,7 @@ function ModalContentPlan({
           project_members={project_members}
           updatedMembers={updatedMembers}
           setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -377,6 +384,7 @@ function ModalContentDo({
   project_members,
   updatedMembers,
   setUpdatedMembers,
+  setProjectMembers,
   result_measurements,
   setUpdatedResultMeasurements,
   handleIdeaClick,
@@ -413,6 +421,7 @@ function ModalContentDo({
           project_members={project_members}
           updatedMembers={updatedMembers}
           setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -463,6 +472,7 @@ function ModalContentStudy({
   project_members,
   updatedMembers,
   setUpdatedMembers,
+  setProjectMembers,
   result_analysis,
   setUpdatedResultAnalysis,
   handleIdeaClick,
@@ -499,6 +509,7 @@ function ModalContentStudy({
           project_members={project_members}
           updatedMembers={updatedMembers}
           setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -550,6 +561,7 @@ function ModalContentAct({
   project_members,
   updatedMembers,
   setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -584,6 +596,7 @@ function ModalContentAct({
           project_members={project_members}
           updatedMembers={updatedMembers}
           setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -916,7 +929,7 @@ cardModalProps) {
           phase: newPhase,
           tags: updatedTags,
           ideas_done: ideas.map((idea) => idea.checked),
-          //project_members: updatedMembers,
+          project_members: updatedMembers,
           all_iterations: data.all_iterations?.map(
             (iteration: Iteration, index: number) => {
               if (index === updatedTotalIterations - 1) {
@@ -1137,7 +1150,8 @@ cardModalProps) {
 
   const [project_leader, setProjectLeader] = useState<string>("hej");
   const [project_members, setProjectMembers] = useState<string[]>([]);
-  const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+ // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+  const [updatedMembers, setUpdatedMembers] = useState(project_members);
 
   async function showModal() {
     const leader = await getMemberName(improvementWork.project_leader);
@@ -1210,6 +1224,7 @@ cardModalProps) {
                   project_members={project_members}
                   updatedMembers={updatedMembers}
                   setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}
                   handlePhaseUpdate={handlePhaseUpdate}
@@ -1247,6 +1262,7 @@ cardModalProps) {
                   project_members={project_members}
                   updatedMembers={updatedMembers}
                   setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   result_measurements={updatedResultMeasurements}
                   setUpdatedResultMeasurements={setUpdatedResultMeasurements}
                   handleIdeaClick={handleIdeaClick}
@@ -1286,6 +1302,7 @@ cardModalProps) {
                   project_members={project_members}
                   updatedMembers={updatedMembers}
                   setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   result_analysis={updatedResultAnalysis}
                   setUpdatedResultAnalysis={setUpdatedResultAnalysis}
                   handleIdeaClick={handleIdeaClick}
@@ -1324,6 +1341,7 @@ cardModalProps) {
                   project_leader={project_leader}
                   project_members={project_members}
                   updatedMembers={updatedMembers}
+                  setProjectMembers={setProjectMembers}
                   setUpdatedMembers={setUpdatedMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}

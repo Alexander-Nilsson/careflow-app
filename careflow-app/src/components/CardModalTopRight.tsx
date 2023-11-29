@@ -16,13 +16,23 @@ const projectMembersContainer = {
   borderRadius: "10px",
 };
 
+const buttonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 20px",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "20px",
+};
+
 interface CardModalTopRightProps {
   project_leader: string;
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
 }
-
 
 //The top right part of the modal containing the project leader and project members
 function CardModalTopRight(
@@ -31,6 +41,7 @@ function CardModalTopRight(
   project_members,
   updatedMembers,
   setUpdatedMembers,
+  setProjectMembers,
 }
 
 : CardModalTopRightProps) 
@@ -41,6 +52,8 @@ function CardModalTopRight(
   const [userID, setUserID] = useState<string>("UserID");
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [newMember, setNewMember] = useState("");
+  const [updateMembers, setUpdateMembers] = useState(Array<string>);
+  const [addMembersClicked, setAddMembersClicked] = useState(false);
 
  //Handles the deletion of tags
  const handleRemoveMember = (indexToRemove: number) => {
@@ -62,17 +75,22 @@ const handleCloseTagModal = () => {
 
 //Adds the new tag to the tag array when the "lägg till kollegor" button is clicked
 const handleSaveMember = (newMember: string) => {
+  setProjectMembers(project_members);
+  console.log(project_members);
+  //console.log(project_members);
   //Makes sure that the input field is filled before the tag can be added
   if (newMember.trim() !== "") {
     handleCloseTagModal();
-    const updatedMembersArray = [...updatedMembers, newMember];
+    const updatedMembersArray = [...updateMembers, newMember];
   
     console.log(updatedMembersArray);
-    setUpdatedMembers(updatedMembersArray);
+    setUpdateMembers(updatedMembersArray);
     const updatedProjectMemberArray = [...project_members, ...updatedMembersArray];
     
     console.log(updatedProjectMemberArray);
     
+    setUpdatedMembers(updatedProjectMemberArray);
+
     setNewMember("");
   }
 };
@@ -100,7 +118,6 @@ const handleSaveMember = (newMember: string) => {
 
 
 
-
   return (
     <>
       <div style={projectMembersContainer}>
@@ -123,7 +140,7 @@ const handleSaveMember = (newMember: string) => {
                   {member}
                 </div>
               ))}
-              {updatedMembers.map((member, index) => (
+              {updateMembers.map((member, index) => (
                 <div style={{ marginTop: "10px", fontSize: "15px" }}>
                   {member}
                 </div>
