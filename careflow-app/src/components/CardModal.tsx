@@ -94,6 +94,9 @@ interface modalContentPlanProps {
   setChecklistMembers: React.Dispatch<React.SetStateAction<string[]>>;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -130,6 +133,9 @@ interface modalContentDoProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
   result_measurements: string;
   setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -168,6 +174,10 @@ interface modalContentStudyProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
+
   result_analysis: string;
   setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -206,6 +216,9 @@ interface modalContentActProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -262,6 +275,9 @@ function ModalContentPlan({
   setChecklistMembers,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -306,6 +322,9 @@ function ModalContentPlan({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -363,6 +382,9 @@ function ModalContentDo({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   result_measurements,
   setUpdatedResultMeasurements,
   handleIdeaClick,
@@ -397,6 +419,9 @@ function ModalContentDo({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -445,6 +470,9 @@ function ModalContentStudy({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   result_analysis,
   setUpdatedResultAnalysis,
   handleIdeaClick,
@@ -479,6 +507,9 @@ function ModalContentStudy({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -528,6 +559,9 @@ function ModalContentAct({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -560,6 +594,9 @@ function ModalContentAct({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -618,6 +655,7 @@ cardModalProps) {
   } = improvementWork;
 
   // Accessing properties from the all_iterations object
+  
   const result_measurements =
     all_iterations[total_iterations - 1].do?.results || "";
   const result_analysis =
@@ -632,6 +670,7 @@ cardModalProps) {
   const files_act = all_iterations[total_iterations - 1].act?.files || {};
   const checklist_plan =
     all_iterations[total_iterations - 1].plan?.checklist || {};
+  
 
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
@@ -875,7 +914,7 @@ cardModalProps) {
       updateDb(phase + 1, false);
     }
   };
-
+  
   //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
@@ -890,6 +929,7 @@ cardModalProps) {
           phase: newPhase,
           tags: updatedTags,
           ideas_done: ideas.map((idea) => idea.checked),
+          project_members: updatedMembers,
           all_iterations: data.all_iterations?.map(
             (iteration: Iteration, index: number) => {
               if (index === updatedTotalIterations - 1) {
@@ -1110,6 +1150,8 @@ cardModalProps) {
 
   const [project_leader, setProjectLeader] = useState<string>("hej");
   const [project_members, setProjectMembers] = useState<string[]>([]);
+ // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+  const [updatedMembers, setUpdatedMembers] = useState(project_members);
 
   async function showModal() {
     const leader = await getMemberName(improvementWork.project_leader);
@@ -1180,6 +1222,9 @@ cardModalProps) {
                   setChecklistMembers={setChecklistMembers}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}
                   handlePhaseUpdate={handlePhaseUpdate}
@@ -1215,6 +1260,9 @@ cardModalProps) {
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   result_measurements={updatedResultMeasurements}
                   setUpdatedResultMeasurements={setUpdatedResultMeasurements}
                   handleIdeaClick={handleIdeaClick}
@@ -1252,6 +1300,9 @@ cardModalProps) {
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   result_analysis={updatedResultAnalysis}
                   setUpdatedResultAnalysis={setUpdatedResultAnalysis}
                   handleIdeaClick={handleIdeaClick}
@@ -1289,6 +1340,9 @@ cardModalProps) {
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setProjectMembers={setProjectMembers}
+                  setUpdatedMembers={setUpdatedMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}
                   handlePhaseUpdate={handlePhaseUpdate}
