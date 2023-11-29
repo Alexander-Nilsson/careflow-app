@@ -107,7 +107,7 @@ function Start() {
             allImprovementWorks={improvementWorks}
             showClosed={false}
              />
-          <div className="d-flex mr-2 w-100">
+          <div className="d-flex mr-2 w-100" style={{ marginBottom: '2%' }}>
             <IdeasSection userInfo={userInfo} width={"42%"} />
             <ProgressSection improvementWorks={improvementWorks} />
           </div>
