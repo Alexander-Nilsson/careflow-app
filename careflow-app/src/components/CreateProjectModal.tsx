@@ -209,7 +209,7 @@ function CreateProjectModal({
     const formJson = Object.fromEntries(formData.entries());
 
     let project_members = findUserIds(selectedMembers, usersClassArray);
-    let centrum = findUserInfo(selectedMembers, usersInfoArray);
+    //let centrum = findUserInfo(selectedMembers, usersInfoArray);
     // Remove logged in user from members list
     project_members = project_members.filter((item) => item != userID);
 
@@ -312,7 +312,6 @@ function CreateProjectModal({
       console.error("Failed to add project: ", error);
       // Handle any errors here, such as showing an error message to the user
     }
-
   }
 
   return (
