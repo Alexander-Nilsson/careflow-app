@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
-import "./ShowCard.css";
+//import "./ShowCard.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -90,7 +90,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
         style={style}
         className="
           opacity-30
-          bg-mainBackgroundColor p-2.5 h-[10vh] min-h-[10vh] w-[15vw] items-center flex text-left rounded-xl border-2 border-blue-500 cursor-grab relative
+          bg-mainBackgroundColor p-2.5 h-[10vh] min-h-[140px] w-[15vw] items-center flex text-left rounded-xl border-2 border-blue-500 cursor-grab relative
         "
       />
     );
