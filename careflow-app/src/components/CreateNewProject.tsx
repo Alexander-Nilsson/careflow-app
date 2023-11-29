@@ -6,8 +6,8 @@ import ContinueButton from "./ContinueButton";
 import { Id } from "../types";
 import { getTags, getUsers } from "../ImprovementWorkLib";
 
-var users: any[] = [];
-var usersClassArray: any[] = [];
+export var users: any[] = [];
+export var usersClassArray: any[] = [];
 var usersInfoArray: any[] = [];
 
 export class userIDname {
