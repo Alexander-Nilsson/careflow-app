@@ -47,13 +47,9 @@ function CardModalTopRight(
 : CardModalTopRightProps) 
 {
 
-  type MembersState = string[];
-  const [selectedMembers, setSelectedMembers] = useState<MembersState>([]);
-  const [userID, setUserID] = useState<string>("UserID");
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [newMember, setNewMember] = useState("");
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
-  const [addMembersClicked, setAddMembersClicked] = useState(false);
 
  //Handles the deletion of tags
  const handleRemoveMember = (indexToRemove: number) => {
@@ -73,7 +69,7 @@ const handleCloseTagModal = () => {
 
 //setSelectedMembers(project_members);
 
-//Adds the new tag to the tag array when the "lägg till kollegor" button is clicked
+//Adds the new member to the member array when the "lägg till kollegor" button is clicked
 const handleSaveMember = (newMember: string) => {
   setProjectMembers(project_members);
   console.log(project_members);
@@ -94,29 +90,6 @@ const handleSaveMember = (newMember: string) => {
     setNewMember("");
   }
 };
-
-  const selectNewMembers = (chosenMember: string) => {
-  if (selectedMembers.includes(chosenMember)) {
-    const updatedChosenMembers = selectedMembers.filter(
-      (member) => member !== chosenMember
-    );
-    setSelectedMembers(updatedChosenMembers);
-    //If the selected member has not already been chosen, add the member to the array
-  } else {
-    const updatedChosenMembers = [...selectedMembers, chosenMember];
-    setSelectedMembers(updatedChosenMembers);
-  }
-  let project_members = findUserIds(selectedMembers, usersClassArray);
-  // Remove logged in user from members list
-  project_members = project_members.filter((item) => item != userID);
-  const updatedMembersArray = [...updatedMembers, newMember];
-    setUpdatedMembers(updatedMembersArray);
-    setNewMember("");
-
-  console.log(updatedMembers);
-}
-
-
 
   return (
     <>
