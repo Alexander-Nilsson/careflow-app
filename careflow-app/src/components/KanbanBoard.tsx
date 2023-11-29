@@ -86,40 +86,62 @@ function KanbanBoard() {
         src="./background-gradient.jpeg"
       />
       <div className="board-container">
-        <DndContext
-          sensors={sensors}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onDragOver={onDragOver}
-        >
-          <div className="column-group">
-            {columns.map((col) => (
+        <div className="column-group">
+          {/* Render the column where column.id === 1 outside the DndContext */}
+          {columns
+            .filter((col) => col.id === 1)
+            .map((col) => (
               <ColumnContainer
                 key={col.id}
                 column={col}
                 improvementWorkList={improvementWorkList.filter(
                   (ImprovementWork) =>
-                    ImprovementWork.phase === col.id && !ImprovementWork.closed //only display non- closed cards in kanban
+                    ImprovementWork.phase === col.id && !ImprovementWork.closed
                 )}
                 isAdmin={isAdmin}
                 fetchProjects={fetchProjects}
               />
             ))}
-          </div>
 
-          {createPortal(
-            <DragOverlay>
-              {activeImprovementWork && (
-                <ShowCard
-                  improvementWork={activeImprovementWork}
-                  isAdmin={isAdmin}
-                  fetchProjects={fetchProjects}
-                />
-              )}
-            </DragOverlay>,
-            document.body
-          )}
-        </DndContext>
+          <DndContext
+            sensors={sensors}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}
+          >
+            <div className="column-group">
+              {/* Render all other columns inside the DndContext */}
+              {columns
+                .filter((col) => col.id !== 1)
+                .map((col) => (
+                  <ColumnContainer
+                    key={col.id}
+                    column={col}
+                    improvementWorkList={improvementWorkList.filter(
+                      (ImprovementWork) =>
+                        ImprovementWork.phase === col.id &&
+                        !ImprovementWork.closed
+                    )}
+                    isAdmin={isAdmin}
+                    fetchProjects={fetchProjects}
+                  />
+                ))}
+            </div>
+
+            {createPortal(
+              <DragOverlay>
+                {activeImprovementWork && (
+                  <ShowCard
+                    improvementWork={activeImprovementWork}
+                    isAdmin={isAdmin}
+                    fetchProjects={fetchProjects}
+                  />
+                )}
+              </DragOverlay>,
+              document.body
+            )}
+          </DndContext>
+        </div>
       </div>
     </div>
   );
