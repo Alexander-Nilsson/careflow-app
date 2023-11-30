@@ -34,7 +34,7 @@ const buttonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "14px",
-  padding: "10px 40px",
+  padding: "10px 20px",
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
@@ -132,6 +132,7 @@ const addTagContainerStyle = {
   borderRadius: "10px",
   cursor: "pointer",
   fontSize: "14px",
+  border: "none",
 };
 
 const saveTagButtonStyle = {
@@ -241,7 +242,7 @@ function CardModalTopLeft({
     //Makes sure that the input field is filled before the tag can be added
     if (newTag.trim() !== "") {
       handleCloseTagModal();
-      const updatedTagsArray = [...updatedTags, newTag.toLowerCase()];
+      const updatedTagsArray = [...updatedTags, newTag];
       setUpdatedTags(updatedTagsArray);
       setNewTag("");
     }
@@ -262,7 +263,7 @@ function CardModalTopLeft({
               {updatedTags.map((tag, index) => (
                 <React.Fragment key={index}>
                   <span style={tagContainerStyle}>
-                    {tag}
+                    {tag.toLowerCase()}
                     <span
                       style={{ marginLeft: "6px" }}
                       onClick={() => handleRemoveTag(index)}
@@ -274,7 +275,7 @@ function CardModalTopLeft({
               ))}
               <Dropdown key={tags.length}>
                 <Dropdown.Toggle style={addTagContainerStyle}>
-                Nytt nyckelord
+                  nytt nyckelord
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{ width: "100%" }}>
                   {tags.map((tag) => (
@@ -373,8 +374,11 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Är du nöjd med resultatet? Avsluta förbättringsarbete                 <span style={{ fontSize: "70%", display: "block" }}>
-                  {"Du hittar den sparade informationen under alla förbättringsarbeten"}
+                Är du nöjd med resultatet? Avsluta förbättringsarbete{" "}
+                <span style={{ fontSize: "70%", display: "block" }}>
+                  {
+                    "Du hittar den sparade informationen under alla förbättringsarbeten"
+                  }
                 </span>
               </Button>
               <Button
@@ -385,11 +389,10 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(6)}
               >
-                Påbörja ny PGSA-cykel 
+                Påbörja ny PGSA-cykel
                 <span style={{ fontSize: "100%", display: "block" }}>
-                med <b>samma</b> idé
+                  med <b>samma</b> idé
                 </span>
-                
               </Button>
               <Button
                 style={newIdeaButtonStyle}
@@ -401,9 +404,8 @@ function CardModalTopLeft({
                 onClick={() => handlePhaseUpdate(7)}
               >
                 Påbörja ny PGSA-cykel
-         
                 <span style={{ fontSize: "100%", display: "block" }}>
-                med <b>annan</b> idé
+                  med <b>annan</b> idé
                 </span>
               </Button>
             </div>
@@ -541,6 +543,7 @@ function CardModalTopLeft({
                 {ideas.map((idea, index) => (
                   <Form.Check
                     key={index}
+                    className="custom-checkbox"
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
@@ -564,7 +567,9 @@ function CardModalTopLeft({
                       marginTop: "15px",
                     }}
                   >
-                 <strong>För att påbörja förbättringsarbetet</strong> måste du trycka i vilken idé som kommer testas under denna PGSA-cykel.
+                    <strong>För att påbörja förbättringsarbetet</strong> måste
+                    du trycka i vilken idé som kommer testas under denna
+                    PGSA-cykel.
                   </div>
                 ) : (
                   <div
