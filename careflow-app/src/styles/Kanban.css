@@ -102,4 +102,6 @@ body {
 
 .plus-icon-hover {
   cursor: pointer;
+  position: relative;
+  top: 3px;
 }
