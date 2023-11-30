@@ -56,7 +56,7 @@ function CardModalSimilarProjects({
       displayedImprovementWorks.push(improvementWork);
     }
   });
-  if (displayedImprovementWorks) {
+  if (displayedImprovementWorks.length > 0) {
     return (
       <>
         <Form.Group style={formGroupStyle}>
