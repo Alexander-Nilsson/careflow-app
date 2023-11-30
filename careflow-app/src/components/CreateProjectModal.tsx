@@ -123,7 +123,8 @@ function CreateProjectModal({
     title.trim() !== "" && ideas.replace("+ ", "").trim() !== "";
 
   //User specific data
-  const [name, setName] = useState<String>("Namn ej funnet");
+  const [user_first_name, setFirstName] = useState<String>("Namn ej funnet");
+  const [user_last_name, setLastName] = useState<String>("Namn ej funnet");
   const [department, setDepartment] = useState<String>("Avdelning ej funnen");
   const [role, setRole] = useState<String>("Roll ej funnen");
   const [place, setPlace] = useState<String>("Plats ej funnen");
@@ -145,7 +146,8 @@ function CreateProjectModal({
 
     if (docSnap.exists()) {
       //  console.log("Document data:", docSnap.data());
-      setName(docSnap.data().first_name);
+      setFirstName(docSnap.data().first_name);
+      setLastName(docSnap.data().sur_name);
       setDepartment(docSnap.data().clinic);
       setRole(docSnap.data().profession);
       setPlace(docSnap.data().place);
@@ -313,6 +315,10 @@ function CreateProjectModal({
       // Handle any errors here, such as showing an error message to the user
     }
   }
+
+  users = users.filter(
+    (item) => item != user_first_name + " " + user_last_name
+  );
 
   return (
     <Modal show={show} onHide={onHide}>
