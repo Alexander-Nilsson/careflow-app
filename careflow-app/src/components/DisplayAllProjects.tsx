@@ -24,7 +24,7 @@ function DisplayAllProjects() {
   const [filteredImprovementWorks, setFilteredImprovementWorks] = useState<ImprovementWork[]>([]);
   const [currentProjects, setCurrentProjects] = useState<ImprovementWork[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 12; // Adjust this based on your layout
+  const projectsPerPage = 8; // Adjust this based on your layout
   const { user } = useAuth0();
   const [totalProjects, setTotalProjects] = useState<number>(0)
 
@@ -72,7 +72,12 @@ function DisplayAllProjects() {
   }, [filteredImprovementWorks]);
 
   useEffect(() => {
-  }, [totalProjects, currentProjects]);
+    if (filteredImprovementWorks) {
+      const lastProjectIndex = currentPage * projectsPerPage;
+      const firstProjectIndex = lastProjectIndex - projectsPerPage;
+      setCurrentProjects(filteredImprovementWorks.slice(firstProjectIndex, lastProjectIndex))
+    }
+  }, [currentPage])
 
   // for admin func
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
