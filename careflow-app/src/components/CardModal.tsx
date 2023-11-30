@@ -688,6 +688,11 @@ cardModalProps) {
   //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
   const [updatedTags, setUpdatedTags] = useState(tags);
 
+  // Effect to trigger when updatedTags changes
+  useEffect(() => {
+    setLoadDataOnClose(true); // This will run whenever updatedTags changes
+  }, [updatedTags]); // The dependency array ensures the effect runs when updatedTags changes
+
   //State variable that contains the updated content of the text field "Analys av resultat"
   const [updatedResultAnalysis, setUpdatedResultAnalysis] =
     useState(result_analysis);
