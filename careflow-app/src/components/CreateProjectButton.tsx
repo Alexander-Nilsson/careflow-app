@@ -1,9 +1,10 @@
 import { Button } from "react-bootstrap";
+import { PlusLg } from "react-bootstrap-icons";
 
 const ButtonStyle: React.CSSProperties = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
-  fontSize: "20px",
+  fontSize: "16px",
   padding: "20px",
   border: "none",
   cursor: "pointer",
@@ -19,11 +20,7 @@ interface CreateProjectButtonProps {
 function CreateProjectButton({ onClick }: CreateProjectButtonProps) {
   return (
     <Button id="NyttFörbättringsarbete" onClick={onClick} style={ButtonStyle}>
-      <img
-        src="./Plus.png"
-        alt="Image"
-        style={{ width: "20px", height: "20px", marginRight: "10px" }}
-      />
+      <PlusLg style={{ width: "20px", height: "20px", marginRight: "10px" }} />
       Nytt förbättringsarbete
     </Button>
   );

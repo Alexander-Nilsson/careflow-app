@@ -216,13 +216,13 @@ function DisplayAllProjects() {
         Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
           />
           <div className="description" style={{ marginLeft: "2vw" }}>
-            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "70%", fontWeight: "normal" }}>
+            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "110%", fontWeight: "normal" }}>
               Här kan du se alla pågående och avslutade förbättringsarbeten inom regionen.
               <br />
               Använd sök- och filterfunktionerna för att leta efter förbättringsarbeten som du är intresserad av.
             </p>
           </div>
-        </div>
+          </div>
 
 
         <div className="d-inline-flex ml-auto mr-2">

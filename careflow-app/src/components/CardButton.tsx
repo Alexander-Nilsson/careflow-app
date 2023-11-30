@@ -81,25 +81,29 @@ function CardButton({
         onMouseLeave={handleMouseLeave}
       >
         <div className="outerContainer" onClick={modalToggle}>
-          <div className="tags">
+          <div
+            className="tags"
+            style={{ marginLeft: "10px", marginTop: "10px" }}
+          >
             {tags.slice(0, 2).map((tag, index) => (
               <React.Fragment key={index}>
                 <span style={TagContainerStyle}>{tag}</span>
               </React.Fragment>
             ))}
           </div>
-          <div className="title"> {"   " + title}</div>
-          <div className="bottomContainer">
-            <div className="dateAndIcons">
-              <div className="icons ">
-              </div>
-              <div className="date">
-                <label>{formattedDate}</label>
-              </div>
-            </div>
-            <div className="profilCard">
-              <PersonFill />
-            </div>
+          <div
+            className="title"
+            style={{
+              marginLeft: "10px",
+              marginTop: "5px",
+              fontSize: "15px",
+            }}
+          >
+            {title}
+          </div>
+
+          <div className="bottomContainer" style={{ marginLeft: "10px" }}>
+            {formattedDate}
           </div>
         </div>
 
