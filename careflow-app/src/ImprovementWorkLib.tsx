@@ -30,6 +30,7 @@ export interface ArchiveFilterState {
   tag: string;
   closed: string;
   place: string;
+  phase: string;
 }
 
 export interface Project {
@@ -316,7 +317,7 @@ export function searchImprovementWorks(orgImprovementWorks: ImprovementWork[], s
     improvementWork.centrum.toLowerCase().includes(search.toLowerCase()) ||
     improvementWork.date_created.toDate().toString().toLowerCase().includes(search.toLowerCase()) ||
     improvementWork.goals.some(goal => goal.toLowerCase().includes(search.toLowerCase())) ||
-    improvementWork.goals.some(idea => idea.toLowerCase().includes(search.toLowerCase()))
+    improvementWork.ideas.some(idea => idea.toLowerCase().includes(search.toLowerCase()))
   );
 
   if (sort === "oldest_date") {
@@ -351,6 +352,17 @@ function includeArchive(improvementWork: ImprovementWork, filter: ArchiveFilterS
 
   if (filter.closed !== "all") {
     if ((filter.closed === "closed" && !improvementWork.closed) || (filter.closed === "open" && improvementWork.closed)) {
+      return false;
+    }
+  }
+
+  if (filter.closed !== "all_phases") {
+    if ((filter.phase === "phase_p" && improvementWork.phase !== 2) ||
+        (filter.phase === "phase_g" && improvementWork.phase !== 3) ||
+        (filter.phase === "phase_s" && improvementWork.phase !== 4) ||
+        (filter.phase === "phase_a" && improvementWork.phase !== 5)
+        ) 
+    {
       return false;
     }
   }
