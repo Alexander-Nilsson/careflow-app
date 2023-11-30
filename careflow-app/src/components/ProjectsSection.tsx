@@ -130,7 +130,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                 </div>
                 <div className="ml-2 mt-2">
                     <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-                        <option selected value="all_tags">Visa alla taggar</option>
+                        <option selected value="all_tags">Visa alla nyckelord</option>
                         {
                             tagOptions.map((tag) => (
                                 <option key={tag} value={tag}> {tag}</option>
@@ -140,7 +140,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                     </select>
                 </div>
                 <div className="mt-3 ml-2">
-                    <HelpPopover content="Vill du se över ett av dina genomförda förbättringsarbeten, testa någon idé en till iteration eller följa upp förbättringen? Dina gamla förbättringsarbeten ligger här." />
+                    <HelpPopover content="Vill du se över ett av dina genomförda förbättringsarbeten, testa någon idé en till PGSA-cykel eller följa upp förbättringen? Dina gamla förbättringsarbeten ligger här." />
                     </div> 
             </div>
 

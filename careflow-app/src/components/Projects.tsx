@@ -297,7 +297,7 @@ function Projects() {
 
         <div className="ml-2 align-self-end">
           <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-            <option selected value="all_tags">Visa alla taggar</option>
+            <option selected value="all_tags">Visa alla nyckelord</option>
             {
               tagOptions.map((tag) => (
                 <option key={tag} value={tag}> {tag}</option>

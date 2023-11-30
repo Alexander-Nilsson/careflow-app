@@ -246,7 +246,7 @@ function DisplayAllProjects() {
           </div>
           <div className="ml-2 mt-2">
             <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-              <option selected value="all_tags">Visa alla taggar</option>
+              <option selected value="all_tags">Visa alla nyckelord</option>
               {
                 tagOptions.map((tag) => (
                   <option key={tag} value={tag}> {tag}</option>

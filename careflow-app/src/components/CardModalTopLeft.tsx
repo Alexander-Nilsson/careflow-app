@@ -385,7 +385,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(6)}
               >
-                Påbörja ny iteration 
+                Påbörja ny PGSA-cykel 
                 <span style={{ fontSize: "100%", display: "block" }}>
                 med <b>samma</b> idé
                 </span>
@@ -400,7 +400,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(7)}
               >
-                Påbörja ny iteration
+                Påbörja ny PGSA-cykel
          
                 <span style={{ fontSize: "100%", display: "block" }}>
                 med <b>annan</b> idé
@@ -564,7 +564,7 @@ function CardModalTopLeft({
                       marginTop: "15px",
                     }}
                   >
-                 <strong>För att påbörja förbättringsarbetet</strong> måste du trycka i vilken idé som kommer testas under denna iteration.
+                 <strong>För att påbörja förbättringsarbetet</strong> måste du trycka i vilken idé som kommer testas under denna PGSA-cykel.
                   </div>
                 ) : (
                   <div

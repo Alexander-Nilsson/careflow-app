@@ -1378,7 +1378,7 @@ cardModalProps) {
                 borderRadius: "0 10px 10px 0",
               }}
             >
-              {"Iteration "}
+              {"PGSA-cykel "}
               {updatedTotalIterations}
             </div>
           </div>
@@ -1434,7 +1434,7 @@ cardModalProps) {
             <div className="mb-3 text-center">
               Att byta idé innebär att allt arbete som utförts hittills för den
               nuvarande idén raderas. Om du önskar spara arbetet innan du byter,
-              vänligen gå till agera-fasen och välj "Påbörja ny iteration med
+              vänligen gå till agera-fasen och välj "Påbörja ny PGSA-cykel med
               annan idé".
             </div>
             <div className="mb-3 text-center">
