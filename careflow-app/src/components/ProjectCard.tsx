@@ -123,6 +123,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
+  
 
   useEffect(() => {
     const fetchData = async () => {

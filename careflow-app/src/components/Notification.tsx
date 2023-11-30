@@ -46,15 +46,11 @@ const Notification = () => {
         <button style={notificationButton}>VISA</button>
       </div>
       <div style={notificationItemStyle}>
-        <span style={notificationText}>Deadline har passerat för förbättringsarbete XX.</span>
+        <span style={notificationText}>Ett nytt förbättringsarbete har lagt till på din klinik.</span>
         <button style={notificationButton}>VISA</button>
       </div>
       <div style={notificationItemStyle}>
-        <span style={notificationText}>Notifikation 3</span>
-        <button style={notificationButton}>VISA</button>
-      </div>
-      <div style={notificationItemStyle}>
-        <span style={notificationText}>Notifikation 4</span>
+        <span style={notificationText}>"Köp in nya arbetskläder" har bytt fas till Göra.</span>
         <button style={notificationButton}>VISA</button>
       </div>
     </div>

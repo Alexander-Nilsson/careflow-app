@@ -63,6 +63,7 @@ const formGroupStyle = {
   borderRadius: "10px",
 };
 
+
 interface cardModalProps {
   show: boolean;
   onHide: (data?: any) => void;
@@ -631,7 +632,7 @@ function ModalContentAct({
 function CardModal({
   show,
   onHide,
-  improvementWork,
+  improvementWork
 }: // project_leader,
 // project_members,
 cardModalProps) {
@@ -818,6 +819,10 @@ cardModalProps) {
     setSelectedTab(updatedProjectPhase.toString());
   }, [updatedProjectPhase]);
 
+  useEffect(() => {
+    setIsDisabled(updatedProjectPhase === 5);
+  }, [updatedProjectPhase]);
+
   // Variable to track if we want to load data when the modal is closed
   const [loadDataOnClose, setLoadDataOnClose] = useState(false);
 
@@ -914,6 +919,8 @@ cardModalProps) {
       updateDb(phase + 1, false);
     }
   };
+
+  const [isDisabled, setIsDisabled] = useState(true); 
   
   //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
   async function updateDb(newPhase: number, isClosed: boolean) {
@@ -1414,6 +1421,7 @@ cardModalProps) {
                     updateDb(updatedProjectPhase, false);
                   }}
                   style={saveButtonStyle}
+                  disabled={isDisabled}
                 >
                   Spara
                 </Button>
