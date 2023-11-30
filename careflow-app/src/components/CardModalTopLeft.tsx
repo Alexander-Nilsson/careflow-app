@@ -541,10 +541,12 @@ function CardModalTopLeft({
                 {ideas.map((idea, index) => (
                   <Form.Check
                     key={index}
+                    className="custom-checkbox"
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
                     style={{
+                      
                       color: ideas.some((idea) => idea.checked)
                         ? idea.checked
                           ? "#000000"

@@ -62,7 +62,7 @@ function Archive() {
                 </div>
             </h1>
 */}
-        <DisplayAllProjects />ß
+        <DisplayAllProjects />
       {/* </div> */} 
     </div>
   );
