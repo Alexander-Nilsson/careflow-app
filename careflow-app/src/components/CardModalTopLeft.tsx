@@ -243,7 +243,6 @@ function CardModalTopLeft({
     if (newTag.trim() !== "") {
       handleCloseTagModal();
       const updatedTagsArray = [...updatedTags, newTag];
-      const updatedTagsArray = [...updatedTags, newTag];
       setUpdatedTags(updatedTagsArray);
       setNewTag("");
     }
