@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
+import { Button } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProjectCard from "./ProjectCard";
 import "../styles/DisplayAllProjects.css";
@@ -44,8 +45,30 @@ function DisplayAllProjects() {
     centrum: "all_centrums",
     tag: "all_tags",
     place: "all_places",
-    closed: "all"
+    closed: "all",
+    phase: "all_phases"
   });
+
+
+  const clearFilters = () => {
+    setFilterState({
+      clinic: "all_clinics",
+      centrum: "all_centrums",
+      tag: "all_tags",
+      place: "all_places",
+      closed: "all",
+      phase: "all_phases"
+    });
+  };
+
+  const ButtonStyle: React.CSSProperties = {
+        backgroundColor: "#051F6F",
+        fontFamily: "Avenir",
+        margin: "10px",
+        border: "none",
+        cursor: "pointer",
+        width: "10rem",
+    };
 
   const fetchData = async () => {
     // if (user?.name) {
@@ -116,6 +139,11 @@ function DisplayAllProjects() {
     setFilterState(prev => ({ ...prev, closed: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
   }
 
+  const handlePhases = (event: any) => {
+    setFilterState(prev => ({ ...prev, phase: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
+  }
+
+
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedSortOption = event.target.value as
       | "date_created"
@@ -149,7 +177,6 @@ function DisplayAllProjects() {
   const handleTitleSearch = (searchValue: string) => {
     setSearchTitle(searchValue);
   };
-
 
   useEffect(() => {
     const works: ImprovementWork[] = filterAll(allImprovementWorks, filterState, sortBy)
@@ -243,14 +270,23 @@ function DisplayAllProjects() {
             </select>
           </div>
           <div className="ml-2 mt-2">
-            <select className="form-select" aria-label="Filtrera" onChange={handleClosed}>
+            <select className="form-select" aria-label="Filtrera" value={filterState.closed} onChange={handleClosed}>
               <option selected value="all">Öppna och stängda</option>
               <option value="open">Visa öppna</option>
               <option value="closed">Visa stängda</option>
             </select>
           </div>
           <div className="ml-2 mt-2">
-            <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
+            <select className="form-select" aria-label="Filtrera" value={filterState.phase} onChange={handlePhases}>
+              <option selected value="all_phases">Visa alla faser</option>
+              <option value="phase_p">P</option>
+              <option value="phase_g">G</option>
+              <option value="phase_s">S</option>
+              <option value="phase_a">A</option>
+            </select>
+          </div>
+          <div className="ml-2 mt-2">
+            <select className="form-select" aria-label="Filtrera" value={filterState.tag} onChange={handleTags}>
               <option selected value="all_tags">Visa alla nyckelord</option>
               {
                 tagOptions.map((tag) => (
@@ -260,7 +296,7 @@ function DisplayAllProjects() {
             </select>
           </div>
           <div className="ml-2 mt-2">
-            <select className="form-select" aria-label="Filtrera" onChange={handlePlace}>
+            <select className="form-select" aria-label="Filtrera" value={filterState.place} onChange={handlePlace}>
               <option selected value="all_places">Visa alla platser</option>
               {
                 placeOptions.map((place) => (
@@ -271,7 +307,7 @@ function DisplayAllProjects() {
             </select>
           </div>
           <div className="ml-2 mt-2">
-            <select className="form-select" aria-label="Filtrera" onChange={handleClinic}>
+            <select className="form-select" aria-label="Filtrera" value={filterState.clinic} onChange={handleClinic}>
               <option selected value="all_clinics">Visa alla kliniker</option>
               {
                 clinicOptions.map((clinic) => (
@@ -282,7 +318,7 @@ function DisplayAllProjects() {
             </select>
           </div>
           <div className="ml-2 mt-2">
-            <select className="form-select" aria-label="Filtrera" onChange={handleCentrum}>
+            <select className="form-select" aria-label="Filtrera" value={filterState.centrum} onChange={handleCentrum}>
               <option selected value="all_centrums">Visa alla centrum</option>
               {
                 centrumOptions.map((centrum) => (
@@ -290,6 +326,9 @@ function DisplayAllProjects() {
                 ))
               }
             </select>
+          </div>
+          <div className="ml-auto d-flex">
+          <Button  style={{ ...ButtonStyle}} onClick={clearFilters}>Rensa filter</Button>
           </div>
         </div>
         <div className="projects-container">
