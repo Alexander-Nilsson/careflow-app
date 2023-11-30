@@ -2,8 +2,7 @@ import { Button, Dropdown, Form } from "react-bootstrap";
 import { getMemberName } from "../ImprovementWorkLib";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import {  findUserIds,
-} from "./CreateProjectModalHelp";
+import { findUserIds } from "./CreateProjectModalHelp";
 import { users, usersClassArray } from "./CreateNewProject";
 
 const projectMembersContainer = {
@@ -35,61 +34,59 @@ interface CardModalTopRightProps {
 }
 
 //The top right part of the modal containing the project leader and project members
-function CardModalTopRight(
-  {
+function CardModalTopRight({
   project_leader,
   project_members,
   updatedMembers,
   setUpdatedMembers,
   setProjectMembers,
-}
-
-: CardModalTopRightProps) 
-{
-
+}: CardModalTopRightProps) {
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [newMember, setNewMember] = useState("");
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
 
- //Handles the deletion of tags
- const handleRemoveMember = (indexToRemove: number) => {
-  const updatedMembersArray = updatedMembers.filter(
-    (_, index) => index !== indexToRemove
-  );
-  setUpdatedMembers(updatedMembersArray);
-  console.log(updatedMembers);
-};
+  //Handles the deletion of tags
+  const handleRemoveMember = (indexToRemove: number) => {
+    const updatedMembersArray = updatedMembers.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setUpdatedMembers(updatedMembersArray);
+    console.log(updatedMembers);
+  };
 
-const handleShowTagModal = () => {
-  setShowMemberModal(true);
-};
-const handleCloseTagModal = () => {
-  setShowMemberModal(false);
-};
+  const handleShowTagModal = () => {
+    setShowMemberModal(true);
+  };
+  const handleCloseTagModal = () => {
+    setShowMemberModal(false);
+  };
 
-//setSelectedMembers(project_members);
+  //setSelectedMembers(project_members);
 
-//Adds the new member to the member array when the "lägg till kollegor" button is clicked
-const handleSaveMember = (newMember: string) => {
-  setProjectMembers(project_members);
-  console.log(project_members);
-  //console.log(project_members);
-  //Makes sure that the input field is filled before the tag can be added
-  if (newMember.trim() !== "") {
-    handleCloseTagModal();
-    const updatedMembersArray = [...updateMembers, newMember];
-  
-    console.log(updatedMembersArray);
-    setUpdateMembers(updatedMembersArray);
-    const updatedProjectMemberArray = [...project_members, ...updatedMembersArray];
-    
-    console.log(updatedProjectMemberArray);
-    
-    setUpdatedMembers(updatedProjectMemberArray);
+  //Adds the new member to the member array when the "lägg till kollegor" button is clicked
+  const handleSaveMember = (newMember: string) => {
+    setProjectMembers(project_members);
+    console.log(project_members);
+    //console.log(project_members);
+    //Makes sure that the input field is filled before the tag can be added
+    if (newMember.trim() !== "") {
+      handleCloseTagModal();
+      const updatedMembersArray = [...updateMembers, newMember];
 
-    setNewMember("");
-  }
-};
+      console.log(updatedMembersArray);
+      setUpdateMembers(updatedMembersArray);
+      const updatedProjectMemberArray = [
+        ...project_members,
+        ...updatedMembersArray,
+      ];
+
+      console.log(updatedProjectMemberArray);
+
+      setUpdatedMembers(updatedProjectMemberArray);
+
+      setNewMember("");
+    }
+  };
 
   return (
     <>
@@ -118,7 +115,7 @@ const handleSaveMember = (newMember: string) => {
                   {member}
                 </div>
               ))}
-              
+
               <div>
               <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
             <Dropdown.Toggle
@@ -160,8 +157,6 @@ const handleSaveMember = (newMember: string) => {
       </div>
     </>
   );
-
 }
-
 
 export default CardModalTopRight;

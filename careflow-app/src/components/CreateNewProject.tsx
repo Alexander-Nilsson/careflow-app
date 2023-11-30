@@ -34,8 +34,8 @@ async function fetchUsers() {
   const userSnapshot = await getUsers();
   userSnapshot.forEach((doc) => {
     const userData = doc.data() as User;
-    if (!users.includes(userData.sur_name)) {
-      users.push(userData.sur_name);
+    if (!users.includes(userData.first_name + " " + userData.sur_name)) {
+      users.push(userData.first_name + " " + userData.sur_name);
       usersClassArray.push(new userIDname(doc.data().id, userData.sur_name));
       usersInfoArray.push(
         new userInfo(doc.data().id, userData.sur_name, doc.data().centrum)
