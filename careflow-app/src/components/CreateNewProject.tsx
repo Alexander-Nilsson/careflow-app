@@ -6,8 +6,9 @@ import ContinueButton from "./ContinueButton";
 import { Id } from "../types";
 import { getTags, getUsers } from "../ImprovementWorkLib";
 
-var users: any[] = [];
-var usersClassArray: any[] = [];
+export var users: any[] = [];
+export var usersClassArray: any[] = [];
+var usersInfoArray: any[] = [];
 
 export class userIDname {
   id: string;
@@ -18,14 +19,27 @@ export class userIDname {
   }
 }
 
-async function fetchUsers() {
+export class userInfo {
+  id: string;
+  sur_name: string;
+  centrum: string;
+  constructor(id: string, sur_name: string, centrum: string) {
+    this.id = id;
+    this.sur_name = sur_name;
+    this.centrum = centrum;
+  }
+}
 
+async function fetchUsers() {
   const userSnapshot = await getUsers();
   userSnapshot.forEach((doc) => {
     const userData = doc.data() as User;
     if (!users.includes(userData.sur_name)) {
       users.push(userData.sur_name);
       usersClassArray.push(new userIDname(doc.data().id, userData.sur_name));
+      usersInfoArray.push(
+        new userInfo(doc.data().id, userData.sur_name, doc.data().centrum)
+      );
     }
   });
 }
@@ -123,7 +137,7 @@ const tagConverter = {
   },
 };
 
-var tags: any[] = [];
+export var tags: any[] = [];
 
 async function fetchTags() {
   const querySnapshot = await getTags();
@@ -135,7 +149,12 @@ async function fetchTags() {
   });
 }
 
-function CreateNewProject() {
+interface CreateNewProjectProps {
+  onRefreshProjects: () => Promise<void>;
+  // Define other props here if there are any
+}
+
+function CreateNewProject({ onRefreshProjects }: CreateNewProjectProps) {
   const [show, setShow] = useState(false);
 
   const modalClose = () => setShow(false);
@@ -154,6 +173,8 @@ function CreateNewProject() {
         users={users}
         tags={tags}
         usersClassArray={usersClassArray}
+        usersInfoArray={usersInfoArray}
+        onRefreshProjects={onRefreshProjects}
       />
     </div>
   );

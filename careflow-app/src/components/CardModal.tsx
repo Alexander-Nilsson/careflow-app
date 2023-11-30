@@ -12,7 +12,7 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import CardModalNotes from "./CardModalNotes";
 import CardModalChecklist from "./CardModalChecklist";
-import CardModalSimilarProjects from "./CardModalSimilarProjects";
+//import CardModalSimilarProjects from "./CardModalSimilarProjects";
 import CardModalResultMeasurements from "./CardModalResultMeasurements";
 import CardModalResultAnalysis from "./CardModalResultAnalysis";
 import CardModalFiles from "./CardModalFiles";
@@ -63,60 +63,10 @@ const formGroupStyle = {
   borderRadius: "10px",
 };
 
-const iconStyle = {
-  width: "15px",
-  height: "15px",
-  margin: "auto", // Center the icon
-  display: "flex",
-};
-
 interface cardModalProps {
   show: boolean;
-  onHide: () => void;
+  onHide: (data?: any) => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
-  /*
-  id: Id;
-  title: string;
-  phase: Id;
-  place: string;
-  centrum: string;
-  tags: Array<string>;
-  date_created: Timestamp;
-  goals: Array<string>;
-  ideas_array: Array<string>;
-  measure: Array<string>;
-  purpose: string;
-  result_measurements: string;
-  result_analysis: string;
-  notes_plan: string;
-  notes_do: string;
-  notes_study: string;
-  notes_act: string;
-  total_iterations: number;
-  files_plan: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_do: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_study: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_act: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  project_leader: string;
-  project_members: Array<string>;
-  checklist_plan: {
-    checklist_done: Array<boolean>;
-    checklist_items: Array<string>;
-    checklist_members: Array<string>;
-  };
-  */
 }
 
 interface modalContentPlanProps {
@@ -144,6 +94,9 @@ interface modalContentPlanProps {
   setChecklistMembers: React.Dispatch<React.SetStateAction<string[]>>;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -180,6 +133,9 @@ interface modalContentDoProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   result_measurements: string;
   setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -218,6 +174,10 @@ interface modalContentStudyProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
+
   result_analysis: string;
   setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -256,6 +216,9 @@ interface modalContentActProps {
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -312,6 +275,9 @@ function ModalContentPlan({
   setChecklistMembers,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -356,6 +322,9 @@ function ModalContentPlan({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -392,7 +361,7 @@ function ModalContentPlan({
 
           {/* --------------------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -413,6 +382,9 @@ function ModalContentDo({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   result_measurements,
   setUpdatedResultMeasurements,
   handleIdeaClick,
@@ -447,6 +419,9 @@ function ModalContentDo({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -474,7 +449,7 @@ function ModalContentDo({
 
           {/* ---------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/* <CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -495,6 +470,9 @@ function ModalContentStudy({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   result_analysis,
   setUpdatedResultAnalysis,
   handleIdeaClick,
@@ -529,6 +507,9 @@ function ModalContentStudy({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -557,7 +538,7 @@ function ModalContentStudy({
 
           {/* ----------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -578,6 +559,9 @@ function ModalContentAct({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -610,6 +594,9 @@ function ModalContentAct({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -633,7 +620,7 @@ function ModalContentAct({
 
           {/* --------------------------------------------*/}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -668,6 +655,7 @@ cardModalProps) {
   } = improvementWork;
 
   // Accessing properties from the all_iterations object
+
   const result_measurements =
     all_iterations[total_iterations - 1].do?.results || "";
   const result_analysis =
@@ -836,13 +824,29 @@ cardModalProps) {
     setSelectedTab(updatedProjectPhase.toString());
   }, [updatedProjectPhase]);
 
+  // Variable to track if we want to load data when the modal is closed
+  const [loadDataOnClose, setLoadDataOnClose] = useState(false);
+
   //Called whenever mark phase as done is called
   const handlePhaseUpdate = (phase: number) => {
+    // Set loadDataOnClose to TRUE
+    setLoadDataOnClose(true);
+
+    //TODO
+
     if (phase === 5) {
       //If "Avsluta arbete" is clicked in the act phase
-      onHide();
-      setIsClosed(true);
+      //console.log("load data:", loadDataOnClose);
+      //setLoadDataOnClose(true);
+
+      //console.log("load data:", loadDataOnClose);
+
+      setIsClosed(true); // marks imrovementwork as closed ??
       updateDb(phase, true);
+
+      // some issue with calling onHide here
+      // true directly -> dont have to wait for useState
+      onHide(true); //TODO test this
     } else if (phase === 6) {
       //If "Påbörja ny iteration med samma idé" (phase === 6) is clicked in the act phase
       //Sets the phase to plan and clear all state-variables related to the iteration
@@ -876,7 +880,6 @@ cardModalProps) {
         file_descriptions: [],
         file_urls: [],
       });
-      setUpdatedAllIterations(updatedAllIterations + 1);
       addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
     } else if (phase === 7) {
@@ -997,6 +1000,7 @@ cardModalProps) {
           phase: newPhase,
           tags: updatedTags,
           ideas_done: ideas.map((idea) => idea.checked),
+          project_members: updatedMembers,
           all_iterations: data.all_iterations?.map(
             (iteration: Iteration, index: number) => {
               if (index === updatedTotalIterations - 1) {
@@ -1225,6 +1229,8 @@ cardModalProps) {
 
   const [project_leader, setProjectLeader] = useState<string>("hej");
   const [project_members, setProjectMembers] = useState<string[]>([]);
+  // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+  const [updatedMembers, setUpdatedMembers] = useState(project_members);
 
   async function showModal() {
     const leader = await getMemberName(improvementWork.project_leader);
@@ -1236,7 +1242,12 @@ cardModalProps) {
 
   return (
     <>
-      <Modal onShow={showModal} show={show} onHide={onHide} size="lg">
+      <Modal
+        onShow={showModal}
+        show={show}
+        onHide={() => onHide(loadDataOnClose)}
+        size="lg"
+      >
         <Modal.Header
           style={{
             borderColor: "#FFFFFF",
@@ -1290,6 +1301,9 @@ cardModalProps) {
                   setChecklistMembers={setChecklistMembers}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}
                   handlePhaseUpdate={handlePhaseUpdate}
@@ -1325,6 +1339,9 @@ cardModalProps) {
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   result_measurements={updatedResultMeasurements}
                   setUpdatedResultMeasurements={setUpdatedResultMeasurements}
                   handleIdeaClick={handleIdeaClick}
@@ -1362,6 +1379,9 @@ cardModalProps) {
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
                   result_analysis={updatedResultAnalysis}
                   setUpdatedResultAnalysis={setUpdatedResultAnalysis}
                   handleIdeaClick={handleIdeaClick}
@@ -1399,6 +1419,9 @@ cardModalProps) {
                   centrum={centrum}
                   project_leader={project_leader}
                   project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setProjectMembers={setProjectMembers}
+                  setUpdatedMembers={setUpdatedMembers}
                   handleIdeaClick={handleIdeaClick}
                   id={projectId}
                   handlePhaseUpdate={handlePhaseUpdate}
@@ -1474,10 +1497,8 @@ cardModalProps) {
                 zIndex: "0",
               }}
             >
-              <span>
-                {"Iteration "}
-                {updatedTotalIterations}
-              </span>
+              {"PGSA-cykel  "}
+              {updatedTotalIterations}
             </div>
           </div>
 
@@ -1532,7 +1553,7 @@ cardModalProps) {
             <div className="mb-3 text-center">
               Att byta idé innebär att allt arbete som utförts hittills för den
               nuvarande idén raderas. Om du önskar spara arbetet innan du byter,
-              vänligen gå till agera-fasen och välj "Påbörja ny iteration med
+              vänligen gå till agera-fasen och välj "Påbörja ny PGSA-cykel med
               annan idé".
             </div>
             <div className="mb-3 text-center">

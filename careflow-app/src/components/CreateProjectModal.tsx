@@ -18,6 +18,7 @@ import {
   handleFocusBulletPointGoals,
   handleKeyPressBulletPointGoals,
   findUserIds,
+  findUserInfo,
 } from "./CreateProjectModalHelp";
 import { getUser2 } from "../ImprovementWorkLib";
 
@@ -79,10 +80,12 @@ interface CreateProjectModalProps {
   users: any[];
   tags: any[];
   usersClassArray: any[];
+  onRefreshProjects: () => Promise<void>;
+  usersInfoArray: any[];
 }
 
 // Writes the formdata to database
-async function sendToDataBase(projectData: object) {
+async function sendToDataBase(projectData: object): Promise<void> {
   try {
     const docRef = await addDoc(
       collection(db, "improvementWorks"),
@@ -100,6 +103,8 @@ function CreateProjectModal({
   users,
   tags,
   usersClassArray,
+  onRefreshProjects,
+  usersInfoArray,
 }: CreateProjectModalProps) {
   // States for error messages
   const [titleError, setTitleError] = useState(false);
@@ -167,7 +172,7 @@ function CreateProjectModal({
   }, [user]);
 
   //console.log(newTag);
-  const handleAlternativeClick = (chosenMember: string) => {
+  const handleMemberClick = (chosenMember: string) => {
     //If the selected member already has been chosen, remove from the array
     if (selectedMembers.includes(chosenMember)) {
       const updatedChosenMembers = selectedMembers.filter(
@@ -181,22 +186,20 @@ function CreateProjectModal({
     }
   };
 
-  const handleAlternativeClick1 = (chosenMember: string) => {
+  const handleTagClick = (chosenTag: string) => {
     //If the selected member already has been chosen, remove from the array
-    if (selectedTags.includes(chosenMember)) {
-      const updatedChosenMembers = selectedTags.filter(
-        (member) => member !== chosenMember
-      );
-      setSelectedTags(updatedChosenMembers);
+    if (selectedTags.includes(chosenTag)) {
+      const updatedChosenTags = selectedTags.filter((tag) => tag !== chosenTag);
+      setSelectedTags(updatedChosenTags);
       //If the selected member has not already been chosen, add the member to the array
     } else {
-      const updatedChosenMembers = [...selectedTags, chosenMember];
-      setSelectedTags(updatedChosenMembers);
+      const updatedChosenTags = [...selectedTags, chosenTag];
+      setSelectedTags(updatedChosenTags);
     }
   };
 
   // is executed when submit button is pressed
-  function handleSubmit(e: any) {
+  async function handleSubmit(e: any) {
     // Prevent the browser from reloading the page
     e.preventDefault();
 
@@ -206,6 +209,7 @@ function CreateProjectModal({
     const formJson = Object.fromEntries(formData.entries());
 
     let project_members = findUserIds(selectedMembers, usersClassArray);
+    //let centrum = findUserInfo(selectedMembers, usersInfoArray);
     // Remove logged in user from members list
     project_members = project_members.filter((item) => item != userID);
 
@@ -296,8 +300,17 @@ function CreateProjectModal({
       setIdeas("");
       setMeasure("");
       setGoals("");
-      sendToDataBase(projectData);
-      onHide(); // Only close the modal if the title is provided
+      // sendToDataBase(projectData);
+      // onHide(); // Only close the modal if the title is provided
+    }
+    try {
+      await sendToDataBase(projectData); // Wait for the project to be added
+      onRefreshProjects(); // Refresh the project list in the parent component
+      onHide(); // Close the modal
+      // Optionally, reset form state here if needed
+    } catch (error) {
+      console.error("Failed to add project: ", error);
+      // Handle any errors here, such as showing an error message to the user
     }
   }
 
@@ -305,7 +318,9 @@ function CreateProjectModal({
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <div>
-          <HelpPopover content="Här kommer det vara en informationsruta som hjälper användaren att skapa ett nytt förändringsarbete" />
+          <HelpPopover
+            content={"Titel:\nSyfte:\nMål:\nMät och följa upp:\nSamla idéer"}
+          />
         </div>
         <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
       </Modal.Header>
@@ -526,7 +541,7 @@ function CreateProjectModal({
                       ? "bold"
                       : "normal",
                   }}
-                  onClick={() => handleAlternativeClick(member)}
+                  onClick={() => handleMemberClick(member)}
                 >
                   {member}
                 </Dropdown.Item>
@@ -545,29 +560,12 @@ function CreateProjectModal({
               Lägg till beskrivande nyckelord
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
-              {/* <div style={{ display: "flex", alignItems: "center" }}>
-                <Form.Control
-                  type="text"
-                  placeholder="Lägg till egna nyckelord"
-                  value={textValue}
-                  onChange={handleTextChange}
-                  className="mr-sm-2"
-                  style={{ width: "80%" }}
-                />
-                <Button
-                  variant="primary"
-                  onClick={handleConfirm}
-                  style={{ marginRight: "0" }}
-                >
-                  Lägg till
-                </Button>
-              </div> */}
               {tags.map((tag) => (
                 <Dropdown.Item
                   style={{
                     fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
                   }}
-                  onClick={() => handleAlternativeClick1(tag)}
+                  onClick={() => handleTagClick(tag)}
                 >
                   {tag}
                 </Dropdown.Item>

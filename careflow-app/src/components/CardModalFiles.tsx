@@ -146,6 +146,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
       <Form.Group style={formGroupStyle}>
         <Form.Label>
           <b>Bilagor</b>
+          <p style={{ fontSize: '75%', fontStyle: 'italic' }}>Här lägger du bilagor som kan vara relevanta för fasen t.ex handlingsplan, diagram, eller loggbok. </p>
         </Form.Label>
         <div style={whiteContainerStyle}>
           {files.file_names.map((item, index) => (
@@ -160,7 +161,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
               />
               {/* Print the file name followed by the decription (if there is no description, only print the file name) */}
               {files.file_descriptions[index] === "" ? (
-                <span>{item}</span>
+                <span><Link to={files.file_urls[index]}>{item}</Link></span>
               ) : (
                 <span>
                   <Link to={files.file_urls[index]}>{item}</Link>

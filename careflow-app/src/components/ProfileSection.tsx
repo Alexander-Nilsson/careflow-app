@@ -4,11 +4,13 @@ import nurseImage from "../Images/genderNeutralWorker.png";
 import { UserInfoType } from "./Start";
 
 type ProfileSectionProps = {
-  userInfo: UserInfoType;
+  userInfo: UserInfoType,
+  //HÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄR
+  onRefresh: () => Promise<void>;
 };
 
 
-function ProfileSection({userInfo}: ProfileSectionProps) {
+function ProfileSection({userInfo, onRefresh }: ProfileSectionProps) {
 
   const entireSectionStyle = {
     width: "100%",
@@ -80,7 +82,7 @@ function ProfileSection({userInfo}: ProfileSectionProps) {
         </div>
       </div>
       <div style= {buttonSectionStyle}>
-         <CreateNewProject />
+         <CreateNewProject onRefreshProjects={onRefresh} />
       </div>
     </div>
     

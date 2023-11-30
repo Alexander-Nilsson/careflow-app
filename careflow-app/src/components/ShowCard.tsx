@@ -2,23 +2,30 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
 import CardModal from "./CardModal";
-import "./ShowCard.css";
+//import "./ShowCard.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
+import React from "react";
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
+  fetchProjects: () => void;
 }
 
-function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
+function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
   // State to track whether the mouse is over the task card
 
   const [show, setShow] = useState(false);
-  const modalClose = () => {
+  const modalClose = (data?: any) => {
     setShow(false);
-    console.log("modalClosed in showcard", show);
+    //console.log("modalClosed in showcard", show);
+    console.log("data sent onHide: (True = load data)", data);
+    // If data is true, then fetch projects
+    if (data) {
+      fetchProjects();
+    }
   };
   const modalShow = () => {
     setShow(true);
@@ -44,7 +51,7 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
         //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
-        console.log("hämtar från showCard: ")
+        console.log("hämtar från showCard: ");
         const names = await Promise.all(
           improvementWork.project_members.map(
             async (member) => await getMemberName(member)
@@ -58,8 +65,6 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
         console.error("Error fetching member names:", error);
       }
     };
-
-    // fetchData();
   }, []);
 
   // UseSortable hook for drag-and-drop functionality
@@ -70,8 +75,6 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
         type: "ImprovementWork",
         improvementWork,
       },
-
-      //disabled: editMode,
     });
 
   // Define the style based on drag-and-drop transition
@@ -87,7 +90,7 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
         style={style}
         className="
           opacity-30
-          bg-mainBackgroundColor p-2.5 h-[10vh] min-h-[10vh] w-[15vw] items-center flex text-left rounded-xl border-2 border-blue-500 cursor-grab relative
+          bg-mainBackgroundColor p-2.5 h-[10vh] min-h-[140px] w-[15vw] items-center flex text-left rounded-xl border-2 border-blue-500 cursor-grab relative
         "
       />
     );
@@ -117,4 +120,4 @@ function ShowCard({ improvementWork, isAdmin }: ShowCardProps) {
   );
 }
 
-export default ShowCard;
+export default React.memo(ShowCard);

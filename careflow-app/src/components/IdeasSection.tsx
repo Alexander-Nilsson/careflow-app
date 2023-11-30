@@ -10,19 +10,22 @@ import rightArrow from "../Images/right-arrow.png";
 
 type IdeasSectionProps = {
     userInfo: UserInfoType;
+    width: string;
+    add_height:string;
 };
 
-function IdeasSection({ userInfo }: IdeasSectionProps) {
+function IdeasSection({ userInfo,width,add_height }: IdeasSectionProps) {
     // You can define your project data here
     const ideasSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
-        height: "250px",
+        height: add_height,
         borderRadius: "10px",
         // margin: "10px",
         // marginLeft: "20px",
         marginTop: "0px",
-        width: "42%",
+        width: width,
         boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
+        
     };
 
     const ButtonStyle: React.CSSProperties = {
@@ -79,17 +82,17 @@ function IdeasSection({ userInfo }: IdeasSectionProps) {
             <div className="d-flex">
                 <h1 className="mt-2 ml-2 flex-grow-1" style={titleStyle}>Förslagslåda</h1>
                 <div className="mt-3 mr-2">
-                    <HelpPopover content="Har du ett förslag på ett förbättringsarbete? Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
+                    <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
                 </div>
             </div>
             <p className="ml-2">Saknar du tid eller en detaljerad plan för ett förbättringsarbete?<br />
-                Skicka in ditt förslag här!</p>
+                Skicka in ditt förslag här! Förslaget hamnar bland mina förbättringsarbeten.</p>
             <Container className="my-3">
                 <FormControl
                     as="textarea"
                     value={ideaValue}
                     onChange={handleChange}
-                    placeholder="Skicka in ett eget förslag på en förändring."
+                    placeholder="Beskriv ditt förslag med en mening här."
                     style={ideaInputStyle}
                 />
                 <div className="d-flex flex-row-reverse">
