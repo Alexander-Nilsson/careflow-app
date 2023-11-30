@@ -89,6 +89,7 @@ function ColumnContainer({
               improvementWork={improvementWork}
               isAdmin={isAdmin}
               fetchProjects={fetchProjects}
+              improvementWorkList={improvementWorkList}
             />
           ))}
         </SortableContext>

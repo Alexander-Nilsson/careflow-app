@@ -1,4 +1,9 @@
+import React, { useState, useEffect } from "react";
 import { Form } from "react-bootstrap";
+import { UserFilterState, ImprovementWork, filterForUser, findTagOptions } from "../ImprovementWorkLib";
+import ProjectsSection from "./ProjectsSection";
+import ProjectCard from "./ProjectCard";
+
 
 const whiteContainerStyle = {
   backgroundColor: "#FFFFFF",
@@ -26,9 +31,36 @@ const projectsContainerStyle = {
 
 interface similarImprovementWorksProps {
   tags: Array<string>;
+  improvementWorkList: ImprovementWork[];
 }
 
-function CardModalSimilarProjects({ tags }: similarImprovementWorksProps) {
+function CardModalSimilarProjects({ tags, improvementWorkList }: similarImprovementWorksProps) {
+//   const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
+
+  const [filterState, setFilterState] = useState<UserFilterState>({
+    includeUser: false,
+    includeClinic: false,
+    includeCentrum: false,
+    tagFilter: tags[0],
+    placeFilter: "all_places",
+    closed: false
+});
+
+
+  let randomUserdata = {
+    hsaID: "",
+    admin: false,
+    centrum: "",
+    clinic: "",
+    email: "",
+    first_name: "",
+    phone_number: "",
+    place: "",
+    profession: "",
+    sur_name: ""
+  };
+  const displayedImprovementWorks: ImprovementWork[] = filterForUser(improvementWorkList, filterState, randomUserdata, "date_created");
+
   return (
     <>
       <Form.Group style={formGroupStyle}>
@@ -37,7 +69,7 @@ function CardModalSimilarProjects({ tags }: similarImprovementWorksProps) {
         </Form.Label>
         <div style={whiteContainerStyle}>
           <div style={projectsContainerStyle}>
-            {/*{displayedImprovementWorks != null ? (
+          {displayedImprovementWorks != null ? (
                     displayedImprovementWorks.map((improvementWork, index) => (
                         <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
                             <ProjectCard
@@ -46,13 +78,16 @@ function CardModalSimilarProjects({ tags }: similarImprovementWorksProps) {
                                 place={improvementWork.place}
                                 tags={improvementWork.tags}
                                 phase={improvementWork.phase}
-                                displayPhaseImage={true}
+                                displayPhaseImage={false}
+                                improvementWork={improvementWork}
+                                isAdmin={randomUserdata.admin}
+                                improvementWorkList={improvementWorkList}
                             />
                         </div>
                     ))
                 ) : (
                     null
-                )}*/}
+                )}
           </div>
         </div>
       </Form.Group>
