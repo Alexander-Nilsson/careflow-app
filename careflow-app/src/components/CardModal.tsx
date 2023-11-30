@@ -96,7 +96,7 @@ interface modalContentPlanProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
-  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -135,7 +135,7 @@ interface modalContentDoProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
-  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   result_measurements: string;
   setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -176,7 +176,7 @@ interface modalContentStudyProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
-  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
 
   result_analysis: string;
   setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
@@ -218,7 +218,7 @@ interface modalContentActProps {
   project_members: Array<string>;
   updatedMembers: Array<string>;
   setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
-  setProjectMembers:  React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -655,7 +655,7 @@ cardModalProps) {
   } = improvementWork;
 
   // Accessing properties from the all_iterations object
-  
+
   const result_measurements =
     all_iterations[total_iterations - 1].do?.results || "";
   const result_analysis =
@@ -670,7 +670,6 @@ cardModalProps) {
   const files_act = all_iterations[total_iterations - 1].act?.files || {};
   const checklist_plan =
     all_iterations[total_iterations - 1].plan?.checklist || {};
-  
 
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
@@ -826,11 +825,21 @@ cardModalProps) {
     // Set loadDataOnClose to TRUE
     setLoadDataOnClose(true);
 
+    //TODO
+
     if (phase === 5) {
       //If "Avsluta arbete" is clicked in the act phase
-      onHide(loadDataOnClose);
-      setIsClosed(true);
+      //console.log("load data:", loadDataOnClose);
+      //setLoadDataOnClose(true);
+
+      //console.log("load data:", loadDataOnClose);
+
+      setIsClosed(true); // marks imrovementwork as closed ??
       updateDb(phase, true);
+
+      // some issue with calling onHide here
+      // true directly -> dont have to wait for useState
+      onHide(true); //TODO test this
     } else if (phase === 6) {
       //If "Påbörja ny iteration med samma idé" (phase === 6) or "Påbörja ny iteration med annan idé" (phase === 7) is clicked in the act phase
       //Sets the phase to plan and clear all state-variables related to the iteration
@@ -914,7 +923,7 @@ cardModalProps) {
       updateDb(phase + 1, false);
     }
   };
-  
+
   //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
@@ -1150,7 +1159,7 @@ cardModalProps) {
 
   const [project_leader, setProjectLeader] = useState<string>("hej");
   const [project_members, setProjectMembers] = useState<string[]>([]);
- // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+  // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
   const [updatedMembers, setUpdatedMembers] = useState(project_members);
 
   async function showModal() {
