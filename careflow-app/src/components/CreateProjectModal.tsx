@@ -207,7 +207,7 @@ function CreateProjectModal({
     const formJson = Object.fromEntries(formData.entries());
 
     let project_members = findUserIds(selectedMembers, usersClassArray);
-    let [centrum, clinic] = findUserInfo(selectedMembers, usersInfoArray);
+    // let [centrum, clinic] = findUserInfo(selectedMembers, usersInfoArray);
     console.log("centrum", centrum);
     //console.log("clinic", clinic);
 
@@ -218,7 +218,7 @@ function CreateProjectModal({
       title: formJson.title,
       centrum: centrum,
       place: place,
-      clinic: clinic,
+      clinic: department,
       closed: false,
       phase: 2, // planning phase is phase 2
       date_created: Timestamp.fromDate(new Date()),
