@@ -213,6 +213,8 @@ function CreateProjectModal({
     // Remove logged in user from members list
     project_members = project_members.filter((item) => item != userID);
 
+    console.log("hej");
+
     const projectData = {
       title: formJson.title,
       centrum: centrum,
