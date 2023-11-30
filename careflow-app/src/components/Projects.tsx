@@ -240,7 +240,11 @@ function Projects() {
       ) : (
         <></>
       )}
-      <div
+      
+
+      {isAuthenticated && userInfo ? (
+        <div>
+          <div
         style={{
           width: "100%",
           height: "150px",
@@ -403,8 +407,6 @@ function Projects() {
       >
         <KanbanBoard />
       </ProjectContext.Provider>
-
-      {isAuthenticated && userInfo ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',marginLeft: "-0,8%"}}>
         <div style={{ width: "94%"}}>
         <ProjectsSection
@@ -413,6 +415,7 @@ function Projects() {
           allImprovementWorks={allImprovementWorks}
           showClosed={true}
         />
+        </div>
         </div>
         </div>
       ) : (
