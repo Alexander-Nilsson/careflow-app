@@ -11,19 +11,21 @@ import rightArrow from "../Images/right-arrow.png";
 type IdeasSectionProps = {
     userInfo: UserInfoType;
     width: string;
+    add_height:string;
 };
 
-function IdeasSection({ userInfo,width }: IdeasSectionProps) {
+function IdeasSection({ userInfo,width,add_height }: IdeasSectionProps) {
     // You can define your project data here
     const ideasSectionStyle = {
         background: 'rgba(255, 255, 255, 0.70)',
-        height: "250px",
+        height: add_height,
         borderRadius: "10px",
         // margin: "10px",
         // marginLeft: "20px",
         marginTop: "0px",
         width: width,
         boxShadow: '0px 0px 10px rgba(100, 100, 100, 0.2)',
+        
     };
 
     const ButtonStyle: React.CSSProperties = {
