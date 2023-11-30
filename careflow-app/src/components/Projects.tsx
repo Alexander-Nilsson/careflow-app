@@ -216,7 +216,7 @@ function Projects() {
         }}
       >
         <div className="outerContainer" style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex", marginTop: "3vh" }}>
             <TitleBox
               title={"Mina förbättringsarbeten"}
               description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
@@ -232,8 +232,8 @@ function Projects() {
             </div>
             </div>
           </div>
-          <div className="description" style={{ marginLeft: "2vw" }}>
-            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "70%", fontWeight: "normal" }}>
+          <div className="description" style={{ marginLeft: "2vw"}}>
+            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "110%", fontWeight: "normal" }}>
               Här kan du jobba med dina förbättringsarbeten genom förbättringsmodellen och de fyra stegen av PGSA-cykeln.
               <br />
               Du kan även involvera dig i din kliniks och ditt centrums förbättringsarbeten.
@@ -339,12 +339,16 @@ function Projects() {
       </ProjectContext.Provider>
 
       {isAuthenticated && userInfo ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',marginLeft: "-0,8%"}}>
+        <div style={{ width: "94%"}}>
         <ProjectsSection
           title={"Avslutade förbättringsarbeten"}
           userInfo={userInfo}
           allImprovementWorks={allImprovementWorks}
           showClosed={true}
         />
+        </div>
+        </div>
       ) : (
         <div
           style={{
