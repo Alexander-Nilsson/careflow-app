@@ -690,7 +690,8 @@ cardModalProps) {
 
   // Effect to trigger when updatedTags changes
   useEffect(() => {
-    setLoadDataOnClose(true); // This will run whenever updatedTags changes
+    setLoadDataOnClose(true); // This will run whenever updatedTags changes'
+    console.log("useEffect in modal, loadDataOnClose: ", loadDataOnClose);
   }, [updatedTags]); // The dependency array ensures the effect runs when updatedTags changes
 
   //State variable that contains the updated content of the text field "Analys av resultat"
