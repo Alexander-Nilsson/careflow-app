@@ -348,6 +348,7 @@ function DisplayAllProjects() {
                   displayPhaseImage={true}
                   improvementWork={project}
                   isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
+                  improvementWorkList={allImprovementWorks}
                 />
               </div>
             </div>
