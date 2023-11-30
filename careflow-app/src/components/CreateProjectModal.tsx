@@ -304,6 +304,9 @@ function CreateProjectModal({
       sendToDataBase(projectData);
       onHide(); // Only close the modal if the title is provided
     }
+
+    project_members.length = 0;
+    selectedTags.length = 0;
   }
 
   return (
