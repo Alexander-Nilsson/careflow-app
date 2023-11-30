@@ -132,8 +132,11 @@ const handleSaveMember = (newMember: string) => {
               Lägg till kollegor
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
-              {users.map((member) => (
-                <Dropdown.Item
+              {
+              users.map((member) => (
+                (project_members.includes(member))
+                ? <p>nej</p>
+                : <Dropdown.Item
                   style={{
                     fontWeight: updatedMembers.includes(member)
                       ? "bold"
@@ -146,6 +149,7 @@ const handleSaveMember = (newMember: string) => {
                 >
                   {member}
                 </Dropdown.Item>
+               
               ))}
             </Dropdown.Menu>
           </Dropdown>
