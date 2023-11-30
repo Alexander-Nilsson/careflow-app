@@ -682,6 +682,8 @@ cardModalProps) {
   const files_act = all_iterations[total_iterations - 1].act?.files || {};
   const checklist_plan =
     all_iterations[total_iterations - 1].plan?.checklist || {};
+  const selected_idea =
+    all_iterations[total_iterations - 1].selected_idea || "";
 
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
@@ -693,6 +695,10 @@ cardModalProps) {
   //State variable that is updated when the number of iterations is updated, which makes sure that the right Iteration's info is displayed
   const [updatedTotalIterations, setUpdatedTotalIterations] =
     useState(total_iterations);
+
+  const [updatedAllIterations, setUpdatedAllIterations] = useState(
+    all_iterations.length
+  );
 
   //State variable that is updated when the improvement work is marked as finished
   const [isClosed, setIsClosed] = useState(closed);
@@ -736,8 +742,8 @@ cardModalProps) {
 
   //Handles what happens when an idea is clicked, if an idea already has been chosen and another one is clicked - the confirmation modal will show
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState<number | null>(
-    null
+  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState(
+    parseInt(selected_idea)
   );
 
   //State variable that handles if the "Sparat!" text will show or not
@@ -764,6 +770,7 @@ cardModalProps) {
       const updatedIdeas = [...ideas];
       updatedIdeas[index].checked = true;
       setIdeas(updatedIdeas);
+      setSelectedIdeaIndex(index);
       updateDb(updatedProjectPhase, false);
     }
   };
@@ -837,7 +844,7 @@ cardModalProps) {
       setIsClosed(true);
       updateDb(phase, true);
     } else if (phase === 6) {
-      //If "Påbörja ny iteration med samma idé" (phase === 6) or "Påbörja ny iteration med annan idé" (phase === 7) is clicked in the act phase
+      //If "Påbörja ny iteration med samma idé" (phase === 6) is clicked in the act phase
       //Sets the phase to plan and clear all state-variables related to the iteration
       setUpdatedProjectPhase(2);
       setChecklistItems([]);
@@ -869,9 +876,11 @@ cardModalProps) {
         file_descriptions: [],
         file_urls: [],
       });
+      setUpdatedAllIterations(updatedAllIterations + 1);
       addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
     } else if (phase === 7) {
+      //If "Påbörja ny iteration med annan idé" (phase === 7) is clicked in the act phase
       console.log("Fortsätt med ny ide");
       setUpdatedProjectPhase(2);
       setChecklistItems([]);
@@ -904,6 +913,7 @@ cardModalProps) {
         file_urls: [],
       });
       addNewIterationInDb(); //Creates an new iteration in the db, where chosen idea will be set to none
+      setUpdatedAllIterations(updatedAllIterations + 1);
       setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
 
       //Also updates the state variable ideas so that all ideas will be set to false
@@ -922,7 +932,16 @@ cardModalProps) {
 
   //Changes the displayed iteration when one of the arrrows next to the iteration is clicked
   const handleIterationChange = (displayedIteration: number) => {
-    setUpdatedTotalIterations(displayedIteration + 1);
+    /*setUpdatedTotalIterations(displayedIteration + 1);
+
+    const updatedIdeas = ideas.map((idea, index) => ({
+      ...idea,
+      checked:
+        index === parseInt(all_iterations[displayedIteration]?.selected_idea),
+    }));
+
+    setIdeas(updatedIdeas);
+
     setChecklistItems(
       all_iterations[displayedIteration].plan.checklist.checklist_items
     );
@@ -961,7 +980,7 @@ cardModalProps) {
       file_descriptions:
         all_iterations[displayedIteration].act.files.file_descriptions,
       file_urls: all_iterations[displayedIteration].act.files.file_urls,
-    });
+    });*/
   };
 
   //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
@@ -981,9 +1000,13 @@ cardModalProps) {
           all_iterations: data.all_iterations?.map(
             (iteration: Iteration, index: number) => {
               if (index === updatedTotalIterations - 1) {
+                const selectedIdeaIndex = ideas.findIndex(
+                  (idea) => idea.checked
+                );
                 // Update the last iteration
                 return {
                   ...iteration,
+                  selected_idea: selectedIdeaIndex.toString(),
                   plan: {
                     ...iteration.plan,
                     checklist: {
@@ -1060,6 +1083,7 @@ cardModalProps) {
       const projectDoc = await getImprovementWork(projectDocRef);
       if (projectDoc.exists()) {
         const data = projectDoc.data();
+        const selectedIdeaIndex = updatedIdeasChecked.findIndex((idea) => idea);
         const updatedData = {
           phase: 2, // Updates the phase to plan
           ideas_done: updatedIdeasChecked, //Updates the chosen idea
@@ -1067,6 +1091,7 @@ cardModalProps) {
             //Clear all fields of the current iteration
             {
               ...data.all_iterations?.[updatedTotalIterations - 1],
+              selected_idea: selectedIdeaIndex.toString(),
               plan: {
                 ...data.all_iterations?.[updatedTotalIterations - 1]?.plan,
                 checklist: {
@@ -1079,27 +1104,27 @@ cardModalProps) {
                   file_descriptions: [],
                   file_urls: [],
                 },
-                notes: [],
+                notes: "",
               },
               do: {
                 ...data.all_iterations?.[updatedTotalIterations - 1]?.do,
-                results: [],
+                results: "",
                 files: {
                   file_names: [],
                   file_descriptions: [],
                   file_urls: [],
                 },
-                notes: [],
+                notes: "",
               },
               study: {
                 ...data.all_iterations?.[updatedTotalIterations - 1]?.study,
-                analysis: [],
+                analysis: "",
                 files: {
                   file_names: [],
                   file_descriptions: [],
                   file_urls: [],
                 },
-                notes: [],
+                notes: "",
               },
               act: {
                 ...data.all_iterations?.[updatedTotalIterations - 1]?.act,
@@ -1108,7 +1133,7 @@ cardModalProps) {
                   file_descriptions: [],
                   file_urls: [],
                 },
-                notes: [],
+                notes: "",
               },
             },
           ],
@@ -1132,9 +1157,11 @@ cardModalProps) {
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const allIterations = data.all_iterations || [];
+        const selectedIdeaIndex = ideas.findIndex((idea) => idea.checked);
 
         //Add a new iteration to the array
         const newIteration = {
+          selected_idea: selectedIdeaIndex.toString(),
           plan: {
             checklist: {
               checklist_done: [],
@@ -1146,25 +1173,25 @@ cardModalProps) {
               file_descriptions: [],
               file_urls: [],
             },
-            notes: [],
+            notes: "",
           },
           do: {
-            results: [],
+            results: "",
             files: {
               file_names: [],
               file_descriptions: [],
               file_urls: [],
             },
-            notes: [],
+            notes: "",
           },
           study: {
-            analysis: [],
+            analysis: "",
             files: {
               file_names: [],
               file_descriptions: [],
               file_urls: [],
             },
-            notes: [],
+            notes: "",
           },
           act: {
             files: {
@@ -1172,7 +1199,7 @@ cardModalProps) {
               file_descriptions: [],
               file_urls: [],
             },
-            notes: [],
+            notes: "",
           },
         };
 
@@ -1400,14 +1427,16 @@ cardModalProps) {
               <ArrowUp
                 style={{
                   marginTop: "12px",
-                  marginRight: "-16px",
+                  marginRight:
+                    updatedTotalIterations < updatedAllIterations
+                      ? "-16px"
+                      : "-30px",
                   zIndex: "1",
                   width: "17px",
                   height: "17px",
                   cursor: "pointer",
                 }}
                 onClick={() => {
-                  updateDb(updatedProjectPhase, false);
                   handleIterationChange(updatedTotalIterations - 2);
                 }}
               />
@@ -1415,7 +1444,7 @@ cardModalProps) {
               ""
             )}
             {/* Show downwards arrow if the currently viewed iteration is not the latest one */}
-            {updatedTotalIterations < all_iterations.length ? (
+            {updatedTotalIterations < updatedAllIterations ? (
               <ArrowDown
                 style={{
                   marginTop: "151px",
@@ -1426,7 +1455,6 @@ cardModalProps) {
                   cursor: "pointer",
                 }}
                 onClick={() => {
-                  updateDb(updatedProjectPhase, false);
                   handleIterationChange(updatedTotalIterations);
                 }}
               />
