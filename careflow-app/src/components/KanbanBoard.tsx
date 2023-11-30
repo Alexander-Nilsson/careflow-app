@@ -25,31 +25,31 @@ const columns: Column[] = [
     id: 1,
     title: "Förslag",
     columnDescription:
-      "Här ligger de projekt som ännu inte startats. Det kan saknas viss information som behövs innan förbättringsarbetet kan starta.",
+      "Här finns inskickade förslag som ej är påbörjade förbättringsarbeten. Klicka på ett kort för att se mer information och eventuellt påbörja en PGSA-cykel.",
   },
   {
     id: 2,
     title: "Planera",
     columnDescription:
-      "I planeringsfasen har projektet inletts men inte genomförts. Detaljer kring genomförandet diskuteras fortfarande i denna fas.",
+      "I planeringsfasen tar vi fram en plan för vad som ska göras utifrån den idén vi har valt samt de mål och mått som vi har identifierat. Vi planerar hur det ska göras samt när och vem som ska genomföra det. Sist agerar vi på de framtagna punkterna.",
   },
   {
     id: 3,
     title: "Göra",
     columnDescription:
-      "Projekt som har genomförts eller genomförs just nu ligger här.",
+      "I denna fas genomför vi mätningarna och testerna som i studera-fasen ska studeras. Vi fångar fakta genom synpunkter, iakttagelser och erfarenheter. \n Här noterar vi även problem och oväntade händelser samt tar del av erfarenheter. Det är viktigt att se till att de som är involverade förstår problemet och vilka förbättringar som ska utföras.",
   },
   {
     id: 4,
     title: "Studera",
     columnDescription:
-      "Här studeras och utvärderas utfallet av projekten som genomförts, och beslut fattas om det ska bli en permanent förändring eller inte.",
+      "I studera fasen så analyserar vi och jämför resultatet med vårt mål och eventuella mätetal. Vi använder eventuellt olika statistiska metoder för att studera resultatet. \n När en positiv effekt uppnåtts och kvaliteten förbättrats, utvärderar vi behovet av fortsatta kontroller för att se till att förbättringarna bibehålls.",
   },
   {
     id: 5,
     title: "Agera",
     columnDescription:
-      "Efter lyckat genomförande har det beslutats att förändringen ska implementeras permanent, vilket pågår i denna fasen.",
+      "I sista fasen tar vi hand om lärdomar från genomförandet. Vi summerar och reflekterar över de lärdomar vi kommit fram till. Vi tar ställning till om förbättringen ska förkastas, vi vill göra ett till varv med samma idé men justerat eller med en av våra andra idéer. \n \n Om vi nått önskat resultat, så kanske förbättringar ska implementeras som den är. Även då behövs en plan för det fortsätta arbetet. Vi tar också beslut om att sprida förbättringen och utanför den egna enheten.",
   },
 ];
 
@@ -61,7 +61,12 @@ function KanbanBoard() {
     );
   }
 
-  const { improvementWorkList, setImprovementWorkList } = context;
+  const {
+    improvementWorkList,
+    setImprovementWorkList,
+    isAdmin,
+    fetchProjects,
+  } = context;
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
 
@@ -81,34 +86,62 @@ function KanbanBoard() {
         src="./background-gradient.jpeg"
       />
       <div className="board-container">
-        <DndContext
-          sensors={sensors}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onDragOver={onDragOver}
-        >
-          <div className="column-group">
-            {columns.map((col) => (
+        <div className="column-group">
+          {/* Render the column where column.id === 1 outside the DndContext */}
+          {columns
+            .filter((col) => col.id === 1)
+            .map((col) => (
               <ColumnContainer
                 key={col.id}
                 column={col}
                 improvementWorkList={improvementWorkList.filter(
                   (ImprovementWork) =>
-                    ImprovementWork.phase === col.id && !ImprovementWork.closed //only display non- closed cards in kanban
+                    ImprovementWork.phase === col.id && !ImprovementWork.closed
                 )}
+                isAdmin={isAdmin}
+                fetchProjects={fetchProjects}
               />
             ))}
-          </div>
 
-          {createPortal(
-            <DragOverlay>
-              {activeImprovementWork && (
-                <ShowCard improvementWork={activeImprovementWork} />
-              )}
-            </DragOverlay>,
-            document.body
-          )}
-        </DndContext>
+          <DndContext
+            sensors={sensors}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}
+          >
+            <div className="column-group">
+              {/* Render all other columns inside the DndContext */}
+              {columns
+                .filter((col) => col.id !== 1)
+                .map((col) => (
+                  <ColumnContainer
+                    key={col.id}
+                    column={col}
+                    improvementWorkList={improvementWorkList.filter(
+                      (ImprovementWork) =>
+                        ImprovementWork.phase === col.id &&
+                        !ImprovementWork.closed
+                    )}
+                    isAdmin={isAdmin}
+                    fetchProjects={fetchProjects}
+                  />
+                ))}
+            </div>
+
+            {createPortal(
+              <DragOverlay>
+                {activeImprovementWork && (
+                  <ShowCard
+                    improvementWork={activeImprovementWork}
+                    isAdmin={isAdmin}
+                    fetchProjects={fetchProjects}
+                  />
+                )}
+              </DragOverlay>,
+              document.body
+            )}
+          </DndContext>
+        </div>
       </div>
     </div>
   );
@@ -227,6 +260,21 @@ function KanbanBoard() {
       });
     }
   }
+
+  /*
+  //function to update phase in view (not db)
+  function updateImprovementWorkPhase(
+    improvementWork: ImprovementWork,
+    newPhase: number
+  ) {
+    const newImprovementWorks = improvementWorkList.map((work) => {
+      if (work.id !== improvementWork.id) return work;
+      return { ...work, phase: newPhase };
+    });
+    setImprovementWorkList(newImprovementWorks);
+    console.log("Update improvementWork phase in UI");
+  }
+  */
 }
 
 export default KanbanBoard;

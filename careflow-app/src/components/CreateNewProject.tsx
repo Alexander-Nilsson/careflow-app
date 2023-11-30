@@ -4,20 +4,11 @@ import CreateProjectButton from "./CreateProjectButton";
 import CreateProjectModal from "./CreateProjectModal";
 import ContinueButton from "./ContinueButton";
 import { Id } from "../types";
-import {
-  doc,
-  setDoc,
-  getDocs,
-  getDoc,
-  collection,
-  Timestamp,
-  query,
-  addDoc,
-} from "firebase/firestore";
-import { db } from "../firebase";
+import { getTags, getUsers } from "../ImprovementWorkLib";
 
-var users: any[] = [];
-var usersClassArray: any[] = [];
+export var users: any[] = [];
+export var usersClassArray: any[] = [];
+var usersInfoArray: any[] = [];
 
 export class userIDname {
   id: string;
@@ -28,26 +19,32 @@ export class userIDname {
   }
 }
 
+export class userInfo {
+  id: string;
+  sur_name: string;
+  centrum: string;
+  constructor(id: string, sur_name: string, centrum: string) {
+    this.id = id;
+    this.sur_name = sur_name;
+    this.centrum = centrum;
+  }
+}
+
 async function fetchUsers() {
-  const q = query(collection(db, "users"));
-  const querySnapshot = await getDocs(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
-
-  ids.map(async (id) => {
-    const projectReference = doc(db, "users", id).withConverter(
-      memberConverter
-    );
-    const snapshot = await getDoc(projectReference);
-    const userData = snapshot.data() as User;
-
+  const userSnapshot = await getUsers();
+  userSnapshot.forEach((doc) => {
+    const userData = doc.data() as User;
     if (!users.includes(userData.sur_name)) {
       users.push(userData.sur_name);
-      usersClassArray.push(new userIDname(id, userData.sur_name));
+      usersClassArray.push(new userIDname(doc.data().id, userData.sur_name));
+      usersInfoArray.push(
+        new userInfo(doc.data().id, userData.sur_name, doc.data().centrum)
+      );
     }
   });
 }
 
-class User {
+export class User {
   id: Id;
   admin: boolean;
   centrum: string;
@@ -87,7 +84,7 @@ class User {
   }
 }
 
-class Tag {
+export class Tag {
   id: Id;
   description: string;
   constructor(id: Id, description: string) {
@@ -140,28 +137,24 @@ const tagConverter = {
   },
 };
 
-var tags: any[] = [];
+export var tags: any[] = [];
 
 async function fetchTags() {
-  const q = query(collection(db, "tags"));
-  const querySnapshot = await getDocs(q);
-  const ids = querySnapshot.docs.map((doc) => doc.id);
-
-  ids.map(async (id) => {
-    const tagReference = doc(db, "tags", id).withConverter(tagConverter);
-    const snapshot = await getDoc(tagReference);
-    const tagData = snapshot.data() as Tag;
-
-    if (!tags.includes(tagData.description)) {
-      tags.push(tagData.description);
+  const querySnapshot = await getTags();
+  querySnapshot.forEach((doc) => {
+    if (!tags.includes(doc.data().description)) {
+      let tag = doc.data().description;
+      tags.push(tag);
     }
   });
-
-  //tags.length = 0;
-  //return tags;
 }
 
-function CreateNewProject() {
+interface CreateNewProjectProps {
+  onRefreshProjects: () => Promise<void>;
+  // Define other props here if there are any
+}
+
+function CreateNewProject({ onRefreshProjects }: CreateNewProjectProps) {
   const [show, setShow] = useState(false);
 
   const modalClose = () => setShow(false);
@@ -180,6 +173,8 @@ function CreateNewProject() {
         users={users}
         tags={tags}
         usersClassArray={usersClassArray}
+        usersInfoArray={usersInfoArray}
+        onRefreshProjects={onRefreshProjects}
       />
     </div>
   );

@@ -14,6 +14,9 @@ import {
   Lightbulb,
   Bullseye,
 } from "react-bootstrap-icons";
+import { tags } from "./CreateNewProject";
+import Dropdown from "react-bootstrap/Dropdown";
+console.log("taggar", tags);
 
 const iconCircleStyle = {
   borderRadius: "50%",
@@ -35,6 +38,41 @@ const buttonStyle = {
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
+};
+
+const finishButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 10px",
+  width: "100%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "15px",
+};
+
+const newIdeaButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 0px",
+  width: "48.9%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
+  marginLeft: "5px",
+};
+
+const sameIdeaButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 0px",
+  width: "48.9%",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
+  marginRight: "5px",
 };
 
 const iconStyle = {
@@ -69,7 +107,7 @@ const whiteDescriptionContainerStyle = {
 
 const tagStyle: React.CSSProperties = {
   marginTop: "5px",
-  color: "#FFFFFF",
+
   fontSize: "14px",
   display: "flex",
   flexWrap: "wrap",
@@ -77,18 +115,24 @@ const tagStyle: React.CSSProperties = {
 
 const tagContainerStyle = {
   backgroundColor: "#051F6E",
+  color: "#FFFFFF",
   padding: "2px 10px",
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  cursor: "pointer",
 };
 
 const addTagContainerStyle = {
-  backgroundColor: "#AEAEAE",
+  backgroundColor: "#A2BCEF",
+  color: "#FFFFFF",
   padding: "2px 10px",
   marginRight: "5px",
   marginBottom: "8px",
   borderRadius: "10px",
+  cursor: "pointer",
+  fontSize: "14px",
+  border: "none",
 };
 
 const saveTagButtonStyle = {
@@ -115,6 +159,7 @@ interface cardModalTopLeftProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   active_tab: number;
   percentage: number;
   handleIdeaClick: (index: number) => void;
@@ -130,7 +175,7 @@ interface phasePercentageProps {
 function PhasePercentage({ percentage }: phasePercentageProps) {
   return (
     <>
-      <div style={{ width: 120, height: 120 }}>
+      <div style={{ width: 130, height: 130 }}>
         <CircularProgressbar
           value={percentage}
           text={`${percentage}%`}
@@ -165,6 +210,7 @@ function CardModalTopLeft({
   date_created,
   goals,
   measure,
+  purpose,
   active_tab,
   percentage,
   ideas,
@@ -172,8 +218,7 @@ function CardModalTopLeft({
   id,
   handlePhaseUpdate,
 }: cardModalTopLeftProps) {
-  const formattedDate = date_created.toDate().toLocaleString();
-  //const [updatedTags, setUpdatedTags] = useState(tags);
+  const formattedDate = date_created.toDate().toLocaleDateString();
   const [showTagModal, setShowTagModal] = useState(false);
   const [newTag, setNewTag] = useState("");
 
@@ -197,7 +242,7 @@ function CardModalTopLeft({
     //Makes sure that the input field is filled before the tag can be added
     if (newTag.trim() !== "") {
       handleCloseTagModal();
-      const updatedTagsArray = [...updatedTags, newTag.toLowerCase()];
+      const updatedTagsArray = [...updatedTags, newTag];
       setUpdatedTags(updatedTagsArray);
       setNewTag("");
     }
@@ -206,14 +251,19 @@ function CardModalTopLeft({
   return (
     <>
       <div style={{ width: "63%" }}>
-        <div style={{ display: "flex", marginBottom: "20px" }}>
+        <div
+          style={{
+            display: active_tab !== 5 ? "flex" : "block",
+            marginBottom: "20px",
+          }}
+        >
           <div style={{ width: "60%" }}>
             <Modal.Title style={{ marginTop: "30px" }}>{title}</Modal.Title>
             <div style={tagStyle}>
               {updatedTags.map((tag, index) => (
                 <React.Fragment key={index}>
                   <span style={tagContainerStyle}>
-                    {tag}
+                    {tag.toLowerCase()}
                     <span
                       style={{ marginLeft: "6px" }}
                       onClick={() => handleRemoveTag(index)}
@@ -223,15 +273,27 @@ function CardModalTopLeft({
                   </span>
                 </React.Fragment>
               ))}
-              <span style={addTagContainerStyle} onClick={handleShowTagModal}>
-                ny tagg +
-              </span>
+              <Dropdown key={tags.length}>
+                <Dropdown.Toggle style={addTagContainerStyle}>
+                  nytt nyckelord
+                </Dropdown.Toggle>
+                <Dropdown.Menu style={{ width: "100%" }}>
+                  {tags.map((tag) => (
+                    <Dropdown.Item onClick={() => handleSaveTag(tag)}>
+                      {tag}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
             <div>
               <div style={flexAndCenter}>
                 <Calendar style={iconStyle} />
                 <div>
-                  <label>{formattedDate}</label>
+                  <label>
+                    {"Skapad "}
+                    {formattedDate}
+                  </label>
                 </div>
               </div>
               <div style={flexAndCenter}>
@@ -257,8 +319,7 @@ function CardModalTopLeft({
           >
             <Modal.Header closeButton></Modal.Header>
             <Modal.Body className="d-flex justify-content-center align-items-center">
-              <Form style={{ width: "90%" }}>
-                <div className="mb-3 text-center">
+              {/* <div className="mb-3 text-center">
                   <input
                     type="text"
                     className="form-control"
@@ -275,12 +336,11 @@ function CardModalTopLeft({
                   >
                     Lägg till tagg
                   </Button>
-                </div>
-              </Form>
+                </div> */}
             </Modal.Body>
           </Modal>
 
-          {/* If the active tab is Planera the donut is shown, if not only the "Markera fas som klar" button is shown */}
+          {/* If the active tab is Planera the donut is shown, if not only the "Gå till nästa fas" button is shown */}
           {active_tab === 2 ? ( //If active_tab is plan, show the donut
             <div
               style={{
@@ -301,29 +361,52 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Markera fas som klar
+                Gå vidare till nästa fas
               </Button>
             </div>
           ) : active_tab === 5 ? ( //If active tab is act, show three different buttons
-            <div
-              style={{
-                width: "40%",
-                display: "flex",
-                justifyContent: "right",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "40px",
-              }}
-            >
-              <div style={{ width: 120, height: 120 }}></div>
+            <div style={{ marginTop: "20px" }}>
               <Button
-                style={buttonStyle}
+                style={finishButtonStyle}
                 disabled={
                   phase !== active_tab ||
                   ideas.every((idea) => idea.checked === false)
                 }
+                onClick={() => handlePhaseUpdate(phase)}
               >
-                Markera fas som klar
+                Är du nöjd med resultatet? Avsluta förbättringsarbete{" "}
+                <span style={{ fontSize: "70%", display: "block" }}>
+                  {
+                    "Du hittar den sparade informationen under alla förbättringsarbeten"
+                  }
+                </span>
+              </Button>
+              <Button
+                style={sameIdeaButtonStyle}
+                disabled={
+                  phase !== active_tab ||
+                  ideas.every((idea) => idea.checked === false)
+                }
+                onClick={() => handlePhaseUpdate(6)}
+              >
+                Påbörja ny PGSA-cykel
+                <span style={{ fontSize: "100%", display: "block" }}>
+                  med <b>samma</b> idé
+                </span>
+              </Button>
+              <Button
+                style={newIdeaButtonStyle}
+                disabled={
+                  ideas.length === 1 ||
+                  phase !== active_tab ||
+                  ideas.every((idea) => idea.checked === false)
+                }
+                onClick={() => handlePhaseUpdate(7)}
+              >
+                Påbörja ny PGSA-cykel
+                <span style={{ fontSize: "100%", display: "block" }}>
+                  med <b>annan</b> idé
+                </span>
               </Button>
             </div>
           ) : (
@@ -339,7 +422,7 @@ function CardModalTopLeft({
                 marginTop: "40px",
               }}
             >
-              <div style={{ width: 120, height: 120 }}></div>
+              <div style={{ width: 130, height: 130 }}></div>
               <Button
                 style={buttonStyle}
                 disabled={
@@ -348,7 +431,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(phase)}
               >
-                Markera fas som klar
+                Gå vidare till nästa fas
               </Button>
             </div>
           )}
@@ -373,7 +456,7 @@ function CardModalTopLeft({
                 </span>
               }
             >
-              <div style={whiteDescriptionContainerStyle}>Ett syfte</div>
+              <div style={whiteDescriptionContainerStyle}>{purpose}</div>
             </Tab>
             <Tab
               eventKey="mål"
@@ -460,10 +543,18 @@ function CardModalTopLeft({
                 {ideas.map((idea, index) => (
                   <Form.Check
                     key={index}
+                    className="custom-checkbox"
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
-                    //disabled={ideas.some((idea) => idea.checked === true)} //Check if any of the idea checkboxes is checked, and if yes, disable the checkboxes
+                    style={{
+                      color: ideas.some((idea) => idea.checked)
+                        ? idea.checked
+                          ? "#000000"
+                          : "#AEAEAE"
+                        : "#000000",
+                    }} //If no idea is chosen they are all displayed in black, and when an idea has been chosen the chosen one is black while the rest are set tho gray
+                    disabled={phase !== 2} //Disable the idea checkboxes if the improvement work's phase is not plan
                     onChange={() => handleIdeaClick(index)}
                   />
                 ))}
@@ -476,9 +567,9 @@ function CardModalTopLeft({
                       marginTop: "15px",
                     }}
                   >
-                    Innan förbättringsarbetet kan påbörjas måste det
-                    specificeras vilken idé som kommer arbetas med under denna
-                    iteration.
+                    <strong>För att påbörja förbättringsarbetet</strong> måste
+                    du trycka i vilken idé som kommer testas under denna
+                    PGSA-cykel.
                   </div>
                 ) : (
                   <div
@@ -488,7 +579,7 @@ function CardModalTopLeft({
                       marginTop: "15px",
                     }}
                   >
-                    Nu kan du börja arbeta med förbättringarbetet!
+                    Nu kan förbättringsarbetet påbörjas!
                   </div>
                 )}
               </div>

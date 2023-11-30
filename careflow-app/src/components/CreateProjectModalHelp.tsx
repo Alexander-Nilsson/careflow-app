@@ -1,4 +1,4 @@
-import { userIDname } from "./CreateNewProject";
+import { userIDname, userInfo } from "./CreateNewProject";
 
 export function findUserIds(members: string[], usersClassArray: userIDname[]) {
   let userIDs = [];
@@ -10,6 +10,18 @@ export function findUserIds(members: string[], usersClassArray: userIDname[]) {
     }
   }
   return userIDs;
+}
+
+export function findUserInfo(members: string[], usersInfoArray: userInfo[]) {
+  let userInfos = [];
+  for (let i = 0; i < members.length; i++) {
+    for (let j = 0; j < usersInfoArray.length; j++) {
+      if (members[i] == usersInfoArray[j].sur_name) {
+        userInfos.push(usersInfoArray[j].centrum);
+      }
+    }
+  }
+  return userInfos;
 }
 
 export function handleKeyPressBulletPoint(

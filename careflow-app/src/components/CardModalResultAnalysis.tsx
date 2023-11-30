@@ -1,5 +1,3 @@
-import { db } from "../firebase";
-import { doc, updateDoc } from "firebase/firestore";
 import { useState, ChangeEvent } from "react";
 import { Button, Form } from "react-bootstrap";
 
@@ -40,6 +38,12 @@ function CardModalResultAnalysis({
       <Form.Group style={formGroupStyle}>
         <Form.Label>
           <b>Analys av resultat</b>
+          <p style={{ fontSize: "75%", fontStyle: "italic" }}>
+            I studera-fasen analyserar vi utfallet av den genomförda
+            förbättringen. Hur blev resultatet av förbättringen? Skiljer det sig
+            från det ursprungliga målet? Utgå ifrån de uppsatta målen och
+            mätetalen.{" "}
+          </p>
         </Form.Label>
         <textarea
           className="form-control"

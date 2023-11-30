@@ -12,13 +12,21 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import CardModalNotes from "./CardModalNotes";
 import CardModalChecklist from "./CardModalChecklist";
-import CardModalSimilarProjects from "./CardModalSimilarProjects";
+//import CardModalSimilarProjects from "./CardModalSimilarProjects";
 import CardModalResultMeasurements from "./CardModalResultMeasurements";
 import CardModalResultAnalysis from "./CardModalResultAnalysis";
 import CardModalFiles from "./CardModalFiles";
 import CardModalTopLeft from "./CardModalTopLeft";
 import CardModalTopRight from "./CardModalTopRight";
 import "react-circular-progressbar/dist/styles.css";
+import {
+  ImprovementWork,
+  Iteration,
+  getImprovementWork,
+  getMemberName,
+  getMemberNames,
+} from "../ImprovementWorkLib";
+
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
 import { Circle, CheckCircle } from "react-bootstrap-icons";
@@ -31,6 +39,16 @@ const buttonStyle = {
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
+};
+
+const saveButtonStyle = {
+  backgroundColor: "#051F6F",
+  fontFamily: "Avenir",
+  fontSize: "14px",
+  padding: "10px 50px",
+  border: "none",
+  cursor: "pointer",
+  marginTop: "10px",
 };
 
 const flexAndCenter = {
@@ -47,46 +65,8 @@ const formGroupStyle = {
 
 interface cardModalProps {
   show: boolean;
-  onHide: () => void;
-  id: Id;
-  title: string;
-  phase: Id;
-  place: string;
-  centrum: string;
-  tags: Array<string>;
-  date_created: Timestamp;
-  goals: Array<string>;
-  ideas_array: Array<string>;
-  measure: Array<string>;
-  result_measurements: string;
-  result_analysis: string;
-  notes_plan: string;
-  notes_do: string;
-  notes_study: string;
-  notes_act: string;
-  files_plan: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_do: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_study: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  files_act: {
-    file_descriptions: Array<string>;
-    file_names: Array<string>;
-  };
-  project_leader: string;
-  project_members: Array<string>;
-  checklist_plan: {
-    checklist_done: Array<boolean>;
-    checklist_items: Array<string>;
-    checklist_members: Array<string>;
-  };
+  onHide: (data?: any) => void;
+  improvementWork: ImprovementWork; // passing the improvementWork with all its variables
 }
 
 interface modalContentPlanProps {
@@ -101,6 +81,7 @@ interface modalContentPlanProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   checklist: {
@@ -113,6 +94,9 @@ interface modalContentPlanProps {
   setChecklistMembers: React.Dispatch<React.SetStateAction<string[]>>;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -121,11 +105,13 @@ interface modalContentPlanProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls: string[];
   };
   setUpdatedFilesPlan: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -142,10 +128,14 @@ interface modalContentDoProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   result_measurements: string;
   setUpdatedResultMeasurements: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -156,11 +146,13 @@ interface modalContentDoProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls: string[];
   };
   setUpdatedFilesDo: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -177,10 +169,15 @@ interface modalContentStudyProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
+
   result_analysis: string;
   setUpdatedResultAnalysis: React.Dispatch<React.SetStateAction<string>>;
   handleIdeaClick: (index: number) => void;
@@ -191,11 +188,13 @@ interface modalContentStudyProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls: string[];
   };
   setUpdatedFilesStudy: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -212,10 +211,14 @@ interface modalContentActProps {
     checked: boolean;
   }[];
   measure: Array<string>;
+  purpose: string;
   place: string;
   centrum: string;
   project_leader: string;
   project_members: Array<string>;
+  updatedMembers: Array<string>;
+  setUpdatedMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setProjectMembers: React.Dispatch<React.SetStateAction<string[]>>;
   handleIdeaClick: (index: number) => void;
   id: string;
   handlePhaseUpdate: (phase: number) => void;
@@ -224,11 +227,13 @@ interface modalContentActProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
+    file_urls: string[];
   };
   setUpdatedFilesAct: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
+      file_urls: string[];
     }>
   >;
 }
@@ -252,64 +257,6 @@ function getPhaseIcon(
   );
 }
 
-// Asynchronous function that fetches the project leader's name from the database
-/*async function getProjectLeader(
-  project_leader: DocumentReference<DocumentData>
-) {
-  interface User {
-    first_name: string;
-    sur_name: string;
-  }
-
-  if (project_leader && project_leader.id) {
-    const userReference = doc(db, "users", project_leader.id);
-
-    try {
-      const userDoc = await getDoc(userReference);
-      if (userDoc.exists()) {
-        const userData = userDoc.data() as User;
-        return userData.first_name + " " + userData.sur_name;
-      } else {
-        console.error("User document not found.");
-      }
-    } catch (error) {
-      console.error("Error fetching user document:", error);
-    }
-  }
-
-  return null;
-}*/
-
-//Asynchronous function that fetches the names of the project members
-/*async function getProjectMembers(project_members: Array<string>) {
-  interface User {
-    first_name: string;
-    sur_name: string;
-  }
-
-  const names: string[] = [];
-
-  for (const memberId of project_members) {
-    if (memberId) {
-      const userReference = doc(db, "users", memberId);
-
-      try {
-        const userDoc = await getDoc(userReference);
-        if (userDoc.exists()) {
-          const userData = userDoc.data() as User;
-          names.push(userData.first_name + " " + userData.sur_name);
-        } else {
-          console.error("User document not found.");
-        }
-      } catch (error) {
-        console.error("Error fetching user document:", error);
-      }
-    }
-  }
-
-  return names;
-}*/
-
 function ModalContentPlan({
   title,
   phase,
@@ -319,6 +266,7 @@ function ModalContentPlan({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   checklist,
@@ -327,6 +275,9 @@ function ModalContentPlan({
   setChecklistMembers,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -359,6 +310,7 @@ function ModalContentPlan({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={2}
@@ -370,6 +322,9 @@ function ModalContentPlan({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -406,7 +361,7 @@ function ModalContentPlan({
 
           {/* --------------------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -422,10 +377,14 @@ function ModalContentDo({
   goals,
   ideas,
   measure,
+  purpose,
   place,
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   result_measurements,
   setUpdatedResultMeasurements,
   handleIdeaClick,
@@ -445,6 +404,7 @@ function ModalContentDo({
           updatedTags={updatedTags}
           setUpdatedTags={setUpdatedTags}
           date_created={date_created}
+          purpose={purpose}
           goals={goals}
           ideas={ideas}
           measure={measure}
@@ -459,6 +419,9 @@ function ModalContentDo({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -486,7 +449,7 @@ function ModalContentDo({
 
           {/* ---------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/* <CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -499,6 +462,7 @@ function ModalContentStudy({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
@@ -506,6 +470,9 @@ function ModalContentStudy({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   result_analysis,
   setUpdatedResultAnalysis,
   handleIdeaClick,
@@ -528,6 +495,7 @@ function ModalContentStudy({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={4}
@@ -539,6 +507,9 @@ function ModalContentStudy({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -567,7 +538,7 @@ function ModalContentStudy({
 
           {/* ----------------------------------------- */}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -580,6 +551,7 @@ function ModalContentAct({
   updatedTags,
   setUpdatedTags,
   date_created,
+  purpose,
   goals,
   ideas,
   measure,
@@ -587,6 +559,9 @@ function ModalContentAct({
   centrum,
   project_leader,
   project_members,
+  updatedMembers,
+  setUpdatedMembers,
+  setProjectMembers,
   handleIdeaClick,
   id,
   handlePhaseUpdate,
@@ -607,6 +582,7 @@ function ModalContentAct({
           goals={goals}
           ideas={ideas}
           measure={measure}
+          purpose={purpose}
           place={place}
           centrum={centrum}
           active_tab={5}
@@ -618,6 +594,9 @@ function ModalContentAct({
         <CardModalTopRight
           project_leader={project_leader}
           project_members={project_members}
+          updatedMembers={updatedMembers}
+          setUpdatedMembers={setUpdatedMembers}
+          setProjectMembers={setProjectMembers}
         />
       </div>
 
@@ -641,7 +620,7 @@ function ModalContentAct({
 
           {/* --------------------------------------------*/}
 
-          <CardModalSimilarProjects tags={updatedTags} />
+          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
         </div>
       ) : null}
     </>
@@ -652,111 +631,59 @@ function ModalContentAct({
 function CardModal({
   show,
   onHide,
-  id,
-  title,
-  phase,
-  place,
-  centrum,
-  tags,
-  date_created,
-  goals,
-  ideas_array,
-  measure,
-  result_measurements,
-  result_analysis,
-  notes_plan,
-  notes_do,
-  notes_study,
-  notes_act,
-  files_plan,
-  files_do,
-  files_study,
-  files_act,
-  project_leader,
-  project_members,
-  checklist_plan,
-}: cardModalProps) {
+  improvementWork,
+}: // project_leader,
+// project_members,
+cardModalProps) {
+  // Now, you can directly use the destructured values
+  const {
+    id,
+    title,
+    phase,
+    place,
+    centrum,
+    tags,
+    date_created,
+    goals,
+    ideas: ideas_array, // Renamed from ideas
+    ideas_done,
+    measure,
+    purpose,
+    closed,
+    all_iterations,
+    total_iterations,
+  } = improvementWork;
+
+  // Accessing properties from the all_iterations object
+
+  const result_measurements =
+    all_iterations[total_iterations - 1].do?.results || "";
+  const result_analysis =
+    all_iterations[total_iterations - 1].study?.analysis || "";
+  const notes_plan = all_iterations[total_iterations - 1].plan?.notes || "";
+  const notes_do = all_iterations[total_iterations - 1].do?.notes || "";
+  const notes_study = all_iterations[total_iterations - 1].study?.notes || "";
+  const notes_act = all_iterations[total_iterations - 1].act?.notes || "";
+  const files_plan = all_iterations[total_iterations - 1].plan?.files || {};
+  const files_do = all_iterations[total_iterations - 1].do?.files || {};
+  const files_study = all_iterations[total_iterations - 1].study?.files || {};
+  const files_act = all_iterations[total_iterations - 1].act?.files || {};
+  const checklist_plan =
+    all_iterations[total_iterations - 1].plan?.checklist || {};
+
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();
-  const initialIdeasState = ideas_array.map((idea) => ({
+  const initialIdeasState = ideas_array.map((idea, index) => ({
     text: idea,
-    checked: false,
+    checked: ideas_done[index],
   }));
 
-  //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
-  const [ideas, setIdeas] = useState(initialIdeasState);
+  //State variable that is updated when the number of iterations is updated, which makes sure that the right Iteration's info is displayed
+  const [updatedTotalIterations, setUpdatedTotalIterations] =
+    useState(total_iterations);
 
-  //Handles what happens when an idea is clicked, if an idea already has been chosen and another one is clicked - the confirmation modal will show
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState<number | null>(
-    null
-  );
-
-  const handleIdeaClick = (index: number) => {
-    // Checks if any other idea is already checked
-    const isOtherIdeaChecked = ideas.some(
-      (idea, i) => idea.checked && i !== index
-    );
-
-    if (isOtherIdeaChecked) {
-      setShowConfirmationModal(true);
-      setSelectedIdeaIndex(index); // Save the index of the clicked idea
-    } else {
-      const updatedIdeas = [...ideas];
-      updatedIdeas[index].checked = true;
-      setIdeas(updatedIdeas);
-    }
-  };
-
-  const handleConfirmation = (confirmed: boolean) => {
-    setShowConfirmationModal(false);
-    if (confirmed && selectedIdeaIndex !== null) {
-      // Reset all ideas to unchecked
-      const updatedIdeas = ideas.map((idea, i) => ({
-        ...idea,
-        checked: false,
-      }));
-      // Set the clicked idea to checked
-      updatedIdeas[selectedIdeaIndex].checked = true;
-      setIdeas(updatedIdeas);
-
-      //Set the active phase back to plan and clear everything
-      handlePhaseUpdate(1);
-      setChecklistItems([]);
-      setChecklistDone([]);
-      setChecklistMembers([]);
-      setUpdatedNotesPlan("");
-      setUpdatedNotesDo("");
-      setUpdatedNotesStudy("");
-      setUpdatedNotesAct("");
-      setUpdatedResultAnalysis("");
-      setUpdatedResultMeasurements("");
-      setUpdatedFilesPlan({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesDo({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesStudy({ file_names: [], file_descriptions: [] });
-      setUpdatedFilesAct({ file_names: [], file_descriptions: [] });
-
-      //Update the database with the cleared field
-      updateDb();
-
-      //Här måste vi också byta vald idé i databasen!
-    }
-  };
-
-  //Makes sure that the next phase tab is displayed when the user marks a phase as done
-  const [updatedProjectPhase, setUpdatedProjectPhase] =
-    useState<number>(currentPhase);
-  const [selectedTab, setSelectedTab] = useState<string>(
-    currentPhase.toString()
-  );
-
-  useEffect(() => {
-    setSelectedTab(updatedProjectPhase.toString());
-  }, [updatedProjectPhase]);
-
-  const handlePhaseUpdate = (phase: number) => {
-    setUpdatedProjectPhase(phase + 1);
-  };
+  //State variable that is updated when the improvement work is marked as finished
+  const [isClosed, setIsClosed] = useState(closed);
 
   //State array of the tags that makes sure that tags removed/tags added are reflected in all phases
   const [updatedTags, setUpdatedTags] = useState(tags);
@@ -792,246 +719,717 @@ function CardModal({
     checklist_plan.checklist_members
   );
 
-  //Updates the database with the changes made when the save button is clicked
-  async function updateDb() {
+  //Keeps track on if an idea has been chosen or not, since the content of the modal will vary depending on this
+  const [ideas, setIdeas] = useState(initialIdeasState);
+
+  //Handles what happens when an idea is clicked, if an idea already has been chosen and another one is clicked - the confirmation modal will show
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState<number | null>(
+    null
+  );
+
+  //State variable that handles if the "Sparat!" text will show or not
+  const [showSavedMessage, setShowSavedMessage] = useState(false);
+
+  const showSaveMessage = () => {
+    setShowSavedMessage(true);
+
+    //Hide the "Saved" message after 3 seconds
+    setTimeout(() => {
+      setShowSavedMessage(false);
+    }, 2000);
+  };
+
+  const handleIdeaClick = (index: number) => {
+    const isOtherIdeaChecked = ideas.some(
+      (idea, i) => idea.checked && i !== index
+    );
+    // Checks if any other idea is already checked
+    if (isOtherIdeaChecked) {
+      setShowConfirmationModal(true);
+      setSelectedIdeaIndex(index); // Save the index of the clicked idea
+    } else {
+      const updatedIdeas = [...ideas];
+      updatedIdeas[index].checked = true;
+      setIdeas(updatedIdeas);
+      updateDb(updatedProjectPhase, false);
+    }
+  };
+
+  const handleConfirmation = (confirmed: boolean) => {
+    setShowConfirmationModal(false);
+    if (confirmed && selectedIdeaIndex !== null) {
+      // Reset all ideas to unchecked
+      const updatedIdeas = ideas.map((idea, i) => ({
+        ...idea,
+        checked: false,
+      }));
+      // Set the clicked idea to checked
+      updatedIdeas[selectedIdeaIndex].checked = true;
+      setIdeas(updatedIdeas);
+
+      //Set the active phase and tab back to plan and clear all iteration-related fields
+      setUpdatedProjectPhase(2);
+      setSelectedTab("2");
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesDo({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesStudy({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesAct({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+
+      //Update the database with the cleared fields
+      clearDb(updatedIdeas.map((idea) => idea.checked));
+    }
+  };
+
+  //Makes sure that the next phase tab is displayed when the user marks a phase as done
+  const [updatedProjectPhase, setUpdatedProjectPhase] =
+    useState<number>(currentPhase);
+  const [selectedTab, setSelectedTab] = useState<string>(
+    currentPhase.toString()
+  );
+
+  useEffect(() => {
+    setSelectedTab(updatedProjectPhase.toString());
+  }, [updatedProjectPhase]);
+
+  // Variable to track if we want to load data when the modal is closed
+  const [loadDataOnClose, setLoadDataOnClose] = useState(false);
+
+  //Called whenever mark phase as done is called
+  const handlePhaseUpdate = (phase: number) => {
+    // Set loadDataOnClose to TRUE
+    setLoadDataOnClose(true);
+
+    //TODO
+
+    if (phase === 5) {
+      //If "Avsluta arbete" is clicked in the act phase
+      //console.log("load data:", loadDataOnClose);
+      //setLoadDataOnClose(true);
+
+      //console.log("load data:", loadDataOnClose);
+
+      setIsClosed(true); // marks imrovementwork as closed ??
+      updateDb(phase, true);
+
+      // some issue with calling onHide here
+      // true directly -> dont have to wait for useState
+      onHide(true); //TODO test this
+    } else if (phase === 6) {
+      //If "Påbörja ny iteration med samma idé" (phase === 6) or "Påbörja ny iteration med annan idé" (phase === 7) is clicked in the act phase
+      //Sets the phase to plan and clear all state-variables related to the iteration
+      setUpdatedProjectPhase(2);
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesDo({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesStudy({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesAct({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      addNewIterationInDb(ideas.map((idea) => idea.checked)); //Creates an new iteration in the db, where chosen idea stays the same
+      setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
+    } else if (phase === 7) {
+      console.log("Fortsätt med ny ide");
+      setUpdatedProjectPhase(2);
+      setChecklistItems([]);
+      setChecklistDone([]);
+      setChecklistMembers([]);
+      setUpdatedNotesPlan("");
+      setUpdatedNotesDo("");
+      setUpdatedNotesStudy("");
+      setUpdatedNotesAct("");
+      setUpdatedResultAnalysis("");
+      setUpdatedResultMeasurements("");
+      setUpdatedFilesPlan({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesDo({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesStudy({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      setUpdatedFilesAct({
+        file_names: [],
+        file_descriptions: [],
+        file_urls: [],
+      });
+      addNewIterationInDb(); //Creates an new iteration in the db, where chosen idea will be set to none
+      setUpdatedTotalIterations(updatedTotalIterations + 1); //Update the state variable totalIterations
+
+      //Also updated the state variable ideas so that all ideas will be set to false
+      const uncheckedIdeas = ideas.map((idea) => ({
+        ...idea,
+        checked: false,
+      }));
+
+      setIdeas(uncheckedIdeas);
+    } else {
+      //If "Markera fas som klar" is clicked in the plan, do or study phase
+      setUpdatedProjectPhase(phase + 1);
+      updateDb(phase + 1, false);
+    }
+  };
+
+  //Updates the database with the changes made when the save button, "Markera fas som klar" or "Avsluta förbättringsarbete" is clicked, or if an idea has been chosen
+  async function updateDb(newPhase: number, isClosed: boolean) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      const projectDoc = await getDoc(projectDocRef);
+      // const projectDoc = await getDoc(projectDocRef);
+      const projectDoc = await getImprovementWork(projectDocRef);
 
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const updatedData = {
-          phase: updatedProjectPhase, // Updates the phase
-          tags: updatedTags, // Updates the tags
-          all_iterations: {
-            ...data.all_iterations,
-            iteration1: {
-              ...data.all_iterations?.iteration1,
-              plan: {
-                ...data.all_iterations?.iteration1?.plan,
-                checklist: {
-                  checklist_done: checklistDone,
-                  checklist_items: checklistItems,
-                  checklist_members: checklistMembers,
-                },
-                files: {
-                  file_names: updatedFilesPlan.file_names,
-                  file_descriptions: updatedFilesPlan.file_descriptions,
-                },
-                notes: updatedNotesPlan, // Updates "Övriga anteckningar" in the plan phase
-              },
-              do: {
-                ...data.all_iterations?.iteration1?.do,
-                results: updatedResultMeasurements, // Updates "Uppmätt resultat"
-                files: {
-                  file_names: updatedFilesDo.file_names,
-                  file_descriptions: updatedFilesDo.file_descriptions,
-                },
-                notes: updatedNotesDo, // Updates "Övriga anteckningar" in the do phase
-              },
-              study: {
-                ...data.all_iterations?.iteration1?.study,
-                analysis: updatedResultAnalysis, // Updates "Analys av resultat"
-                files: {
-                  file_names: updatedFilesStudy.file_names,
-                  file_descriptions: updatedFilesStudy.file_descriptions,
-                },
-                notes: updatedNotesStudy, // Updates "Övriga anteckningar" in the study phase
-              },
-              act: {
-                ...data.all_iterations?.iteration1?.act,
-                files: {
-                  file_names: updatedFilesAct.file_names,
-                  file_descriptions: updatedFilesAct.file_descriptions,
-                },
-                notes: updatedNotesAct, // Updates "Övriga anteckningar" in the act phase
-              },
-            },
-          },
+          closed: isClosed,
+          phase: newPhase,
+          tags: updatedTags,
+          ideas_done: ideas.map((idea) => idea.checked),
+          project_members: updatedMembers,
+          all_iterations: data.all_iterations?.map(
+            (iteration: Iteration, index: number) => {
+              if (index === updatedTotalIterations - 1) {
+                // Update the last iteration
+                return {
+                  ...iteration,
+                  plan: {
+                    ...iteration.plan,
+                    checklist: {
+                      checklist_done: checklistDone,
+                      checklist_items: checklistItems,
+                      checklist_members: checklistMembers,
+                    },
+                    files: {
+                      file_names: updatedFilesPlan.file_names,
+                      file_descriptions: updatedFilesPlan.file_descriptions,
+                      file_urls: updatedFilesPlan.file_urls,
+                    },
+                    notes: updatedNotesPlan,
+                  },
+                  do: {
+                    ...iteration.do,
+                    results: updatedResultMeasurements,
+                    files: {
+                      file_names: updatedFilesDo.file_names,
+                      file_descriptions: updatedFilesDo.file_descriptions,
+                      file_urls: updatedFilesDo.file_urls,
+                    },
+                    notes: updatedNotesDo,
+                  },
+                  study: {
+                    ...iteration.study,
+                    analysis: updatedResultAnalysis,
+                    files: {
+                      file_names: updatedFilesStudy.file_names,
+                      file_descriptions: updatedFilesStudy.file_descriptions,
+                      file_urls: updatedFilesStudy.file_urls,
+                    },
+                    notes: updatedNotesStudy,
+                  },
+                  act: {
+                    ...iteration.act,
+                    files: {
+                      file_names: updatedFilesAct.file_names,
+                      file_descriptions: updatedFilesAct.file_descriptions,
+                      file_urls: updatedFilesAct.file_urls,
+                    },
+                    notes: updatedNotesAct,
+                  },
+                };
+              }
+              // Keep other iterations unchanged
+              return iteration; //Behövs denna???
+            }
+          ),
         };
 
         await updateDoc(projectDocRef, updatedData);
-        console.log("Improvement work updated successfully");
+        console.log(
+          "Improvement work " +
+            improvementWork.title +
+            " updated successfully! Phase updated to: " +
+            newPhase +
+            " , closed set to: " +
+            isClosed +
+            " and the ideas array have the following idea checked: " +
+            ideas.map((idea) => idea.checked)
+        );
       }
     } catch (e) {
       console.error("Error updating improvement work: ", e);
     }
   }
 
+  //This function is called when a new idea is chosen, and what it does is that it updates the database
+  //with the new idea, clears all Iteration-related fields and sets the phase of the improvement work to "plan"
+  async function clearDb(updatedIdeasChecked: Array<boolean>) {
+    try {
+      const projectDocRef = doc(db, "improvementWorks", projectId);
+      const projectDoc = await getImprovementWork(projectDocRef);
+      if (projectDoc.exists()) {
+        const data = projectDoc.data();
+        const updatedData = {
+          phase: 2, // Updates the phase to plan
+          ideas_done: updatedIdeasChecked, //Updates the chosen idea
+          all_iterations: [
+            //Clear all fields of the current iteration
+            {
+              ...data.all_iterations?.[updatedTotalIterations - 1],
+              plan: {
+                ...data.all_iterations?.[updatedTotalIterations - 1]?.plan,
+                checklist: {
+                  checklist_done: [],
+                  checklist_items: [],
+                  checklist_members: [],
+                },
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                  file_urls: [],
+                },
+                notes: [],
+              },
+              do: {
+                ...data.all_iterations?.[updatedTotalIterations - 1]?.do,
+                results: [],
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                  file_urls: [],
+                },
+                notes: [],
+              },
+              study: {
+                ...data.all_iterations?.[updatedTotalIterations - 1]?.study,
+                analysis: [],
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                  file_urls: [],
+                },
+                notes: [],
+              },
+              act: {
+                ...data.all_iterations?.[updatedTotalIterations - 1]?.act,
+                files: {
+                  file_names: [],
+                  file_descriptions: [],
+                  file_urls: [],
+                },
+                notes: [],
+              },
+            },
+          ],
+        };
+
+        await updateDoc(projectDocRef, updatedData);
+        console.log(
+          "Iteration fields cleared, phase set to plan and the new idea successfully updated in db"
+        );
+      }
+    } catch (e) {
+      console.error("Error updating improvement work: ", e);
+    }
+  }
+
+  async function addNewIterationInDb(ideasDone?: Array<boolean>) {
+    try {
+      const projectDocRef = doc(db, "improvementWorks", projectId);
+      const projectDoc = await getImprovementWork(projectDocRef);
+
+      if (projectDoc.exists()) {
+        const data = projectDoc.data();
+        const allIterations = data.all_iterations || [];
+
+        //Add a new iteration to the array
+        const newIteration = {
+          plan: {
+            checklist: {
+              checklist_done: [],
+              checklist_items: [],
+              checklist_members: [],
+            },
+            files: {
+              file_names: [],
+              file_descriptions: [],
+              file_urls: [],
+            },
+            notes: [],
+          },
+          do: {
+            results: [],
+            files: {
+              file_names: [],
+              file_descriptions: [],
+              file_urls: [],
+            },
+            notes: [],
+          },
+          study: {
+            analysis: [],
+            files: {
+              file_names: [],
+              file_descriptions: [],
+              file_urls: [],
+            },
+            notes: [],
+          },
+          act: {
+            files: {
+              file_names: [],
+              file_descriptions: [],
+              file_urls: [],
+            },
+            notes: [],
+          },
+        };
+
+        const updatedIdeasDone =
+          ideasDone || Array(data.ideas.length).fill(false);
+
+        const updatedData = {
+          phase: 2, // Updates the phase to plan
+          total_iterations: updatedTotalIterations + 1, //Increases the total_iterations field with 1
+          ideas_done: updatedIdeasDone,
+          all_iterations: [...allIterations, newIteration], //Adds the new iteration to all_iterations
+        };
+
+        await updateDoc(projectDocRef, updatedData);
+        console.log(
+          "New iteration added successfully! Ideas set to: " + updatedIdeasDone
+        );
+      }
+    } catch (e) {
+      console.error("Error updating improvement work: ", e);
+    }
+  }
+
+  const [project_leader, setProjectLeader] = useState<string>("hej");
+  const [project_members, setProjectMembers] = useState<string[]>([]);
+  // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+  const [updatedMembers, setUpdatedMembers] = useState(project_members);
+
+  async function showModal() {
+    const leader = await getMemberName(improvementWork.project_leader);
+    setProjectLeader(leader);
+
+    const members = await getMemberNames(improvementWork.project_members);
+    setProjectMembers(members);
+  }
+
   return (
     <>
-      <Modal show={show} onHide={onHide} size="lg">
-        <Modal.Body
+      <Modal
+        onShow={showModal}
+        show={show}
+        onHide={() => onHide(loadDataOnClose)}
+        size="lg"
+      >
+        <Modal.Header
           style={{
-            paddingLeft: "30px",
-            paddingRight: "30px",
-            fontFamily: "Avenir",
+            borderColor: "#FFFFFF",
+            height: "0px",
+            paddingTop: "20px",
           }}
-        >
-          <Tabs
-            activeKey={selectedTab}
-            onSelect={(key) => key !== null && setSelectedTab(key)}
-            justify
-          >
-            {/*------ PLANERA ------*/}
-            <Tab
-              eventKey="2"
-              title={
-                <span style={flexAndCenter}>
-                  {getPhaseIcon(2, updatedProjectPhase, 35)}
-                  Planera
-                </span>
-              }
-            >
-              <ModalContentPlan
-                title={title}
-                phase={updatedProjectPhase}
-                updatedTags={updatedTags}
-                setUpdatedTags={setUpdatedTags}
-                date_created={date_created}
-                goals={goals}
-                ideas={ideas}
-                measure={measure}
-                place={place}
-                centrum={centrum}
-                checklist={{
-                  checklist_items: checklistItems,
-                  checklist_done: checklistDone,
-                  checklist_members: checklistMembers,
-                }}
-                setChecklistItems={setChecklistItems}
-                setChecklistDone={setChecklistDone}
-                setChecklistMembers={setChecklistMembers}
-                project_leader={""}
-                project_members={project_members}
-                handleIdeaClick={handleIdeaClick}
-                id={projectId}
-                handlePhaseUpdate={handlePhaseUpdate}
-                notes={updatedNotesPlan}
-                setUpdatedNotesPlan={setUpdatedNotesPlan}
-                files={updatedFilesPlan}
-                setUpdatedFilesPlan={setUpdatedFilesPlan}
-              />
-            </Tab>
-
-            {/*------ GÖRA ------*/}
-
-            <Tab
-              eventKey="3"
-              title={
-                <span style={flexAndCenter}>
-                  {getPhaseIcon(3, updatedProjectPhase, 40)}
-                  Göra
-                </span>
-              }
-            >
-              <ModalContentDo
-                title={title}
-                phase={updatedProjectPhase}
-                updatedTags={updatedTags}
-                setUpdatedTags={setUpdatedTags}
-                date_created={date_created}
-                goals={goals}
-                ideas={ideas}
-                measure={measure}
-                place={place}
-                centrum={centrum}
-                project_leader={""}
-                project_members={project_members}
-                result_measurements={updatedResultMeasurements}
-                setUpdatedResultMeasurements={setUpdatedResultMeasurements}
-                handleIdeaClick={handleIdeaClick}
-                id={projectId}
-                handlePhaseUpdate={handlePhaseUpdate}
-                notes={updatedNotesDo}
-                setUpdatedNotesDo={setUpdatedNotesDo}
-                files={updatedFilesDo}
-                setUpdatedFilesDo={setUpdatedFilesDo}
-              />
-            </Tab>
-
-            {/*------STUDERA ------*/}
-
-            <Tab
-              eventKey="4"
-              title={
-                <span style={flexAndCenter}>
-                  {getPhaseIcon(4, updatedProjectPhase, 30)}
-                  Studera
-                </span>
-              }
-            >
-              <ModalContentStudy
-                title={title}
-                phase={updatedProjectPhase}
-                updatedTags={updatedTags}
-                setUpdatedTags={setUpdatedTags}
-                date_created={date_created}
-                goals={goals}
-                ideas={ideas}
-                measure={measure}
-                place={place}
-                centrum={centrum}
-                project_leader={""}
-                project_members={project_members}
-                result_analysis={updatedResultAnalysis}
-                setUpdatedResultAnalysis={setUpdatedResultAnalysis}
-                handleIdeaClick={handleIdeaClick}
-                id={projectId}
-                handlePhaseUpdate={handlePhaseUpdate}
-                notes={updatedNotesStudy}
-                setUpdatedNotesStudy={setUpdatedNotesStudy}
-                files={updatedFilesStudy}
-                setUpdatedFilesStudy={setUpdatedFilesStudy}
-              />
-            </Tab>
-
-            {/*------- AGERA ------*/}
-
-            <Tab
-              eventKey="5"
-              title={
-                <span style={flexAndCenter}>
-                  {getPhaseIcon(5, updatedProjectPhase, 40)}
-                  Agera
-                </span>
-              }
-            >
-              <ModalContentAct
-                title={title}
-                phase={updatedProjectPhase}
-                updatedTags={updatedTags}
-                setUpdatedTags={setUpdatedTags}
-                date_created={date_created}
-                goals={goals}
-                ideas={ideas}
-                measure={measure}
-                place={place}
-                centrum={centrum}
-                project_leader={""}
-                project_members={project_members}
-                handleIdeaClick={handleIdeaClick}
-                id={projectId}
-                handlePhaseUpdate={handlePhaseUpdate}
-                notes={updatedNotesAct}
-                setUpdatedNotesAct={setUpdatedNotesAct}
-                files={updatedFilesAct}
-                setUpdatedFilesAct={setUpdatedFilesAct}
-              />
-            </Tab>
-          </Tabs>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            onClick={() => {
-              onHide();
-              updateDb();
+          closeButton
+        ></Modal.Header>
+        <div style={{ position: "relative" }}>
+          <Modal.Body
+            style={{
+              paddingLeft: "30px",
+              paddingRight: "30px",
+              fontFamily: "Avenir",
             }}
-            style={buttonStyle}
           >
-            Spara
-          </Button>
-        </Modal.Footer>
+            <Tabs
+              activeKey={selectedTab}
+              onSelect={(key) => key !== null && setSelectedTab(key)}
+              justify
+            >
+              {/*------ PLANERA ------*/}
+              <Tab
+                eventKey="2"
+                title={
+                  <span style={flexAndCenter}>
+                    {getPhaseIcon(2, updatedProjectPhase, 35)}
+                    Planera
+                  </span>
+                }
+              >
+                <ModalContentPlan
+                  title={title}
+                  phase={updatedProjectPhase}
+                  updatedTags={updatedTags}
+                  setUpdatedTags={setUpdatedTags}
+                  date_created={date_created}
+                  goals={goals}
+                  ideas={ideas}
+                  measure={measure}
+                  purpose={purpose}
+                  place={place}
+                  centrum={centrum}
+                  checklist={{
+                    checklist_items: checklistItems,
+                    checklist_done: checklistDone,
+                    checklist_members: checklistMembers,
+                  }}
+                  setChecklistItems={setChecklistItems}
+                  setChecklistDone={setChecklistDone}
+                  setChecklistMembers={setChecklistMembers}
+                  project_leader={project_leader}
+                  project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
+                  handleIdeaClick={handleIdeaClick}
+                  id={projectId}
+                  handlePhaseUpdate={handlePhaseUpdate}
+                  notes={updatedNotesPlan}
+                  setUpdatedNotesPlan={setUpdatedNotesPlan}
+                  files={updatedFilesPlan}
+                  setUpdatedFilesPlan={setUpdatedFilesPlan}
+                />
+              </Tab>
+
+              {/*------ GÖRA ------*/}
+
+              <Tab
+                eventKey="3"
+                title={
+                  <span style={flexAndCenter}>
+                    {getPhaseIcon(3, updatedProjectPhase, 40)}
+                    Göra
+                  </span>
+                }
+              >
+                <ModalContentDo
+                  title={title}
+                  phase={updatedProjectPhase}
+                  updatedTags={updatedTags}
+                  setUpdatedTags={setUpdatedTags}
+                  date_created={date_created}
+                  goals={goals}
+                  ideas={ideas}
+                  measure={measure}
+                  purpose={purpose}
+                  place={place}
+                  centrum={centrum}
+                  project_leader={project_leader}
+                  project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
+                  result_measurements={updatedResultMeasurements}
+                  setUpdatedResultMeasurements={setUpdatedResultMeasurements}
+                  handleIdeaClick={handleIdeaClick}
+                  id={projectId}
+                  handlePhaseUpdate={handlePhaseUpdate}
+                  notes={updatedNotesDo}
+                  setUpdatedNotesDo={setUpdatedNotesDo}
+                  files={updatedFilesDo}
+                  setUpdatedFilesDo={setUpdatedFilesDo}
+                />
+              </Tab>
+
+              {/*------STUDERA ------*/}
+
+              <Tab
+                eventKey="4"
+                title={
+                  <span style={flexAndCenter}>
+                    {getPhaseIcon(4, updatedProjectPhase, 30)}
+                    Studera
+                  </span>
+                }
+              >
+                <ModalContentStudy
+                  title={title}
+                  phase={updatedProjectPhase}
+                  updatedTags={updatedTags}
+                  setUpdatedTags={setUpdatedTags}
+                  date_created={date_created}
+                  purpose={purpose}
+                  goals={goals}
+                  ideas={ideas}
+                  measure={measure}
+                  place={place}
+                  centrum={centrum}
+                  project_leader={project_leader}
+                  project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  setProjectMembers={setProjectMembers}
+                  result_analysis={updatedResultAnalysis}
+                  setUpdatedResultAnalysis={setUpdatedResultAnalysis}
+                  handleIdeaClick={handleIdeaClick}
+                  id={projectId}
+                  handlePhaseUpdate={handlePhaseUpdate}
+                  notes={updatedNotesStudy}
+                  setUpdatedNotesStudy={setUpdatedNotesStudy}
+                  files={updatedFilesStudy}
+                  setUpdatedFilesStudy={setUpdatedFilesStudy}
+                />
+              </Tab>
+
+              {/*------- AGERA ------*/}
+
+              <Tab
+                eventKey="5"
+                title={
+                  <span style={flexAndCenter}>
+                    {getPhaseIcon(5, updatedProjectPhase, 40)}
+                    Agera
+                  </span>
+                }
+              >
+                <ModalContentAct
+                  title={title}
+                  phase={updatedProjectPhase}
+                  updatedTags={updatedTags}
+                  setUpdatedTags={setUpdatedTags}
+                  date_created={date_created}
+                  goals={goals}
+                  ideas={ideas}
+                  measure={measure}
+                  purpose={purpose}
+                  place={place}
+                  centrum={centrum}
+                  project_leader={project_leader}
+                  project_members={project_members}
+                  updatedMembers={updatedMembers}
+                  setProjectMembers={setProjectMembers}
+                  setUpdatedMembers={setUpdatedMembers}
+                  handleIdeaClick={handleIdeaClick}
+                  id={projectId}
+                  handlePhaseUpdate={handlePhaseUpdate}
+                  notes={updatedNotesAct}
+                  setUpdatedNotesAct={setUpdatedNotesAct}
+                  files={updatedFilesAct}
+                  setUpdatedFilesAct={setUpdatedFilesAct}
+                />
+              </Tab>
+            </Tabs>
+          </Modal.Body>
+
+          {/* The white div sticking out on the right displaying the current iteration */}
+          <div
+            style={{
+              position: "absolute",
+              top: "90px",
+              right: "-60px",
+              height: "180px",
+              display: "flex",
+              justifyContent: "center",
+              fontSize: "20px",
+            }}
+          >
+            <div
+              style={{
+                writingMode: "vertical-lr",
+                transform: "rotate(360deg)",
+                backgroundColor: "#FFFFFF",
+                width: "60px",
+                textAlign: "center",
+                padding: "15px",
+                borderRadius: "0 10px 10px 0",
+              }}
+            >
+              {"PGSA-cykel "}
+              {updatedTotalIterations}
+            </div>
+          </div>
+
+          <Modal.Footer>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {showSavedMessage ? (
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: "14px",
+                    fontStyle: "Avenir",
+                    marginBottom: "0px",
+                    color: "#008000",
+                  }}
+                >
+                  Arbete sparat!
+                </div>
+              ) : (
+                <div style={{ height: "21px" }}></div>
+              )}
+              <div>
+                <Button
+                  onClick={() => {
+                    showSaveMessage();
+                    updateDb(updatedProjectPhase, false);
+                  }}
+                  style={saveButtonStyle}
+                >
+                  Spara
+                </Button>
+              </div>
+            </div>
+          </Modal.Footer>
+        </div>
       </Modal>
 
       <Modal
@@ -1045,7 +1443,7 @@ function CardModal({
             <div className="mb-3 text-center">
               Att byta idé innebär att allt arbete som utförts hittills för den
               nuvarande idén raderas. Om du önskar spara arbetet innan du byter,
-              vänligen gå till agera-fasen och välj "Påbörja ny iteration med
+              vänligen gå till agera-fasen och välj "Påbörja ny PGSA-cykel med
               annan idé".
             </div>
             <div className="mb-3 text-center">
