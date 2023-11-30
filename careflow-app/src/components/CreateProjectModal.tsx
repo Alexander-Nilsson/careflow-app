@@ -208,11 +208,12 @@ function CreateProjectModal({
 
     let project_members = findUserIds(selectedMembers, usersClassArray);
     // let [centrum, clinic] = findUserInfo(selectedMembers, usersInfoArray);
-    console.log("centrum", centrum);
+    // console.log("centrum", centrum);
     //console.log("clinic", clinic);
 
     // Remove logged in user from members list
     project_members = project_members.filter((item) => item != userID);
+    users = users.filter((item) => item != userID);
 
     const projectData = {
       title: formJson.title,
@@ -536,7 +537,10 @@ function CreateProjectModal({
                       ? "bold"
                       : "normal",
                   }}
-                  onClick={() => handleMemberClick(member)}
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation(); // Prevent dropdown from closing
+                    handleMemberClick(member);
+                  }}
                 >
                   {member}
                 </Dropdown.Item>
@@ -560,7 +564,10 @@ function CreateProjectModal({
                   style={{
                     fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
                   }}
-                  onClick={() => handleTagClick(tag)}
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation(); // Prevent dropdown from closing
+                    handleTagClick(tag);
+                  }}
                 >
                   {tag}
                 </Dropdown.Item>
