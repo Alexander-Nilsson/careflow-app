@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
 import { useAuth0 } from "@auth0/auth0-react";
 import { filterForUser, UserFilterState } from "../ImprovementWorkLib";
-import { findPlaceOptions, findTagOptions, searchImprovementWorks } from "../ImprovementWorkLib";
+import {
+  findPlaceOptions,
+  findTagOptions,
+  searchImprovementWorks,
+} from "../ImprovementWorkLib";
 import {
   sortByDateCreated,
   sortByOldestDate,
@@ -50,12 +54,16 @@ function Projects() {
   >("date_created");
 
   // const [projectList, setProjectList] = useState<Project[]>([])
-  const [improvementWorkList, setImprovementWorkList] = useState<ImprovementWork[]>([]);
-  const [searchTitle, setSearchTitle] = useState<string>('');
+  const [improvementWorkList, setImprovementWorkList] = useState<
+    ImprovementWork[]
+  >([]);
+  const [searchTitle, setSearchTitle] = useState<string>("");
 
   // for admin func
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
-  const [allImprovementWorks, setAllImprovementWorks] = useState<ImprovementWork[]>([]);
+  const [allImprovementWorks, setAllImprovementWorks] = useState<
+    ImprovementWork[]
+  >([]);
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [filterState, setFilterState] = useState<UserFilterState>({
     includeUser: true,
@@ -63,7 +71,7 @@ function Projects() {
     includeCentrum: false,
     tagFilter: "all_tags",
     placeFilter: "all_places",
-    closed: false
+    closed: false,
   });
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -93,10 +101,10 @@ function Projects() {
     setSearchTitle(searchValue);
   };
 
-
   async function fetchProjects() {
     if (user?.name) {
-      const fetchedImprovementWorks: ImprovementWork[] | null = await getAllImprovementWorks();
+      const fetchedImprovementWorks: ImprovementWork[] | null =
+        await getAllImprovementWorks();
       // console.log(fetchedImprovementWorks);
       if (fetchedImprovementWorks)
         setAllImprovementWorks(fetchedImprovementWorks);
@@ -105,22 +113,36 @@ function Projects() {
 
   const handleFilter = async (event: any) => {
     if (event.target.value === "user") {
-      setFilterState(prev => ({ ...prev, includeUser: true, includeCentrum: false, includeClinic: false }));
+      setFilterState((prev) => ({
+        ...prev,
+        includeUser: true,
+        includeCentrum: false,
+        includeClinic: false,
+      }));
     } else if (event.target.value === "clinic") {
-      setFilterState(prev => ({ ...prev, includeClinic: true, includeCentrum: false, includeUser: false }));
+      setFilterState((prev) => ({
+        ...prev,
+        includeClinic: true,
+        includeCentrum: false,
+        includeUser: false,
+      }));
     } else if (event.target.value === "centrum") {
-      setFilterState(prev => ({ ...prev, includeCentrum: true, includeClinic: false, includeUser: false }));
+      setFilterState((prev) => ({
+        ...prev,
+        includeCentrum: true,
+        includeClinic: false,
+        includeUser: false,
+      }));
     }
-
   };
 
   // denna uppdaterar vilken tag som ska filtreras på.
   const handleTags = (event: any) => {
-    setFilterState(prev => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
-  }
+    setFilterState((prev) => ({ ...prev, tagFilter: event.target.value })); //när denna är färdiguppdaterad körs alltså useEffect
+  };
 
   useEffect(() => {
-    console.log("start")
+    console.log("start");
     if (isLoading) {
       return;
     }
@@ -144,49 +166,63 @@ function Projects() {
     setAllImprovementWorks(updatedImprovementWorks);
   };
 
-
   useEffect(() => {
     if (allImprovementWorks.length > 0) {
-      const tags = findTagOptions(allImprovementWorks)
+      const tags = findTagOptions(allImprovementWorks);
       setTagOptions(tags);
       // const places = findPlaceOptions(allImprovementWorks)
       // setPlaceOptions(places);
       if (userInfo) {
-        const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
-        setImprovementWorkList(filteredImprovementWorks)
+        const filteredImprovementWorks: ImprovementWork[] = filterForUser(
+          allImprovementWorks,
+          filterState,
+          userInfo,
+          sortBy
+        );
+        setImprovementWorkList(filteredImprovementWorks);
       }
     }
-  }, [allImprovementWorks])
+  }, [allImprovementWorks]);
 
   useEffect(() => {
-    console.log("2")
+    console.log("2");
     if (userInfo) {
-      const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
-      setImprovementWorkList(filteredImprovementWorks)
-
+      const filteredImprovementWorks: ImprovementWork[] = filterForUser(
+        allImprovementWorks,
+        filterState,
+        userInfo,
+        sortBy
+      );
+      setImprovementWorkList(filteredImprovementWorks);
     }
-
-  }, [filterState])
+  }, [filterState]);
 
   useEffect(() => {
     if (searchTitle) {
       if (userInfo) {
-        const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
-        const searchedImprovementWorks: ImprovementWork[] = searchImprovementWorks(filteredImprovementWorks, searchTitle, sortBy)
-        setImprovementWorkList(searchedImprovementWorks)
+        const filteredImprovementWorks: ImprovementWork[] = filterForUser(
+          allImprovementWorks,
+          filterState,
+          userInfo,
+          sortBy
+        );
+        const searchedImprovementWorks: ImprovementWork[] =
+          searchImprovementWorks(filteredImprovementWorks, searchTitle, sortBy);
+        setImprovementWorkList(searchedImprovementWorks);
       }
-
     } else {
       if (userInfo) {
-        const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, sortBy)
-        console.log("search filter")
-        setImprovementWorkList(filteredImprovementWorks)
+        const filteredImprovementWorks: ImprovementWork[] = filterForUser(
+          allImprovementWorks,
+          filterState,
+          userInfo,
+          sortBy
+        );
+        console.log("search filter");
+        setImprovementWorkList(filteredImprovementWorks);
       }
     }
-
-
-  }, [searchTitle])
-
+  }, [searchTitle]);
 
   return (
     <>
@@ -215,7 +251,10 @@ function Projects() {
           whiteSpace: "pre-line",
         }}
       >
-        <div className="outerContainer" style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          className="outerContainer"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
           <div style={{ display: "flex" }}>
             <TitleBox
               title={"Mina förbättringsarbeten"}
@@ -226,40 +265,58 @@ function Projects() {
             {/*<div className="questionMark" style={{ marginLeft: "2vh" }}>
       <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
       </div> */}
-      <div className="buttonPopoverContainer" style={{  fontSize: "80%", borderRadius: "5px", height: "100%",paddingTop: "1vh" }}>
-            <div className="buttonPopover" style={{ marginLeft: "2vh",color: "white",fontStyle: 'italic', fontSize: "80%",backgroundColor: "#051F6F", borderRadius: "5px" }}>
-              <ButtonPopover title={"Vad är förbättringsmodellen och hur hjälper den oss?"} content={" \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "} text={"Vad är förbättringsmodellen?"}></ButtonPopover>
-            </div>
+            <div
+              className="buttonPopoverContainer"
+              style={{
+                fontSize: "80%",
+                borderRadius: "5px",
+                height: "100%",
+                paddingTop: "1vh",
+              }}
+            >
+              <div
+                className="buttonPopover"
+                style={{
+                  marginLeft: "2vh",
+                  color: "white",
+                  fontStyle: "italic",
+                  fontSize: "80%",
+                  backgroundColor: "#051F6F",
+                  borderRadius: "5px",
+                }}
+              >
+                <ButtonPopover
+                  title={"Vad är förbättringsmodellen och hur hjälper den oss?"}
+                  content={
+                    " \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "
+                  }
+                  text={"Vad är förbättringsmodellen?"}
+                ></ButtonPopover>
+              </div>
             </div>
           </div>
           <div className="description" style={{ marginLeft: "2vw" }}>
-            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "110%", fontWeight: "normal" }}>
-              Här kan du jobba med dina förbättringsarbeten genom förbättringsmodellen och de fyra stegen av PGSA-cykeln.
+            <p
+              style={{
+                fontFamily: "Avenir",
+                fontStyle: "italic",
+                fontSize: "110%",
+                fontWeight: "normal",
+              }}
+            >
+              Här kan du jobba med dina förbättringsarbeten genom
+              förbättringsmodellen och de fyra stegen av PGSA-cykeln.
               <br />
-              Du kan även involvera dig i din kliniks och ditt centrums förbättringsarbeten.
+              Du kan även involvera dig i din kliniks och ditt centrums
+              förbättringsarbeten.
             </p>
           </div>
         </div>
 
-
-
-
-        <div
-          style={{
-            width: "30%",
-            height: "140px",
-            margin: "0px",
-            marginRight: " 4vw",
-            marginTop: "2vh",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
+        <div style={{ marginTop: "30px", marginRight: "40px" }}>
           <CreateNewProject onRefreshProjects={refreshImprovementWorks} />
         </div>
-
       </div>
-
 
       <div className="d-flex pl-7 pr-14">
         <div className="">
@@ -272,40 +329,48 @@ function Projects() {
             className="form-select"
             aria-label="Filtrera"
             onChange={handleSortChange}
-          // style={{ width: "8.5rem" }} // Adjust the width as needed
+            // style={{ width: "8.5rem" }} // Adjust the width as needed
           >
             <option selected value="date_created">
               Visa senaste
             </option>
             <option value="oldest_date">Visa äldsta</option>
-            <option value="ascending">
-              Visa a-ö
-            </option>
+            <option value="ascending">Visa a-ö</option>
             <option value="descending">Visa ö-a</option>
           </select>
         </div>
         <div className="ml-2">
-          <label className="form-label me-2">
-            Filtrera:
-          </label>
-          <select className="form-select" aria-label="Filtrera" onChange={handleFilter}>
-            <option selected value="user">Visa mina</option>
+          <label className="form-label me-2">Filtrera:</label>
+          <select
+            className="form-select"
+            aria-label="Filtrera"
+            onChange={handleFilter}
+          >
+            <option selected value="user">
+              Visa mina
+            </option>
             <option value="clinic">Visa klinikens</option>
             <option value="centrum">Visa centrets</option>
           </select>
         </div>
 
         <div className="ml-2 align-self-end">
-          <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-            <option selected value="all_tags">Visa alla nyckelord</option>
-            {
-              tagOptions.map((tag) => (
-                <option key={tag} value={tag}> {tag}</option>
-              ))
-            }
+          <select
+            className="form-select"
+            aria-label="Filtrera"
+            onChange={handleTags}
+          >
+            <option selected value="all_tags">
+              Visa alla nyckelord
+            </option>
+            {tagOptions.map((tag) => (
+              <option key={tag} value={tag}>
+                {" "}
+                {tag}
+              </option>
+            ))}
           </select>
         </div>
-
 
         <div className="ml-auto align-self-end">
           <div className="input-group rounded">
@@ -320,7 +385,11 @@ function Projects() {
               onChange={(e) => handleTitleSearch(e.target.value)}
             />
             <IoSearchOutline
-              style={{ fontSize: "1.5rem", marginLeft: "0.5rem", marginTop: "0.4rem" }}
+              style={{
+                fontSize: "1.5rem",
+                marginLeft: "0.5rem",
+                marginTop: "0.4rem",
+              }}
             />
           </div>
         </div>
