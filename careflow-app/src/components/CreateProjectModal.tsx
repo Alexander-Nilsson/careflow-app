@@ -541,7 +541,10 @@ function CreateProjectModal({
                       ? "bold"
                       : "normal",
                   }}
-                  onClick={() => handleMemberClick(member)}
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation(); // Prevent dropdown from closing
+                    handleMemberClick(member);
+                  }}
                 >
                   {member}
                 </Dropdown.Item>
@@ -565,7 +568,10 @@ function CreateProjectModal({
                   style={{
                     fontWeight: selectedTags.includes(tag) ? "bold" : "normal",
                   }}
-                  onClick={() => handleTagClick(tag)}
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation(); // Prevent dropdown from closing
+                    handleTagClick(tag);
+                  }}
                 >
                   {tag}
                 </Dropdown.Item>
