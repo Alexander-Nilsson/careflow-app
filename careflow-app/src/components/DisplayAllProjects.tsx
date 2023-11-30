@@ -24,7 +24,7 @@ function DisplayAllProjects() {
   const [filteredImprovementWorks, setFilteredImprovementWorks] = useState<ImprovementWork[]>([]);
   const [currentProjects, setCurrentProjects] = useState<ImprovementWork[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 12; // Adjust this based on your layout
+  const projectsPerPage = 8; // Adjust this based on your layout
   const { user } = useAuth0();
   const [totalProjects, setTotalProjects] = useState<number>(0)
 
@@ -72,7 +72,12 @@ function DisplayAllProjects() {
   }, [filteredImprovementWorks]);
 
   useEffect(() => {
-  }, [totalProjects, currentProjects]);
+    if (filteredImprovementWorks) {
+      const lastProjectIndex = currentPage * projectsPerPage;
+      const firstProjectIndex = lastProjectIndex - projectsPerPage;
+      setCurrentProjects(filteredImprovementWorks.slice(firstProjectIndex, lastProjectIndex))
+    }
+  }, [currentPage])
 
   // for admin func
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null); // Initialize with the type
@@ -184,13 +189,13 @@ function DisplayAllProjects() {
         Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
           />
           <div className="description" style={{ marginLeft: "2vw" }}>
-            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "70%", fontWeight: "normal" }}>
+            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "110%", fontWeight: "normal" }}>
               Här kan du se alla pågående och avslutade förbättringsarbeten inom regionen.
               <br />
               Använd sök- och filterfunktionerna för att leta efter förbättringsarbeten som du är intresserad av.
             </p>
           </div>
-        </div>
+          </div>
 
 
         <div className="d-inline-flex ml-auto mr-2">
@@ -246,7 +251,7 @@ function DisplayAllProjects() {
           </div>
           <div className="ml-2 mt-2">
             <select className="form-select" aria-label="Filtrera" onChange={handleTags}>
-              <option selected value="all_tags">Visa alla taggar</option>
+              <option selected value="all_tags">Visa alla nyckelord</option>
               {
                 tagOptions.map((tag) => (
                   <option key={tag} value={tag}> {tag}</option>

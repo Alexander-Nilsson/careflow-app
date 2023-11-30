@@ -108,7 +108,7 @@ function Start() {
             showClosed={false}
              />
           <div className="d-flex mr-2 w-100" style={{ marginBottom: '2%' }}>
-            <IdeasSection userInfo={userInfo} width={"42%"} />
+            <IdeasSection userInfo={userInfo} width={"42%"} add_height="250px"/>
             <ProgressSection improvementWorks={improvementWorks} />
           </div>
           {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}

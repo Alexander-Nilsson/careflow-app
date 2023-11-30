@@ -6,7 +6,6 @@ import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { Link } from "react-router-dom";
 
-
 const saveFileButtonStyle = {
   backgroundColor: "#051F6F",
   fontSize: "16px",
@@ -42,24 +41,23 @@ interface cardModalFilesProps {
   files: {
     file_descriptions: string[];
     file_names: string[];
-    file_urls : string[];
+    file_urls: string[];
   };
   setUpdatedFiles: React.Dispatch<
     React.SetStateAction<{
       file_descriptions: string[];
       file_names: string[];
-      file_urls : string[];
+      file_urls: string[];
     }>
   >;
 }
-
 
 //The section of the modal where the user uploads files
 function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
   const [showFileModal, setShowFileModal] = useState(false);
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newFileDescription, setNewFileDescription] = useState("");
-  const [newFileUrl, setNewFileUrl] = useState('');
+  const [newFileUrl, setNewFileUrl] = useState("");
   const [progresspercent, setProgresspercent] = useState(0);
 
   const handleShowFileModal = () => {
@@ -96,11 +94,13 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
 
       const storageRef = ref(fileStorage, `files/${newFile.name}`);
       const uploadTask = uploadBytesResumable(storageRef, newFile);
-  
-      uploadTask.on("state_changed",
+
+      uploadTask.on(
+        "state_changed",
         (snapshot) => {
-          const progress =
-            Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
           setProgresspercent(progress);
         },
         (error) => {
@@ -110,14 +110,11 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setNewFileUrl(downloadURL);
             console.log("File-url: " + newFileUrl);
-            const updatedFileUrls = [
-              ...files.file_urls,
-              downloadURL,
-            ];
+            const updatedFileUrls = [...files.file_urls, downloadURL];
             setUpdatedFiles({
               file_names: updatedFileNames,
               file_descriptions: updatedFileDescriptions,
-              file_urls : updatedFileUrls
+              file_urls: updatedFileUrls,
             });
             console.log(updatedFileNames);
             console.log(updatedFileDescriptions);
@@ -125,13 +122,7 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
           });
         }
       );
-      
-      
 
-    
-
-      
-  
       // Clear new file and description field
       setNewFile(null);
       setNewFileDescription("");
@@ -140,13 +131,15 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
     }
   };
 
-
   return (
     <>
       <Form.Group style={formGroupStyle}>
         <Form.Label>
           <b>Bilagor</b>
-          <p style={{ fontSize: '75%', fontStyle: 'italic' }}>Här lägger du bilagor som kan vara relevanta för fasen t.ex handlingsplan, diagram, eller loggbok. </p>
+          <p style={{ fontSize: "75%", fontStyle: "italic" }}>
+            Här lägger du bilagor som kan vara relevanta för fasen - t.ex
+            handlingsplan, diagram, eller loggbok.{" "}
+          </p>
         </Form.Label>
         <div style={whiteContainerStyle}>
           {files.file_names.map((item, index) => (
@@ -161,7 +154,9 @@ function CardModalFiles({ files, setUpdatedFiles }: cardModalFilesProps) {
               />
               {/* Print the file name followed by the decription (if there is no description, only print the file name) */}
               {files.file_descriptions[index] === "" ? (
-                <span><Link to={files.file_urls[index]}>{item}</Link></span>
+                <span>
+                  <Link to={files.file_urls[index]}>{item}</Link>
+                </span>
               ) : (
                 <span>
                   <Link to={files.file_urls[index]}>{item}</Link>

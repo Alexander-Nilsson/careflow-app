@@ -105,7 +105,13 @@ function ColumnContainer({
           <Modal.Title></Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ width: "100%" }}>
-          {userInfo && <IdeasSection userInfo={userInfo} width={"100%"} />}
+          {userInfo && (
+            <IdeasSection
+              userInfo={userInfo}
+              width={"100%"}
+              add_height="260px"
+            />
+          )}
         </Modal.Body>
       </Modal>
     </div>

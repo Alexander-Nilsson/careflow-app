@@ -84,7 +84,7 @@ body {
 .column-group {
   max-height: 96vh;   /* Account for the padding */
   max-width: 96vw;    /* Account for the padding */
-  margin: auto;
+  /*margin: auto;*/
   display: flex;
   gap: 1vw;
   box-sizing: border-box;
@@ -102,4 +102,6 @@ body {
 
 .plus-icon-hover {
   cursor: pointer;
+  position: relative;
+  top: 3px;
 }

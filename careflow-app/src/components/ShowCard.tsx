@@ -21,8 +21,8 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
   const [show, setShow] = useState(false);
   const modalClose = (data?: any) => {
     setShow(false);
-    console.log("modalClosed in showcard", show);
-    console.log("data from modalclose: ", data);
+    //console.log("modalClosed in showcard", show);
+    console.log("data sent onHide: (True = load data)", data);
     // If data is true, then fetch projects
     if (data) {
       fetchProjects();

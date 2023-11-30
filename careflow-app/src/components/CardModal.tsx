@@ -851,11 +851,21 @@ cardModalProps) {
     // Set loadDataOnClose to TRUE
     setLoadDataOnClose(true);
 
+    //TODO
+
     if (phase === 5) {
       //If "Avsluta arbete" is clicked in the act phase
-      onHide(loadDataOnClose);
-      setIsClosed(true);
+      //console.log("load data:", loadDataOnClose);
+      //setLoadDataOnClose(true);
+
+      //console.log("load data:", loadDataOnClose);
+
+      setIsClosed(true); // marks imrovementwork as closed ??
       updateDb(phase, true);
+
+      // some issue with calling onHide here
+      // true directly -> dont have to wait for useState
+      onHide(true); //TODO test this
     } else if (phase === 6) {
       //If "Påbörja ny iteration med samma idé" (phase === 6) or "Påbörja ny iteration med annan idé" (phase === 7) is clicked in the act phase
       //Sets the phase to plan and clear all state-variables related to the iteration
@@ -1407,7 +1417,7 @@ cardModalProps) {
                 borderRadius: "0 10px 10px 0",
               }}
             >
-              {"Iteration "}
+              {"PGSA-cykel "}
               {updatedTotalIterations}
             </div>
           </div>
@@ -1463,7 +1473,7 @@ cardModalProps) {
             <div className="mb-3 text-center">
               Att byta idé innebär att allt arbete som utförts hittills för den
               nuvarande idén raderas. Om du önskar spara arbetet innan du byter,
-              vänligen gå till agera-fasen och välj "Påbörja ny iteration med
+              vänligen gå till agera-fasen och välj "Påbörja ny PGSA-cykel med
               annan idé".
             </div>
             <div className="mb-3 text-center">

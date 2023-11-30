@@ -34,7 +34,7 @@ const buttonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
   fontSize: "14px",
-  padding: "10px 40px",
+  padding: "10px 20px",
   border: "none",
   cursor: "pointer",
   marginTop: "20px",
@@ -132,6 +132,7 @@ const addTagContainerStyle = {
   borderRadius: "10px",
   cursor: "pointer",
   fontSize: "14px",
+  border: "none",
 };
 
 const saveTagButtonStyle = {
@@ -242,6 +243,7 @@ function CardModalTopLeft({
     if (newTag.trim() !== "") {
       handleCloseTagModal();
       const updatedTagsArray = [...updatedTags, newTag];
+      const updatedTagsArray = [...updatedTags, newTag];
       setUpdatedTags(updatedTagsArray);
       setNewTag("");
     }
@@ -262,7 +264,7 @@ function CardModalTopLeft({
               {updatedTags.map((tag, index) => (
                 <React.Fragment key={index}>
                   <span style={tagContainerStyle}>
-                    {tag}
+                    {tag.toLowerCase()}
                     <span
                       style={{ marginLeft: "6px" }}
                       onClick={() => handleRemoveTag(index)}
@@ -274,7 +276,7 @@ function CardModalTopLeft({
               ))}
               <Dropdown key={tags.length}>
                 <Dropdown.Toggle style={addTagContainerStyle}>
-                  Nytt nyckelord
+                  nytt nyckelord
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{ width: "100%" }}>
                   {tags.map((tag) => (
@@ -388,7 +390,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(6)}
               >
-                Påbörja ny iteration
+                Påbörja ny PGSA-cykel
                 <span style={{ fontSize: "100%", display: "block" }}>
                   med <b>samma</b> idé
                 </span>
@@ -402,7 +404,7 @@ function CardModalTopLeft({
                 }
                 onClick={() => handlePhaseUpdate(7)}
               >
-                Påbörja ny iteration
+                Påbörja ny PGSA-cykel
                 <span style={{ fontSize: "100%", display: "block" }}>
                   med <b>annan</b> idé
                 </span>
@@ -542,6 +544,7 @@ function CardModalTopLeft({
                 {ideas.map((idea, index) => (
                   <Form.Check
                     key={index}
+                    className="custom-checkbox"
                     type="checkbox"
                     label={idea.text}
                     checked={idea.checked}
@@ -567,7 +570,7 @@ function CardModalTopLeft({
                   >
                     <strong>För att påbörja förbättringsarbetet</strong> måste
                     du trycka i vilken idé som kommer testas under denna
-                    iteration.
+                    PGSA-cykel.
                   </div>
                 ) : (
                   <div
