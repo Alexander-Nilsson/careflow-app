@@ -242,7 +242,7 @@ function CardModalTopLeft({
     //Makes sure that the input field is filled before the tag can be added
     if (newTag.trim() !== "") {
       handleCloseTagModal();
-      const updatedTagsArray = [...updatedTags, newTag.toLowerCase()];
+      const updatedTagsArray = [...updatedTags, newTag];
       setUpdatedTags(updatedTagsArray);
       setNewTag("");
     }
@@ -280,7 +280,7 @@ function CardModalTopLeft({
                 <Dropdown.Menu style={{ width: "100%" }}>
                   {tags.map((tag) => (
                     <Dropdown.Item onClick={() => handleSaveTag(tag)}>
-                      {tag.toLowerCase()}
+                      {tag}
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
