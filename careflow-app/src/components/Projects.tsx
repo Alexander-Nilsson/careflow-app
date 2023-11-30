@@ -233,7 +233,7 @@ function Projects() {
             </div>
           </div>
           <div className="description" style={{ marginLeft: "2vw" }}>
-            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "70%", fontWeight: "normal" }}>
+            <p style={{ fontFamily: 'Avenir', fontStyle: 'italic', fontSize: "110%", fontWeight: "normal" }}>
               Här kan du jobba med dina förbättringsarbeten genom förbättringsmodellen och de fyra stegen av PGSA-cykeln.
               <br />
               Du kan även involvera dig i din kliniks och ditt centrums förbättringsarbeten.
@@ -339,12 +339,16 @@ function Projects() {
       </ProjectContext.Provider>
 
       {isAuthenticated && userInfo ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',marginLeft: "-0,5%"}}>
+        <div style={{ width: "94%"}}>
         <ProjectsSection
           title={"Avslutade förbättringsarbeten"}
           userInfo={userInfo}
           allImprovementWorks={allImprovementWorks}
           showClosed={true}
         />
+        </div>
+        </div>
       ) : (
         <div
           style={{
