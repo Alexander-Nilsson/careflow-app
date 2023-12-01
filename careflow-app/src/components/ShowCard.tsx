@@ -8,6 +8,9 @@ import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 
+export var draggable : boolean = true;
+export var notDraggable : boolean = true;
+
 interface ShowCardProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
@@ -17,10 +20,15 @@ interface ShowCardProps {
 
 function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList }: ShowCardProps) {
   // State to track whether the mouse is over the task card
+  const [isDraggable, setIsDraggable] = useState(draggable);
 
   const [show, setShow] = useState(false);
+
   const modalClose = (data?: any) => {
+    setIsDraggable(true);
+    draggable=true;
     setShow(false);
+    console.log("Modal close Dragbar:", isDraggable);
     //console.log("modalClosed in showcard", show);
     console.log("data sent onHide: (True = load data)", data);
     // If data is true, then fetch projects
@@ -28,6 +36,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
       fetchProjects();
     }
   };
+
   const modalShow = () => {
     setShow(true);
     console.log("setShow in showcard", show);
@@ -36,18 +45,20 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
   const { isLoading } = useAuth0();
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
-
+  //const [isDraggable, setIsDraggable] = useState(true);
   const modalToggle = () => {
     setShow((prevShow) => !prevShow); // Toggle the modal state
+    setIsDraggable(false);
+    draggable=false;
     console.log("setShow in showcard", show);
   };
 
   useEffect(() => {
+    draggable=isDraggable;
     const fetchData = async () => {
       if (isLoading) {
         return;
       }
-
       try {
         //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
@@ -66,7 +77,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
         console.error("Error fetching member names:", error);
       }
     };
-  }, []);
+  }, [isDraggable]);
 
   // UseSortable hook for drag-and-drop functionality
   const { setNodeRef, attributes, listeners, transition, isDragging } =

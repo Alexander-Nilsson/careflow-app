@@ -117,36 +117,39 @@ function CardModalTopRight({
               ))}
 
               <div>
-                <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
-                  <Dropdown.Toggle
-                    style={{
-                      width: "100%",
-                      backgroundColor: "#FFFFFF",
-                      color: "#000000",
-                      border: "1px solid #DDDDDD",
-                    }}
-                  >
-                    Lägg till kollegor
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu style={{ width: "100%" }}>
-                    {users.map((member) => (
-                      <Dropdown.Item
-                        style={{
-                          fontWeight: updatedMembers.includes(member)
-                            ? "bold"
-                            : "normal",
-                        }}
-                        onClick={() =>
-                          updatedMembers.includes(member)
-                            ? handleRemoveMember(member)
-                            : handleSaveMember(member)
-                        }
-                      >
-                        {member}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+              <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
+              }}
+            >
+              Lägg till kollegor
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {
+              users.map((member) => (
+                (project_members.includes(member))
+                ? <p>nej</p>
+                : <Dropdown.Item
+                  style={{
+                    fontWeight: updatedMembers.includes(member)
+                      ? "bold"
+                      : "normal",
+                  }}
+                  onClick={() => 
+                    (updatedMembers.includes(member))
+                    ? handleRemoveMember(member)
+                    : handleSaveMember(member)}
+                >
+                  {member}
+                </Dropdown.Item>
+               
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
               </div>
             </div>
           </Form.Label>
