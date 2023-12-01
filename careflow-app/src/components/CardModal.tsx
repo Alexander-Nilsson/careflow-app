@@ -1203,6 +1203,7 @@ cardModalProps) {
         show={show}
         onHide={() => onHide(loadDataOnClose)}
         size="lg"
+        backdrop= "static"
       >
         <Modal.Header
           style={{

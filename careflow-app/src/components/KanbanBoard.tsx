@@ -19,7 +19,19 @@ import { doc, updateDoc } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
 import { ImprovementWork } from "../ImprovementWorkLib";
+import {draggable} from "./ShowCard";
 
+var condition:boolean = false;
+
+export async function setCh(cond:boolean) {
+const condition:boolean = cond;
+console.log("cond is set to " + condition)
+}
+
+function getCh(){
+  console.log("cond is " + condition)
+  return condition;
+}
 const columns: Column[] = [
   {
     id: 1,
@@ -52,6 +64,7 @@ const columns: Column[] = [
       "I sista fasen tar vi hand om lärdomar från genomförandet. Vi summerar och reflekterar över de lärdomar vi kommit fram till. Vi tar ställning till om förbättringen ska förkastas, vi vill göra ett till varv med samma idé men justerat eller med en av våra andra idéer. \n \n Om vi nått önskat resultat, så kanske förbättringar ska implementeras som den är. Även då behövs en plan för det fortsätta arbetet. Vi tar också beslut om att sprida förbättringen och utanför den egna enheten.",
   },
 ];
+
 
 function KanbanBoard() {
   const context = useContext(ProjectContext);
@@ -102,7 +115,7 @@ function KanbanBoard() {
                 fetchProjects={fetchProjects}
               />
             ))}
-
+ {getCh() ?   
           <DndContext
             sensors={sensors}
             onDragStart={onDragStart}
@@ -127,8 +140,8 @@ function KanbanBoard() {
                   />
                 ))}
             </div>
-
-            {createPortal(
+            {/* {getCh() ?  */}
+           {createPortal(
               <DragOverlay>
                 {activeImprovementWork && (
                   <ShowCard
@@ -140,8 +153,40 @@ function KanbanBoard() {
                 )}
               </DragOverlay>,
               document.body
-            )}
+                )}
+            {/* ): 
+            activeImprovementWork && (
+              <ShowCard
+                improvementWork={activeImprovementWork}
+                isAdmin={isAdmin}
+                fetchProjects={fetchProjects}
+                improvementWorkList={improvementWorkList}
+              />
+            )
+                } */}
           </DndContext>
+   
+          : 
+          <div className="column-group">
+          {/* Render all other columns inside the DndContext  */}
+          {columns
+            .filter((col) => col.id !== 1)
+            .map((col) => (
+              <ColumnContainer
+                key={col.id}
+                column={col}
+                improvementWorkList={improvementWorkList.filter(
+                  (ImprovementWork) =>
+                    ImprovementWork.phase === col.id &&
+                    !ImprovementWork.closed
+                )}
+                isAdmin={isAdmin}
+                fetchProjects={fetchProjects}
+              />
+            ))}
+        </div>
+          }
+          
         </div>
       </div>
     </div>
@@ -279,3 +324,7 @@ function KanbanBoard() {
 }
 
 export default KanbanBoard;
+function Kanban() {
+  throw new Error("Function not implemented.");
+}
+

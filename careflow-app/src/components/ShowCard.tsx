@@ -7,6 +7,9 @@ import { useSortable } from "@dnd-kit/sortable";
 import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
+import { Kanban } from "react-bootstrap-icons";
+import KanbanBoard, {setCh} from "./KanbanBoard";
+export var draggable : boolean = true;
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
@@ -17,16 +20,20 @@ interface ShowCardProps {
 
 function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList }: ShowCardProps) {
   // State to track whether the mouse is over the task card
-
+  const [isDraggable, setIsDraggable] = useState(draggable);
   const [show, setShow] = useState(false);
+  
   const modalClose = (data?: any) => {
     setShow(false);
+    setIsDraggable(true);
+    setCh(true);
     //console.log("modalClosed in showcard", show);
     console.log("data sent onHide: (True = load data)", data);
     // If data is true, then fetch projects
     if (data) {
       fetchProjects();
     }
+    <KanbanBoard></KanbanBoard>
   };
   const modalShow = () => {
     setShow(true);
@@ -39,7 +46,10 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
 
   const modalToggle = () => {
     setShow((prevShow) => !prevShow); // Toggle the modal state
+    setIsDraggable(false);
+    setCh(false);
     console.log("setShow in showcard", show);
+    <KanbanBoard></KanbanBoard>
   };
 
   useEffect(() => {
@@ -110,6 +120,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
         />
 
         {
+          
           <CardModal
             show={show}
             onHide={modalClose}
