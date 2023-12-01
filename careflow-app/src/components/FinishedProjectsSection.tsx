@@ -143,6 +143,7 @@ function FinishedProjectsSection({ userInfo, allImprovementWorks }: FinishedProj
                   displayPhaseImage={true}
                   improvementWork={improvementWork}
                   isAdmin={userInfo.admin}
+                  improvementWorkList={allImprovementWorks}
                 />
               </div>
             ))

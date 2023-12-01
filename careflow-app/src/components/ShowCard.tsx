@@ -15,9 +15,10 @@ interface ShowCardProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
   fetchProjects: () => void;
+  improvementWorkList: ImprovementWork[];
 }
 
-function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
+function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList }: ShowCardProps) {
   // State to track whether the mouse is over the task card
   const [isDraggable, setIsDraggable] = useState(draggable);
 
@@ -124,6 +125,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
             show={show}
             onHide={modalClose}
             improvementWork={improvementWork}
+            improvementWorkList={improvementWorkList}
           />
         }
       </div>

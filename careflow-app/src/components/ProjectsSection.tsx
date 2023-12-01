@@ -119,7 +119,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
 
     return (
         <div style={projectsSectionStyle}>
-            <style>{scrollBarStyles}</style>
+            {/* <style>{scrollBarStyles}</style>  removed to prevent horizontal scrolling, only works on mac*/}
             <div className="d-flex">
                 <h1 className="mt-2 ml-2" style={titleStyle}>{title}</h1>
                 <div className="ml-2 mt-2">
@@ -157,6 +157,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                                 displayPhaseImage={true}
                                 improvementWork={improvementWork}
                                 isAdmin={userInfo.admin}
+                                improvementWorkList={allImprovementWorks}
                             />
                         </div>
                     ))

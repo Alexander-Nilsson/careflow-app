@@ -240,180 +240,184 @@ function Projects() {
       ) : (
         <></>
       )}
-      <div
-        style={{
-          width: "100%",
-          height: "150px",
-          display: "flex",
-          justifyContent: "space-between",
-          //alignItems: "baseline",
-          //marginTop: "20px",
-          whiteSpace: "pre-line",
-        }}
-      >
-        <div
-          className="outerContainer"
-          style={{ display: "flex", flexDirection: "column" }}
-        >
-          <div style={{ display: "flex" }}>
-            <TitleBox
-              title={"Mina förbättringsarbeten"}
-              description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
+
+
+      {isAuthenticated && userInfo ? (
+        <div>
+          <div
+            style={{
+              width: "100%",
+              height: "150px",
+              display: "flex",
+              justifyContent: "space-between",
+              //alignItems: "baseline",
+              //marginTop: "20px",
+              whiteSpace: "pre-line",
+            }}
+          >
+            <div className="outerContainer" style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", marginTop: "3vh" }}>
+                <TitleBox
+                  title={"Mina förbättringsarbeten"}
+                  description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
         Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
         Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
-            />
-            {/*<div className="questionMark" style={{ marginLeft: "2vh" }}>
+                />
+                {/*<div className="questionMark" style={{ marginLeft: "2vh" }}>
       <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
       </div> */}
-            <div
-              className="buttonPopoverContainer"
-              style={{
-                fontSize: "80%",
-                borderRadius: "5px",
-                height: "100%",
-                paddingTop: "1vh",
-              }}
-            >
-              <div
-                className="buttonPopover"
-                style={{
-                  marginLeft: "2vh",
-                  color: "white",
-                  fontStyle: "italic",
-                  fontSize: "80%",
-                  backgroundColor: "#051F6F",
-                  borderRadius: "5px",
-                }}
+                <div
+                  className="buttonPopoverContainer"
+                  style={{
+                    fontSize: "80%",
+                    borderRadius: "5px",
+                    height: "100%",
+                    paddingTop: "1vh",
+                  }}
+                >
+                  <div
+                    className="buttonPopover"
+                    style={{
+                      marginLeft: "2vh",
+                      color: "white",
+                      fontStyle: "italic",
+                      fontSize: "80%",
+                      backgroundColor: "#051F6F",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    <ButtonPopover
+                      title={"Vad är förbättringsmodellen och hur hjälper den oss?"}
+                      content={
+                        " \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "
+                      }
+                      text={"Vad är förbättringsmodellen?"}
+                    ></ButtonPopover>
+                  </div>
+                </div>
+              </div>
+              <div className="description" style={{ marginLeft: "2vw" }}>
+                <p
+                  style={{
+                    fontFamily: "Avenir",
+                    fontStyle: "italic",
+                    fontSize: "110%",
+                    fontWeight: "normal",
+                  }}
+                >
+                  Här kan du jobba med dina förbättringsarbeten genom
+                  förbättringsmodellen och de fyra stegen av PGSA-cykeln.
+                  <br />
+                  Du kan även involvera dig i din kliniks och ditt centrums
+                  förbättringsarbeten.
+                </p>
+              </div>
+            </div>
+
+            <div style={{ marginTop: "30px", marginRight: "40px" }}>
+              <CreateNewProject onRefreshProjects={refreshImprovementWorks} />
+            </div>
+          </div>
+
+          <div className="d-flex pl-7 pr-14">
+            <div className="">
+              <label htmlFor="sortDropdown" className="form-label me-2">
+                Sortera:
+              </label>
+              <select
+                id="sortDropdown"
+                value={sortBy}
+                className="form-select"
+                aria-label="Filtrera"
+                onChange={handleSortChange}
+              // style={{ width: "8.5rem" }} // Adjust the width as needed
               >
-                <ButtonPopover
-                  title={"Vad är förbättringsmodellen och hur hjälper den oss?"}
-                  content={
-                    " \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "
-                  }
-                  text={"Vad är förbättringsmodellen?"}
-                ></ButtonPopover>
+                <option selected value="date_created">
+                  Visa senaste
+                </option>
+                <option value="oldest_date">Visa äldsta</option>
+                <option value="ascending">Visa a-ö</option>
+                <option value="descending">Visa ö-a</option>
+              </select>
+            </div>
+            <div className="ml-2">
+              <label className="form-label me-2">Filtrera:</label>
+              <select
+                className="form-select"
+                aria-label="Filtrera"
+                onChange={handleFilter}
+              >
+                <option selected value="user">
+                  Visa mina
+                </option>
+                <option value="clinic">Visa klinikens</option>
+                <option value="centrum">Visa centrets</option>
+              </select>
+            </div>
+
+            <div className="ml-2 align-self-end">
+              <select
+                className="form-select"
+                aria-label="Filtrera"
+                onChange={handleTags}
+              >
+                <option selected value="all_tags">
+                  Visa alla nyckelord
+                </option>
+                {tagOptions.map((tag) => (
+                  <option key={tag} value={tag}>
+                    {" "}
+                    {tag}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="ml-auto align-self-end">
+              <div className="input-group rounded">
+                <input
+                  type="search"
+                  className="form-control rounded"
+                  placeholder="Sök"
+                  aria-label="Search"
+                  aria-describedby="search-addon"
+                  style={{ width: "20rem" }}
+                  value={searchTitle}
+                  onChange={(e) => handleTitleSearch(e.target.value)}
+                />
+                <IoSearchOutline
+                  style={{
+                    fontSize: "1.5rem",
+                    marginLeft: "0.5rem",
+                    marginTop: "0.4rem",
+                  }}
+                />
               </div>
             </div>
           </div>
-          <div className="description" style={{ marginLeft: "2vw" }}>
-            <p
-              style={{
-                fontFamily: "Avenir",
-                fontStyle: "italic",
-                fontSize: "70%",
-                fontWeight: "normal",
-              }}
-            >
-              Här kan du jobba med dina förbättringsarbeten genom
-              förbättringsmodellen och de fyra stegen av PGSA-cykeln.
-              <br />
-              Du kan även involvera dig i din kliniks och ditt centrums
-              förbättringsarbeten.
-            </p>
+
+          {/* <ProjectContext.Provider value={{ projectList, setProjectList }}> */}
+          <ProjectContext.Provider
+            value={{
+              improvementWorkList,
+              setImprovementWorkList,
+              isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
+              fetchProjects,
+            }}
+          >
+            <KanbanBoard />
+          </ProjectContext.Provider>
+          <div style={{ display: 'flex', alignItems: 'center', marginLeft: "2%" }}>
+            <div style={{ width: "96%" }}>
+              <ProjectsSection
+                title={"Avslutade förbättringsarbeten"}
+                userInfo={userInfo}
+                allImprovementWorks={allImprovementWorks}
+                showClosed={true}
+              />
+            </div>
           </div>
         </div>
-
-        <div style={{ marginTop: "30px", marginRight: "40px" }}>
-          <CreateNewProject onRefreshProjects={refreshImprovementWorks} />
-        </div>
-      </div>
-
-      <div className="d-flex pl-7 pr-14">
-        <div className="">
-          <label htmlFor="sortDropdown" className="form-label me-2">
-            Sortera:
-          </label>
-          <select
-            id="sortDropdown"
-            value={sortBy}
-            className="form-select"
-            aria-label="Filtrera"
-            onChange={handleSortChange}
-            // style={{ width: "8.5rem" }} // Adjust the width as needed
-          >
-            <option selected value="date_created">
-              Visa senaste
-            </option>
-            <option value="oldest_date">Visa äldsta</option>
-            <option value="ascending">Visa a-ö</option>
-            <option value="descending">Visa ö-a</option>
-          </select>
-        </div>
-        <div className="ml-2">
-          <label className="form-label me-2">Filtrera:</label>
-          <select
-            className="form-select"
-            aria-label="Filtrera"
-            onChange={handleFilter}
-          >
-            <option selected value="user">
-              Visa mina
-            </option>
-            <option value="clinic">Visa klinikens</option>
-            <option value="centrum">Visa centrets</option>
-          </select>
-        </div>
-
-        <div className="ml-2 align-self-end">
-          <select
-            className="form-select"
-            aria-label="Filtrera"
-            onChange={handleTags}
-          >
-            <option selected value="all_tags">
-              Visa alla nyckelord
-            </option>
-            {tagOptions.map((tag) => (
-              <option key={tag} value={tag}>
-                {" "}
-                {tag}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="ml-auto align-self-end">
-          <div className="input-group rounded">
-            <input
-              type="search"
-              className="form-control rounded"
-              placeholder="Sök"
-              aria-label="Search"
-              aria-describedby="search-addon"
-              style={{ width: "20rem" }}
-              value={searchTitle}
-              onChange={(e) => handleTitleSearch(e.target.value)}
-            />
-            <IoSearchOutline
-              style={{
-                fontSize: "1.5rem",
-                marginLeft: "0.5rem",
-                marginTop: "0.4rem",
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* <ProjectContext.Provider value={{ projectList, setProjectList }}> */}
-      <ProjectContext.Provider
-        value={{
-          improvementWorkList,
-          setImprovementWorkList,
-          isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
-          fetchProjects,
-        }}
-      >
-        <KanbanBoard />
-      </ProjectContext.Provider>
-
-      {isAuthenticated && userInfo ? (
-        <ProjectsSection
-          title={"Avslutade förbättringsarbeten"}
-          userInfo={userInfo}
-          allImprovementWorks={allImprovementWorks}
-          showClosed={true}
-        />
       ) : (
         <div
           style={{

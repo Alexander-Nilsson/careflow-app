@@ -12,7 +12,7 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import CardModalNotes from "./CardModalNotes";
 import CardModalChecklist from "./CardModalChecklist";
-//import CardModalSimilarProjects from "./CardModalSimilarProjects";
+import CardModalSimilarProjects from "./CardModalSimilarProjects";
 import CardModalResultMeasurements from "./CardModalResultMeasurements";
 import CardModalResultAnalysis from "./CardModalResultAnalysis";
 import CardModalFiles from "./CardModalFiles";
@@ -68,6 +68,7 @@ interface cardModalProps {
   show: boolean;
   onHide: (data?: any) => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
+  improvementWorkList: ImprovementWork[]; // passing the list of all improvementworks
 }
 
 interface modalContentPlanProps {
@@ -115,6 +116,7 @@ interface modalContentPlanProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 interface modalContentDoProps {
@@ -156,6 +158,7 @@ interface modalContentDoProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 interface modalContentStudyProps {
@@ -198,6 +201,7 @@ interface modalContentStudyProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 interface modalContentActProps {
@@ -237,6 +241,7 @@ interface modalContentActProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 //Function that checks if the icon next to the phase (in the tabs at the top) should be checked or not
@@ -286,6 +291,7 @@ function ModalContentPlan({
   setUpdatedNotesPlan,
   files,
   setUpdatedFilesPlan,
+  improvementWorkList,
 }: modalContentPlanProps) {
   //Calculates the phase's progress based on the number of checked tasks in the checklist
   function calculatePercentage() {
@@ -362,7 +368,11 @@ function ModalContentPlan({
 
           {/* --------------------------------------------------- */}
 
-          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -395,6 +405,7 @@ function ModalContentDo({
   setUpdatedNotesDo,
   files,
   setUpdatedFilesDo,
+  improvementWorkList,
 }: modalContentDoProps) {
   return (
     <>
@@ -450,7 +461,11 @@ function ModalContentDo({
 
           {/* ---------------------------------------- */}
 
-          {/* <CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -483,6 +498,7 @@ function ModalContentStudy({
   setUpdatedNotesStudy,
   files,
   setUpdatedFilesStudy,
+  improvementWorkList,
 }: modalContentStudyProps) {
   return (
     <>
@@ -539,7 +555,11 @@ function ModalContentStudy({
 
           {/* ----------------------------------------- */}
 
-          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -570,6 +590,7 @@ function ModalContentAct({
   setUpdatedNotesAct,
   files,
   setUpdatedFilesAct,
+  improvementWorkList,
 }: modalContentActProps) {
   return (
     <>
@@ -621,7 +642,11 @@ function ModalContentAct({
 
           {/* --------------------------------------------*/}
 
-          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -633,6 +658,7 @@ function CardModal({
   show,
   onHide,
   improvementWork,
+  improvementWorkList,
 }: // project_leader,
 // project_members,
 cardModalProps) {
@@ -1260,6 +1286,7 @@ cardModalProps) {
                   setUpdatedNotesPlan={setUpdatedNotesPlan}
                   files={updatedFilesPlan}
                   setUpdatedFilesPlan={setUpdatedFilesPlan}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
 
@@ -1300,6 +1327,7 @@ cardModalProps) {
                   setUpdatedNotesDo={setUpdatedNotesDo}
                   files={updatedFilesDo}
                   setUpdatedFilesDo={setUpdatedFilesDo}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
 
@@ -1340,6 +1368,7 @@ cardModalProps) {
                   setUpdatedNotesStudy={setUpdatedNotesStudy}
                   files={updatedFilesStudy}
                   setUpdatedFilesStudy={setUpdatedFilesStudy}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
 
@@ -1378,6 +1407,7 @@ cardModalProps) {
                   setUpdatedNotesAct={setUpdatedNotesAct}
                   files={updatedFilesAct}
                   setUpdatedFilesAct={setUpdatedFilesAct}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
             </Tabs>

@@ -153,6 +153,7 @@ function KanbanBoard() {
                     improvementWork={activeImprovementWork}
                     isAdmin={isAdmin}
                     fetchProjects={fetchProjects}
+                    improvementWorkList={improvementWorkList}
                   />
                 )}
               </DragOverlay>,
