@@ -58,18 +58,14 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
     useEffect(() => {
-        console.log("uppdaterar ProjectsSection")
-        // console.log(allImprovementWorks)
-        const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
-        // console.log(filteredImprovementWorks)
-        setDisplayedImprovementWorks(filteredImprovementWorks)
-    }, [filterState, allImprovementWorks]);
-
-    useEffect(() => {
-        if (displayedImprovementWorks.length !== 0) {
-            console.log(displayedImprovementWorks)
+        if (allImprovementWorks.length > 0) {
+            // console.log("uppdaterar ProjectsSection")
+            // console.log(allImprovementWorks)
+            const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
+            // console.log(filteredImprovementWorks)
+            setDisplayedImprovementWorks(filteredImprovementWorks)
         }
-    }, [displayedImprovementWorks]);
+    }, [filterState, allImprovementWorks]);
 
 
     // denna useEffect ser till att man hämtar taggar endast en gång, eftersom den inte har en hook som den ovan har.
@@ -78,7 +74,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     useEffect(() => {
         const improvementWorks = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
         const tags = findTagOptions(improvementWorks)
-        // setImprovementWorks(improvementWorks)
+        // setDisplayedImprovementWorks(improvementWorks)
         setTagOptions(tags);
         setFilterState(prev => ({ ...prev, includeClinic: false }));
     }, []);
@@ -156,30 +152,27 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
             </div>
 
             <div style={projectsContainerStyle}>
-                {displayedImprovementWorks !== null &&
-                    (function () {
-                        const elements = [];
-                        for (let index = 0; index < displayedImprovementWorks.length; index++) {
-                            const improvementWork = displayedImprovementWorks[index];
-                            elements.push(
-                                <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
-                                    <ProjectCard
-                                        title={improvementWork.title}
-                                        date_created={improvementWork.date_created}
-                                        place={improvementWork.place}
-                                        tags={improvementWork.tags}
-                                        phase={improvementWork.phase}
-                                        displayPhaseImage={true}
-                                        improvementWork={improvementWork}
-                                        isAdmin={userInfo.admin}
-                                        improvementWorkList={allImprovementWorks}
-                                    />
-                                </div>
-                            );
-                        }
-                        return elements;
-                    })()}
+                {displayedImprovementWorks != null ? (
+                    displayedImprovementWorks.map((improvementWork, index) => (
+                        <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
+                            <ProjectCard
+                                title={improvementWork.title}
+                                date_created={improvementWork.date_created}
+                                place={improvementWork.place}
+                                tags={improvementWork.tags}
+                                phase={improvementWork.phase}
+                                displayPhaseImage={true}
+                                improvementWork={improvementWork}
+                                isAdmin={userInfo.admin}
+                                improvementWorkList={allImprovementWorks}
+                            />
+                        </div>
+                    ))
+                ) : (
+                    null
+                )}
             </div>
+
         </div>
     )
 }

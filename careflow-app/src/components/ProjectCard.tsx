@@ -131,11 +131,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
 
-  useEffect(() => {
-    console.log("uppdaterar ProjectCard")
-    console.log(improvementWork)
-  }, [improvementWork]);
-
   return (
     <div>
       <Card

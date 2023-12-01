@@ -3,14 +3,14 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyADTE4HdNKZkQAjQ90ki94lXstv_JdVQqg",
-    authDomain: "careflow-2.firebaseapp.com",
-    projectId: "careflow-2",
-    storageBucket: "careflow-2.appspot.com",
-    messagingSenderId: "230984333882",
-    appId: "1:230984333882:web:c07ee89e6a649a45ec5303",
-    measurementId: "G-5Q7SQNQLYE"
-};
+    apiKey: "AIzaSyD_VmL7OhFcnqzzsmyowA4v0aMHf2MVXDs",
+    authDomain: "careflow-60a15.firebaseapp.com",
+    databaseURL: "https://careflow-60a15-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "careflow-60a15",
+    storageBucket: "careflow-60a15.appspot.com",
+    messagingSenderId: "100218090999",
+    appId: "1:100218090999:web:fef937f15602aa48a0aaf2"
+  };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

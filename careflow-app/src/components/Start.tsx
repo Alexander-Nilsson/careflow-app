@@ -52,8 +52,7 @@ function Start() {
     if (user?.name) {
       fetchUser(user.name, user, setUserInfo);
 
-      const improvementWorks: ImprovementWork[] | null =
-        await getAllImprovementWorks();
+      const improvementWorks = await getAllImprovementWorks();
       if (improvementWorks !== null) {
         setImprovementWorks(improvementWorks);
       } else {
@@ -61,14 +60,24 @@ function Start() {
       }
     }
   }
- //HÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄR
+
+  const [forceRerender, setForceRerender] = useState<number | null>(null);
+
+  // ... (existing code)
+
   const refreshImprovementWorks = async () => {
     // Assuming you have a method to fetch the latest improvement works
     const updatedImprovementWorks = await getAllImprovementWorks();
     // console.log(updatedImprovementWorks)
     setImprovementWorks(updatedImprovementWorks);
-    // window.location.reload();
+
+    // Instead of window.location.reload(), trigger a re-render
+    // setForceRerender(prevState => (prevState !== null ? null : 1));
   };
+
+  useEffect(() => {
+    setForceRerender(prevState => (prevState !== null ? null : 1));
+  }, [improvementWorks])
 
 
   function Spinner() {
@@ -91,7 +100,7 @@ function Start() {
   }, [isAuthenticated]);
 
   return (
-    <div>
+    <div key={forceRerender}>
       <img
         className="background-gradient"
         alt=""
@@ -99,8 +108,8 @@ function Start() {
       />
       {isAuthenticated && userInfo && improvementWorks ? (
         <div style={contentStyle}>
-          
-        <ProfileSection userInfo={userInfo} onRefresh={refreshImprovementWorks}/>
+
+          <ProfileSection userInfo={userInfo} onRefresh={refreshImprovementWorks} />
 
           {/* <CreateNewProject /> */}
           <ProjectsSection
@@ -108,16 +117,16 @@ function Start() {
             userInfo={userInfo}
             allImprovementWorks={improvementWorks}
             showClosed={false}
-             />
+          />
           <div className="d-flex mr-2 w-100" style={{ marginBottom: '2%' }}>
-            <IdeasSection userInfo={userInfo} width={"42%"} add_height="250px"/>
+            <IdeasSection userInfo={userInfo} width={"42%"} add_height="250px" />
             <ProgressSection improvementWorks={improvementWorks} />
           </div>
           {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <Spinner />
+          <Spinner />
         </div>
       )}
     </div>
