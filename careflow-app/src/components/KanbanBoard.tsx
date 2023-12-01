@@ -60,8 +60,7 @@ const columns: Column[] = [
 
 
 function KanbanBoard() {
-  // const [isDraggable, setIsDraggable] = useState(draggable);
-  // console.log("Går att dra: ", isDraggable, draggable);
+
   const context = useContext(ProjectContext);
   if (!context) {
     throw new Error(
@@ -76,7 +75,6 @@ function KanbanBoard() {
   } = context;
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
-    //setIsDraggable(draggable);
 
  
    const sensors =
@@ -88,12 +86,6 @@ function KanbanBoard() {
         }
        ));
       
-  
-
-  // useEffect(() => {
-  //   setIsDraggable(draggable);
-  //   console.log("zzzz Use effect dragbar: ", isDraggable);
-  // }, [draggable]);
 
 
   return (
@@ -152,9 +144,7 @@ function KanbanBoard() {
                   <ShowCard
                     improvementWork={activeImprovementWork}
                     isAdmin={isAdmin}
-                    fetchProjects={fetchProjects}
-                    improvementWorkList={improvementWorkList}
-                  />
+                    fetchProjects={fetchProjects} improvementWorkList={[]}                  />
                 )}
               </DragOverlay>,
               document.body
