@@ -166,7 +166,7 @@ function Projects() {
   const refreshImprovementWorks = async () => {
     const updatedImprovementWorks = await getAllImprovementWorks();
     setAllImprovementWorks(updatedImprovementWorks);
-    setForceRerender(prevState => (prevState !== null ? null : 1));
+    // setForceRerender(prevState => (prevState !== null ? null : 1));
   };
 
   
@@ -187,6 +187,7 @@ function Projects() {
         setImprovementWorkList(filteredImprovementWorks);
       }
     }
+    setForceRerender(prevState => (prevState !== null ? null : 1));
   }, [allImprovementWorks]);
 
   useEffect(() => {
@@ -265,12 +266,12 @@ function Projects() {
                 <TitleBox
                   title={"Mina förbättringsarbeten"}
                   description="Här kan du bläddra bland pågående projekt och se vilken status de har. \n \n
-        Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
-        Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
+         Du kan välja vilken avdelning, vårdenhet eller region som projekten ska beröra. Det finns även ett flertal filter att välja bland, som gör att du kan smalna av sökningen och göra resultaten relevanta för vad du söker. \n \n I fritext-rutan kan du skriva in sökord och få resultat relaterade till dem. 
+         Projekten dyker upp som kort där en översikt med den viktigaste informationen visas. \n \n Det finns fem olika faser som ett projekt kan befinna sig i och korten flyttas mellan dem i takt med att projektet fortskrider."
                 />
                 {/*<div className="questionMark" style={{ marginLeft: "2vh" }}>
-      <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
-      </div> */}
+          <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
+         </div> */}
                 <div
                   className="buttonPopoverContainer"
                   style={{

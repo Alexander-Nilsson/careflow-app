@@ -201,14 +201,19 @@ function DisplayAllProjects() {
 
   const refreshImprovementWorks = async () => {
     // Assuming you have a method to fetch the latest improvement works
-    // const updatedImprovementWorks = await getAllImprovementWorks();
+    const updatedImprovementWorks = await getAllImprovementWorks();
     // // console.log(updatedImprovementWorks)
-    // setAllImprovementWorks(updatedImprovementWorks);
+    setAllImprovementWorks(updatedImprovementWorks);
 
     fetchData()
     // Instead of window.location.reload(), trigger a re-render
-    setForceRerender(prevState => (prevState !== null ? null : 1));
+    
   };
+
+  useEffect(() => {
+    console.log("renderar om")
+    setForceRerender(prevState => (prevState !== null ? null : 1));
+  }, [allImprovementWorks])
 
   const contentStyle = {
     marginTop: '20px',
