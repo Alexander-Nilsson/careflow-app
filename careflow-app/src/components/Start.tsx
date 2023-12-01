@@ -65,7 +65,9 @@ function Start() {
   const refreshImprovementWorks = async () => {
     // Assuming you have a method to fetch the latest improvement works
     const updatedImprovementWorks = await getAllImprovementWorks();
+    // console.log(updatedImprovementWorks)
     setImprovementWorks(updatedImprovementWorks);
+    // window.location.reload();
   };
 
 

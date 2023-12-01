@@ -37,15 +37,16 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     const handleFilter = async (event: any) => {
         if (event.target.value === "user") {
             setFilterState(prev => ({
-                 ...prev, 
-                 includeUser: true,
-                 includeClinic: false}));
+                ...prev,
+                includeUser: true,
+                includeClinic: false
+            }));
         } else if (event.target.value === "clinic") {
             setFilterState(prev => ({
-                 ...prev, 
-                 includeClinic: true,
-                 includeUser: false
-                 }));
+                ...prev,
+                includeClinic: true,
+                includeUser: false
+            }));
         }
     };
 
@@ -57,9 +58,19 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
     //Denna useEffect uppdaterar alla arbeten som ska visas efter att filterState har uppdaterats
     // d.v.s. när man har klickat på ett filter
     useEffect(() => {
+        console.log("uppdaterar ProjectsSection")
+        // console.log(allImprovementWorks)
         const filteredImprovementWorks: ImprovementWork[] = filterForUser(allImprovementWorks, filterState, userInfo, "date_created")
+        // console.log(filteredImprovementWorks)
         setDisplayedImprovementWorks(filteredImprovementWorks)
     }, [filterState, allImprovementWorks]);
+
+    useEffect(() => {
+        if (displayedImprovementWorks.length !== 0) {
+            console.log(displayedImprovementWorks)
+        }
+    }, [displayedImprovementWorks]);
+
 
     // denna useEffect ser till att man hämtar taggar endast en gång, eftersom den inte har en hook som den ovan har.
     // OBS den hämtar ALLA taggar och inte bara de som finns i användarens/klinikens projekt så det behöver ändras
@@ -141,29 +152,33 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                 </div>
                 <div className="mt-3 ml-2">
                     <HelpPopover content="Vill du se över ett av dina genomförda förbättringsarbeten, testa någon idé en till PGSA-cykel eller följa upp förbättringen? Dina gamla förbättringsarbeten ligger här." />
-                    </div> 
+                </div>
             </div>
 
             <div style={projectsContainerStyle}>
-                {displayedImprovementWorks != null ? (
-                    displayedImprovementWorks.map((improvementWork, index) => (
-                        <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
-                            <ProjectCard
-                                title={improvementWork.title}
-                                date_created={improvementWork.date_created}
-                                place={improvementWork.place}
-                                tags={improvementWork.tags}
-                                phase={improvementWork.phase}
-                                displayPhaseImage={true}
-                                improvementWork={improvementWork}
-                                isAdmin={userInfo.admin}
-                                improvementWorkList={allImprovementWorks}
-                            />
-                        </div>
-                    ))
-                ) : (
-                    null
-                )}
+                {displayedImprovementWorks !== null &&
+                    (function () {
+                        const elements = [];
+                        for (let index = 0; index < displayedImprovementWorks.length; index++) {
+                            const improvementWork = displayedImprovementWorks[index];
+                            elements.push(
+                                <div className="col-md-6 col-lg-3" style={{ marginRight: "1%" }} key={index}>
+                                    <ProjectCard
+                                        title={improvementWork.title}
+                                        date_created={improvementWork.date_created}
+                                        place={improvementWork.place}
+                                        tags={improvementWork.tags}
+                                        phase={improvementWork.phase}
+                                        displayPhaseImage={true}
+                                        improvementWork={improvementWork}
+                                        isAdmin={userInfo.admin}
+                                        improvementWorkList={allImprovementWorks}
+                                    />
+                                </div>
+                            );
+                        }
+                        return elements;
+                    })()}
             </div>
         </div>
     )

@@ -132,29 +132,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [memberNames, setMemberNames] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const leaderName = await getMemberName(improvementWork.project_leader);
-        setLeaderName(leaderName);
-
-        console.log("hämtar från ProjectCard:");
-        const names = await Promise.all(
-          improvementWork.project_members.map(
-            async (member) => await getMemberName(member)
-          )
-        );
-
-        const filteredNames = names.filter(
-          (name) => name !== null
-        ) as Array<string>;
-        setMemberNames(filteredNames);
-      } catch (error) {
-        console.error("Error fetching member names:", error);
-      }
-    };
-
-    // fetchData();
-  }, []);
+    console.log("uppdaterar ProjectCard")
+    console.log(improvementWork)
+  }, [improvementWork]);
 
   return (
     <div>
@@ -189,7 +169,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   aria-label="Pin Emoji"
                   style={{ fontSize: "15px" }}
                 >
-                  📍
+                  
                 </span>
                 {place}
               </Card.Text>

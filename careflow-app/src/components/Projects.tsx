@@ -18,7 +18,6 @@ import { getAllImprovementWorks, ImprovementWork } from "../ImprovementWorkLib";
 import TitleBox from "./TitleBox";
 import CreateNewProject from "./CreateNewProject";
 import { UserInfoType, fetchUser } from "./Start";
-import FinishedProjectsSection from "./FinishedProjectsSection";
 import ProjectsSection from "./ProjectsSection";
 import CardDeleteModal from "./CardDeleteModal";
 import { IoSearchOutline } from "react-icons/io5";
