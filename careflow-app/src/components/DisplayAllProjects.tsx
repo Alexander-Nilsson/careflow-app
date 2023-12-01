@@ -211,7 +211,7 @@ function DisplayAllProjects() {
   };
 
   useEffect(() => {
-    console.log("renderar om")
+    // console.log("renderar om")
     setForceRerender(prevState => (prevState !== null ? null : 1));
   }, [allImprovementWorks])
 
