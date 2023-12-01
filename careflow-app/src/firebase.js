@@ -3,17 +3,18 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDA8Usn1chvmNJoRAiXkQ6at3ibZJyf6fU",
-  authDomain: "careflow-testing.firebaseapp.com",
-  projectId: "careflow-testing",
-  storageBucket: "careflow-testing.appspot.com",
-  messagingSenderId: "257256774434",
-  appId: "1:257256774434:web:7ff66aede9fbc80b2ba37b",
-  measurementId: "G-XQMF8822JE",
+    apiKey: "AIzaSyADTE4HdNKZkQAjQ90ki94lXstv_JdVQqg",
+    authDomain: "careflow-2.firebaseapp.com",
+    projectId: "careflow-2",
+    storageBucket: "careflow-2.appspot.com",
+    messagingSenderId: "230984333882",
+    appId: "1:230984333882:web:c07ee89e6a649a45ec5303",
+    measurementId: "G-5Q7SQNQLYE"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const fileStorage = getStorage(app);
 
-export { db, fileStorage };
+
+export { db, fileStorage }
