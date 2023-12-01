@@ -41,6 +41,7 @@ const buttonStyle = {
   marginTop: "20px",
 };
 
+
 const saveButtonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
@@ -1168,15 +1169,33 @@ cardModalProps) {
 
     const members = await getMemberNames(improvementWork.project_members);
     setProjectMembers(members);
+
+    console.log(show);
   }
 
+  function overlayOnClick(){
+    console.log("Klick");
+  }
+  
+
   return (
-    <>
+    <><div className="overlay" style={{
+      /* making it hidden by default */
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: 100,
+      height: 100,
+      color: "rgba(128,128,128,0.5)",
+      display: "block",
+    }} onClick={overlayOnClick}>
       <Modal
         onShow={showModal}
         show={show}
         onHide={() => onHide(loadDataOnClose)}
         size="lg"
+        backdrop="static"
+        position="fixed"
       >
         <Modal.Header
           style={{
@@ -1457,6 +1476,7 @@ cardModalProps) {
           </Form>
         </Modal.Body>
       </Modal>
+      </div>
     </>
   );
 }

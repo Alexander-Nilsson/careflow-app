@@ -8,6 +8,8 @@ import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 
+export var draggable : boolean = true;
+
 interface ShowCardProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
@@ -16,10 +18,14 @@ interface ShowCardProps {
 
 function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
   // State to track whether the mouse is over the task card
+  const [isDraggable, setIsDraggable] = useState(draggable);
 
   const [show, setShow] = useState(false);
   const modalClose = (data?: any) => {
     setShow(false);
+    setIsDraggable(true);
+    draggable=true;
+    console.log("Dragbar:", draggable);
     //console.log("modalClosed in showcard", show);
     console.log("data sent onHide: (True = load data)", data);
     // If data is true, then fetch projects
@@ -35,9 +41,12 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
   const { isLoading } = useAuth0();
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
-
+  //const [isDraggable, setIsDraggable] = useState(true);
   const modalToggle = () => {
     setShow((prevShow) => !prevShow); // Toggle the modal state
+    setIsDraggable(false);
+    draggable=false;
+    console.log(draggable);
     console.log("setShow in showcard", show);
   };
 
@@ -46,7 +55,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
       if (isLoading) {
         return;
       }
-
+      setIsDraggable(draggable);
       try {
         //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
@@ -65,7 +74,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
         console.error("Error fetching member names:", error);
       }
     };
-  }, []);
+  }, [draggable]);
 
   // UseSortable hook for drag-and-drop functionality
   const { setNodeRef, attributes, listeners, transition, isDragging } =
