@@ -11,8 +11,6 @@ import {
   sortByTitleDescending, searchImprovementWorks
 } from "../ImprovementWorkLib";
 import { IoSearchOutline } from "react-icons/io5";
-import { ProjectCardProps } from "./ProjectCard";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/DisplayAllProjects.css";
 import "../font/font.css";
@@ -197,6 +195,21 @@ function DisplayAllProjects() {
     }
   }, [searchTitle])
 
+  const [forceRerender, setForceRerender] = useState<number | null>(null);
+
+  // ... (existing code)
+
+  const refreshImprovementWorks = async () => {
+    // Assuming you have a method to fetch the latest improvement works
+    // const updatedImprovementWorks = await getAllImprovementWorks();
+    // // console.log(updatedImprovementWorks)
+    // setAllImprovementWorks(updatedImprovementWorks);
+
+    fetchData()
+    // Instead of window.location.reload(), trigger a re-render
+    setForceRerender(prevState => (prevState !== null ? null : 1));
+  };
+
   const contentStyle = {
     marginTop: '20px',
     width: "90%",
@@ -206,7 +219,7 @@ function DisplayAllProjects() {
   }
 
   return (
-    <div style={contentStyle}>
+    <div style={contentStyle} key={forceRerender}>
       <div className="d-flex">
         <div>
           <TitleBox
@@ -349,6 +362,7 @@ function DisplayAllProjects() {
                   improvementWork={project}
                   isAdmin={userInfo?.admin || false} // Use a default value if userInfo is not available
                   improvementWorkList={allImprovementWorks}
+                  onRefresh={refreshImprovementWorks}
                 />
               </div>
             </div>

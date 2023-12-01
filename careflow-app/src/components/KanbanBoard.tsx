@@ -21,7 +21,7 @@ import ShowCard from "./ShowCard";
 import { db } from "../firebase";
 import { ImprovementWork } from "../ImprovementWorkLib";
 
-import {draggable} from "./ShowCard";
+import { draggable } from "./ShowCard";
 
 
 
@@ -72,20 +72,21 @@ function KanbanBoard() {
     setImprovementWorkList,
     isAdmin,
     fetchProjects,
+    refreshImprovementWorks,
   } = context;
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
 
- 
-   const sensors =
+
+  const sensors =
     useSensors(
-       useSensor(PointerSensor, {
-         activationConstraint: {
+      useSensor(PointerSensor, {
+        activationConstraint: {
           distance: 10,
         }
-        }
-       ));
-      
+      }
+      ));
+
 
 
   return (
@@ -110,6 +111,7 @@ function KanbanBoard() {
                 )}
                 isAdmin={isAdmin}
                 fetchProjects={fetchProjects}
+                onRefresh={refreshImprovementWorks}
               />
             ))}
 
@@ -134,6 +136,7 @@ function KanbanBoard() {
                     )}
                     isAdmin={isAdmin}
                     fetchProjects={fetchProjects}
+                    onRefresh={refreshImprovementWorks}
                   />
                 ))}
             </div>
@@ -144,7 +147,7 @@ function KanbanBoard() {
                   <ShowCard
                     improvementWork={activeImprovementWork}
                     isAdmin={isAdmin}
-                    fetchProjects={fetchProjects} improvementWorkList={[]}                  />
+                    fetchProjects={fetchProjects} improvementWorkList={[]} onRefresh={refreshImprovementWorks}/>
                 )}
               </DragOverlay>,
               document.body
@@ -155,21 +158,21 @@ function KanbanBoard() {
     </div>
   );
 
- 
+
 
 
   // Update function for dragdrop
   async function updateImprovementWork(id: any, newColumn: any) {
     const userDoc = doc(db, "improvementWorks", id);
     const newFields = { phase: newColumn };
-    
+
     console.log("updateImprovementWork in db");
     await updateDoc(userDoc, newFields);
   }
 
   function onDragStart(event: DragStartEvent) {
     console.log("Försöker dra: ", draggable);
-    if (event.active.data.current?.type === "ImprovementWork" && draggable==true) {
+    if (event.active.data.current?.type === "ImprovementWork" && draggable == true) {
       setActiveImprovementWork(event.active.data.current.improvementWork);
       return;
     }
@@ -206,7 +209,7 @@ function KanbanBoard() {
     if (!isActiveAImprovementWork) return;
 
     // Dropping a Task over another Task
-    if (isActiveAImprovementWork && isOverAImprovementWork && draggable==true) {
+    if (isActiveAImprovementWork && isOverAImprovementWork && draggable == true) {
       setImprovementWorkList((improvementWorkList) => {
         const activeIndex = improvementWorkList.findIndex(
           (t) => t.id === activeId
@@ -253,7 +256,7 @@ function KanbanBoard() {
     const isOverAColumn = over.data.current?.type === "Column";
 
     // dropping a Task over a column
-    if (isActiveAImprovementWork && isOverAColumn && draggable==true) {
+    if (isActiveAImprovementWork && isOverAColumn && draggable == true) {
       setImprovementWorkList((improvementWorkList) => {
         const activeIndex = improvementWorkList.findIndex(
           (t) => t.id === activeId

@@ -40,6 +40,10 @@ interface similarImprovementWorksProps {
   title: string;
 }
 
+function refresh(){
+
+}
+
 function CardModalSimilarProjects({
   tags,
   improvementWorkList,
@@ -82,6 +86,7 @@ function CardModalSimilarProjects({
                         improvementWork={improvementWork}
                         isAdmin={false}
                         improvementWorkList={improvementWorkList}
+                        onRefresh={refresh}
                       />
                     </div>
                   ))

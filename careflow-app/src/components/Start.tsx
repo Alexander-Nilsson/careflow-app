@@ -72,11 +72,11 @@ function Start() {
     setImprovementWorks(updatedImprovementWorks);
 
     // Instead of window.location.reload(), trigger a re-render
-    // setForceRerender(prevState => (prevState !== null ? null : 1));
+    setForceRerender(prevState => (prevState !== null ? null : 1));
   };
 
   useEffect(() => {
-    setForceRerender(prevState => (prevState !== null ? null : 1));
+    // setForceRerender(prevState => (prevState !== null ? null : 1));
   }, [improvementWorks])
 
 
@@ -100,14 +100,14 @@ function Start() {
   }, [isAuthenticated]);
 
   return (
-    <div key={forceRerender}>
+    <div>
       <img
         className="background-gradient"
         alt=""
         src="./background-gradient.jpeg"
       />
       {isAuthenticated && userInfo && improvementWorks ? (
-        <div style={contentStyle}>
+        <div style={contentStyle} key={forceRerender}>
 
           <ProfileSection userInfo={userInfo} onRefresh={refreshImprovementWorks} />
 
@@ -117,6 +117,7 @@ function Start() {
             userInfo={userInfo}
             allImprovementWorks={improvementWorks}
             showClosed={false}
+            onRefresh={refreshImprovementWorks}
           />
           <div className="d-flex mr-2 w-100" style={{ marginBottom: '2%' }}>
             <IdeasSection userInfo={userInfo} width={"42%"} add_height="250px" />

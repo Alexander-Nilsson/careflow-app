@@ -18,6 +18,7 @@ interface Props {
   improvementWorkList: ImprovementWork[];
   isAdmin: boolean;
   fetchProjects: () => void;
+  onRefresh: (data?: any) => void;
 }
 
 function ColumnContainer({
@@ -25,6 +26,7 @@ function ColumnContainer({
   improvementWorkList,
   isAdmin,
   fetchProjects,
+  onRefresh
 }: Props) {
   // Memoize task IDs for use in SortableContext
   const tasksIds = useMemo(() => {
@@ -90,6 +92,7 @@ function ColumnContainer({
               isAdmin={isAdmin}
               fetchProjects={fetchProjects}
               improvementWorkList={improvementWorkList}
+              onRefresh={onRefresh}
             />
           ))}
         </SortableContext>

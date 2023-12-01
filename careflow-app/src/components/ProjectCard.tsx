@@ -29,6 +29,7 @@ export interface ProjectCardProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
   improvementWorkList: ImprovementWork[]; // passing the list of all improvementworks
+  onRefresh: (data?: any) => void;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -41,6 +42,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   improvementWork,
   isAdmin,
   improvementWorkList,
+  onRefresh
 }) => {
   const cardBodyStyle = {
     height: "180px",
@@ -209,6 +211,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           onHide={modalClose}
           improvementWork={improvementWork}
           improvementWorkList={improvementWorkList}
+          onRefresh={onRefresh}
         />
       }
     </div>

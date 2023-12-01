@@ -15,11 +15,12 @@ type ProjectsSectionProps = {
     title: string;
     userInfo: UserInfoType;
     allImprovementWorks: ImprovementWork[];
-    showClosed: boolean
+    showClosed: boolean,
+    onRefresh: (data?: any) => void;
 };
 
 
-function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: ProjectsSectionProps) {
+function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed, onRefresh }: ProjectsSectionProps) {
 
     // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
     const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<ImprovementWork[]>([]);
@@ -165,6 +166,7 @@ function ProjectsSection({ title, userInfo, allImprovementWorks, showClosed }: P
                                 improvementWork={improvementWork}
                                 isAdmin={userInfo.admin}
                                 improvementWorkList={allImprovementWorks}
+                                onRefresh={onRefresh}
                             />
                         </div>
                     ))

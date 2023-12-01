@@ -33,6 +33,7 @@ export interface ProjectContextType {
   >;
   isAdmin: boolean;
   fetchProjects: () => Promise<void>;
+  refreshImprovementWorks: (data?: any) => void;
 }
 
 function Spinner() {
@@ -160,10 +161,15 @@ function Projects() {
     // Fetch projects only if the user is authenticated and data is not loading.
     fetchProjects();
   }, [isAuthenticated]);
+
+  const [forceRerender, setForceRerender] = useState<number | null>(null);
   const refreshImprovementWorks = async () => {
     const updatedImprovementWorks = await getAllImprovementWorks();
     setAllImprovementWorks(updatedImprovementWorks);
+    setForceRerender(prevState => (prevState !== null ? null : 1));
   };
+
+  
 
   useEffect(() => {
     if (allImprovementWorks.length > 0) {
@@ -242,7 +248,7 @@ function Projects() {
 
 
       {isAuthenticated && userInfo ? (
-        <div>
+        <div key={forceRerender}>
           <div
             style={{
               width: "100%",
@@ -402,6 +408,7 @@ function Projects() {
               setImprovementWorkList,
               isAdmin: userInfo?.admin || false, // Use a default value if userInfo is not available
               fetchProjects,
+              refreshImprovementWorks
             }}
           >
             <KanbanBoard />
@@ -413,6 +420,7 @@ function Projects() {
                 userInfo={userInfo}
                 allImprovementWorks={allImprovementWorks}
                 showClosed={true}
+                onRefresh={refreshImprovementWorks}
               />
             </div>
           </div>

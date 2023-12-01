@@ -41,7 +41,6 @@ const buttonStyle = {
   marginTop: "20px",
 };
 
-
 const saveButtonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
@@ -69,6 +68,7 @@ interface cardModalProps {
   onHide: (data?: any) => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
   improvementWorkList: ImprovementWork[]; // passing the list of all improvementworks
+  onRefresh: (data?: any) => void;
 }
 
 interface modalContentPlanProps {
@@ -659,6 +659,7 @@ function CardModal({
   onHide,
   improvementWork,
   improvementWorkList,
+  onRefresh
 }: // project_leader,
 // project_members,
 cardModalProps) {
@@ -1195,33 +1196,15 @@ cardModalProps) {
 
     const members = await getMemberNames(improvementWork.project_members);
     setProjectMembers(members);
-
-    console.log(show);
   }
-
-  function overlayOnClick(){
-    console.log("Klick");
-  }
-  
 
   return (
-    <><div className="overlay" style={{
-      /* making it hidden by default */
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: 100,
-      height: 100,
-      color: "rgba(128,128,128,0.5)",
-      display: "block",
-    }} onClick={overlayOnClick}>
+    <>
       <Modal
         onShow={showModal}
         show={show}
         onHide={() => onHide(loadDataOnClose)}
         size="lg"
-        backdrop="static"
-        position="fixed"
       >
         <Modal.Header
           style={{
@@ -1470,6 +1453,7 @@ cardModalProps) {
                   onClick={() => {
                     showSaveMessage();
                     updateDb(updatedProjectPhase, false);
+                    onRefresh()
                   }}
                   style={saveButtonStyle}
                 >
@@ -1506,7 +1490,6 @@ cardModalProps) {
           </Form>
         </Modal.Body>
       </Modal>
-      </div>
     </>
   );
 }
