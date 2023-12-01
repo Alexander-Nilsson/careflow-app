@@ -9,6 +9,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 
 export var draggable : boolean = true;
+export var notDraggable : boolean = true;
 
 interface ShowCardProps {
   improvementWork: ImprovementWork;
@@ -21,11 +22,12 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
   const [isDraggable, setIsDraggable] = useState(draggable);
 
   const [show, setShow] = useState(false);
+
   const modalClose = (data?: any) => {
-    setShow(false);
     setIsDraggable(true);
     draggable=true;
-    console.log("Dragbar:", draggable);
+    setShow(false);
+    console.log("Modal close Dragbar:", isDraggable);
     //console.log("modalClosed in showcard", show);
     console.log("data sent onHide: (True = load data)", data);
     // If data is true, then fetch projects
@@ -33,6 +35,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
       fetchProjects();
     }
   };
+
   const modalShow = () => {
     setShow(true);
     console.log("setShow in showcard", show);
@@ -46,16 +49,15 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
     setShow((prevShow) => !prevShow); // Toggle the modal state
     setIsDraggable(false);
     draggable=false;
-    console.log(draggable);
     console.log("setShow in showcard", show);
   };
 
   useEffect(() => {
+    draggable=isDraggable;
     const fetchData = async () => {
       if (isLoading) {
         return;
       }
-      setIsDraggable(draggable);
       try {
         //console.log("Hej");
         const leaderName = await getMemberName(improvementWork.project_leader);
@@ -74,7 +76,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects }: ShowCardProps) {
         console.error("Error fetching member names:", error);
       }
     };
-  }, [draggable]);
+  }, [isDraggable]);
 
   // UseSortable hook for drag-and-drop functionality
   const { setNodeRef, attributes, listeners, transition, isDragging } =

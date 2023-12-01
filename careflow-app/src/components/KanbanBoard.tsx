@@ -7,6 +7,7 @@ import {
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
+  MouseSensor,
   PointerSensor,
   useSensor,
   useSensors,
@@ -59,8 +60,8 @@ const columns: Column[] = [
 
 
 function KanbanBoard() {
-  const [isDraggable, setIsDraggable] = useState(draggable);
-  console.log("Går att dra: ", isDraggable, draggable);
+  // const [isDraggable, setIsDraggable] = useState(draggable);
+  // console.log("Går att dra: ", isDraggable, draggable);
   const context = useContext(ProjectContext);
   if (!context) {
     throw new Error(
@@ -77,18 +78,22 @@ function KanbanBoard() {
     useState<ImprovementWork | null>(null);
     //setIsDraggable(draggable);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 10,
-      },
-    })
-  );
+ 
+   const sensors =
+    useSensors(
+       useSensor(PointerSensor, {
+         activationConstraint: {
+          distance: 10,
+        }
+        }
+       ));
+      
+  
 
-  useEffect(() => {
-    setIsDraggable(draggable);
-    console.log("Use effect dragbar: ", isDraggable);
-  }, [draggable]);
+  // useEffect(() => {
+  //   setIsDraggable(draggable);
+  //   console.log("zzzz Use effect dragbar: ", isDraggable);
+  // }, [draggable]);
 
 
   return (
@@ -172,8 +177,8 @@ function KanbanBoard() {
   }
 
   function onDragStart(event: DragStartEvent) {
-    console.log("Försöker dra: ", isDraggable);
-    if (event.active.data.current?.type === "ImprovementWork" && isDraggable==true) {
+    console.log("Försöker dra: ", draggable);
+    if (event.active.data.current?.type === "ImprovementWork" && draggable==true) {
       setActiveImprovementWork(event.active.data.current.improvementWork);
       return;
     }
@@ -181,7 +186,7 @@ function KanbanBoard() {
 
   function onDragEnd(event: DragEndEvent) {
     setActiveImprovementWork(null);
-    console.log("Försöker släppa: ", isDraggable);
+    console.log("Försöker släppa: ", draggable);
 
     const { active, over } = event;
     if (!over) return;
@@ -210,7 +215,7 @@ function KanbanBoard() {
     if (!isActiveAImprovementWork) return;
 
     // Dropping a Task over another Task
-    if (isActiveAImprovementWork && isOverAImprovementWork && isDraggable==true) {
+    if (isActiveAImprovementWork && isOverAImprovementWork && draggable==true) {
       setImprovementWorkList((improvementWorkList) => {
         const activeIndex = improvementWorkList.findIndex(
           (t) => t.id === activeId
@@ -257,7 +262,7 @@ function KanbanBoard() {
     const isOverAColumn = over.data.current?.type === "Column";
 
     // dropping a Task over a column
-    if (isActiveAImprovementWork && isOverAColumn && isDraggable==true) {
+    if (isActiveAImprovementWork && isOverAColumn && draggable==true) {
       setImprovementWorkList((improvementWorkList) => {
         const activeIndex = improvementWorkList.findIndex(
           (t) => t.id === activeId
