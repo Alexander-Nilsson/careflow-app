@@ -125,6 +125,7 @@ function CardButton({
                   onHide={handleCloseModal}
                   impWorkId={improvementWork.id.toString()}
                   fetchProjects={fetchProjects}
+                  impWorkName={improvementWork.title}
                 />
               )}
             </div>

@@ -1,16 +1,18 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { deleteProject } from "../ImprovementWorkLib";
+import { AlignCenter } from "react-bootstrap-icons";
 
 interface CardDeleteModalProps {
   show: boolean;
   onHide: () => void;
   impWorkId: string;
 fetchProjects: () => void;
+impWorkName:String;
 
 }
 
-function CardDeleteModal({ show, onHide, impWorkId,fetchProjects }: CardDeleteModalProps) {
+function CardDeleteModal({ show, onHide, impWorkId,fetchProjects,impWorkName }: CardDeleteModalProps) {
   const handleDeleteClick = async () => {
     await deleteProject(impWorkId);
     onHide(); // Close the modal after deleting
@@ -20,19 +22,21 @@ function CardDeleteModal({ show, onHide, impWorkId,fetchProjects }: CardDeleteMo
 
   return (
     <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Radera förbättringsarbetet</Modal.Title>
+      <Modal.Header closeButton >
+        <Modal.Title className="ms-auto"><b>Radera {impWorkName}</b></Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        Är du säker att du vill radera förbättringsarbetet?
+      <Modal.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        Är du säker att du vill radera förbättringsarbetet? 
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleDeleteClick}>
+      <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        
+        <Button variant="danger" onClick={handleDeleteClick}>
           Radera
         </Button>
-        <Button variant="primary" onClick={onHide}>
+        <Button variant="primary" onClick={onHide} style={{backgroundColor: "#051F6F",border: "none",}}>
           Avbryt
         </Button>
+        
       </Modal.Footer>
     </Modal>
   );
