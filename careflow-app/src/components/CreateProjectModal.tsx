@@ -21,6 +21,7 @@ import {
   findUserInfo,
 } from "./CreateProjectModalHelp";
 import { getUser2 } from "../ImprovementWorkLib";
+import ButtonPopover from "./ButtonPopover";
 
 const TitleStyle = {
   fontFamily: "Avenir",
@@ -323,12 +324,14 @@ function CreateProjectModal({
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <div>
-          <HelpPopover
-            content={"Titel:\nSyfte:\nMål:\nMät och följa upp:\nSamla idéer"}
-          />
-        </div>
-        <label style={TitleStyle}>Skapa ett förbättringsarbete</label>
+      <div className="buttonPopoverContainer" style={{  fontSize: "80%", borderRadius: "5px", height: "100%",paddingTop: "1vh" }}>
+            <div className="buttonPopover" style={{marginLeft: "2.5vh",marginRight: "2vh",color: "white",fontStyle: 'italic', fontSize: "70%",backgroundColor: "#051F6F", borderRadius: "5px" }}>
+              <ButtonPopover title={"Vad är förbättringsmodellen och hur hjälper den oss?"} content={" \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "} text={"Vad är förbättringsmodellen?"}></ButtonPopover>
+            </div>
+            </div>
+        <label style={{ ...TitleStyle, display: 'flex', alignItems: 'center',justifyContent: "center"}}>Skapa ett förbättringsarbete</label>
+
+        
       </Modal.Header>
 
       <Modal.Body className="d-flex justify-content-center align-items-center">
@@ -366,7 +369,7 @@ function CreateProjectModal({
               <div>
                 <label style={TitleStyle}>Syfte</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Vad är syftet med förändringen?
+                Varför behövs förbättringen?
                 </div>
               </div>
             </div>
@@ -379,11 +382,13 @@ function CreateProjectModal({
                   right: "0",
                   marginBottom: "0",
                   fontFamily: "Avenir",
+                  
                 }}
               >
                 <textarea
                   name="purpose"
                   className="form-control"
+                  placeholder="Skriv ditt syfte här"
                   style={{ border: "none", height: "98px" }}
                   value={purpose}
                   onChange={(e) => setPurpose(e.target.value)}
@@ -450,7 +455,7 @@ function CreateProjectModal({
               <div>
                 <label style={TitleStyle}>Mäta och följa upp</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Hur mäter vi om förändringen gör skillnad?
+                  Hur mäter vi om förbättringen gör skillnad?
                 </div>
               </div>
             </div>
@@ -495,7 +500,7 @@ function CreateProjectModal({
               <div>
                 <label style={TitleStyle}>Samla idéer</label>
                 <div className="form-text" style={DescriptiveTextStyle}>
-                  Brainstorma idéer för för nå målen
+                Skriv ner idéer på lösningar som en i taget kan testas för att nå målen. I nästa steg väljer ni vilken idé som först testas i en PGSA-cykel.
                 </div>
               </div>
             </div>
@@ -537,7 +542,7 @@ function CreateProjectModal({
                 border: "1px solid #DDDDDD",
               }}
             >
-              Lägg till kollegor
+              Vilka ska genomföra förbättringen?
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
               {users.map((member) => (
@@ -566,7 +571,7 @@ function CreateProjectModal({
                 border: "1px solid #DDDDDD",
               }}
             >
-              Lägg till beskrivande nyckelord
+              Vilka nyckelord beskriver förbättringsarbetet?
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
               {tags.map((tag) => (
@@ -590,7 +595,7 @@ function CreateProjectModal({
               id="SkapaFörbättringsarbete"
               style={!isFormFilled ? ButtonStyleGrey : ButtonStyle}
             >
-              Skicka in förbättringsarbete
+              Skapa förbättringsarbete
             </Button>
           </div>
         </Form>

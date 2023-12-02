@@ -7,7 +7,7 @@ import pImage from "../Images/p.png";
 import pgImage from "../Images/pg.png";
 import pgsImage from "../Images/pgs.png";
 import pgsaImage from "../Images/pgsa.png";
-import pgsacImage from "../Images/pgsa_closed_small.png"
+import pgsacImage from "../Images/pgsa_closed_small.png";
 import noImage from "../Images/none.png";
 import {
   Id,
@@ -53,7 +53,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     fontFamily: "Avenir",
     fontWeight: "bold",
     marginBottom: "0rem",
-    marginTop: "0.3rem",
+    marginTop: "0.9rem",
   };
 
   const badgeStyle = {
@@ -79,7 +79,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return timestamp.toDate().toLocaleDateString("sv-SE");
   };
 
-  const getPhaseImage = (phase: Id) => { 
+  const getPhaseImage = (phase: Id) => {
     if (phase === 5 && improvementWork.closed) {
       // Return a specific image or perform an action for this case
       return <img src={pgsacImage} />; // Replace 'someOtherImage' with your desired image
@@ -156,7 +156,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 <p>Inga taggar</p>
               )}
               <Card.Title style={titleStyle}>{title}</Card.Title>
-              <Card.Text style={{ fontFamily: "Avenir", marginBottom: "1rem" }}>
+              <Card.Text
+                style={{
+                  fontFamily: "Avenir",
+                  marginBottom: tags && tags.length > 0 ? "2.4rem" : "3.8rem",
+                }}
+              >
                 {formatDate(date_created)}
               </Card.Text>
 
@@ -195,6 +200,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       show={showModal}
                       onHide={handleCloseModal}
                       impWorkId={improvementWork.id.toString()}
+                      fetchProjects={() => {}}
                     />
                   )}
                 </div>

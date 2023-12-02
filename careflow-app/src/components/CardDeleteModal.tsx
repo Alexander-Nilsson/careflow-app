@@ -6,13 +6,16 @@ interface CardDeleteModalProps {
   show: boolean;
   onHide: () => void;
   impWorkId: string;
+fetchProjects: () => void;
+
 }
 
-function CardDeleteModal({ show, onHide, impWorkId }: CardDeleteModalProps) {
-  const handleDeleteClick = () => {
-    deleteProject(impWorkId);
+function CardDeleteModal({ show, onHide, impWorkId,fetchProjects }: CardDeleteModalProps) {
+  const handleDeleteClick = async () => {
+    await deleteProject(impWorkId);
     onHide(); // Close the modal after deleting
     console.log("pressed delete in modal");
+    fetchProjects();
   };
 
   return (
