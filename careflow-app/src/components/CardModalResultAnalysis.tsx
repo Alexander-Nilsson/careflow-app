@@ -50,6 +50,7 @@ function CardModalResultAnalysis({
           rows={3}
           value={updatedResultAnalysis}
           onChange={handleResultInputChange}
+          placeholder= "Skriv analys här"
         ></textarea>
       </Form.Group>
     </>
