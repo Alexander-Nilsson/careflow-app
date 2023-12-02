@@ -118,6 +118,7 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
           improvementWork={improvementWork}
           isAdmin={isAdmin}
           modalToggle={modalToggle} // send toggle function to cardButton
+          fetchProjects={fetchProjects}
         />
 
         {

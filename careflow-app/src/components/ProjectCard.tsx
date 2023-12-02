@@ -223,6 +223,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       show={showModal}
                       onHide={handleCloseModal}
                       impWorkId={improvementWork.id.toString()}
+                      fetchProjects={() => {}}
                     />
                   )}
                 </div>

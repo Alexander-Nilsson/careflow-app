@@ -32,6 +32,7 @@ interface CardButtonProps {
   improvementWork: ImprovementWork;
   isAdmin: boolean;
   modalToggle: () => void;
+  fetchProjects: () => void;
 }
 
 function CardButton({
@@ -41,6 +42,7 @@ function CardButton({
   improvementWork,
   isAdmin,
   modalToggle,
+  fetchProjects,
 }: CardButtonProps) {
   const [showModal, setShowModal] = useState(false); // State variable to control modal visibility
 
@@ -122,6 +124,7 @@ function CardButton({
                   show={showModal}
                   onHide={handleCloseModal}
                   impWorkId={improvementWork.id.toString()}
+                  fetchProjects={fetchProjects}
                 />
               )}
             </div>
