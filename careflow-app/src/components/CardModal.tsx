@@ -1193,9 +1193,10 @@ cardModalProps) {
     const leader = await getMemberName(improvementWork.project_leader);
     setProjectLeader(leader);
 
+    console.log("ImprovementWork: ", improvementWork);
     const members = await getMemberNames(improvementWork.project_members);
     setProjectMembers(members);
-
+    console.log(members);
     console.log(show);
   }
 

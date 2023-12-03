@@ -506,7 +506,7 @@ export async function getMemberName(hsaId: string) {
 
 export async function getMemberNames(hsaIds: string[]) {
   const fetchedMembers: string[] = [];
-  console.log("hämtar namn");
+  console.log("hämtar namn", hsaIds);
   // Use map to create an array of promises
   const promises = hsaIds.map(async (hsaId) => {
     const memberRef = doc(db, "users", hsaId);
@@ -516,8 +516,9 @@ export async function getMemberNames(hsaIds: string[]) {
       const member =
         memberSnap.data().first_name + " " + memberSnap.data().sur_name;
       fetchedMembers.push(member);
+      console.log(member);
     } else {
-      console.log("No such document!");
+      console.log("No such document!", "memberRef ", memberRef, "memberSnap ", memberSnap, "hsaId ", hsaId, "memberSnap ", memberSnap.exists());
     }
   });
 
