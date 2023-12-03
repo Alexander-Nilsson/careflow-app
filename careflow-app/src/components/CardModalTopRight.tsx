@@ -44,6 +44,10 @@ function CardModalTopRight({
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [newMember, setNewMember] = useState("");
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
+  const [membersDisplayed, setMembersDisplayed] = useState(Array<string>);
+
+  let usersList = users.filter((item) => item != project_leader);
+  usersList = usersList.filter((item) => !project_members.includes(item));
 
 
   //console.log(project_members);
@@ -83,9 +87,17 @@ function CardModalTopRight({
         ...updatedMembersArray,
       ];
 
+      setMembersDisplayed(updatedProjectMemberArray);
+
+      const userIDs = findUserIds(updatedProjectMemberArray, usersClassArray);
+
+      console.log(userIDs);
+
       console.log(updatedProjectMemberArray);
 
-      setUpdatedMembers(updatedProjectMemberArray);
+      
+
+      setUpdatedMembers(userIDs);
 
       setNewMember("");
     }
@@ -113,7 +125,7 @@ function CardModalTopRight({
                   {member}
                 </div>
               ))}
-              {updatedMembers.map((member, index) => (
+              {membersDisplayed.map((member, index) => (
                 <div style={{ marginTop: "10px", fontSize: "15px" }}>
                   {member}
                 </div>
@@ -133,12 +145,10 @@ function CardModalTopRight({
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
               {
-              users.map((member) => (
-                (project_members.includes(member))
-                ? <p>nej</p>
-                : <Dropdown.Item
+              usersList.map((member) => (
+                <Dropdown.Item
                   style={{
-                    fontWeight: updatedMembers.includes(member)
+                    fontWeight: project_members.includes(member)
                       ? "bold"
                       : "normal",
                   }}
