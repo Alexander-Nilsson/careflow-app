@@ -506,7 +506,7 @@ export async function getMemberName(hsaId: string) {
 
 export async function getMemberNames(hsaIds: string[]) {
   const fetchedMembers: string[] = [];
-  console.log("hämtar namn");
+  console.log("hämtar namn", hsaIds);
   // Use map to create an array of promises
   const promises = hsaIds.map(async (hsaId) => {
     const memberRef = doc(db, "users", hsaId);

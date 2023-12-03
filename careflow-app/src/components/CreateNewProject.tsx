@@ -13,8 +13,10 @@ var usersInfoArray: any[] = [];
 export class userIDname {
   id: string;
   sur_name: string;
-  constructor(id: string, sur_name: string) {
+  first_name: string;
+  constructor(id: string, first_name: string, sur_name: string) {
     this.id = id;
+    this.first_name = first_name;
     this.sur_name = sur_name;
   }
 }
@@ -36,7 +38,7 @@ async function fetchUsers() {
     const userData = doc.data() as User;
     if (!users.includes(userData.first_name + " " + userData.sur_name)) {
       users.push(userData.first_name + " " + userData.sur_name);
-      usersClassArray.push(new userIDname(doc.data().id, userData.sur_name));
+      usersClassArray.push(new userIDname(doc.data().id, userData.first_name , userData.sur_name));
       usersInfoArray.push(
         new userInfo(doc.data().id, userData.sur_name, doc.data().centrum)
       );
