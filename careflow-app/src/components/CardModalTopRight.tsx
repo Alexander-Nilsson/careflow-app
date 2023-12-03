@@ -46,11 +46,10 @@ function CardModalTopRight({
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
   const [membersDisplayed, setMembersDisplayed] = useState(Array<string>);
 
+  //Removes project leader and already added members from the add members list
   let usersList = users.filter((item) => item != project_leader);
   usersList = usersList.filter((item) => !project_members.includes(item));
 
-
-  //console.log(project_members);
 
   //Handles the deletion of tags
   const handleRemoveMember = (indexToRemove: number) => {
@@ -72,10 +71,9 @@ function CardModalTopRight({
 
   //Adds the new member to the member array when the "lägg till kollegor" button is clicked
   const handleSaveMember = (newMember: string) => {
-    //setProjectMembers(project_members);
     console.log(project_members);
-    //console.log(project_members);
-    //Makes sure that the input field is filled before the tag can be added
+
+    //Makes sure that the input field is filled before the member can be added
     if (newMember.trim() !== "") {
       handleCloseTagModal();
       const updatedMembersArray = [...updateMembers, newMember];
@@ -94,8 +92,6 @@ function CardModalTopRight({
       console.log(userIDs);
 
       console.log(updatedProjectMemberArray);
-
-      
 
       setUpdatedMembers(userIDs);
 

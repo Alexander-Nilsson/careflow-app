@@ -516,9 +516,8 @@ export async function getMemberNames(hsaIds: string[]) {
       const member =
         memberSnap.data().first_name + " " + memberSnap.data().sur_name;
       fetchedMembers.push(member);
-      console.log(member);
     } else {
-      console.log("No such document!", "memberRef ", memberRef, "memberSnap ", memberSnap, "hsaId ", hsaId, "memberSnap ", memberSnap.exists());
+      console.log("No such document!");
     }
   });
 
