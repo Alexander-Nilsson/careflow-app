@@ -8,7 +8,7 @@ import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 import { Kanban } from "react-bootstrap-icons";
-import KanbanBoard, {setCh} from "./KanbanBoard";
+// import KanbanBoard, {setCh} from "./KanbanBoard";
 export var draggable : boolean = true;
 
 interface ShowCardProps {
@@ -16,24 +16,36 @@ interface ShowCardProps {
   isAdmin: boolean;
   fetchProjects: () => void;
   improvementWorkList: ImprovementWork[];
+  parentState: boolean; // Boolean state from the parent component
+  setParentState: (newState: boolean) => void; // Function to update the parent's state
 }
 
-function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList }: ShowCardProps) {
+function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList,parentState, setParentState }: ShowCardProps) {
+
+  const updateParentState = (condition: boolean) => {
+    setParentState(condition);
+    console.log("kanbanstate är " + parentState);
+  };
+
   // State to track whether the mouse is over the task card
   const [isDraggable, setIsDraggable] = useState(draggable);
   const [show, setShow] = useState(false);
   
   const modalClose = (data?: any) => {
+   
+
     setShow(false);
-    setIsDraggable(true);
-    setCh(true);
+    // setIsDraggable(true);
+    // setCh(true);
     //console.log("modalClosed in showcard", show);
     console.log("data sent onHide: (True = load data)", data);
     // If data is true, then fetch projects
     if (data) {
       fetchProjects();
+     
     }
-    <KanbanBoard></KanbanBoard>
+    updateParentState(true); // or false
+    // <KanbanBoard></KanbanBoard>
   };
   const modalShow = () => {
     setShow(true);
@@ -45,11 +57,13 @@ function ShowCard({ improvementWork, isAdmin, fetchProjects, improvementWorkList
   const [memberNames, setMemberNames] = useState<string[]>([]);
 
   const modalToggle = () => {
+    updateParentState(false); // or false
     setShow((prevShow) => !prevShow); // Toggle the modal state
-    setIsDraggable(false);
-    setCh(false);
-    console.log("setShow in showcard", show);
-    <KanbanBoard></KanbanBoard>
+    // setIsDraggable(false);
+    // setCh(false);
+    // console.log("setShow in showcard", show);
+    // <KanbanBoard></KanbanBoard>
+    updateParentState(false); // or false
   };
 
   useEffect(() => {

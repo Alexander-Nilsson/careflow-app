@@ -18,6 +18,8 @@ interface Props {
   improvementWorkList: ImprovementWork[];
   isAdmin: boolean;
   fetchProjects: () => void;
+  parentState: boolean; // Boolean state from the parent component
+  setParentState: (newState: boolean) => void; // Function to update the parent's state
 }
 
 function ColumnContainer({
@@ -25,6 +27,9 @@ function ColumnContainer({
   improvementWorkList,
   isAdmin,
   fetchProjects,
+  parentState, 
+  setParentState
+
 }: Props) {
   // Memoize task IDs for use in SortableContext
   const tasksIds = useMemo(() => {
@@ -90,6 +95,8 @@ function ColumnContainer({
               isAdmin={isAdmin}
               fetchProjects={fetchProjects}
               improvementWorkList={improvementWorkList}
+              parentState={parentState}
+              setParentState={setParentState}
             />
           ))}
         </SortableContext>

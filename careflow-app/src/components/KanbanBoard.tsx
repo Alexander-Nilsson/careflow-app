@@ -21,17 +21,17 @@ import { db } from "../firebase";
 import { ImprovementWork } from "../ImprovementWorkLib";
 import {draggable} from "./ShowCard";
 
-var condition:boolean = false;
+// var condition:boolean = false;
 
-export async function setCh(cond:boolean) {
-const condition:boolean = cond;
-console.log("cond is set to " + condition)
-}
+// export async function setCh(cond:boolean) {
+// const condition:boolean = cond;
+// console.log("cond is set to " + condition)
+// }
 
-function getCh(){
-  console.log("cond is " + condition)
-  return condition;
-}
+// function getCh(){
+//   console.log("cond is " + condition)
+//   return condition;
+// }
 const columns: Column[] = [
   {
     id: 1,
@@ -67,6 +67,7 @@ const columns: Column[] = [
 
 
 function KanbanBoard() {
+  const [parentState, setParentState] = useState(true);
   const context = useContext(ProjectContext);
   if (!context) {
     throw new Error(
@@ -113,9 +114,12 @@ function KanbanBoard() {
                 )}
                 isAdmin={isAdmin}
                 fetchProjects={fetchProjects}
+                parentState={parentState}
+                setParentState={setParentState}
               />
             ))}
- {getCh() ?   
+ {/* {getCh() ?    */}
+ {parentState ?   
           <DndContext
             sensors={sensors}
             onDragStart={onDragStart}
@@ -137,6 +141,8 @@ function KanbanBoard() {
                     )}
                     isAdmin={isAdmin}
                     fetchProjects={fetchProjects}
+                    parentState={parentState}
+                    setParentState={setParentState}
                   />
                 ))}
             </div>
@@ -149,6 +155,8 @@ function KanbanBoard() {
                     isAdmin={isAdmin}
                     fetchProjects={fetchProjects}
                     improvementWorkList={improvementWorkList}
+                    parentState={parentState}
+                    setParentState={setParentState}
                   />
                 )}
               </DragOverlay>,
@@ -182,6 +190,8 @@ function KanbanBoard() {
                 )}
                 isAdmin={isAdmin}
                 fetchProjects={fetchProjects}
+                parentState={parentState}
+                setParentState={setParentState}
               />
             ))}
         </div>
