@@ -83,25 +83,6 @@ const SimiliarWorkCard: React.FC<SimiliarWorkCardProps> = ({
     return timestamp.toDate().toLocaleDateString("sv-SE");
   };
 
-  const getPhaseImage = (phase: Id) => {
-    if (phase === 5 && improvementWork.closed) {
-      // Return a specific image or perform an action for this case
-      return <img src={pgsacImage} />; // Replace 'someOtherImage' with your desired image
-    }
-    switch (phase) {
-      case 1:
-        return <img src={noImage} />; //Förslag
-      case 2:
-        return <img src={pImage} />; //Planera
-      case 3:
-        return <img src={pgImage} />;
-      case 4:
-        return <img src={pgsImage} />;
-      case 5:
-        return <img src={pgsaImage} />;
-    }
-  };
-
   const [show, setShow] = useState(false);
   const modalClose = () => setShow(false);
   const modalShow = () => setShow(true);
@@ -208,13 +189,6 @@ const SimiliarWorkCard: React.FC<SimiliarWorkCardProps> = ({
                 {place}
               </Card.Text>
             </div>
-            {displayPhaseImage && (
-              <div
-                style={{ position: "absolute", bottom: "1rem", right: "1rem" }}
-              >
-                {getPhaseImage(phase)}
-              </div>
-            )}
           </div>
           <div></div>
         </Card.Body>
