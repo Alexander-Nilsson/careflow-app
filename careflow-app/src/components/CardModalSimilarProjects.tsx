@@ -8,7 +8,7 @@ import {
   filterOnTags,
 } from "../ImprovementWorkLib";
 import ProjectsSection from "./ProjectsSection";
-import ProjectCard from "./ProjectCard";
+import SimiliarWorkCard from "./SimiliarWorkCard";
 
 const whiteContainerStyle = {
   backgroundColor: "#FFFFFF",
@@ -72,7 +72,7 @@ function CardModalSimilarProjects({
                       style={{ marginRight: "1%" }}
                       key={index}
                     >
-                      <ProjectCard
+                      <SimiliarWorkCard
                         title={improvementWork.title}
                         date_created={improvementWork.date_created}
                         place={improvementWork.place}

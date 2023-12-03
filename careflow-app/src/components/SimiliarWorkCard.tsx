@@ -19,7 +19,7 @@ import CardModal from "./CardModal";
 import TrashIcon from "../icons/Trashicon";
 import CardDeleteModal from "./CardDeleteModal";
 
-export interface ProjectCardProps {
+export interface SimiliarWorkCardProps {
   title: string;
   date_created: any;
   place: string;
@@ -30,8 +30,9 @@ export interface ProjectCardProps {
   isAdmin: boolean;
   improvementWorkList: ImprovementWork[]; // passing the list of all improvementworks
 }
+const MAX_BADGES_DISPLAYED = 1;
 
-const ProjectCard: React.FC<ProjectCardProps> = ({
+const SimiliarWorkCard: React.FC<SimiliarWorkCardProps> = ({
   title,
   date_created,
   place,
@@ -133,6 +134,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     console.log("modalClose");
   };
 
+
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
 
@@ -142,7 +144,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
-        console.log("hämtar från ProjectCard:");
+        console.log("hämtar från SimiliarWorkCard:");
         const names = await Promise.all(
           improvementWork.project_members.map(
             async (member) => await getMemberName(member)
@@ -161,7 +163,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     // fetchData();
   }, []);
 
-  const MAX_BADGES_DISPLAYED = 4;
   const renderedTags = tags.length > MAX_BADGES_DISPLAYED ? tags.slice(0, MAX_BADGES_DISPLAYED) : tags;
   const additionalTagsCount = tags.length - MAX_BADGES_DISPLAYED;
 
@@ -215,30 +216,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             )}
           </div>
-          <div>
-            <div>
-              {mouseIsOver && isAdmin && (
-                <div>
-                  <button
-                    onClick={handleButtonClick}
-                    className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
-                  >
-                    <TrashIcon />
-                  </button>
-                  {/* Render CardDeleteModal conditionally */}
-                  {showModal && (
-                    <CardDeleteModal
-                      show={showModal}
-                      onHide={handleCloseModal}
-                      impWorkId={improvementWork.id.toString()}
-                      fetchProjects={() => {}}
-                      impWorkName={improvementWork.title}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
           <div></div>
         </Card.Body>
       </Card>
@@ -255,4 +232,4 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   );
 };
 
-export default ProjectCard;
+export default SimiliarWorkCard;
