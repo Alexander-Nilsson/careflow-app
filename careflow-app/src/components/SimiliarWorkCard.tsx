@@ -1,14 +1,5 @@
 import React, { useEffect, useState, CSSProperties } from "react";
 import Card from "react-bootstrap/Card";
-import Badge from "react-bootstrap/Badge";
-import { BiComment, BiFileBlank } from "react-icons/bi";
-import { GrTextAlignLeft } from "react-icons/gr";
-import pImage from "../Images/p.png";
-import pgImage from "../Images/pg.png";
-import pgsImage from "../Images/pgs.png";
-import pgsaImage from "../Images/pgsa.png";
-import pgsacImage from "../Images/pgsa_closed_small.png";
-import noImage from "../Images/none.png";
 import {
   Id,
   ImprovementWork,
@@ -16,8 +7,6 @@ import {
   getMemberName,
 } from "../ImprovementWorkLib";
 import CardModal from "./CardModal";
-import TrashIcon from "../icons/Trashicon";
-import CardDeleteModal from "./CardDeleteModal";
 
 export interface SimiliarWorkCardProps {
   title: string;
@@ -44,7 +33,7 @@ const SimiliarWorkCard: React.FC<SimiliarWorkCardProps> = ({
   improvementWorkList,
 }) => {
   const cardBodyStyle = {
-    height: "180px",
+    minheight: "180px",
     alignItems: "center" as "center",
   };
 
