@@ -45,17 +45,23 @@ function CardModalSimilarProjects({
   improvementWorkList,
   title,
 }: similarImprovementWorksProps) {
-  const filteredImprovementWorks: ImprovementWork[] = filterOnTags(
-    improvementWorkList,
-    tags[0],
-    "date_created"
-  );
-  let displayedImprovementWorks: ImprovementWork[] = [];
-  filteredImprovementWorks.forEach((improvementWork) => {
-    if (improvementWork.title != title) {
-      displayedImprovementWorks.push(improvementWork);
-    }
+  let allFilteredImprovementWorks: ImprovementWork[] = [];
+
+  // Loop through each tag and filter projects for each one
+  tags.forEach((tag) => {
+    let filteredImprovementWorksForTag = filterOnTags(improvementWorkList, tag, "date_created");
+    // Combine the results, avoiding duplicates
+    filteredImprovementWorksForTag.forEach((work) => {
+      if (!allFilteredImprovementWorks.some((fWork) => fWork.id === work.id)) {
+        allFilteredImprovementWorks.push(work);
+      }
+    });
   });
+
+  // filter out the current project from the results
+  let displayedImprovementWorks: ImprovementWork[] = allFilteredImprovementWorks.filter(
+    (improvementWork) => improvementWork.title !== title
+  );
   if (displayedImprovementWorks.length > 0) {
     return (
       <>
