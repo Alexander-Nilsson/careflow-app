@@ -44,6 +44,12 @@ function CardModalTopRight({
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [newMember, setNewMember] = useState("");
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
+  const [membersDisplayed, setMembersDisplayed] = useState(Array<string>);
+
+  //Removes project leader and already added members from the add members list
+  let usersList = users.filter((item) => item != project_leader);
+  usersList = usersList.filter((item) => !project_members.includes(item));
+
 
   //Handles the deletion of tags
   const handleRemoveMember = (indexToRemove: number) => {
@@ -65,10 +71,9 @@ function CardModalTopRight({
 
   //Adds the new member to the member array when the "lägg till kollegor" button is clicked
   const handleSaveMember = (newMember: string) => {
-    setProjectMembers(project_members);
     console.log(project_members);
-    //console.log(project_members);
-    //Makes sure that the input field is filled before the tag can be added
+
+    //Makes sure that the input field is filled before the member can be added
     if (newMember.trim() !== "") {
       handleCloseTagModal();
       const updatedMembersArray = [...updateMembers, newMember];
@@ -80,9 +85,15 @@ function CardModalTopRight({
         ...updatedMembersArray,
       ];
 
+      setMembersDisplayed(updatedProjectMemberArray);
+
+      const userIDs = findUserIds(updatedProjectMemberArray, usersClassArray);
+
+      console.log(userIDs);
+
       console.log(updatedProjectMemberArray);
 
-      setUpdatedMembers(updatedProjectMemberArray);
+      setUpdatedMembers(userIDs);
 
       setNewMember("");
     }
@@ -110,7 +121,7 @@ function CardModalTopRight({
                   {member}
                 </div>
               ))}
-              {updateMembers.map((member, index) => (
+              {membersDisplayed.map((member, index) => (
                 <div style={{ marginTop: "10px", fontSize: "15px" }}>
                   {member}
                 </div>
@@ -130,12 +141,10 @@ function CardModalTopRight({
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ width: "100%" }}>
               {
-              users.map((member) => (
-                (project_members.includes(member))
-                ? <p>nej</p>
-                : <Dropdown.Item
+              usersList.map((member) => (
+                <Dropdown.Item
                   style={{
-                    fontWeight: updatedMembers.includes(member)
+                    fontWeight: project_members.includes(member)
                       ? "bold"
                       : "normal",
                   }}
