@@ -26,7 +26,6 @@ import {
   getMemberName,
   getMemberNames,
 } from "../ImprovementWorkLib";
-import { addingMembers } from "./CardModalTopRight";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
@@ -842,7 +841,6 @@ cardModalProps) {
     currentPhase.toString()
   );
 
-  const [isAddingMembers, setAddingMembers] = useState(addingMembers);
   const [project_leader, setProjectLeader] = useState<string>("hej");
   const [project_members, setProjectMembers] = useState<string[]>([]);
   //const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
@@ -853,19 +851,10 @@ cardModalProps) {
     setProjectLeader(leader);
     
     console.log("improvementWork.project_members", improvementWork.project_members);
-    // console.log("ImprovementWork: ", improvementWork);
-
-    //setUpdatedMembers(improvementWork.project_members);
 
     const members = await getMemberNames(improvementWork.project_members);
     setProjectMembers(members);
     
-    console.log("updatedMembers 1", updatedMembers);
-   
-    console.log("Impro.proj_members after one adding: ",improvementWork.project_members);
-
-    console.log("Project_members", project_members);
-    console.log("updatedMembers 2", updatedMembers)
     console.log(members);
     console.log(show);
   }
@@ -982,13 +971,11 @@ cardModalProps) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       // const projectDoc = await getDoc(projectDocRef);
-      console.log("Adding members: ", addingMembers);
+   
       if(updatedMembers.length != 0)
       {
         improvementWork.project_members = updatedMembers;
       }
-      setAddingMembers(false);
-      console.log("Adding members: ", addingMembers);
       const projectDoc = await getImprovementWork(projectDocRef);
       if (projectDoc.exists()) {
         const data = projectDoc.data();
