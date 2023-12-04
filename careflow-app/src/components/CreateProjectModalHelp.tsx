@@ -4,9 +4,9 @@ export function findUserIds(members: string[], usersClassArray: userIDname[]) {
   let userIDs = [];
   for (let i = 0; i < members.length; i++) {
     for (let j = 0; j < usersClassArray.length; j++) {
-      console.log("usersClassArray", usersClassArray[j]);
+      //console.log("usersClassArray", usersClassArray[j]);
       if (members[i] == usersClassArray[j].first_name + " " + usersClassArray[j].sur_name) {
-        console.log("UserID ", userIDs);
+        //console.log("UserID ", userIDs);
         userIDs.push(usersClassArray[j].id);
       }
     }

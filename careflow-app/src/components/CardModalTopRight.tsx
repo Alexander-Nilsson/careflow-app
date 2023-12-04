@@ -5,6 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { findUserIds } from "./CreateProjectModalHelp";
 import { users, usersClassArray } from "./CreateNewProject";
 
+
 const projectMembersContainer = {
   width: "34%",
   marginTop: "30px",
@@ -45,13 +46,14 @@ function CardModalTopRight({
   const [newMember, setNewMember] = useState("");
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
   const [membersDisplayed, setMembersDisplayed] = useState(Array<string>);
+  const [newMembers, setNewMembers] =  useState(Array<string>);
 
   //Removes project leader and already added members from the add members list
   let usersList = users.filter((item) => item != project_leader);
   usersList = usersList.filter((item) => !project_members.includes(item));
 
 
-  //Handles the deletion of tags
+  //Handles the deletion of member (NOT WORKING YET)
   const handleRemoveMember = (indexToRemove: number) => {
     const updatedMembersArray = updatedMembers.filter(
       (_, index) => index !== indexToRemove
@@ -72,7 +74,6 @@ function CardModalTopRight({
   //Adds the new member to the member array when the "lägg till kollegor" button is clicked
   const handleSaveMember = (newMember: string) => {
     console.log(project_members);
-
     //Makes sure that the input field is filled before the member can be added
     if (newMember.trim() !== "") {
       handleCloseTagModal();
@@ -87,13 +88,19 @@ function CardModalTopRight({
 
       setMembersDisplayed(updatedProjectMemberArray);
 
+      //The array of new members added
+      setNewMembers(updatedMembersArray);
+
+      //Fetching user IDs for each member
       const userIDs = findUserIds(updatedProjectMemberArray, usersClassArray);
 
       console.log(userIDs);
 
       console.log(updatedProjectMemberArray);
 
+      //The new array of members which is sent to the db
       setUpdatedMembers(userIDs);
+
 
       setNewMember("");
     }
@@ -121,7 +128,7 @@ function CardModalTopRight({
                   {member}
                 </div>
               ))}
-              {membersDisplayed.map((member, index) => (
+              {newMembers.map((member, index) => (
                 <div style={{ marginTop: "10px", fontSize: "15px" }}>
                   {member}
                 </div>
