@@ -983,7 +983,7 @@ cardModalProps) {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       // const projectDoc = await getDoc(projectDocRef);
       console.log("Adding members: ", addingMembers);
-      if(addingMembers)
+      if(updatedMembers.length != 0)
       {
         improvementWork.project_members = updatedMembers;
       }
@@ -1227,9 +1227,7 @@ cardModalProps) {
     //showModal();
     // setProjectMembers(improvementWork.project_members);
     // console.log("improvementWork.project_members",improvementWork.project_members);
-      setAddingMembers(addingMembers);
-      console.log("addingMembers", isAddingMembers);
-  }, [updatedProjectPhase, addingMembers]);
+  }, [updatedProjectPhase]);
 
   return (
     <><div className="overlay" style={{
