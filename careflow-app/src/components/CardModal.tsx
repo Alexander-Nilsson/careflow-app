@@ -840,9 +840,28 @@ cardModalProps) {
     currentPhase.toString()
   );
 
-  useEffect(() => {
-    setSelectedTab(updatedProjectPhase.toString());
-  }, [updatedProjectPhase]);
+  const [project_leader, setProjectLeader] = useState<string>("hej");
+  const [project_members, setProjectMembers] = useState<string[]>([]);
+  //const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+  const [updatedMembers, setUpdatedMembers] = useState(project_members);
+
+  async function showModal() {
+    const leader = await getMemberName(improvementWork.project_leader);
+    setProjectLeader(leader);
+    
+    console.log("improvementWork.project_members", improvementWork.project_members);
+    // console.log("ImprovementWork: ", improvementWork);
+
+    // setUpdatedMembers(improvementWork.project_members);
+
+    const members = await getMemberNames(improvementWork.project_members);
+    setProjectMembers(members);
+    
+    console.log("Project_members", project_members);
+    console.log("updatedMembers", updatedMembers)
+    console.log(members);
+    console.log(show);
+  }
 
   // Variable to track if we want to load data when the modal is closed
   const [loadDataOnClose, setLoadDataOnClose] = useState(false);
@@ -955,9 +974,9 @@ cardModalProps) {
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
+      improvementWork.project_members = updatedMembers;
       // const projectDoc = await getDoc(projectDocRef);
       const projectDoc = await getImprovementWork(projectDocRef);
-
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const updatedData = {
@@ -1184,26 +1203,18 @@ cardModalProps) {
     }
   }
 
-  const [project_leader, setProjectLeader] = useState<string>("hej");
-  const [project_members, setProjectMembers] = useState<string[]>([]);
-  // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
-  const [updatedMembers, setUpdatedMembers] = useState(project_members);
-
-  async function showModal() {
-    const leader = await getMemberName(improvementWork.project_leader);
-    setProjectLeader(leader);
-
-    console.log("ImprovementWork: ", improvementWork);
-    const members = await getMemberNames(improvementWork.project_members);
-    setProjectMembers(members);
-    console.log(members);
-    console.log(show);
-  }
+  
 
   function overlayOnClick(){
     console.log("Klick");
   }
   
+  useEffect(() => {
+    setSelectedTab(updatedProjectPhase.toString());
+    //showModal();
+    // setProjectMembers(improvementWork.project_members);
+    // console.log("improvementWork.project_members",improvementWork.project_members);
+  }, [updatedProjectPhase, improvementWork.project_members]);
 
   return (
     <><div className="overlay" style={{

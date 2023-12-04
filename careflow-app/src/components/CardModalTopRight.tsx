@@ -45,13 +45,14 @@ function CardModalTopRight({
   const [newMember, setNewMember] = useState("");
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
   const [membersDisplayed, setMembersDisplayed] = useState(Array<string>);
+  const [newMembers, setNewMembers] =  useState(Array<string>);
 
   //Removes project leader and already added members from the add members list
   let usersList = users.filter((item) => item != project_leader);
   usersList = usersList.filter((item) => !project_members.includes(item));
 
 
-  //Handles the deletion of tags
+  //Handles the deletion of member (NOT WORKING YET)
   const handleRemoveMember = (indexToRemove: number) => {
     const updatedMembersArray = updatedMembers.filter(
       (_, index) => index !== indexToRemove
@@ -87,15 +88,21 @@ function CardModalTopRight({
 
       setMembersDisplayed(updatedProjectMemberArray);
 
+      //The array of new members added
+      setNewMembers(updatedMembersArray);
+
+      //Fetching user IDs for each member
       const userIDs = findUserIds(updatedProjectMemberArray, usersClassArray);
 
       console.log(userIDs);
 
       console.log(updatedProjectMemberArray);
 
+      //The new array of members which is sent to the db
       setUpdatedMembers(userIDs);
 
       setNewMember("");
+      //setUpdatedMembers([]);
     }
   };
 
@@ -121,7 +128,7 @@ function CardModalTopRight({
                   {member}
                 </div>
               ))}
-              {membersDisplayed.map((member, index) => (
+              {newMembers.map((member, index) => (
                 <div style={{ marginTop: "10px", fontSize: "15px" }}>
                   {member}
                 </div>
