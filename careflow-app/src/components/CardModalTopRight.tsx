@@ -5,6 +5,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { findUserIds } from "./CreateProjectModalHelp";
 import { users, usersClassArray } from "./CreateNewProject";
 
+export var addingMembers = false;
+
 const projectMembersContainer = {
   width: "34%",
   marginTop: "30px",
@@ -73,7 +75,7 @@ function CardModalTopRight({
   //Adds the new member to the member array when the "lägg till kollegor" button is clicked
   const handleSaveMember = (newMember: string) => {
     console.log(project_members);
-
+    addingMembers = true;
     //Makes sure that the input field is filled before the member can be added
     if (newMember.trim() !== "") {
       handleCloseTagModal();
@@ -101,8 +103,8 @@ function CardModalTopRight({
       //The new array of members which is sent to the db
       setUpdatedMembers(userIDs);
 
+
       setNewMember("");
-      //setUpdatedMembers([]);
     }
   };
 

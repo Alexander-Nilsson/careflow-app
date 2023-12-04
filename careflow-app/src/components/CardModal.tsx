@@ -26,10 +26,12 @@ import {
   getMemberName,
   getMemberNames,
 } from "../ImprovementWorkLib";
+import { addingMembers } from "./CardModalTopRight";
 
 // Måste köra detta kommando i terminalen för att CircularProgressBar ska fungera: npm install --save react-circular-progressbar
 
 import { Circle, CheckCircle } from "react-bootstrap-icons";
+
 
 const buttonStyle = {
   backgroundColor: "#051F6F",
@@ -840,6 +842,7 @@ cardModalProps) {
     currentPhase.toString()
   );
 
+  const [isAddingMembers, setAddingMembers] = useState(addingMembers);
   const [project_leader, setProjectLeader] = useState<string>("hej");
   const [project_members, setProjectMembers] = useState<string[]>([]);
   //const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
@@ -852,13 +855,17 @@ cardModalProps) {
     console.log("improvementWork.project_members", improvementWork.project_members);
     // console.log("ImprovementWork: ", improvementWork);
 
-    // setUpdatedMembers(improvementWork.project_members);
+    //setUpdatedMembers(improvementWork.project_members);
 
     const members = await getMemberNames(improvementWork.project_members);
     setProjectMembers(members);
     
+    console.log("updatedMembers 1", updatedMembers);
+   
+    console.log("Impro.proj_members after one adding: ",improvementWork.project_members);
+
     console.log("Project_members", project_members);
-    console.log("updatedMembers", updatedMembers)
+    console.log("updatedMembers 2", updatedMembers)
     console.log(members);
     console.log(show);
   }
@@ -974,8 +981,14 @@ cardModalProps) {
   async function updateDb(newPhase: number, isClosed: boolean) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
-      improvementWork.project_members = updatedMembers;
       // const projectDoc = await getDoc(projectDocRef);
+      console.log("Adding members: ", addingMembers);
+      if(addingMembers)
+      {
+        improvementWork.project_members = updatedMembers;
+      }
+      setAddingMembers(false);
+      console.log("Adding members: ", addingMembers);
       const projectDoc = await getImprovementWork(projectDocRef);
       if (projectDoc.exists()) {
         const data = projectDoc.data();
@@ -1214,7 +1227,9 @@ cardModalProps) {
     //showModal();
     // setProjectMembers(improvementWork.project_members);
     // console.log("improvementWork.project_members",improvementWork.project_members);
-  }, [updatedProjectPhase, improvementWork.project_members]);
+      setAddingMembers(addingMembers);
+      console.log("addingMembers", isAddingMembers);
+  }, [updatedProjectPhase, addingMembers]);
 
   return (
     <><div className="overlay" style={{
