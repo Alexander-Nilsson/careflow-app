@@ -85,9 +85,9 @@ function IdeasSection({ userInfo, width, add_height }: IdeasSectionProps) {
         <h1 className="mt-2 ml-2 flex-grow-1" style={titleStyle}>
           Förslagslåda
         </h1>
-        <div className="mt-2 mr-2">
+        {/* <div className="mt-2 mr-2">
           <HelpPopover content="Har du ett förslag på ett förbättringsarbete? \n Här kan du skicka in ditt förslag så kommer en ansvarig se över ditt förslag. Idéerna är anonyma." />
-        </div>
+        </div> */}
       </div>
       <p className="ml-2" style={{ fontFamily: "Avenir", fontSize: "15px" }}>
         Saknar du tid eller en detaljerad plan för ett förbättringsarbete?
