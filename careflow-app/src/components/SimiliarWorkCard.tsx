@@ -38,10 +38,14 @@ const SimiliarWorkCard: React.FC<SimiliarWorkCardProps> = ({
   };
 
   const titleStyle = {
+    display: "flex",
     fontFamily: "Avenir",
     fontWeight: "bold",
     marginBottom: "0rem",
     marginTop: "0.9rem",
+    whiteSpace: "normal" as "normal", // allows text wrapping
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
 
   const badgeStyle = {
@@ -145,7 +149,7 @@ const SimiliarWorkCard: React.FC<SimiliarWorkCardProps> = ({
       >
         <Card.Body style={cardBodyStyle}>
           <div
-            style={{ display: "flex", justifyContent: "space-between" }}
+            style={{ height: "200px", justifyContent: "space-between" }}
             onClick={modalToggle}
           >
             <div>
