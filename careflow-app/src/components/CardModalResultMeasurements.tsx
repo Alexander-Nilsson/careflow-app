@@ -43,7 +43,7 @@ function CardModalResultMeasurements({
         rows={5}
         value={updatedResultMeasurements}
         onChange={handleResultInputChange}
-        placeholder="Skriv här"
+        placeholder="Skriv resultatet här"
       ></textarea>
     </>
   );

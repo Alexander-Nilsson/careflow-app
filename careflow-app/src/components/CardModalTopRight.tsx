@@ -5,6 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { findUserIds } from "./CreateProjectModalHelp";
 import { users, usersClassArray } from "./CreateNewProject";
 
+
 const projectMembersContainer = {
   width: "34%",
   marginTop: "30px",
@@ -44,8 +45,15 @@ function CardModalTopRight({
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [newMember, setNewMember] = useState("");
   const [updateMembers, setUpdateMembers] = useState(Array<string>);
+  const [membersDisplayed, setMembersDisplayed] = useState(Array<string>);
+  const [newMembers, setNewMembers] =  useState(Array<string>);
 
-  //Handles the deletion of tags
+  //Removes project leader and already added members from the add members list
+  let usersList = users.filter((item) => item != project_leader);
+  usersList = usersList.filter((item) => !project_members.includes(item));
+
+
+  //Handles the deletion of member (NOT WORKING YET)
   const handleRemoveMember = (indexToRemove: number) => {
     const updatedMembersArray = updatedMembers.filter(
       (_, index) => index !== indexToRemove
@@ -65,10 +73,8 @@ function CardModalTopRight({
 
   //Adds the new member to the member array when the "lägg till kollegor" button is clicked
   const handleSaveMember = (newMember: string) => {
-    setProjectMembers(project_members);
     console.log(project_members);
-    //console.log(project_members);
-    //Makes sure that the input field is filled before the tag can be added
+    //Makes sure that the input field is filled before the member can be added
     if (newMember.trim() !== "") {
       handleCloseTagModal();
       const updatedMembersArray = [...updateMembers, newMember];
@@ -80,9 +86,21 @@ function CardModalTopRight({
         ...updatedMembersArray,
       ];
 
+      setMembersDisplayed(updatedProjectMemberArray);
+
+      //The array of new members added
+      setNewMembers(updatedMembersArray);
+
+      //Fetching user IDs for each member
+      const userIDs = findUserIds(updatedProjectMemberArray, usersClassArray);
+
+      console.log(userIDs);
+
       console.log(updatedProjectMemberArray);
 
-      setUpdatedMembers(updatedProjectMemberArray);
+      //The new array of members which is sent to the db
+      setUpdatedMembers(userIDs);
+
 
       setNewMember("");
     }
@@ -110,43 +128,44 @@ function CardModalTopRight({
                   {member}
                 </div>
               ))}
-              {updateMembers.map((member, index) => (
+              {newMembers.map((member, index) => (
                 <div style={{ marginTop: "10px", fontSize: "15px" }}>
                   {member}
                 </div>
               ))}
 
               <div>
-                <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
-                  <Dropdown.Toggle
-                    style={{
-                      width: "100%",
-                      backgroundColor: "#FFFFFF",
-                      color: "#000000",
-                      border: "1px solid #DDDDDD",
-                    }}
-                  >
-                    Lägg till kollegor
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu style={{ width: "100%" }}>
-                    {users.map((member) => (
-                      <Dropdown.Item
-                        style={{
-                          fontWeight: updatedMembers.includes(member)
-                            ? "bold"
-                            : "normal",
-                        }}
-                        onClick={() =>
-                          updatedMembers.includes(member)
-                            ? handleRemoveMember(member)
-                            : handleSaveMember(member)
-                        }
-                      >
-                        {member}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+              <Dropdown style={{ marginBottom: "15px", marginTop: "30px" }}>
+            <Dropdown.Toggle
+              style={{
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                color: "#000000",
+                border: "1px solid #DDDDDD",
+              }}
+            >
+              Lägg till kollegor
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {
+              usersList.map((member) => (
+                <Dropdown.Item
+                  style={{
+                    fontWeight: project_members.includes(member)
+                      ? "bold"
+                      : "normal",
+                  }}
+                  onClick={() => 
+                    (updatedMembers.includes(member))
+                    ? handleRemoveMember(member)
+                    : handleSaveMember(member)}
+                >
+                  {member}
+                </Dropdown.Item>
+               
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
               </div>
             </div>
           </Form.Label>

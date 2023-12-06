@@ -1,14 +1,5 @@
 import React, { useEffect, useState, CSSProperties } from "react";
 import Card from "react-bootstrap/Card";
-import Badge from "react-bootstrap/Badge";
-import { BiComment, BiFileBlank } from "react-icons/bi";
-import { GrTextAlignLeft } from "react-icons/gr";
-import pImage from "../Images/p.png";
-import pgImage from "../Images/pg.png";
-import pgsImage from "../Images/pgs.png";
-import pgsaImage from "../Images/pgsa.png";
-import pgsacImage from "../Images/pgsa_closed_small.png";
-import noImage from "../Images/none.png";
 import {
   Id,
   ImprovementWork,
@@ -16,10 +7,8 @@ import {
   getMemberName,
 } from "../ImprovementWorkLib";
 import CardModal from "./CardModal";
-import TrashIcon from "../icons/Trashicon";
-import CardDeleteModal from "./CardDeleteModal";
 
-export interface ProjectCardProps {
+export interface SimiliarWorkCardProps {
   title: string;
   date_created: any;
   place: string;
@@ -30,8 +19,9 @@ export interface ProjectCardProps {
   isAdmin: boolean;
   improvementWorkList: ImprovementWork[]; // passing the list of all improvementworks
 }
+const MAX_BADGES_DISPLAYED = 1;
 
-const ProjectCard: React.FC<ProjectCardProps> = ({
+const SimiliarWorkCard: React.FC<SimiliarWorkCardProps> = ({
   title,
   date_created,
   place,
@@ -43,15 +33,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   improvementWorkList,
 }) => {
   const cardBodyStyle = {
-    height: "180px",
+    minheight: "180px",
     alignItems: "center" as "center",
   };
 
   const titleStyle = {
+    display: "flex",
     fontFamily: "Avenir",
     fontWeight: "bold",
     marginBottom: "0rem",
     marginTop: "0.9rem",
+    whiteSpace: "normal" as "normal", // allows text wrapping
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
 
   const badgeStyle = {
@@ -80,25 +74,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       return timestamp.toLocaleDateString("sv-SE"); // Handle if it's already a Date
     }
     return timestamp.toDate().toLocaleDateString("sv-SE");
-  };
-
-  const getPhaseImage = (phase: Id) => {
-    if (phase === 5 && improvementWork.closed) {
-      // Return a specific image or perform an action for this case
-      return <img src={pgsacImage} />; // Replace 'someOtherImage' with your desired image
-    }
-    switch (phase) {
-      case 1:
-        return <img src={noImage} />; //Förslag
-      case 2:
-        return <img src={pImage} />; //Planera
-      case 3:
-        return <img src={pgImage} />;
-      case 4:
-        return <img src={pgsImage} />;
-      case 5:
-        return <img src={pgsaImage} />;
-    }
   };
 
   const [show, setShow] = useState(false);
@@ -133,6 +108,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     console.log("modalClose");
   };
 
+
   const [leaderName, setLeaderName] = useState<string | null>(null);
   const [memberNames, setMemberNames] = useState<string[]>([]);
 
@@ -142,7 +118,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         const leaderName = await getMemberName(improvementWork.project_leader);
         setLeaderName(leaderName);
 
-        console.log("hämtar från ProjectCard:");
+        console.log("hämtar från SimiliarWorkCard:");
         const names = await Promise.all(
           improvementWork.project_members.map(
             async (member) => await getMemberName(member)
@@ -161,7 +137,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     // fetchData();
   }, []);
 
-  const MAX_BADGES_DISPLAYED = 4;
   const renderedTags = tags.length > MAX_BADGES_DISPLAYED ? tags.slice(0, MAX_BADGES_DISPLAYED) : tags;
   const additionalTagsCount = tags.length - MAX_BADGES_DISPLAYED;
 
@@ -174,7 +149,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       >
         <Card.Body style={cardBodyStyle}>
           <div
-            style={{ display: "flex", justifyContent: "space-between" }}
+            style={{ height: "200px", justifyContent: "space-between" }}
             onClick={modalToggle}
           >
             <div>
@@ -207,37 +182,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 {place}
               </Card.Text>
             </div>
-            {displayPhaseImage && (
-              <div
-                style={{ position: "absolute", bottom: "1rem", right: "1rem" }}
-              >
-                {getPhaseImage(phase)}
-              </div>
-            )}
-          </div>
-          <div>
-            <div>
-              {mouseIsOver && isAdmin && (
-                <div>
-                  <button
-                    onClick={handleButtonClick}
-                    className="stroke-black absolute right-4 top-8 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
-                  >
-                    <TrashIcon />
-                  </button>
-                  {/* Render CardDeleteModal conditionally */}
-                  {showModal && (
-                    <CardDeleteModal
-                      show={showModal}
-                      onHide={handleCloseModal}
-                      impWorkId={improvementWork.id.toString()}
-                      fetchProjects={() => {}}
-                      impWorkName={improvementWork.title}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
           </div>
           <div></div>
         </Card.Body>
@@ -255,4 +199,4 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   );
 };
 
-export default ProjectCard;
+export default SimiliarWorkCard;

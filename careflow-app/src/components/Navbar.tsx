@@ -1,62 +1,93 @@
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import { Link } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
-import { BsBell } from 'react-icons/bs'; 
-import React, { useState } from 'react';
-import Notification from  './Notification';
-
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import { useAuth0 } from "@auth0/auth0-react";
+import { BsBell } from "react-icons/bs";
+import Notification from "./Notification";
 
 function NavigationBar() {
   const [showNotifications, setShowNotifications] = useState(false);
+  const { pathname } = useLocation();
+  const { logout } = useAuth0();
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
-  }
-
-  const linkStyle = {
-    color: 'white',
-    fontSize: '22px',
-    fontWeight: 'bold',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    fontFamily: 'Avenir'
   };
-
-  const { logout } = useAuth0();
 
   const handleLogout = () => {
     logout();
-  }
+  };
+
+  const linkStyle = {
+    color: "white",
+    fontSize: "17px",
+    fontWeight: "bold",
+    textDecoration: "none",
+    cursor: "pointer",
+    fontFamily: "Avenir",
+    padding: "10px 15px", // Adjust padding for better control
+  };
+
+  const activeLinkStyle = {
+    borderBottom: "3px solid white",
+  };
+
+  const isActiveLink = (path:string) => pathname === path;
 
   return (
-    <Navbar expand="lg" variant="dark" className="d-flex" style={{ backgroundColor: '#0a206a' }} >
-      <Link to="/start">
+    <Navbar
+      expand="lg"
+      variant="dark"
+      className="d-flex"
+      style={{
+        backgroundColor: "#0a206a",
+        paddingLeft: "23px",
+        height: "75px",
+      }}
+    >
+      <Link to="/start" style={{ display: 'flex', alignItems: 'center' }}>
         <img
-          alt=""
+          alt="CareFlow Logo"
           src="CareFlow_Vit.png"
-          width="220"
-          height="80"
+          width="140"
+          height="30"
           className=""
         />
       </Link>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse id="responsive-navbar-nav" className='d-flex'>
-        <Nav className="d-flex flex-grow-1">
-          <Link className="p-4" to="/start" style={linkStyle} >Hem</Link>
-          <Link className="p-4" to="/forandringsarbeten" style={linkStyle} >Mina förbättringsarbeten</Link>
-          <div className="flex-grow-1 p-4">
-            <Link className="pt-4 pb-4" to="/arkiv" style={linkStyle} >Alla förbättringsarbeten</Link>
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="d-flex align-items-center justify-content-between" style={{ width: '100%' }}>
+          <div className="d-flex align-items-center">
+            <Link 
+              to="/start" 
+              style={isActiveLink("/start") ? { ...linkStyle, ...activeLinkStyle } : linkStyle}
+            >
+              Hem
+            </Link>
+            <Link 
+              to="/forandringsarbeten" 
+              style={isActiveLink("/forandringsarbeten") ? { ...linkStyle, ...activeLinkStyle } : linkStyle}
+            >
+              Mina förbättringsarbeten
+            </Link>
+            <Link 
+              to="/arkiv" 
+              style={isActiveLink("/arkiv") ? { ...linkStyle, ...activeLinkStyle } : linkStyle}
+            >
+              Alla förbättringsarbeten
+            </Link>
           </div>
-          
-          <Nav.Link>
-            <BsBell style={{ color: 'white', fontSize: '22px', marginTop: '20px' }} onClick={toggleNotifications}/>
-          </Nav.Link>
-          {showNotifications && <Notification/>}
-
-          <a className="p-4" style={linkStyle} onClick={handleLogout}>Logga ut</a>
-          {/* Notification Bell */}     
-          
+          <div className="d-flex align-items-center">
+            {showNotifications && <Notification />}
+            <BsBell
+              style={{ color: "white", fontSize: "22px", cursor: "pointer" }}
+              onClick={toggleNotifications}
+            />
+            <a style={{ ...linkStyle, marginLeft: '20px', cursor: 'pointer' }} onClick={handleLogout}>
+              Logga ut
+            </a>
+          </div>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

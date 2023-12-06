@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Column, Id } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import {
@@ -7,6 +7,7 @@ import {
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
+  MouseSensor,
   PointerSensor,
   useSensor,
   useSensors,
@@ -19,6 +20,10 @@ import { doc, updateDoc } from "firebase/firestore";
 import ShowCard from "./ShowCard";
 import { db } from "../firebase";
 import { ImprovementWork } from "../ImprovementWorkLib";
+
+import {draggable} from "./ShowCard";
+
+
 
 const columns: Column[] = [
   {
@@ -53,14 +58,15 @@ const columns: Column[] = [
   },
 ];
 
+
 function KanbanBoard() {
+
   const context = useContext(ProjectContext);
   if (!context) {
     throw new Error(
       "KanbanBoard must be used within a ProjectContext Provider"
     );
   }
-
   const {
     improvementWorkList,
     setImprovementWorkList,
@@ -70,13 +76,17 @@ function KanbanBoard() {
   const [activeImprovementWork, setActiveImprovementWork] =
     useState<ImprovementWork | null>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 10,
-      },
-    })
-  );
+ 
+   const sensors =
+    useSensors(
+       useSensor(PointerSensor, {
+         activationConstraint: {
+          distance: 10,
+        }
+        }
+       ));
+      
+
 
   return (
     <div className="board">
@@ -134,8 +144,7 @@ function KanbanBoard() {
                   <ShowCard
                     improvementWork={activeImprovementWork}
                     isAdmin={isAdmin}
-                    fetchProjects={fetchProjects}
-                  />
+                    fetchProjects={fetchProjects} improvementWorkList={[]}                  />
                 )}
               </DragOverlay>,
               document.body
@@ -146,17 +155,21 @@ function KanbanBoard() {
     </div>
   );
 
+ 
+
+
   // Update function for dragdrop
   async function updateImprovementWork(id: any, newColumn: any) {
     const userDoc = doc(db, "improvementWorks", id);
     const newFields = { phase: newColumn };
-
+    
     console.log("updateImprovementWork in db");
     await updateDoc(userDoc, newFields);
   }
 
   function onDragStart(event: DragStartEvent) {
-    if (event.active.data.current?.type === "ImprovementWork") {
+    console.log("Försöker dra: ", draggable);
+    if (event.active.data.current?.type === "ImprovementWork" && draggable==true) {
       setActiveImprovementWork(event.active.data.current.improvementWork);
       return;
     }
@@ -164,6 +177,7 @@ function KanbanBoard() {
 
   function onDragEnd(event: DragEndEvent) {
     setActiveImprovementWork(null);
+    console.log("Försöker släppa: ", draggable);
 
     const { active, over } = event;
     if (!over) return;
@@ -192,7 +206,7 @@ function KanbanBoard() {
     if (!isActiveAImprovementWork) return;
 
     // Dropping a Task over another Task
-    if (isActiveAImprovementWork && isOverAImprovementWork) {
+    if (isActiveAImprovementWork && isOverAImprovementWork && draggable==true) {
       setImprovementWorkList((improvementWorkList) => {
         const activeIndex = improvementWorkList.findIndex(
           (t) => t.id === activeId
@@ -239,7 +253,7 @@ function KanbanBoard() {
     const isOverAColumn = over.data.current?.type === "Column";
 
     // dropping a Task over a column
-    if (isActiveAImprovementWork && isOverAColumn) {
+    if (isActiveAImprovementWork && isOverAColumn && draggable==true) {
       setImprovementWorkList((improvementWorkList) => {
         const activeIndex = improvementWorkList.findIndex(
           (t) => t.id === activeId
@@ -276,5 +290,6 @@ function KanbanBoard() {
   }
   */
 }
+
 
 export default KanbanBoard;

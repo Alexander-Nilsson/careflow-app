@@ -12,7 +12,7 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import CardModalNotes from "./CardModalNotes";
 import CardModalChecklist from "./CardModalChecklist";
-//import CardModalSimilarProjects from "./CardModalSimilarProjects";
+import CardModalSimilarProjects from "./CardModalSimilarProjects";
 import CardModalResultMeasurements from "./CardModalResultMeasurements";
 import CardModalResultAnalysis from "./CardModalResultAnalysis";
 import CardModalFiles from "./CardModalFiles";
@@ -31,6 +31,7 @@ import {
 
 import { Circle, CheckCircle } from "react-bootstrap-icons";
 
+
 const buttonStyle = {
   backgroundColor: "#051F6F",
   fontFamily: "Avenir",
@@ -40,6 +41,7 @@ const buttonStyle = {
   cursor: "pointer",
   marginTop: "20px",
 };
+
 
 const saveButtonStyle = {
   backgroundColor: "#051F6F",
@@ -67,6 +69,7 @@ interface cardModalProps {
   show: boolean;
   onHide: (data?: any) => void;
   improvementWork: ImprovementWork; // passing the improvementWork with all its variables
+  improvementWorkList: ImprovementWork[]; // passing the list of all improvementworks
 }
 
 interface modalContentPlanProps {
@@ -114,6 +117,7 @@ interface modalContentPlanProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 interface modalContentDoProps {
@@ -155,6 +159,7 @@ interface modalContentDoProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 interface modalContentStudyProps {
@@ -197,6 +202,7 @@ interface modalContentStudyProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 interface modalContentActProps {
@@ -236,6 +242,7 @@ interface modalContentActProps {
       file_urls: string[];
     }>
   >;
+  improvementWorkList: ImprovementWork[];
 }
 
 //Function that checks if the icon next to the phase (in the tabs at the top) should be checked or not
@@ -285,6 +292,7 @@ function ModalContentPlan({
   setUpdatedNotesPlan,
   files,
   setUpdatedFilesPlan,
+  improvementWorkList,
 }: modalContentPlanProps) {
   //Calculates the phase's progress based on the number of checked tasks in the checklist
   function calculatePercentage() {
@@ -361,7 +369,11 @@ function ModalContentPlan({
 
           {/* --------------------------------------------------- */}
 
-          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -394,6 +406,7 @@ function ModalContentDo({
   setUpdatedNotesDo,
   files,
   setUpdatedFilesDo,
+  improvementWorkList,
 }: modalContentDoProps) {
   return (
     <>
@@ -449,7 +462,11 @@ function ModalContentDo({
 
           {/* ---------------------------------------- */}
 
-          {/* <CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -482,6 +499,7 @@ function ModalContentStudy({
   setUpdatedNotesStudy,
   files,
   setUpdatedFilesStudy,
+  improvementWorkList,
 }: modalContentStudyProps) {
   return (
     <>
@@ -538,7 +556,11 @@ function ModalContentStudy({
 
           {/* ----------------------------------------- */}
 
-          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -569,6 +591,7 @@ function ModalContentAct({
   setUpdatedNotesAct,
   files,
   setUpdatedFilesAct,
+  improvementWorkList,
 }: modalContentActProps) {
   return (
     <>
@@ -620,7 +643,11 @@ function ModalContentAct({
 
           {/* --------------------------------------------*/}
 
-          {/*<CardModalSimilarProjects tags={updatedTags} /> */}
+          <CardModalSimilarProjects
+            tags={updatedTags}
+            improvementWorkList={improvementWorkList}
+            title={title}
+          />
         </div>
       ) : null}
     </>
@@ -632,6 +659,7 @@ function CardModal({
   show,
   onHide,
   improvementWork,
+  improvementWorkList,
 }: // project_leader,
 // project_members,
 cardModalProps) {
@@ -813,9 +841,23 @@ cardModalProps) {
     currentPhase.toString()
   );
 
-  useEffect(() => {
-    setSelectedTab(updatedProjectPhase.toString());
-  }, [updatedProjectPhase]);
+  const [project_leader, setProjectLeader] = useState<string>("hej");
+  const [project_members, setProjectMembers] = useState<string[]>([]);
+  //const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
+  const [updatedMembers, setUpdatedMembers] = useState(project_members);
+
+  async function showModal() {
+    const leader = await getMemberName(improvementWork.project_leader);
+    setProjectLeader(leader);
+    
+    console.log("improvementWork.project_members", improvementWork.project_members);
+
+    const members = await getMemberNames(improvementWork.project_members);
+    setProjectMembers(members);
+    
+    console.log(members);
+    console.log(show);
+  }
 
   // Variable to track if we want to load data when the modal is closed
   const [loadDataOnClose, setLoadDataOnClose] = useState(false);
@@ -929,8 +971,12 @@ cardModalProps) {
     try {
       const projectDocRef = doc(db, "improvementWorks", projectId);
       // const projectDoc = await getDoc(projectDocRef);
+   
+      if(updatedMembers.length != 0)
+      {
+        improvementWork.project_members = updatedMembers;
+      }
       const projectDoc = await getImprovementWork(projectDocRef);
-
       if (projectDoc.exists()) {
         const data = projectDoc.data();
         const updatedData = {
@@ -1157,26 +1203,37 @@ cardModalProps) {
     }
   }
 
-  const [project_leader, setProjectLeader] = useState<string>("hej");
-  const [project_members, setProjectMembers] = useState<string[]>([]);
-  // const [updatedMembers, setUpdatedMembers] = useState<string[]>([]);
-  const [updatedMembers, setUpdatedMembers] = useState(project_members);
+  
 
-  async function showModal() {
-    const leader = await getMemberName(improvementWork.project_leader);
-    setProjectLeader(leader);
-
-    const members = await getMemberNames(improvementWork.project_members);
-    setProjectMembers(members);
+  function overlayOnClick(){
+    console.log("Klick");
   }
+  
+  useEffect(() => {
+    setSelectedTab(updatedProjectPhase.toString());
+    //showModal();
+    // setProjectMembers(improvementWork.project_members);
+    // console.log("improvementWork.project_members",improvementWork.project_members);
+  }, [updatedProjectPhase]);
 
   return (
-    <>
+    <><div className="overlay" style={{
+      /* making it hidden by default */
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: 100,
+      height: 100,
+      color: "rgba(128,128,128,0.5)",
+      display: "block",
+    }} onClick={overlayOnClick}>
       <Modal
         onShow={showModal}
         show={show}
         onHide={() => onHide(loadDataOnClose)}
         size="lg"
+        backdrop="static"
+        position="fixed"
       >
         <Modal.Header
           style={{
@@ -1241,6 +1298,7 @@ cardModalProps) {
                   setUpdatedNotesPlan={setUpdatedNotesPlan}
                   files={updatedFilesPlan}
                   setUpdatedFilesPlan={setUpdatedFilesPlan}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
 
@@ -1281,6 +1339,7 @@ cardModalProps) {
                   setUpdatedNotesDo={setUpdatedNotesDo}
                   files={updatedFilesDo}
                   setUpdatedFilesDo={setUpdatedFilesDo}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
 
@@ -1321,6 +1380,7 @@ cardModalProps) {
                   setUpdatedNotesStudy={setUpdatedNotesStudy}
                   files={updatedFilesStudy}
                   setUpdatedFilesStudy={setUpdatedFilesStudy}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
 
@@ -1359,6 +1419,7 @@ cardModalProps) {
                   setUpdatedNotesAct={setUpdatedNotesAct}
                   files={updatedFilesAct}
                   setUpdatedFilesAct={setUpdatedFilesAct}
+                  improvementWorkList={improvementWorkList}
                 />
               </Tab>
             </Tabs>
@@ -1457,6 +1518,7 @@ cardModalProps) {
           </Form>
         </Modal.Body>
       </Modal>
+      </div>
     </>
   );
 }
