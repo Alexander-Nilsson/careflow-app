@@ -61,13 +61,12 @@ function Start() {
       }
     }
   }
- //HÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄR
+  //HÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄR
   const refreshImprovementWorks = async () => {
     // Assuming you have a method to fetch the latest improvement works
     const updatedImprovementWorks = await getAllImprovementWorks();
     setImprovementWorks(updatedImprovementWorks);
   };
-
 
   function Spinner() {
     return (
@@ -97,8 +96,10 @@ function Start() {
       />
       {isAuthenticated && userInfo && improvementWorks ? (
         <div style={contentStyle}>
-          
-        <ProfileSection userInfo={userInfo} onRefresh={refreshImprovementWorks}/>
+          <ProfileSection
+            userInfo={userInfo}
+            onRefresh={refreshImprovementWorks}
+          />
 
           {/* <CreateNewProject /> */}
           <ProjectsSection
@@ -106,24 +107,33 @@ function Start() {
             userInfo={userInfo}
             allImprovementWorks={improvementWorks}
             showClosed={false}
-             />
-          <div className="d-flex mr-2 w-100" style={{ marginBottom: '2%' }}>
-            <IdeasSection userInfo={userInfo} width={"42%"} add_height="250px"/>
+            questionmark={false}
+          />
+          <div className="d-flex mr-2 w-100" style={{ marginBottom: "2%" }}>
+            <IdeasSection
+              userInfo={userInfo}
+              width={"42%"}
+              add_height="250px"
+            />
             <ProgressSection improvementWorks={improvementWorks} />
           </div>
           {/* <FinishedProjectsSection userInfo={userInfo} improvementWorks={improvementWorks} /> */}
         </div>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <Spinner />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+          }}
+        >
+          <Spinner />
         </div>
       )}
     </div>
   );
 }
-
-
-
 
 export default Start;
 

@@ -241,7 +241,6 @@ function Projects() {
         <></>
       )}
 
-
       {isAuthenticated && userInfo ? (
         <div>
           <div
@@ -255,7 +254,10 @@ function Projects() {
               whiteSpace: "pre-line",
             }}
           >
-            <div className="outerContainer" style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              className="outerContainer"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
               <div style={{ display: "flex", marginTop: "3vh" }}>
                 <TitleBox
                   title={"Mina förbättringsarbeten"}
@@ -287,7 +289,9 @@ function Projects() {
                     }}
                   >
                     <ButtonPopover
-                      title={"Vad är förbättringsmodellen och hur hjälper den oss?"}
+                      title={
+                        "Vad är förbättringsmodellen och hur hjälper den oss?"
+                      }
                       content={
                         " \n Modellen består av några frågor samt förbättringshjulet PGSA som hjälper oss att testa små förändringar innan mer genomgripande förändring görs. Med frågornas hjälp får vi fram mål, mått till mätning och idéer som vi vill testa och göra. Därefter är det dags att planera, göra, studera och agera genom PGSA hjulets olika steg. "
                       }
@@ -330,7 +334,7 @@ function Projects() {
                 className="form-select"
                 aria-label="Filtrera"
                 onChange={handleSortChange}
-              // style={{ width: "8.5rem" }} // Adjust the width as needed
+                // style={{ width: "8.5rem" }} // Adjust the width as needed
               >
                 <option selected value="date_created">
                   Visa senaste
@@ -407,13 +411,16 @@ function Projects() {
           >
             <KanbanBoard />
           </ProjectContext.Provider>
-          <div style={{ display: 'flex', alignItems: 'center', marginLeft: "2%" }}>
+          <div
+            style={{ display: "flex", alignItems: "center", marginLeft: "2%" }}
+          >
             <div style={{ width: "96%" }}>
               <ProjectsSection
                 title={"Avslutade förbättringsarbeten"}
                 userInfo={userInfo}
                 allImprovementWorks={allImprovementWorks}
                 showClosed={true}
+                questionmark={true}
               />
             </div>
           </div>

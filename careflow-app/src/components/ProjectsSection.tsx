@@ -16,6 +16,7 @@ type ProjectsSectionProps = {
   userInfo: UserInfoType;
   allImprovementWorks: ImprovementWork[];
   showClosed: boolean;
+  questionmark: boolean;
 };
 
 function ProjectsSection({
@@ -23,6 +24,7 @@ function ProjectsSection({
   userInfo,
   allImprovementWorks,
   showClosed,
+  questionmark,
 }: ProjectsSectionProps) {
   // const [improvementWorks, setImprovementWorks] = useState<ImprovementWork[]>([]);
   const [displayedImprovementWorks, setDisplayedImprovementWorks] = useState<
@@ -170,9 +172,11 @@ function ProjectsSection({
             ))}
           </select>
         </div>
-        <div className="mt-3 ml-2">
-          <HelpPopover content="Vill du se över ett av dina genomförda förbättringsarbeten, testa någon idé en till PGSA-cykel eller följa upp förbättringen? Dina gamla förbättringsarbeten ligger här." />
-        </div>
+        {questionmark ? (
+          <div className="mt-3 ml-2">
+            <HelpPopover content="Vill du se över ett av dina genomförda förbättringsarbeten, testa någon idé en till PGSA-cykel eller följa upp förbättringen? Dina gamla förbättringsarbeten ligger här." />
+          </div>
+        ) : null}
       </div>
 
       <div style={projectsContainerStyle}>
