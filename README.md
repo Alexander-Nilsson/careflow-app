@@ -4,7 +4,7 @@ CareFlow is a specialized project management platform designed for healthcare en
 
 ## 📺 Demo
 
-![CareFlow App Interaction](path/to/your/video-or-gif.gif)
+![CareFlow App Interaction](demo.gif)
 > *[Optional: Add a link to a full video demo here]*
 
 ## 🚀 Main Functionality
