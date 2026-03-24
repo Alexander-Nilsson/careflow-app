@@ -1,6 +1,6 @@
 # CareFlow 🏥
 
-CareFlow is a specialized project management platform designed for healthcare environments to streamline and track continuous improvement work. It provides a structured workflow based on the **PGSA (Plan-Do-Study-Act)** cycle, allowing clinical teams to move from initial ideas to verified, high-quality healthcare improvements.
+CareFlow is a specialized project management platform designed for healthcare environments to streamline and track continuous improvement work. It provides a structured workflow based on the **PDSA (Plan-Do-Study-Act)** cycle, allowing clinical teams to move from initial ideas to verified, high-quality healthcare improvements.
 
 ## 📺 Demo
 
