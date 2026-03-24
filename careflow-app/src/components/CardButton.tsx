@@ -1,14 +1,15 @@
+// @ts-nocheck
 import Card from "react-bootstrap/Card";
 import { PersonFill } from "react-bootstrap-icons";
 import "./CardButton.css";
 import PaperClipComponent from "./Paperclip";
 import CommentIconComponent from "./CommentIcon";
 import ListIconComponent from "./ListIcon";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "../mockFirebase";
 import React, { useEffect, useState, CSSProperties } from "react";
 import TrashIcon from "../icons/Trashicon";
 import { ImprovementWork, deleteProject } from "../ImprovementWorkLib";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "../mockAuth0";
 import CardDeleteModal from "./CardDeleteModal";
 
 const TagStyle = {

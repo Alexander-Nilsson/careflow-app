@@ -1,46 +1,66 @@
-# Getting Started with Create React App
+# CareFlow 🏥
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+CareFlow is a specialized project management platform designed for healthcare environments to streamline and track continuous improvement work. It provides a structured workflow based on the **PGSA (Plan-Do-Study-Act)** cycle, allowing clinical teams to move from initial ideas to verified, high-quality healthcare improvements.
 
-## Available Scripts
+## 📺 Demo
 
-In the project directory, you can run:
+![CareFlow App Interaction](path/to/your/video-or-gif.gif)
+> *[Optional: Add a link to a full video demo here]*
 
-### `npm start`
+## 🚀 Main Functionality
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Kanban Board:** Visualize the entire lifecycle of improvement projects across five phases: *Förslag* (Proposal), *Planera* (Plan), *Göra* (Do), *Studera* (Study), and *Agera* (Act).
+- **PGSA Integration:** Every project follows the Plan-Do-Study-Act methodology, ensuring that changes are tested, analyzed, and refined before full implementation.
+- **Project Tracking:** 
+  - Detailed project cards with titles, dates, locations, and custom tags.
+  - Interactive checklists for each phase of the improvement cycle.
+  - Results measurement and analysis tracking.
+- **Categorization & Filtering:** Filter projects by clinic, center, tags, or status (Open/Closed) to easily find relevant work.
+- **Team Collaboration:** Assign project leaders and members to specific improvement initiatives.
+- **Admin Management:** Dedicated administrative features for overseeing projects and users.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🛠️ Technologies Used
 
-### `npm test`
+- **Frontend:** [React](https://reactjs.org/) (with [TypeScript](https://www.typescriptlang.org/))
+- **State & Routing:** [React Router](https://reactrouter.com/), Context API
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/), [React Bootstrap](https://react-bootstrap.github.io/), Vanilla CSS
+- **Drag & Drop:** [@dnd-kit](https://dnd-kit.com/) for a smooth Kanban experience
+- **Backend/Database:** [Firebase](https://firebase.google.com/) (Authentication & Firestore)
+- **Auth:** [Auth0](https://auth0.com/) for secure identity management
+- **Icons:** [React Icons](https://react-icons.github.io/react-icons/)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🏁 Getting Started
 
-### `npm run build`
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16.x or later)
+- npm or yarn
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/careflow-app.git
+   cd careflow-app
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-### `npm run eject`
+3. **Start the development server:**
+   ```bash
+   npm start
+   ```
+   The app will be available at `http://localhost:3000`.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 📂 Project Structure
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `src/components/`: Reusable UI components (KanbanBoard, ProjectCard, Modals, etc.)
+- `src/ImprovementWorkLib.tsx`: Core logic and interfaces for improvement projects.
+- `src/mockData.ts`: Initial data for development and testing.
+- `src/mockFirebase.ts` & `src/mockAuth0.ts`: Mocked services for offline development.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 📄 License
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.

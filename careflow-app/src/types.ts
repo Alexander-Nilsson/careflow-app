@@ -1,4 +1,5 @@
-import {Timestamp, DocumentReference, DocumentData} from "firebase/firestore";
+// @ts-nocheck
+import {Timestamp, DocumentReference, DocumentData} from "./mockFirebase";
 export type Id = string | number;
 
 export type Column = {

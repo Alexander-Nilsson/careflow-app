@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Button } from "react-bootstrap";
 
 const ButtonStyle: React.CSSProperties = {

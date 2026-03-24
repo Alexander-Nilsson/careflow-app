@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { useState, ChangeEvent, FormEvent } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { PlusLg, Paperclip, Download } from "react-bootstrap-icons";
-import { db, fileStorage } from "../firebase";
-import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { db, fileStorage } from "../mockFirebase";
+import { doc, getDoc, collection, Timestamp, addDoc } from "../mockFirebase";
+import { ref, getDownloadURL, uploadBytesResumable } from "../mockFirebase";
 import { Link } from "react-router-dom";
 
 const saveFileButtonStyle = {

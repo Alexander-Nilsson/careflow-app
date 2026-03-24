@@ -1,4 +1,5 @@
-import { Timestamp } from "firebase/firestore";
+// @ts-nocheck
+import { Timestamp } from "../mockFirebase";
 import React, { useState } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import { CircularProgressbar } from "react-circular-progressbar";

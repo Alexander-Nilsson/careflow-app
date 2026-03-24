@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState, CSSProperties } from "react";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";

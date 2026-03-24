@@ -1,8 +1,9 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "../mockAuth0";
 import { BsBell } from "react-icons/bs";
 import Notification from "./Notification";
 

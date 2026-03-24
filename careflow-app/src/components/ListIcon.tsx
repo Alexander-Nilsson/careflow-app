@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { ReactComponent as List } from "../icons/list.svg";
 

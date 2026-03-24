@@ -1,18 +1,17 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD_VmL7OhFcnqzzsmyowA4v0aMHf2MVXDs",
-  authDomain: "careflow-60a15.firebaseapp.com",
-  projectId: "careflow-60a15",
-  storageBucket: "careflow-60a15.appspot.com",
-  messagingSenderId: "100218090999",
-  appId: "1:100218090999:web:fef937f15602aa48a0aaf2"
+// Mock Firebase
+export const db = {
+  // Add minimal mock to avoid crashes if someone calls collection(db, ...)
+  type: "firestore",
+  toJSON: () => ({})
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const fileStorage = getStorage(app);
+export const fileStorage = {
+  ref: () => ({
+    put: () => Promise.resolve({}),
+    getDownloadURL: () => Promise.resolve("")
+  })
+};
 
-export { db, fileStorage };
+// Also mock common firestore functions if they are imported from this file
+// But they are usually imported from "../mockFirebase"

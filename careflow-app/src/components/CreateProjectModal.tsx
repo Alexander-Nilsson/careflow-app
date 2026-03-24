@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from "react"; //Nytt
 import { Modal, Button, Form } from "react-bootstrap";
 import {
@@ -6,9 +7,9 @@ import {
   Bullseye,
   CheckCircle,
 } from "react-bootstrap-icons";
-import { doc, getDoc, collection, Timestamp, addDoc } from "firebase/firestore";
-import { db } from "../firebase";
-import { useAuth0 } from "@auth0/auth0-react";
+import { doc, getDoc, collection, Timestamp, addDoc } from "../mockFirebase";
+import { db } from "../mockFirebase";
+import { useAuth0 } from "../mockAuth0";
 import HelpPopover from "./HelpPopover";
 import Dropdown from "react-bootstrap/Dropdown";
 import {

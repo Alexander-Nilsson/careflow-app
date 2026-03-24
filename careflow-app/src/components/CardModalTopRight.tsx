@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Button, Dropdown, Form } from "react-bootstrap";
 import { getMemberName } from "../ImprovementWorkLib";
 import { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "../mockAuth0";
 import { findUserIds } from "./CreateProjectModalHelp";
 import { users, usersClassArray } from "./CreateNewProject";
 

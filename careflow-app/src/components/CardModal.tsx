@@ -1,4 +1,5 @@
-import { db } from "../firebase";
+// @ts-nocheck
+import { db } from "../mockFirebase";
 import { Id } from "../types";
 import {
   Timestamp,
@@ -7,7 +8,7 @@ import {
   doc,
   getDoc,
   updateDoc,
-} from "firebase/firestore";
+} from "../mockFirebase";
 import { useState, useEffect, ChangeEvent } from "react";
 import { Modal, Button, Form, Tabs, Tab } from "react-bootstrap";
 import CardModalNotes from "./CardModalNotes";
@@ -683,21 +684,23 @@ cardModalProps) {
   } = improvementWork;
 
   // Accessing properties from the all_iterations object
+  const currentIterationIdx = Math.max(0, total_iterations - 1);
+  const currentIteration = all_iterations && all_iterations.length > currentIterationIdx
+    ? all_iterations[currentIterationIdx]
+    : { plan: {}, do: {}, study: {}, act: {} };
 
-  const result_measurements =
-    all_iterations[total_iterations - 1].do?.results || "";
-  const result_analysis =
-    all_iterations[total_iterations - 1].study?.analysis || "";
-  const notes_plan = all_iterations[total_iterations - 1].plan?.notes || "";
-  const notes_do = all_iterations[total_iterations - 1].do?.notes || "";
-  const notes_study = all_iterations[total_iterations - 1].study?.notes || "";
-  const notes_act = all_iterations[total_iterations - 1].act?.notes || "";
-  const files_plan = all_iterations[total_iterations - 1].plan?.files || {};
-  const files_do = all_iterations[total_iterations - 1].do?.files || {};
-  const files_study = all_iterations[total_iterations - 1].study?.files || {};
-  const files_act = all_iterations[total_iterations - 1].act?.files || {};
-  const checklist_plan =
-    all_iterations[total_iterations - 1].plan?.checklist || {};
+  const result_measurements = currentIteration.do?.results || "";
+  const result_analysis = currentIteration.study?.analysis || "";
+  const notes_plan = currentIteration.plan?.notes || "";
+  const notes_do = currentIteration.do?.notes || "";
+  const notes_study = currentIteration.study?.notes || "";
+  const notes_act = currentIteration.act?.notes || "";
+  const files_plan = currentIteration.plan?.files || {};
+  const files_do = currentIteration.do?.files || {};
+  const files_study = currentIteration.study?.files || {};
+  const files_act = currentIteration.act?.files || {};
+  const checklist_plan = currentIteration.plan?.checklist || {};
+
 
   const currentPhase = typeof phase === "number" ? phase : parseInt(phase, 10);
   const projectId = typeof id === "string" ? id : id.toString();

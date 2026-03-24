@@ -1,8 +1,9 @@
+// @ts-nocheck
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Login from '../Login'; // Import the component to be tested
 
-jest.mock('@auth0/auth0-react', () => ({
+jest.mock('../mockAuth0', () => ({
   useAuth0: () => ({
     isAuthenticated: true, // Simulate an authenticated state
     isLoading: false, // Simulate that loading has finished

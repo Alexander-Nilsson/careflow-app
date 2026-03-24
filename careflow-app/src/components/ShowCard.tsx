@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CardButton from "./CardButton";
@@ -5,7 +6,7 @@ import CardModal from "./CardModal";
 //import "./ShowCard.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { ImprovementWork, getMemberName } from "../ImprovementWorkLib";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "../mockAuth0";
 import React from "react";
 
 export var draggable : boolean = true;

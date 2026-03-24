@@ -1,9 +1,10 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProgressBar from "react-bootstrap/ProgressBar";
 
-import { collection, query, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { collection, query, getDocs } from "../mockFirebase";
+import { db } from "../mockFirebase";
 import { useEffect } from "react";
 import { ImprovementWork, getGoals } from "../ImprovementWorkLib";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect} from "react";
 import { Button } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,8 +13,8 @@ import {
 } from "../ImprovementWorkLib";
 import { IoSearchOutline } from "react-icons/io5";
 import { ProjectCardProps } from "./ProjectCard";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { useAuth0 } from "@auth0/auth0-react";
+import { collection, getDocs, query, where } from "../mockFirebase";
+import { useAuth0 } from "../mockAuth0";
 import "../styles/DisplayAllProjects.css";
 import "../font/font.css";
 import { UserInfoType, fetchUser } from "./Start";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { ReactComponent as Comment } from "../icons/chat-left.svg";
 

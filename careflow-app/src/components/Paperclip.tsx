@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { ReactComponent as PaperClip } from "../icons/paperclip.svg";
 

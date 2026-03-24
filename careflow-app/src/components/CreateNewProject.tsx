@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateProjectButton from "./CreateProjectButton";

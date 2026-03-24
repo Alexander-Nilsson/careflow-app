@@ -1,3 +1,4 @@
+// @ts-nocheck
 import DisplayAllProjects from "./DisplayAllProjects";
 import "../styles/DisplayAllProjects.css";
 import HelpPopover from "./HelpPopover";

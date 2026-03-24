@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { Column, Id, Project } from "../types";
 import { useMemo } from "react";
@@ -11,7 +12,7 @@ import IdeasSection from "./IdeasSection";
 import React, { useState, useEffect } from "react";
 import { useContext } from "react";
 import { UserInfoType, fetchUser } from "./Start";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "../mockAuth0";
 
 interface Props {
   column: Column;

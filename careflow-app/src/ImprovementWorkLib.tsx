@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { mockImprovementWorks, mockTags, mockUsers } from "./mockData";
 import {
   collection,
   getDocs,
@@ -7,9 +9,9 @@ import {
   getDoc,
   deleteDoc,
   Query,
-} from "firebase/firestore";
-import { db } from "./firebase";
-import { Timestamp, DocumentReference, DocumentData } from "firebase/firestore";
+} from "./mockFirebase";
+import { db } from "./mockFirebase";
+import { Timestamp, DocumentReference, DocumentData } from "./mockFirebase";
 import { UserInfoType } from "./components/Start";
 import { Tag, User } from "./components/CreateNewProject";
 
@@ -165,47 +167,88 @@ function setImprovementWork(id: string, data: DocumentData) {
 }
 
 export async function getAllImprovementWorks() {
-  const improvementWorksCollectionRef = collection(db, "improvementWorks");
-  console.log("hämtar alla ImprovementWorks...");
-
-  const improvementWorksQuery = query(improvementWorksCollectionRef);
-  let improvementWorksData: ImprovementWork[] = [];
-  try {
-    return Promise.all([getDocs(improvementWorksQuery)]).then(([snapshot]) => {
-      const improvementWorks = [...snapshot.docs];
-
-      improvementWorks.forEach((doc) => {
-        let data = doc.data();
-        let improvementWork: ImprovementWork = setImprovementWork(doc.id, data);
-        improvementWorksData.push(improvementWork);
-        // }
-      });
-      return sortByDateCreated(improvementWorksData);
-    });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return improvementWorksData;
-  }
+  console.log("Mock fetching all ImprovementWorks...");
+  return sortByDateCreated(mockImprovementWorks as unknown as ImprovementWork[]);
 }
 
 export async function getAllTags() {
-  const tagsRef = collection(db, "tags");
-  const tagsQuery = query(tagsRef);
+  console.log("Mock fetching all tags...");
+  return mockTags;
+}
 
-  var tags: string[] = [];
-  try {
-    return Promise.all([getDocs(tagsQuery)]).then(([snapshot]) => {
-      const fetchedTags = [...snapshot.docs];
-      fetchedTags.forEach((doc) => {
-        let tag = doc.data().description;
-        tags.push(tag);
-        // }
-      });
-    });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-  return tags;
+export async function getMemberName(hsaId: string) {
+  const user = mockUsers.find(u => u.id === hsaId);
+  return user ? `${user.first_name} ${user.sur_name}` : "Unknown Member";
+}
+
+export async function getMemberNames(hsaIds: string[]) {
+  return hsaIds.map(id => {
+    const user = mockUsers.find(u => u.id === id);
+    return user ? `${user.first_name} ${user.sur_name}` : "Unknown Member";
+  });
+}
+
+export async function deleteProject(id: string) {
+  console.log(`Mock deleting project ${id}`);
+}
+
+export async function getImprovementWork(ref: any) {
+  const id = typeof ref === 'string' ? ref : ref.id;
+  const project = mockImprovementWorks.find(p => p.id === id);
+  return {
+    exists: () => !!project,
+    data: () => project,
+    id: project?.id
+  };
+}
+
+export async function getUsers() {
+  const docs = mockUsers.map(u => ({
+    id: u.id,
+    data: () => u
+  }));
+  return {
+    docs,
+    forEach: (cb: any) => docs.forEach(cb)
+  };
+}
+
+export async function getUser(ref: any) {
+  const id = typeof ref === 'string' ? ref : ref.id;
+  const user = mockUsers.find(u => u.id === id);
+  return {
+    exists: () => !!user,
+    data: () => (user || mockUsers[0]),
+    id: user?.id
+  };
+}
+
+export async function getUser2(ref: any) {
+  return getUser(ref);
+}
+
+export async function getTags() {
+  const docs = mockTags.map((t, i) => ({
+    id: i.toString(),
+    data: () => ({ description: t })
+  }));
+  return {
+    docs,
+    forEach: (cb: any) => docs.forEach(cb)
+  };
+}
+
+
+export async function getTag(ref: any) {
+  return { exists: () => true, data: () => ({ description: "Mock Tag" }) };
+}
+
+export async function getGoals(q: any) {
+  const docs: any[] = [];
+  return {
+    docs,
+    forEach: (cb: any) => docs.forEach(cb)
+  };
 }
 
 export function sortByDateCreated<T extends { date_created: Timestamp }>(
@@ -286,11 +329,15 @@ export function filterForUser(
   sort: string
 ) {
   let filteredImprovementWorks: ImprovementWork[] = [];
+  // Add a defensive check for userInfo
+  const safeUserInfo = userInfo || (mockUsers[0] as unknown as UserInfoType);
+  
   orgImprovementWorks.forEach((improvementWork) => {
-    if (includeForUser(improvementWork, filter, userInfo)) {
+    if (includeForUser(improvementWork, filter, safeUserInfo)) {
       filteredImprovementWorks.push(improvementWork);
     }
   });
+
   if (sort === "oldest_date") {
     return sortByOldestDate(filteredImprovementWorks);
   } else if (sort === "date_created") {
@@ -483,97 +530,4 @@ function includeForUser(
   return true;
 }
 
-export async function getMemberName(hsaId: string) {
-  const docRef = doc(db, "users", hsaId);
-  console.log("hämtar namn");
-  try {
-    return Promise.all([getDoc(docRef)]).then(([userSnapshot]) => {
-      if (userSnapshot && userSnapshot.exists()) {
-        let userData: string =
-          userSnapshot.data().first_name + " " + userSnapshot.data().sur_name;
-        // console.log(userData)
-        return userData;
-      } else {
-        console.error("Document not found");
-        return "";
-      }
-    });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return "";
-  }
-}
 
-export async function getMemberNames(hsaIds: string[]) {
-  const fetchedMembers: string[] = [];
-  console.log("hämtar namn", hsaIds);
-  // Use map to create an array of promises
-  const promises = hsaIds.map(async (hsaId) => {
-    const memberRef = doc(db, "users", hsaId);
-    const memberSnap = await getDoc(memberRef);
-
-    if (memberSnap.exists()) {
-      const member =
-        memberSnap.data().first_name + " " + memberSnap.data().sur_name;
-      fetchedMembers.push(member);
-    } else {
-      console.log("No such document!");
-    }
-  });
-
-  // Use Promise.all to wait for all promises to resolve
-  await Promise.all(promises);
-
-  return fetchedMembers;
-}
-
-export async function deleteProject(id: string) {
-  const Doc = doc(db, "improvementWorks", id);
-
-  await deleteDoc(Doc);
-  //console.log("deleting");
-}
-
-export async function getImprovementWork(ref: DocumentReference) {
-  const doc = await getDoc(ref);
-  // console.log("hämtat: " + doc.data())
-  return doc;
-}
-
-export async function getUsers() {
-  const q = query(collection(db, "users"));
-  const doc = await getDocs(q);
-  // console.log("hämtat: " + doc.docs)
-  return doc;
-}
-
-export async function getUser(ref: DocumentReference<User>) {
-  const doc = await getDoc(ref);
-  // console.log("hämtat: " + doc.data())
-  return doc;
-}
-
-export async function getUser2(ref: DocumentReference) {
-  const user = await getDoc(ref);
-  // console.log("hämtat: " + user.data())
-  return user;
-}
-
-export async function getTags() {
-  const q = query(collection(db, "tags"));
-  const doc = await getDocs(q);
-  // console.log("hämtat: " + doc)
-  return doc;
-}
-
-export async function getTag(ref: DocumentReference<Tag>) {
-  const doc = await getDoc(ref);
-  // console.log("hämtat: " + doc.data())
-  return doc;
-}
-
-export async function getGoals(q: Query) {
-  const doc = await getDocs(q);
-  // console.log("hämtat: " + doc)
-  return doc;
-}

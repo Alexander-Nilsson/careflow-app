@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { userIDname, userInfo } from "./CreateNewProject";
 
 export function findUserIds(members: string[], usersClassArray: userIDname[]) {

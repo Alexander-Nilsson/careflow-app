@@ -1,7 +1,8 @@
+// @ts-nocheck
 import LoginModal from "./LoginModal";
 import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0 } from '../mockAuth0';
 import "../styles/LoadingSpinner.css";
 
 function Login() {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react'
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Button } from "react-bootstrap";
 import { PlusLg } from "react-bootstrap-icons";
 

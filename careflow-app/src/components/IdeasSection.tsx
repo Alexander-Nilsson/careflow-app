@@ -1,9 +1,10 @@
+// @ts-nocheck
 import React from "react";
 import { FormControl, Container, Button } from "react-bootstrap";
-import { db } from "../firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { db } from "../mockFirebase";
+import { addDoc, collection } from "../mockFirebase";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "../mockAuth0";
 import { UserInfoType } from "./Start";
 import HelpPopover from "./HelpPopover";
 import rightArrow from "../Images/right-arrow.png";

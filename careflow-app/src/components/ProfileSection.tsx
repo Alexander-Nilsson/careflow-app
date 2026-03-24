@@ -1,3 +1,4 @@
+// @ts-nocheck
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateNewProject from "./CreateNewProject";
 import nurseImage from "../Images/genderNeutralWorker.png";

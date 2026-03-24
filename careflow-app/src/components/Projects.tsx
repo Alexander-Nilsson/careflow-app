@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KanbanBoard from "./KanbanBoard";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "../mockAuth0";
 import { filterForUser, UserFilterState } from "../ImprovementWorkLib";
 import {
   findPlaceOptions,

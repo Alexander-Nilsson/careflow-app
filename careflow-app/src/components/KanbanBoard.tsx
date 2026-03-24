@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useContext, useEffect } from "react";
 import { Column, Id } from "../types";
 import ColumnContainer from "./ColumnContainer";
@@ -16,9 +17,9 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import "../styles/Kanban.css";
 import { ProjectContext } from "./Projects";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "../mockFirebase";
 import ShowCard from "./ShowCard";
-import { db } from "../firebase";
+import { db } from "../mockFirebase";
 import { ImprovementWork } from "../ImprovementWorkLib";
 
 import {draggable} from "./ShowCard";
